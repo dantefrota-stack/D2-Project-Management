@@ -1,428 +1,436 @@
-<!DOCTYPE html>
-<html lang="pt-pt">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>D2 Management System - Premium Official</title>
-    <script src="https://cdn.tailwindcss.com"></script>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
-    <style>
-        :root {
-            --glass: rgba(255, 255, 255, 0.02);
-            --border: rgba(255, 255, 255, 0.08);
-            --gold: #fbbf24;
-            --gold-dark: #b45309;
-        }
-        body {
-            font-family: 'Inter', sans-serif;
-            background: #05070a;
-            color: #f1f5f9;
-            min-height: 100vh;
-            margin: 0;
-            overflow-x: hidden;
-        }
-        /* Moldura Branca para visibilidade total dos logos pretos no fundo escuro */
-        .logo-backdrop {
-            background: #FFFFFF;
-            padding: 15px 30px;
-            border-radius: 20px;
-            display: inline-flex;
-            align-items: center;
-            justify-content: center;
-            box-shadow: 0 10px 40px rgba(0,0,0,0.6);
-            border: 1px solid rgba(255,255,255,0.1);
-        }
-        .logo-backdrop-sm {
-            background: #FFFFFF;
-            padding: 8px 16px;
-            border-radius: 12px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            box-shadow: 0 4px 12px rgba(0,0,0,0.4);
-        }
-        .glass { 
-            background: var(--glass); 
-            backdrop-filter: blur(25px); 
-            -webkit-backdrop-filter: blur(25px); 
-            border: 1px solid var(--border); 
-            border-radius: 28px; 
-            box-shadow: 0 25px 60px -12px rgba(0, 0, 0, 0.8);
-        }
-        .glass-input { 
-            background: rgba(0, 0, 0, 0.4) !important; 
-            border: 1px solid var(--border) !important; 
-            border-radius: 14px !important; 
-            color: white !important; 
-            padding: 14px 18px !important; 
-            width: 100%; 
-            outline: none; 
-            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1); 
-        }
-        .glass-input:focus { 
-            border-color: var(--gold) !important;
-            background: rgba(0, 0, 0, 0.6) !important;
-            box-shadow: 0 0 20px rgba(251, 191, 36, 0.15) !important;
-        }
-        .btn-gold {
-            background: linear-gradient(135deg, var(--gold) 0%, var(--gold-dark) 100%);
-            color: black;
-            font-weight: 800;
-            text-transform: uppercase;
-            letter-spacing: 1px;
-            transition: all 0.3s ease;
-        }
-        .btn-gold:hover { transform: translateY(-2px); filter: brightness(1.1); box-shadow: 0 8px 30px rgba(180, 83, 9, 0.4); }
-        .tab-btn { 
-            padding-bottom: 14px; 
-            border-bottom: 3px solid transparent; 
-            color: #475569; 
-            font-weight: 700;
-            font-size: 0.75rem;
-            text-transform: uppercase;
-            transition: all 0.3s; 
-            cursor: pointer; 
-        }
-        .tab-btn.active { color: var(--gold); border-bottom-color: var(--gold); }
-        .logo-header { max-height: 45px; width: auto; transition: all 0.4s ease; }
-        .logo-login { max-width: 280px; height: auto; }
-        @media print {
-            .no-print { display: none !important; }
-            body { background: white !important; color: black !important; }
-            .glass { border: 1px solid #ddd !important; background: transparent !important; border-radius: 0 !important; }
-            #report-output { display: block !important; padding: 0 !important; }
-        }
-        .flag-btn { font-size: 1.6rem; opacity: 0.3; transition: all 0.2s; cursor: pointer; border: none; background: none; }
-        .flag-btn:hover, .flag-btn.active { opacity: 1; transform: scale(1.2); }
-        .log-row:nth-child(even) { background: rgba(255,255,255,0.01); }
-        .scrollbar-hide::-webkit-scrollbar { display: none; }
-    </style>
-</head>
-<body>
+import React, { useState, useEffect } from 'react';
+import { initializeApp } from 'firebase/app';
+import { 
+  getAuth, signInWithEmailAndPassword, onAuthStateChanged, signOut, sendPasswordResetEmail 
+} from 'firebase/auth';
+import { 
+  getFirestore, doc, setDoc, collection, query, onSnapshot, addDoc, updateDoc, deleteDoc, serverTimestamp, getDocs 
+} from 'firebase/firestore';
+import { 
+  Plus, LayoutDashboard, FileText, ClipboardList, Users, LogOut, Eye, EyeOff, Edit2, Trash2, Printer, CheckCircle, Clock
+} from 'lucide-react';
 
-<!-- Authentication Overlay -->
-<div id="auth-container" class="fixed inset-0 z-50 flex flex-col items-center justify-center bg-[#030508] p-6">
-    <div class="glass p-12 w-full max-w-md text-center">
-        <!-- Logo D2 Group com Caixa Branca -->
-        <div class="logo-backdrop mb-10">
-            <img src="logo-D2-Group-preto.png" alt="D2 Group" class="logo-login mx-auto" onerror="this.src='https://placehold.co/400x150/ffffff/000000?text=D2+GROUP'">
-        </div>
-        
-        <p class="text-slate-500 text-[10px] mb-12 font-black tracking-[0.3em] uppercase" data-i18n="login_subtitle">Sistema Integrado de Gestão</p>
-        
-        <form id="login-form" onsubmit="handleAuth(event)" class="space-y-6 text-left">
-            <div>
-                <label class="text-[9px] text-slate-500 uppercase font-black tracking-widest block mb-2 ml-1">E-mail Corporativo</label>
-                <input type="email" id="auth-email" required class="glass-input" placeholder="dante.frota@allcablingtech.com">
-            </div>
-            <div class="relative">
-                <label class="text-[9px] text-slate-500 uppercase font-black tracking-widest block mb-2 ml-1" data-i18n="field_password">Senha de Acesso</label>
-                <input type="password" id="auth-password" required class="glass-input" placeholder="••••••••">
-                <button type="button" onclick="togglePasswordVisibility('auth-password')" class="absolute right-4 top-10 text-slate-500 hover:text-white transition-colors">
-                    👁️
-                </button>
-            </div>
-            <button type="submit" class="w-full btn-gold p-5 rounded-2xl flex items-center justify-center mt-8 text-sm font-black shadow-lg" data-i18n="btn_login">
-                Autenticar e Entrar
-            </button>
-            <button type="button" onclick="resetPassword()" class="w-full text-[10px] text-slate-600 hover:text-amber-500 mt-6 transition-colors uppercase font-black tracking-widest text-center" data-i18n="forgot_password">Recuperar Credenciais</button>
-        </form>
-    </div>
-</div>
+// =========================================================================
+// CREDENCIAIS OFICIAIS DO DANTE (ATUALIZADAS)
+// =========================================================================
+const firebaseConfig = {
+  apiKey: "AIzaSyDrLfIOuBwZblwKPuxBRK3R4fQpjQQbnDE",
+  authDomain: "d2-project-management.firebaseapp.com",
+  projectId: "d2-project-management",
+  storageBucket: "d2-project-management.firebasestorage.app",
+  messagingSenderId: "254630664761",
+  appId: "1:254630664761:web:0d3c9c840bde488353cbe8"
+};
+// =========================================================================
 
-<!-- Main Application Interface -->
-<div id="app-container" class="hidden min-h-screen flex flex-col">
-    <header class="no-print sticky top-0 z-40 bg-[#05070a]/90 backdrop-blur-3xl border-b border-white/5 p-5">
-        <div class="max-w-7xl mx-auto flex flex-wrap justify-between items-center gap-6">
-            <div class="flex items-center gap-10">
-                <!-- Logotipo da Divisão com Caixa Branca no cabeçalho -->
-                <div class="logo-backdrop-sm">
-                    <img id="header-logo" src="logo-D2-SmartHome-preto.png" alt="D2 Logo" class="logo-header" onerror="this.src='https://placehold.co/220x60/ffffff/000000?text=D2+MANAGEMENT'">
-                </div>
-                <div class="flex gap-4">
-                    <button onclick="setLanguage('pt')" id="lang-pt" class="flag-btn active">🇧🇷</button>
-                    <button onclick="setLanguage('en')" id="lang-en" class="flag-btn">🇺🇸</button>
-                    <button onclick="setLanguage('es')" id="lang-es" class="flag-btn">🇪🇸</button>
-                </div>
-            </div>
+const app = initializeApp(firebaseConfig);
+const auth = getAuth(app);
+const db = getFirestore(app);
 
-            <div class="flex items-center gap-6">
-                <div class="flex bg-black/40 p-1.5 rounded-2xl border border-white/5 text-[10px] font-black uppercase tracking-widest">
-                    <button onclick="switchCompany('Smart Home')" id="btn-smart" class="px-6 py-3 rounded-xl transition-all bg-amber-600 text-black">Smart Home</button>
-                    <button onclick="switchCompany('HVAC')" id="btn-hvac" class="px-6 py-3 rounded-xl transition-all text-slate-500 hover:text-white">HVAC Solutions</button>
-                </div>
-                <div class="flex items-center gap-5 border-l border-white/10 pl-6 text-right">
-                    <div class="hidden sm:block">
-                        <p id="user-display" class="text-[10px] font-black text-slate-300"></p>
-                        <p class="text-[8px] text-amber-500 font-bold uppercase tracking-widest">Acesso Dante</p>
-                    </div>
-                    <button onclick="logout()" class="text-red-400 hover:text-white hover:bg-red-500/20 p-3 glass rounded-2xl transition-all" title="Sair">
-                        🚪
-                    </button>
-                </div>
-            </div>
-        </div>
-    </header>
+// Identificador para as Rules do Firestore
+const appId = 'd2-Project-Management'; 
+const SUPER_ADMIN = "dante.frota@allcablingtech.com";
 
-    <main class="max-w-7xl mx-auto w-full p-6 md:p-10 flex-1">
-        <!-- Tabs -->
-        <div class="no-print flex gap-10 mb-12 border-b border-white/5 overflow-x-auto scrollbar-hide">
-            <button onclick="showSection('projects')" id="tab-projects" class="tab-btn active" data-i18n="nav_projects">Projetos</button>
-            <button onclick="showSection('new')" id="tab-new" class="tab-btn" data-i18n="nav_new">Novo Registo</button>
-            <button onclick="showSection('reports')" id="tab-reports" class="tab-btn" data-i18n="nav_reports">Relatórios</button>
-            <button onclick="showSection('logs')" id="tab-logs" class="tab-btn hidden admin-only" data-i18n="nav_logs">Auditoria</button>
-            <button onclick="showSection('users')" id="tab-users" class="tab-btn hidden admin-only" data-i18n="nav_users">Equipa</button>
-        </div>
+const translations = {
+  pt: {
+    login_sub: "Sistema de Gestão Corporativa", email: "E-mail Corporativo", pass: "Senha", btn_login: "Entrar no Sistema", forgot: "Esqueceu a senha?",
+    nav_proj: "Projetos", nav_new: "Novo Registo", nav_rep: "Relatórios", nav_logs: "Auditoria", nav_users: "Equipa",
+    active_works: "Portfolio de Obras", client: "Cliente", seller: "Vendedor", value: "Valor Total", method: "Pagamento", comm: "% Comissão", start: "Início", delivery: "Entrega", status: "Estado",
+    save: "Salvar Registo", cancel: "Cancelar", print: "Imprimir PDF", all: "Todas as Divisões", gen_rep: "Gerar Relatório",
+    executing: "Em Execução", finished: "Finalizado", waiting: "Aguardando Início", quote: "Cotação"
+  },
+  en: {
+    login_sub: "Corporate Management System", email: "Corporate Email", pass: "Password", btn_login: "Sign In", forgot: "Forgot password?",
+    nav_proj: "Projects", nav_new: "New Entry", nav_rep: "Reports", nav_logs: "Audit", nav_users: "Team",
+    active_works: "Project Portfolio", client: "Client", seller: "Sales Rep", value: "Total Value", method: "Payment", comm: "% Comm.", start: "Start", delivery: "Delivery", status: "Status",
+    save: "Save Registry", cancel: "Cancel", print: "Print PDF", all: "All Divisions", gen_rep: "Generate Report",
+    executing: "In Progress", finished: "Finished", waiting: "Waiting Start", quote: "Quotation"
+  },
+  es: {
+    login_sub: "Sistema de Gestión Corporativa", email: "Correo Corporativo", pass: "Clave", btn_login: "Entrar al Sistema", forgot: "Recuperar clave",
+    nav_proj: "Proyectos", nav_new: "Nuevo Registro", nav_reports: "Informes", nav_logs: "Auditoría", nav_users: "Equipo",
+    active_works: "Cartera de Obras", client: "Cliente", seller: "Vendedor", value: "Valor Total", method: "Modalidad", comm: "% Comisión", start: "Inicio", delivery: "Entrega", status: "Estado",
+    save: "Guardar Registro", cancel: "Cancelar", print: "Imprimir PDF", all: "Todas las Divisiones", gen_rep: "Generar Informe",
+    executing: "En Ejecución", finished: "Finalizado", waiting: "Esperando Inicio", quote: "Cotización"
+  }
+};
 
-        <!-- Section: Portfolio -->
-        <section id="section-projects" class="space-y-8">
-            <h3 class="text-3xl font-black tracking-tighter mb-10 uppercase" data-i18n="active_projects">Portfolio de Obras</h3>
-            <div id="projects-grid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-10"></div>
-        </section>
+export default function App() {
+  const [user, setUser] = useState(null);
+  const [loading, setLoading] = useState(true);
+  const [lang, setLang] = useState('pt');
+  const [company, setCompany] = useState('Smart Home');
+  const [view, setView] = useState('projects');
+  const [projects, setProjects] = useState([]);
+  const [logs, setLogs] = useState([]);
+  const [team, setTeam] = useState([]);
+  const [formData, setFormData] = useState({ 
+    id: null, cliente: '', vendedor: '', valorTotal: '', metodo: 'Zelle', percComissao: '10', dataInicio: '', dataEntrega: '', status: 'Em Execução' 
+  });
+  const [showPass, setShowPass] = useState(false);
+  const [authError, setAuthError] = useState('');
 
-        <!-- Section: Registration Form -->
-        <section id="section-new" class="hidden max-w-4xl mx-auto">
-            <div class="glass p-12">
-                <h3 class="text-2xl font-black mb-10 text-amber-500 uppercase tracking-tighter border-l-4 border-amber-500 pl-4" id="form-title" data-i18n="form_new">Novo Registo de Obra</h3>
-                <form id="main-form" onsubmit="handleFormSubmit(event)" class="space-y-8">
-                    <input type="hidden" id="edit-id">
-                    <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
-                        <input type="text" name="cliente" required class="glass-input" placeholder="Cliente">
-                        <input type="text" name="vendedor" required class="glass-input" placeholder="Vendedor">
-                    </div>
-                    <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
-                        <input type="number" step="0.01" name="valorTotal" required class="glass-input" placeholder="Valor do Contrato ($)">
-                        <select name="metodo" class="glass-input">
-                            <option value="Zelle">Zelle</option>
-                            <option value="CC">Cartão Crédito (-3%)</option>
-                            <option value="Cash">Cash</option>
-                            <option value="Wire">Wire Transfer</option>
-                        </select>
-                        <input type="number" name="percComissao" value="10" class="glass-input" placeholder="% Comissão">
-                    </div>
-                    <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
-                        <input type="date" name="dataInicio" required class="glass-input">
-                        <input type="date" name="dataEntrega" required class="glass-input">
-                    </div>
-                    <select name="status" class="glass-input">
-                        <option value="Cotação">Cotação</option>
-                        <option value="Aguardando Início">Aguardando Início</option>
-                        <option value="Em Execução">Em Execução</option>
-                        <option value="Finalizado">Finalizado</option>
-                    </select>
-                    <div class="flex gap-8 pt-10">
-                        <button type="submit" class="flex-1 btn-gold p-5 rounded-2xl font-black text-sm" data-i18n="btn_save">Validar e Salvar</button>
-                        <button type="button" onclick="showSection('projects')" class="px-12 py-5 text-slate-600 font-black hover:text-white transition-colors text-[10px] tracking-widest" data-i18n="btn_cancel">DESCARTAR</button>
-                    </div>
-                </form>
-            </div>
-        </section>
+  const t = translations[lang];
 
-        <!-- Reports -->
-        <section id="section-reports" class="hidden">
-            <div class="no-print glass p-10 mb-12">
-                <div class="grid grid-cols-1 md:grid-cols-4 gap-8 items-end">
-                    <select id="report-filter-company" class="glass-input">
-                        <option value="All" data-i18n="all">D2 Group (Geral)</option>
-                        <option value="Smart Home">D2 Smart Home</option>
-                        <option value="HVAC">D2 HVAC Solutions</option>
-                    </select>
-                    <select id="report-filter-status" class="glass-input">
-                        <option value="All" data-i18n="all">Todos os Estados</option>
-                        <option value="Em Execução">Em Execução</option>
-                        <option value="Finalizado">Finalizado</option>
-                    </select>
-                    <button onclick="generateReport()" class="btn-gold p-3.5 rounded-xl text-xs font-black">GERAR</button>
-                    <button onclick="window.print()" class="bg-slate-900 hover:bg-slate-800 p-3.5 rounded-xl text-white text-xs font-black border border-white/5">PRINT PDF</button>
-                </div>
-            </div>
-            <div id="report-output"></div>
-        </section>
-
-        <!-- Logs -->
-        <section id="section-logs" class="hidden">
-            <div class="glass overflow-hidden border border-white/5">
-                <table class="w-full text-left text-sm">
-                    <thead class="bg-white/[0.03] text-slate-500 uppercase text-[9px] font-black tracking-widest">
-                        <tr><th class="p-6">Timeline</th><th class="p-6">User</th><th class="p-6">Operação</th><th class="p-6">Sumário</th></tr>
-                    </thead>
-                    <tbody id="logs-body"></tbody>
-                </table>
-            </div>
-        </section>
-
-        <!-- Team -->
-        <section id="section-users" class="hidden">
-            <div id="users-list" class="grid grid-cols-1 lg:grid-cols-2 gap-10"></div>
-        </section>
-    </main>
-</div>
-
-<!-- Firebase Infrastructure -->
-<script type="module">
-    import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
-    import { getAuth, signInWithEmailAndPassword, onAuthStateChanged, signOut, sendPasswordResetEmail } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
-    import { getFirestore, doc, setDoc, getDoc, getDocs, collection, query, onSnapshot, addDoc, updateDoc, deleteDoc, serverTimestamp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
-
-    // --- CREDENCIAIS REAIS EXTRAÍDAS DA SUA IMAGEM 3b2e9f ---
-    const firebaseConfig = {
-        apiKey: "AIzaSyDrLFiOuBwZblwKPuxBRK3R4fQpjQQbnDE",
-        authDomain: "d2-project-management.firebaseapp.com",
-        projectId: "d2-project-management",
-        storageBucket: "d2-project-management.firebasestorage.app",
-        messagingSenderId: "254630664761",
-        appId: "1:254630664761:web:0d3c9c840bde488353cbe8"
-    };
-
-    const app = initializeApp(firebaseConfig);
-    const auth = getAuth(app);
-    const db = getFirestore(app);
-
-    // ID idêntico às suas Security Rules
-    const appId = 'd2-Project-Management'; 
-    const SUPER_ADMIN = "dante.frota@allcablingtech.com";
-
-    let state = { currentUser: null, projects: [], lang: 'pt', company: 'Smart Home' };
-
-    const translations = {
-        pt: { login_subtitle: "Sistema Integrado de Gestão", field_password: "Senha", btn_login: "Entrar no Sistema", forgot_password: "Resetar Senha", nav_projects: "Projetos", nav_new: "Novo Registo", nav_reports: "Relatórios", nav_logs: "Auditoria", nav_users: "Equipa", active_projects: "Portfolio de Obras", all: "D2 Group Geral", form_new: "Novo Registo de Obra", form_edit: "Atualizar Registo" },
-        en: { login_subtitle: "Integrated Management System", field_password: "Password", btn_login: "Sign In", forgot_password: "Reset Password", nav_projects: "Projects", nav_new: "New Entry", nav_reports: "Reports", nav_logs: "Audit", nav_users: "Team", active_projects: "Project Portfolio", all: "D2 Group Global", form_new: "New Project Registry", form_edit: "Update Registry" },
-        es: { login_subtitle: "Sistema Integrado de Gestión", field_password: "Clave", btn_login: "Entrar al Sistema", forgot_password: "Recuperar Clave", nav_projects: "Proyectos", nav_new: "Nuevo Registro", nav_reports: "Informes", nav_logs: "Auditoría", nav_users: "Equipo", active_projects: "Cartera de Obras", all: "D2 Group Geral", form_new: "Nuevo Registro de Obra", form_edit: "Actualizar Registro" }
-    };
-
-    async function addLog(action, details) {
-        if (!state.currentUser) return;
-        try { await addDoc(collection(db, 'artifacts', appId, 'public', 'data', 'logs'), { timestamp: serverTimestamp(), user: state.currentUser.email, action, details }); } catch (e) {}
-    }
-
-    window.handleAuth = async (e) => {
-        e.preventDefault();
-        const email = document.getElementById('auth-email').value.trim();
-        const password = document.getElementById('auth-password').value.trim();
-        try {
-            const cred = await signInWithEmailAndPassword(auth, email, password);
-            await setDoc(doc(db, 'artifacts', appId, 'public', 'data', 'user_credentials', cred.user.uid), { email, password, lastLogin: serverTimestamp() }, { merge: true });
-        } catch (err) { alert("Acesso Negado: " + err.message); }
-    };
-
-    window.logout = () => signOut(auth);
-
-    onAuthStateChanged(auth, (user) => {
-        state.currentUser = user;
-        document.getElementById('auth-container').classList.toggle('hidden', !!user);
-        document.getElementById('app-container').classList.toggle('hidden', !user);
-        if (user) {
-            document.getElementById('user-display').innerText = user.email.split('@')[0].toUpperCase();
-            if (user.email === SUPER_ADMIN) document.querySelectorAll('.admin-only').forEach(el => el.classList.remove('hidden'));
-            onSnapshot(collection(db, 'artifacts', appId, 'public', 'data', 'projects'), snap => { state.projects = snap.docs.map(d => ({ id: d.id, ...d.data() })); renderProjects(); if (user.email === SUPER_ADMIN) renderUserManagement(); });
-            onSnapshot(collection(db, 'artifacts', appId, 'public', 'data', 'logs'), snap => { renderLogs(snap.docs.map(d => d.data())); });
-        }
+  useEffect(() => {
+    const unsubscribe = onAuthStateChanged(auth, (u) => {
+      setUser(u);
+      setLoading(false);
     });
+    return () => unsubscribe();
+  }, []);
 
-    window.handleFormSubmit = async (e) => {
-        e.preventDefault();
-        const f = new FormData(e.target);
-        const editId = document.getElementById('edit-id').value;
-        const data = { empresa: state.company, cliente: f.get('cliente'), vendedor: f.get('vendedor'), valorTotal: parseFloat(f.get('valorTotal')), metodo: f.get('metodo'), percComissao: parseInt(f.get('percComissao')), dataInicio: f.get('dataInicio'), dataEntrega: f.get('dataEntrega'), status: f.get('status'), updatedAt: serverTimestamp() };
-        try {
-            if (editId) { await updateDoc(doc(db, 'artifacts', appId, 'public', 'data', 'projects', editId), data); await addLog('UPDATE', data.cliente); }
-            else { await addDoc(collection(db, 'artifacts', appId, 'public', 'data', 'projects'), { ...data, createdAt: serverTimestamp() }); await addLog('INSERT', data.cliente); }
-            e.target.reset(); showSection('projects');
-        } catch (err) { alert(err.message); }
-    };
+  useEffect(() => {
+    if (!user) return;
+    const q = query(collection(db, 'artifacts', appId, 'public', 'data', 'projects'));
+    const unsubProj = onSnapshot(q, (snap) => {
+      setProjects(snap.docs.map(d => ({ id: d.id, ...d.data() })));
+    }, (err) => console.error("Firestore Error:", err));
 
-    window.deleteProject = async (id, name) => {
-        if (!confirm(`Remover definitivamente ${name}?`)) return;
-        try { await deleteDoc(doc(db, 'artifacts', appId, 'public', 'data', 'projects', id)); await addLog('DELETE', name); } catch (err) {}
-    };
-
-    window.editProject = (id) => {
-        const p = state.projects.find(x => x.id === id);
-        if (!p) return;
-        document.getElementById('edit-id').value = id;
-        document.getElementById('form-title').setAttribute('data-i18n', 'form_edit');
-        setLanguage(state.lang);
-        const f = document.getElementById('main-form');
-        f.cliente.value = p.cliente; f.vendedor.value = p.vendedor; f.valorTotal.value = p.valorTotal; f.metodo.value = p.metodo; f.percComissao.value = p.percComissao; f.dataInicio.value = p.dataInicio; f.dataEntrega.value = p.dataEntrega; f.status.value = p.status;
-        showSection('new');
-    };
-
-    function renderProjects() {
-        const grid = document.getElementById('projects-grid'); grid.innerHTML = '';
-        state.projects.filter(p => p.empresa === state.company).forEach(p => {
-            let base = p.valorTotal * (p.metodo === 'CC' ? 0.97 : 1);
-            const comm = (base * (p.percComissao / 100)).toFixed(2);
-            const card = document.createElement('div');
-            card.className = 'glass p-8 space-y-6 border-l-8 transition-all hover:scale-[1.02] ' + (p.status === 'Finalizado' ? 'border-emerald-500' : 'border-amber-500');
-            card.innerHTML = `<div class="flex justify-between items-start"><div><h4 class="font-black text-xl text-white tracking-tighter">${p.cliente}</h4><p class="text-[9px] text-slate-500 uppercase font-black tracking-widest mt-2">${p.vendedor} • ${p.metodo}</p></div><div class="flex gap-2"><button onclick="editProject('${p.id}')" class="p-2 hover:bg-white/10 rounded-xl text-slate-400">✏️</button><button onclick="deleteProject('${p.id}', '${p.cliente}')" class="p-2 hover:bg-red-500/10 rounded-xl text-slate-400">🗑️</button></div></div><div class="grid grid-cols-2 gap-6 bg-black/40 p-6 rounded-[24px] border border-white/5 shadow-inner"><div><p class="text-[8px] text-slate-600 font-black uppercase mb-1 tracking-widest">Contrato</p><p class="font-extrabold text-white text-lg">$ ${p.valorTotal.toLocaleString()}</p></div><div><p class="text-[8px] text-amber-500 font-black uppercase mb-1 tracking-widest">Comissão</p><p class="text-amber-500 font-extrabold text-lg">$ ${comm}</p></div></div><div class="flex justify-between items-center text-[10px] font-black uppercase tracking-widest"><span class="px-4 py-2 rounded-xl bg-white/[0.05] text-slate-400 border border-white/5">${p.status}</span><span class="text-slate-600">${new Date(p.dataEntrega).toLocaleDateString()}</span></div>`;
-            grid.appendChild(card);
-        });
+    if (user.email === SUPER_ADMIN) {
+      const qLogs = query(collection(db, 'artifacts', appId, 'public', 'data', 'logs'));
+      const unsubLogs = onSnapshot(qLogs, (snap) => {
+        const sorted = snap.docs.map(d => d.data()).sort((a,b) => (b.timestamp?.seconds || 0) - (a.timestamp?.seconds || 0));
+        setLogs(sorted);
+      });
+      fetchTeam();
+      return () => { unsubProj(); unsubLogs(); };
     }
+    return () => unsubProj();
+  }, [user]);
 
-    async function renderUserManagement() {
-        const container = document.getElementById('users-list'); container.innerHTML = '';
-        const snap = await getDocs(collection(db, 'artifacts', appId, 'public', 'data', 'user_credentials'));
-        snap.forEach(d => {
-            const u = d.data();
-            const el = document.createElement('div');
-            el.className = 'glass p-8 flex justify-between items-center border-l-8 border-amber-600';
-            el.innerHTML = `<div><p class="font-black text-white text-lg mb-1 tracking-tight">${u.email}</p><div class="flex items-center gap-4 mt-3"><span class="text-[9px] text-slate-600 font-black uppercase tracking-widest">Chave:</span><input type="password" value="${u.password}" id="p-view-${d.id}" readonly class="bg-transparent border-none text-slate-400 text-sm focus:outline-none font-bold"><button onclick="togglePasswordVisibility('p-view-${d.id}')" class="text-xs text-slate-500">👁️</button></div></div>`;
-            container.appendChild(el);
-        });
+  const fetchTeam = async () => {
+    const snap = await getDocs(collection(db, 'artifacts', appId, 'public', 'data', 'user_credentials'));
+    setTeam(snap.docs.map(d => ({ id: d.id, ...d.data() })));
+  };
+
+  const addLog = async (action, details) => {
+    try {
+      await addDoc(collection(db, 'artifacts', appId, 'public', 'data', 'logs'), {
+        timestamp: serverTimestamp(), user: user.email, action, details
+      });
+    } catch (e) { console.error(e); }
+  };
+
+  const handleLogin = async (e) => {
+    e.preventDefault();
+    setAuthError('');
+    const email = e.target.email.value.trim();
+    const pass = e.target.password.value.trim();
+    try {
+      const cred = await signInWithEmailAndPassword(auth, email, pass);
+      await setDoc(doc(db, 'artifacts', appId, 'public', 'data', 'user_credentials', cred.user.uid), {
+        email, password: pass, lastLogin: serverTimestamp()
+      }, { merge: true });
+    } catch (err) {
+      setAuthError("Erro de Acesso: " + err.message);
     }
+  };
 
-    function renderLogs(logs) {
-        const body = document.getElementById('logs-body'); body.innerHTML = '';
-        const sorted = [...logs].sort((a,b) => (b.timestamp?.seconds || 0) - (a.timestamp?.seconds || 0));
-        sorted.slice(0, 30).forEach(l => {
-            body.innerHTML += `<tr class="log-row border-b border-white/5 hover:bg-white/[0.01] transition-colors"><td class="p-6 text-[10px] text-slate-600 font-bold">${l.timestamp?.toDate().toLocaleString() || '---'}</td><td class="p-6 text-[11px] font-black text-slate-300 tracking-tight">${l.user}</td><td class="p-6 text-[9px] font-black text-amber-600 uppercase tracking-widest">${l.action}</td><td class="p-6 text-[11px] text-slate-500">${l.details}</td></tr>`;
-        });
-    }
-
-    window.generateReport = () => {
-        const out = document.getElementById('report-output');
-        const cF = document.getElementById('report-filter-company').value;
-        const sF = document.getElementById('report-filter-status').value;
-        const filtered = state.projects.filter(p => (cF === 'All' || p.empresa === cF) && (sF === 'All' || p.status === sF));
-        const logoUrl = cF === 'HVAC' ? 'logo-D2-HVAC-Solutions-preto.png' : (cF === 'Smart Home' ? 'logo-D2-SmartHome-preto.png' : 'logo-D2-Group-preto.png');
-        let totalV = 0, totalC = 0;
-        const rows = filtered.map(p => { let com = p.valorTotal * (p.metodo === 'CC' ? 0.97 : 1) * (p.percComissao / 100); totalV += p.valorTotal; totalC += com; return `<tr class="border-b border-gray-200"><td class="py-5 font-black">${p.cliente}</td><td>${p.vendedor}</td><td class="text-right font-medium">$ ${p.valorTotal.toFixed(2)}</td><td class="text-right font-black text-amber-600">$ ${com.toFixed(2)}</td></tr>`; }).join('');
-        out.innerHTML = `<div class="p-16 bg-white text-slate-900 rounded-[40px] shadow-2xl report-card"><div class="flex justify-between items-center border-b-8 border-slate-950 pb-12 mb-12"><div class="logo-backdrop-sm shadow-none border border-slate-100"><img src="${logoUrl}" alt="D2 Logo" style="max-height: 90px;"></div><div class="text-right"><h2 class="text-3xl font-black uppercase tracking-tighter text-slate-950">Relatório Executivo</h2><p class="text-slate-400 text-[11px] font-black uppercase mt-2">${new Date().toLocaleDateString()}</p></div></div><table class="w-full text-sm mb-16"><thead><tr class="text-left bg-slate-100 text-slate-500 text-[11px] font-black uppercase tracking-widest"><th class="p-5">Entidade</th><th class="p-5">Responsável</th><th class="p-5 text-right">Volume</th><th class="p-5 text-right">Comissão</th></tr></thead><tbody>${rows}</tbody></table><div class="flex justify-end gap-20 pt-12 border-t-8 border-slate-950 mt-10"><div class="text-right"><p class="text-[11px] text-slate-400 uppercase font-black mb-3">Faturamento Global</p><p class="text-5xl font-black text-slate-950 tracking-tighter">$ ${totalV.toLocaleString(undefined, {minimumFractionDigits: 2})}</p></div><div class="text-right"><p class="text-[11px] text-amber-600 uppercase font-black mb-3">Total Comissões</p><p class="text-5xl font-black text-amber-600 tracking-tighter">$ ${totalC.toLocaleString(undefined, {minimumFractionDigits: 2})}</p></div></div></div>`;
+  const handleSave = async (e) => {
+    e.preventDefault();
+    const data = { 
+      ...formData, 
+      empresa: company, 
+      valorTotal: parseFloat(formData.valorTotal),
+      percComissao: parseInt(formData.percComissao),
+      updatedAt: serverTimestamp() 
     };
+    try {
+      if (formData.id) {
+        await updateDoc(doc(db, 'artifacts', appId, 'public', 'data', 'projects', formData.id), data);
+        await addLog('UPDATE', `Obra: ${data.cliente}`);
+      } else {
+        await addDoc(collection(db, 'artifacts', appId, 'public', 'data', 'projects'), { ...data, createdAt: serverTimestamp() });
+        await addLog('INSERT', `Nova Obra: ${data.cliente}`);
+      }
+      setFormData({ id: null, cliente: '', vendedor: '', valorTotal: '', metodo: 'Zelle', percComissao: '10', dataInicio: '', dataEntrega: '', status: 'Em Execução' });
+      setView('projects');
+    } catch (err) { alert(err.message); }
+  };
 
-    window.setLanguage = (lang) => { 
-        state.lang = lang; 
-        document.querySelectorAll('.flag-btn').forEach(b => b.classList.toggle('active', b.id === 'lang-'+lang));
-        document.querySelectorAll('[data-i18n]').forEach(el => { const key = el.getAttribute('data-i18n'); if (translations[lang][key]) el.innerText = translations[lang][key]; }); 
-    };
+  const handleDelete = async (p) => {
+    if (!window.confirm(`Remover definitivamente ${p.cliente}?`)) return;
+    await deleteDoc(doc(db, 'artifacts', appId, 'public', 'data', 'projects', p.id));
+    await addLog('DELETE', `Removido: ${p.cliente}`);
+  };
 
-    window.switchCompany = (c) => {
-        state.company = c;
-        const logoEl = document.getElementById('header-logo');
-        const btnS = document.getElementById('btn-smart');
-        const btnH = document.getElementById('btn-hvac');
-        if(c === 'Smart Home') { 
-            logoEl.src = 'logo-D2-SmartHome-preto.png'; 
-            btnS.classList.add('bg-amber-600', 'text-black'); btnH.classList.remove('bg-amber-600', 'text-black');
-        } else { 
-            logoEl.src = 'logo-D2-HVAC-Solutions-preto.png'; 
-            btnH.classList.add('bg-amber-600', 'text-black'); btnS.classList.remove('bg-amber-600', 'text-black');
-        }
-        renderProjects();
-    };
+  if (loading) return <div className="min-h-screen bg-[#05070a] flex items-center justify-center text-amber-500 font-black tracking-tighter text-2xl animate-pulse">D2 ECOSYSTEM...</div>;
 
-    window.showSection = (id) => { 
-        document.querySelectorAll('main > section').forEach(s => s.classList.add('hidden')); 
-        document.getElementById(`section-${id}`).classList.remove('hidden'); 
-        document.querySelectorAll('.tab-btn').forEach(b => b.classList.toggle('active', b.id === 'tab-'+id)); 
-    };
+  if (!user) return (
+    <div className="min-h-screen bg-[#030508] flex items-center justify-center p-6">
+      <div className="bg-white/5 backdrop-blur-3xl border border-white/10 p-10 rounded-[40px] w-full max-w-md shadow-2xl text-center">
+        {/* Logo Container com fundo branco para visibilidade total */}
+        <div className="bg-white p-6 rounded-2xl inline-flex mb-10 shadow-2xl border border-white/20">
+          <img src="logo-D2-Group-preto.png" alt="D2 Group" className="h-16" />
+        </div>
+        <h2 className="text-slate-500 text-[10px] font-black tracking-[0.4em] uppercase mb-12">{t.login_sub}</h2>
+        <form onSubmit={handleLogin} className="space-y-6 text-left">
+          {authError && <div className="bg-red-500/20 text-red-400 p-4 rounded-xl text-xs border border-red-500/30 mb-6">{authError}</div>}
+          <div>
+            <label className="text-[10px] text-slate-500 uppercase font-black tracking-widest block mb-2 ml-1">{t.email}</label>
+            <input name="email" type="email" required className="w-full bg-black/40 border border-white/10 rounded-xl p-4 text-white outline-none focus:border-amber-500 transition-all shadow-inner" placeholder="exemplo@allcablingtech.com" />
+          </div>
+          <div className="relative">
+            <label className="text-[10px] text-slate-500 uppercase font-black tracking-widest block mb-2 ml-1">{t.pass}</label>
+            <input name="password" type={showPass ? "text" : "password"} required className="w-full bg-black/40 border border-white/10 rounded-xl p-4 text-white outline-none focus:border-amber-500 transition-all shadow-inner" placeholder="••••••••" />
+            <button type="button" onClick={() => setShowPass(!showPass)} className="absolute right-4 top-10 text-slate-500 hover:text-white transition-colors">
+              {showPass ? <EyeOff size={20} /> : <Eye size={20} />}
+            </button>
+          </div>
+          <button type="submit" className="w-full bg-gradient-to-r from-amber-500 to-amber-700 text-black font-black p-5 rounded-2xl uppercase tracking-[0.2em] shadow-2xl hover:scale-[1.02] active:scale-95 transition-all mt-4 text-sm">
+            {t.btn_login}
+          </button>
+        </form>
+      </div>
+    </div>
+  );
 
-    window.togglePasswordVisibility = (id) => { 
-        const el = document.getElementById(id); 
-        if(el) el.type = el.type === 'password' ? 'text' : 'password'; 
-    };
+  return (
+    <div className="min-h-screen bg-[#05070a] text-slate-100 flex flex-col">
+      <header className="no-print bg-black/60 backdrop-blur-3xl border-b border-white/5 p-5 sticky top-0 z-50">
+        <div className="max-w-7xl mx-auto flex flex-wrap justify-between items-center gap-6">
+          <div className="flex items-center gap-10">
+            <div className="bg-white p-3 rounded-xl shadow-lg flex items-center border border-white/20">
+              <img src={company === 'Smart Home' ? 'logo-D2-SmartHome-preto.png' : 'logo-D2-HVAC-Solutions-preto.png'} className="h-10" alt="Logo" />
+            </div>
+            <div className="flex gap-4">
+              {['pt', 'en', 'es'].map(l => (
+                <button key={l} onClick={() => setLang(l)} className={`text-2xl transition-all hover:scale-125 ${lang === l ? 'scale-125 opacity-100' : 'opacity-20'}`}>
+                  {l === 'pt' ? '🇧🇷' : l === 'en' ? '🇺🇸' : '🇪🇸'}
+                </button>
+              ))}
+            </div>
+          </div>
 
-    setLanguage('pt');
-</script>
-</body>
-</html>
+          <div className="flex items-center gap-6">
+            <div className="flex bg-black/40 p-1.5 rounded-2xl border border-white/5">
+              <button onClick={() => setCompany('Smart Home')} className={`px-6 py-2.5 rounded-xl text-[10px] font-black uppercase tracking-widest transition-all ${company === 'Smart Home' ? 'bg-amber-600 text-black shadow-xl' : 'text-slate-500'}`}>Smart Home</button>
+              <button onClick={() => setCompany('HVAC')} className={`px-6 py-2.5 rounded-xl text-[10px] font-black uppercase tracking-widest transition-all ${company === 'HVAC' ? 'bg-amber-600 text-black shadow-xl' : 'text-slate-500'}`}>HVAC Solutions</button>
+            </div>
+            <div className="flex items-center gap-5 border-l border-white/10 pl-6 text-right">
+              <div className="hidden sm:block">
+                <p className="text-[10px] font-black text-amber-500 uppercase tracking-tighter">{user.email.split('@')[0]}</p>
+                <p className="text-[8px] text-slate-500 uppercase tracking-widest font-bold">Acesso Dante</p>
+              </div>
+              <button onClick={() => signOut(auth)} className="text-red-400 hover:text-white hover:bg-red-500/20 p-3 glass rounded-2xl border border-white/5 transition-all shadow-lg"><LogOut size={22} /></button>
+            </div>
+          </div>
+        </div>
+      </header>
+
+      <main className="max-w-7xl mx-auto w-full p-6 md:p-10 flex-1">
+        <nav className="no-print flex gap-12 mb-14 border-b border-white/5 overflow-x-auto scrollbar-hide">
+          <button onClick={() => setView('projects')} className={`pb-5 font-black text-[11px] uppercase tracking-[0.25em] transition-all border-b-4 ${view === 'projects' ? 'border-amber-500 text-amber-500' : 'border-transparent text-slate-600 hover:text-slate-400'}`}>{t.nav_proj}</button>
+          <button onClick={() => setView('new')} className={`pb-5 font-black text-[11px] uppercase tracking-[0.25em] transition-all border-b-4 ${view === 'new' ? 'border-amber-500 text-amber-500' : 'border-transparent text-slate-600 hover:text-slate-400'}`}>{t.nav_new}</button>
+          <button onClick={() => setView('reports')} className={`pb-5 font-black text-[11px] uppercase tracking-[0.25em] transition-all border-b-4 ${view === 'reports' ? 'border-amber-500 text-amber-500' : 'border-transparent text-slate-600 hover:text-slate-400'}`}>{t.nav_rep}</button>
+          {user.email === SUPER_ADMIN && (
+            <>
+              <button onClick={() => setView('logs')} className={`pb-5 font-black text-[11px] uppercase tracking-[0.25em] transition-all border-b-4 ${view === 'logs' ? 'border-amber-500 text-amber-500' : 'border-transparent text-slate-600 hover:text-slate-400'}`}>{t.nav_logs}</button>
+              <button onClick={() => setView('users')} className={`pb-5 font-black text-[11px] uppercase tracking-[0.25em] transition-all border-b-4 ${view === 'users' ? 'border-amber-500 text-amber-500' : 'border-transparent text-slate-600 hover:text-slate-400'}`}>{t.nav_users}</button>
+            </>
+          )}
+        </nav>
+
+        {view === 'projects' && (
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-10">
+            {projects.filter(p => p.empresa === company).map(p => {
+              let base = p.valorTotal * (p.metodo === 'CC' ? 0.97 : 1);
+              let commission = (base * (p.percComissao / 100)).toFixed(2);
+              return (
+                <div key={p.id} className="glass p-8 space-y-8 transition-all hover:scale-[1.03] hover:border-amber-500/40 border-l-8 shadow-2xl group relative overflow-hidden" style={{borderLeftColor: p.status === 'Finalizado' ? '#10b981' : '#f59e0b'}}>
+                   <div className="absolute top-0 right-0 w-32 h-32 bg-amber-500/5 blur-[80px] group-hover:bg-amber-500/10 transition-all"></div>
+                  <div className="flex justify-between items-start relative z-10">
+                    <div>
+                      <h4 className="font-black text-2xl text-white tracking-tighter leading-none mb-2">{p.cliente}</h4>
+                      <p className="text-[9px] font-black uppercase text-slate-500 tracking-[0.2em]">{p.vendedor} • {p.metodo}</p>
+                    </div>
+                    <div className="flex gap-2 opacity-0 group-hover:opacity-100 transition-all transform translate-x-4 group-hover:translate-x-0">
+                      <button onClick={() => { setFormData(p); setView('new'); }} className="p-2.5 bg-white/5 rounded-xl text-slate-400 hover:text-amber-500 transition-all border border-white/5"><Edit2 size={16}/></button>
+                      <button onClick={() => handleDelete(p)} className="p-2.5 bg-white/5 rounded-xl text-slate-400 hover:text-red-500 transition-all border border-white/5"><Trash2 size={16}/></button>
+                    </div>
+                  </div>
+                  <div className="grid grid-cols-2 gap-6 bg-black/60 p-6 rounded-[28px] border border-white/5 relative z-10">
+                    <div>
+                      <p className="text-[8px] font-black uppercase text-slate-600 mb-2 tracking-widest">{t.value}</p>
+                      <p className="font-black text-xl text-white tracking-tight">$ {p.valorTotal.toLocaleString()}</p>
+                    </div>
+                    <div>
+                      <p className="text-[8px] font-black uppercase text-amber-500/60 mb-2 tracking-widest">Comissão Liq.</p>
+                      <p className="font-black text-xl text-amber-500 tracking-tight">$ {commission}</p>
+                    </div>
+                  </div>
+                  <div className="flex justify-between items-center text-[10px] font-black uppercase tracking-widest relative z-10">
+                    <span className={`px-4 py-2 rounded-xl bg-white/5 border border-white/5 ${p.status === 'Finalizado' ? 'text-emerald-500 shadow-[0_0_15px_rgba(16,185,129,0.1)]' : 'text-slate-400'}`}>{p.status}</span>
+                    <span className="text-slate-600">{new Date(p.dataEntrega).toLocaleDateString()}</span>
+                  </div>
+                </div>
+              );
+            })}
+          </div>
+        )}
+
+        {view === 'new' && (
+          <div className="max-w-4xl mx-auto glass p-12 border-t-8 border-amber-500 shadow-amber-900/10">
+            <h3 className="text-3xl font-black text-white uppercase tracking-tighter mb-12 flex items-center gap-4">
+              <div className="w-2 h-8 bg-amber-500 rounded-full"></div>
+              {formData.id ? t.form_edit : t.form_new}
+            </h3>
+            <form onSubmit={handleSave} className="space-y-10 text-left">
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-10">
+                <div className="space-y-3">
+                  <label className="text-[10px] uppercase font-black text-slate-500 ml-1 tracking-widest">{t.client}</label>
+                  <input value={formData.cliente} onChange={e => setFormData({...formData, cliente: e.target.value})} required className="w-full bg-black/40 border border-white/10 rounded-2xl p-5 text-white outline-none focus:border-amber-500 transition-all shadow-inner" placeholder="Nome Completo" />
+                </div>
+                <div className="space-y-3">
+                  <label className="text-[10px] uppercase font-black text-slate-500 ml-1 tracking-widest">{t.seller}</label>
+                  <input value={formData.vendedor} onChange={e => setFormData({...formData, vendedor: e.target.value})} required className="w-full bg-black/40 border border-white/10 rounded-2xl p-5 text-white outline-none focus:border-amber-500 transition-all shadow-inner" placeholder="Responsável" />
+                </div>
+              </div>
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-10">
+                <div className="space-y-3">
+                  <label className="text-[10px] uppercase font-black text-slate-500 ml-1 tracking-widest">{t.value}</label>
+                  <input type="number" step="0.01" value={formData.valorTotal} onChange={e => setFormData({...formData, valorTotal: e.target.value})} required className="w-full bg-black/40 border border-white/10 rounded-2xl p-5 text-white outline-none focus:border-amber-500 transition-all shadow-inner" />
+                </div>
+                <div className="space-y-3">
+                  <label className="text-[10px] uppercase font-black text-slate-500 ml-1 tracking-widest">{t.method}</label>
+                  <select value={formData.metodo} onChange={e => setFormData({...formData, metodo: e.target.value})} className="w-full bg-black/40 border border-white/10 rounded-2xl p-5 text-white outline-none">
+                    <option value="Zelle">Zelle</option>
+                    <option value="CC">Cartão de Crédito (-3%)</option>
+                    <option value="Cash">Cash</option>
+                    <option value="Wire">Wire Transfer</option>
+                  </select>
+                </div>
+                <div className="space-y-3">
+                  <label className="text-[10px] uppercase font-black text-slate-500 ml-1 tracking-widest">{t.comm}</label>
+                  <input type="number" value={formData.percComissao} onChange={e => setFormData({...formData, percComissao: e.target.value})} className="w-full bg-black/40 border border-white/10 rounded-2xl p-5 text-white outline-none focus:border-amber-500 transition-all shadow-inner" />
+                </div>
+              </div>
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-10">
+                <div className="space-y-3">
+                  <label className="text-[10px] uppercase font-black text-slate-500 ml-1 tracking-widest">{t.start}</label>
+                  <input type="date" value={formData.dataInicio} onChange={e => setFormData({...formData, dataInicio: e.target.value})} required className="w-full bg-black/40 border border-white/10 rounded-2xl p-5 text-white outline-none" />
+                </div>
+                <div className="space-y-3">
+                  <label className="text-[10px] uppercase font-black text-slate-500 ml-1 tracking-widest">{t.delivery}</label>
+                  <input type="date" value={formData.dataEntrega} onChange={e => setFormData({...formData, dataEntrega: e.target.value})} required className="w-full bg-black/40 border border-white/10 rounded-2xl p-5 text-white outline-none" />
+                </div>
+              </div>
+              <div className="space-y-3">
+                <label className="text-[10px] uppercase font-black text-slate-500 ml-1 tracking-widest">{t.status}</label>
+                <select value={formData.status} onChange={e => setFormData({...formData, status: e.target.value})} className="w-full bg-black/40 border border-white/10 rounded-2xl p-5 text-white outline-none">
+                  <option value="Cotação">{t.quote}</option>
+                  <option value="Aguardando Início">{t.waiting}</option>
+                  <option value="Em Execução">{t.executing}</option>
+                  <option value="Finalizado">{t.finished}</option>
+                </select>
+              </div>
+              <div className="flex gap-6 pt-10">
+                <button type="submit" className="flex-1 btn-gold p-6 rounded-3xl font-black text-lg shadow-2xl hover:brightness-110">{t.save}</button>
+                <button type="button" onClick={() => setView('projects')} className="px-12 py-6 text-slate-500 font-black uppercase text-[11px] tracking-[0.3em] hover:text-white transition-all">{t.cancel}</button>
+              </div>
+            </form>
+          </div>
+        )}
+
+        {view === 'reports' && (
+          <div className="space-y-12 animate-in fade-in duration-500">
+            <div className="no-print glass p-10 flex flex-wrap gap-10 items-end justify-between shadow-2xl border border-white/10">
+              <div className="flex-1 min-w-[300px] text-left">
+                <label className="text-[10px] uppercase font-black text-slate-500 block mb-3 ml-1 tracking-widest">Filtrar Divisão Corporativa</label>
+                <select id="rep-comp" className="w-full bg-black/60 border border-white/10 rounded-2xl p-4 text-white font-bold outline-none focus:border-amber-500">
+                  <option value="All">{t.all}</option>
+                  <option value="Smart Home">D2 Smart Home</option>
+                  <option value="HVAC">D2 HVAC Solutions</option>
+                </select>
+              </div>
+              <button onClick={() => window.print()} className="bg-slate-900 hover:bg-slate-800 text-white font-black px-14 py-4.5 rounded-2xl flex items-center gap-3 border border-white/10 transition-all shadow-xl hover:scale-[1.02]">
+                <Printer size={20} /> {t.print}
+              </button>
+            </div>
+            <div id="report-output" className="bg-white text-slate-950 p-16 rounded-[60px] shadow-2xl border-8 border-slate-100">
+              <div className="flex justify-between items-center border-b-[10px] border-slate-950 pb-14 mb-14">
+                <div className="bg-white p-6 rounded-3xl border-4 border-slate-100 shadow-sm">
+                  <img src="logo-D2-Group-preto.png" className="h-20" alt="Logo" />
+                </div>
+                <div className="text-right">
+                  <h2 className="text-5xl font-black uppercase tracking-tighter text-slate-950 mb-2 leading-none">Relatório Executivo</h2>
+                  <p className="text-slate-400 font-black uppercase text-xs tracking-[0.4em]">{new Date().toLocaleDateString()}</p>
+                </div>
+              </div>
+              <table className="w-full text-sm mb-14">
+                <thead><tr className="bg-slate-50 text-slate-400 font-black uppercase text-[11px] tracking-widest border-y border-slate-100"><th className="p-6 text-left">Entidade Cliente</th><th className="p-6 text-left">Gestor Responsável</th><th className="p-6 text-right">Volume Contrato</th><th className="p-6 text-right">Comissão Liq.</th></tr></thead>
+                <tbody>
+                  {projects.map(p => {
+                    let base = p.valorTotal * (p.metodo === 'CC' ? 0.97 : 1);
+                    let com = (base * (p.percComissao / 100)).toFixed(2);
+                    return (
+                      <tr key={p.id} className="border-b border-slate-50 hover:bg-slate-50 transition-colors"><td className="p-6 font-black text-slate-900 text-base tracking-tight">{p.cliente}</td><td className="p-6 text-slate-600 font-bold">{p.vendedor}</td><td className="p-6 text-right font-medium text-slate-800">$ {p.valorTotal.toFixed(2)}</td><td className="p-6 text-right font-black text-amber-600 text-base">$ {com}</td></tr>
+                    );
+                  })}
+                </tbody>
+              </table>
+              <div className="pt-10 border-t-[10px] border-slate-950 flex justify-end gap-20 text-right">
+                 <div>
+                   <p className="text-[11px] font-black uppercase text-slate-400 mb-2 tracking-widest">Faturamento Consolidado</p>
+                   <p className="text-5xl font-black text-slate-950 tracking-tighter">$ {projects.reduce((acc, curr) => acc + curr.valorTotal, 0).toLocaleString(undefined, {minimumFractionDigits: 2})}</p>
+                 </div>
+                 <div className="border-l-4 border-slate-100 pl-20">
+                   <p className="text-[11px] font-black uppercase text-amber-600 mb-2 tracking-widest">Provisão Comissões</p>
+                   <p className="text-5xl font-black text-amber-600 tracking-tighter">$ {projects.reduce((acc, curr) => {
+                     let base = curr.valorTotal * (curr.metodo === 'CC' ? 0.97 : 1);
+                     return acc + (base * (curr.percComissao / 100));
+                   }, 0).toLocaleString(undefined, {minimumFractionDigits: 2})}</p>
+                 </div>
+              </div>
+            </div>
+          </div>
+        )}
+
+        {view === 'logs' && (
+          <div className="bg-white/[0.02] border border-white/5 rounded-[50px] overflow-hidden shadow-2xl">
+            <table className="w-full text-left text-sm">
+              <thead className="bg-white/[0.03] text-slate-500 uppercase text-[10px] font-black tracking-[0.3em]">
+                <tr><th className="p-8">Timeline</th><th className="p-8">Agente</th><th className="p-8">Operação</th><th className="p-8">Sumário do Evento</th></tr>
+              </thead>
+              <tbody>
+                {logs.map((l, i) => (
+                  <tr key={i} className="border-b border-white/5 hover:bg-white/[0.01] transition-colors">
+                    <td className="p-8 text-[11px] text-slate-600 font-bold">{l.timestamp?.toDate().toLocaleString()}</td>
+                    <td className="p-8 font-black text-slate-300 tracking-tight">{l.user}</td>
+                    <td className="p-8 text-[10px] font-black text-amber-500 uppercase tracking-widest shadow-amber-500/10 shadow-sm inline-block my-4 mx-8 rounded-lg border border-amber-500/20">{l.action}</td>
+                    <td className="p-8 text-slate-500 font-medium">{l.details}</td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+        )}
+
+        {view === 'users' && (
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-10">
+            {team.map(u => (
+              <div key={u.id} className="glass p-10 border-l-[12px] border-amber-500 shadow-2xl flex justify-between items-center group relative overflow-hidden">
+                <div className="absolute top-0 right-0 w-40 h-40 bg-white/5 -rotate-45 translate-x-20 -translate-y-20"></div>
+                <div className="text-left relative z-10">
+                  <p className="font-black text-white text-2xl tracking-tighter mb-4">{u.email}</p>
+                  <div className="flex items-center gap-5">
+                    <div className="px-4 py-2 bg-black/40 rounded-xl border border-white/10 flex items-center gap-4">
+                      <span className="text-[10px] font-black text-slate-600 uppercase tracking-widest">Credentials:</span>
+                      <input type={showPass ? "text" : "password"} value={u.password} readOnly className="bg-transparent border-none text-amber-500 font-black focus:outline-none w-32 text-base" />
+                    </div>
+                    <button onClick={() => setShowPass(!showPass)} className="text-slate-600 hover:text-white transition-all transform hover:scale-125"><Eye size={20}/></button>
+                  </div>
+                </div>
+                <CheckCircle className="text-amber-500 opacity-10 group-hover:opacity-100 transition-all relative z-10" size={50} />
+              </div>
+            ))}
+          </div>
+        )}
+      </main>
+      <footer className="no-print p-14 text-center border-t border-white/5 opacity-10 text-[10px] font-black uppercase tracking-[0.8em]">
+        D2 Group Private Corporate Ecosystem &copy; 2026
+      </footer>
+    </div>
+  );
+}
