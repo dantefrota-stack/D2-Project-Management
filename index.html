@@ -8,126 +8,176 @@
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <style>
         :root {
-            --glass: rgba(255, 255, 255, 0.05);
-            --border: rgba(255, 255, 255, 0.1);
+            --glass: rgba(255, 255, 255, 0.03);
+            --border: rgba(255, 255, 255, 0.08);
         }
         body {
             font-family: 'Inter', sans-serif;
-            background: #0f172a;
+            background: #0a0f1e;
             color: #f1f5f9;
             min-height: 100vh;
             margin: 0;
             overflow-x: hidden;
         }
-        .glass { background: var(--glass); backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px); border: 1px solid var(--border); border-radius: 16px; }
-        .glass-input { background: rgba(0,0,0,0.2); border: 1px solid var(--border); border-radius: 10px; color: white; padding: 10px 14px; width: 100%; outline: none; transition: border 0.2s; }
-        .glass-input:focus { border-color: #3b82f6; }
-        .btn-action { transition: all 0.2s; border-radius: 10px; font-weight: 600; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 8px; }
-        .btn-action:active { transform: scale(0.96); }
-        .tab-btn { padding-bottom: 8px; border-bottom: 2px solid transparent; color: #94a3b8; transition: all 0.2s; cursor: pointer; }
-        .tab-btn.active { color: #3b82f6; border-bottom-color: #3b82f6; }
+        .glass { 
+            background: var(--glass); 
+            backdrop-filter: blur(16px); 
+            -webkit-backdrop-filter: blur(16px); 
+            border: 1px solid var(--border); 
+            border-radius: 24px; 
+            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
+        }
+        .glass-input { 
+            background: rgba(0, 0, 0, 0.3); 
+            border: 1px solid var(--border); 
+            border-radius: 12px; 
+            color: white; 
+            padding: 12px 16px; 
+            width: 100%; 
+            outline: none; 
+            transition: all 0.3s ease; 
+        }
+        .glass-input:focus { 
+            border-color: #fbbf24; /* Gold-ish accent to match logo */
+            background: rgba(0, 0, 0, 0.5);
+            box-shadow: 0 0 0 2px rgba(251, 191, 36, 0.2);
+        }
+        .btn-action { 
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1); 
+            border-radius: 12px; 
+            font-weight: 600; 
+            cursor: pointer; 
+            display: flex; 
+            align-items: center; 
+            justify-content: center; 
+            gap: 8px; 
+        }
+        .btn-action:active { transform: scale(0.97); }
+        .tab-btn { padding-bottom: 12px; border-bottom: 3px solid transparent; color: #64748b; transition: all 0.3s; cursor: pointer; }
+        .tab-btn.active { color: #fbbf24; border-bottom-color: #fbbf24; }
         
+        .logo-header { max-height: 45px; width: auto; transition: opacity 0.3s ease; }
+        .logo-login { max-width: 280px; height: auto; margin-bottom: 2rem; }
+
         @media print {
             .no-print { display: none !important; }
             body { background: white !important; color: black !important; }
-            .glass { border: 1px solid #ddd !important; background: transparent !important; box-shadow: none !important; }
-            #report-output { display: block !important; }
+            .glass { border: 1px solid #eee !important; background: transparent !important; box-shadow: none !important; border-radius: 0 !important; }
+            #report-output { display: block !important; padding: 0 !important; }
+            .report-card { border: none !important; }
         }
         
-        .flag-btn { font-size: 1.5rem; filter: grayscale(0.8); transition: all 0.2s; cursor: pointer; border: none; background: none; }
-        .flag-btn:hover, .flag-btn.active { filter: grayscale(0); transform: scale(1.1); }
-        .log-row:nth-child(even) { background: rgba(255,255,255,0.02); }
+        .flag-btn { font-size: 1.5rem; filter: grayscale(1); opacity: 0.5; transition: all 0.2s; cursor: pointer; border: none; background: none; }
+        .flag-btn:hover, .flag-btn.active { filter: grayscale(0); opacity: 1; transform: scale(1.1); }
+        .log-row:nth-child(even) { background: rgba(255,255,255,0.01); }
         .pass-list-input { background: transparent; border: none; color: #94a3b8; font-size: 0.875rem; width: 140px; outline: none; }
+        
+        /* Custom scrollbar */
+        ::-webkit-scrollbar { width: 8px; }
+        ::-webkit-scrollbar-track { background: #0a0f1e; }
+        ::-webkit-scrollbar-thumb { background: #1e293b; border-radius: 4px; }
+        ::-webkit-scrollbar-thumb:hover { background: #334155; }
     </style>
 </head>
 <body>
 
 <!-- Authentication Overlay -->
-<div id="auth-container" class="fixed inset-0 z-50 flex items-center justify-center bg-[#0f172a] p-4">
-    <div class="glass p-8 w-full max-md shadow-2xl">
-        <div class="text-center mb-8">
-            <h1 class="text-3xl font-bold tracking-tighter">D2 <span class="text-blue-500">SYSTEM</span></h1>
-            <p id="auth-subtitle" class="text-gray-400 text-sm mt-2" data-i18n="login_subtitle">Faça login para continuar</p>
-        </div>
+<div id="auth-container" class="fixed inset-0 z-50 flex items-center justify-center bg-[#070b14] p-6">
+    <div class="glass p-10 w-full max-w-md text-center">
+        <img src="logo-D2-Group-preto.png" alt="D2 Group" class="logo-login mx-auto" onerror="this.src='https://placehold.co/400x150/0a0f1e/fbbf24?text=D2+GROUP'">
         
-        <form id="login-form" onsubmit="handleAuth(event)" class="space-y-4">
+        <p id="auth-subtitle" class="text-slate-400 text-sm mb-8 font-medium" data-i18n="login_subtitle">Faça login para gerenciar suas divisões</p>
+        
+        <form id="login-form" onsubmit="handleAuth(event)" class="space-y-5 text-left">
             <div>
-                <label class="text-xs text-gray-400 block mb-1">E-mail</label>
-                <input type="email" id="auth-email" required class="glass-input" placeholder="seu@email.com">
+                <label class="text-[11px] text-slate-500 uppercase font-bold tracking-wider block mb-1.5 ml-1">E-mail</label>
+                <input type="email" id="auth-email" required class="glass-input" placeholder="exemplo@d2group.com">
             </div>
             <div class="relative">
-                <label class="text-xs text-gray-400 block mb-1" data-i18n="field_password">Senha</label>
+                <label class="text-[11px] text-slate-500 uppercase font-bold tracking-wider block mb-1.5 ml-1" data-i18n="field_password">Senha</label>
                 <input type="password" id="auth-password" required class="glass-input" placeholder="••••••••">
-                <button type="button" onclick="togglePasswordVisibility('auth-password')" class="absolute right-3 top-8 text-gray-500 hover:text-white">👁️</button>
+                <button type="button" onclick="togglePasswordVisibility('auth-password')" class="absolute right-4 top-9 text-slate-500 hover:text-white transition-colors">
+                    👁️
+                </button>
             </div>
-            <button type="submit" class="w-full bg-blue-600 hover:bg-blue-500 p-3 btn-action mt-4" data-i18n="btn_login">Entrar</button>
-            <button type="button" onclick="resetPassword()" class="w-full text-xs text-gray-500 hover:text-blue-400 mt-2" data-i18n="forgot_password">Esqueceu a senha?</button>
+            <button type="submit" class="w-full bg-gradient-to-r from-amber-500 to-yellow-600 hover:from-amber-400 hover:to-yellow-500 text-white p-4 btn-action mt-6 shadow-lg shadow-amber-900/20" data-i18n="btn_login">
+                Entrar no Sistema
+            </button>
+            <button type="button" onclick="resetPassword()" class="w-full text-xs text-slate-500 hover:text-amber-400 mt-4 transition-colors" data-i18n="forgot_password">Esqueceu a senha?</button>
         </form>
     </div>
 </div>
 
 <!-- Main Application -->
-<div id="app-container" class="hidden">
-    <header class="no-print sticky top-0 z-40 bg-[#0f172a]/80 backdrop-blur-md border-b border-white/5 p-4 flex flex-wrap justify-between items-center gap-4">
-        <div class="flex items-center gap-4">
-            <h2 class="text-xl font-bold tracking-tight">D2 <span class="text-blue-500" id="header-company">Smart Home</span></h2>
-            <div class="flex gap-2">
-                <button onclick="setLanguage('pt')" id="lang-pt" class="flag-btn active" title="Português">🇧🇷</button>
-                <button onclick="setLanguage('en')" id="lang-en" class="flag-btn" title="English">🇺🇸</button>
-                <button onclick="setLanguage('es')" id="lang-es" class="flag-btn" title="Español">🇪🇸</button>
+<div id="app-container" class="hidden min-h-screen flex flex-col">
+    <header class="no-print sticky top-0 z-40 bg-[#0a0f1e]/80 backdrop-blur-xl border-b border-white/5 p-4">
+        <div class="max-w-7xl mx-auto flex flex-wrap justify-between items-center gap-4">
+            <div class="flex items-center gap-6">
+                <img id="header-logo" src="logo-D2-SmartHome-preto.png" alt="D2 Logo" class="logo-header" onerror="this.src='https://placehold.co/200x50/0a0f1e/fbbf24?text=D2+Logo'">
+                <div class="h-8 w-px bg-white/10 hidden sm:block"></div>
+                <div class="flex gap-2">
+                    <button onclick="setLanguage('pt')" id="lang-pt" class="flag-btn active" title="Português">🇧🇷</button>
+                    <button onclick="setLanguage('en')" id="lang-en" class="flag-btn" title="English">🇺🇸</button>
+                    <button onclick="setLanguage('es')" id="lang-es" class="flag-btn" title="Español">🇪🇸</button>
+                </div>
             </div>
-        </div>
 
-        <div class="flex items-center gap-4">
-            <div class="flex bg-white/5 p-1 rounded-xl border border-white/10 text-xs">
-                <button onclick="switchCompany('Smart Home')" id="btn-smart" class="px-3 py-1.5 rounded-lg font-medium transition-all bg-blue-600">Smart Home</button>
-                <button onclick="switchCompany('HVAC')" id="btn-hvac" class="px-3 py-1.5 rounded-lg font-medium transition-all">HVAC</button>
-            </div>
-            <div class="flex items-center gap-3 border-l border-white/10 pl-4">
-                <span id="user-display" class="hidden md:inline text-sm text-gray-400"></span>
-                <button onclick="logout()" class="text-red-400 hover:text-red-300 p-2 glass rounded-full" title="Sair">
-                    🚪
-                </button>
+            <div class="flex items-center gap-4">
+                <div class="flex bg-black/40 p-1.5 rounded-2xl border border-white/5 text-[11px] font-bold uppercase tracking-tight">
+                    <button onclick="switchCompany('Smart Home')" id="btn-smart" class="px-4 py-2 rounded-xl transition-all bg-amber-600 text-white">Smart Home</button>
+                    <button onclick="switchCompany('HVAC')" id="btn-hvac" class="px-4 py-2 rounded-xl transition-all text-slate-400">HVAC Solutions</button>
+                </div>
+                <div class="flex items-center gap-3 border-l border-white/10 pl-4">
+                    <span id="user-display" class="hidden lg:inline text-xs font-semibold text-slate-400"></span>
+                    <button onclick="logout()" class="text-red-400 hover:text-red-300 p-2.5 glass rounded-xl transition-colors" title="Sair">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></svg>
+                    </button>
+                </div>
             </div>
         </div>
     </header>
 
-    <main class="max-w-7xl mx-auto p-4 md:p-8">
-        <div class="no-print flex gap-6 mb-8 border-b border-white/5 overflow-x-auto whitespace-nowrap">
-            <button onclick="showSection('projects')" id="tab-projects" class="tab-btn active font-semibold" data-i18n="nav_projects">Projetos</button>
-            <button onclick="showSection('new')" id="tab-new" class="tab-btn font-semibold" data-i18n="nav_new">+ Nova Obra</button>
-            <button onclick="showSection('reports')" id="tab-reports" class="tab-btn font-semibold" data-i18n="nav_reports">Relatórios</button>
-            <button onclick="showSection('logs')" id="tab-logs" class="tab-btn font-semibold hidden admin-only" data-i18n="nav_logs">Logs</button>
-            <button onclick="showSection('users')" id="tab-users" class="tab-btn font-semibold hidden admin-only" data-i18n="nav_users">Usuários</button>
+    <main class="max-w-7xl mx-auto w-full p-4 md:p-8 flex-1">
+        <!-- Navigation Tabs -->
+        <div class="no-print flex gap-8 mb-10 border-b border-white/5 overflow-x-auto whitespace-nowrap scrollbar-hide">
+            <button onclick="showSection('projects')" id="tab-projects" class="tab-btn active font-bold text-sm tracking-wide" data-i18n="nav_projects">Projetos</button>
+            <button onclick="showSection('new')" id="tab-new" class="tab-btn font-bold text-sm tracking-wide" data-i18n="nav_new">+ Nova Obra</button>
+            <button onclick="showSection('reports')" id="tab-reports" class="tab-btn font-bold text-sm tracking-wide" data-i18n="nav_reports">Relatórios</button>
+            <button onclick="showSection('logs')" id="tab-logs" class="tab-btn font-bold text-sm tracking-wide hidden admin-only" data-i18n="nav_logs">Auditoria</button>
+            <button onclick="showSection('users')" id="tab-users" class="tab-btn font-bold text-sm tracking-wide hidden admin-only" data-i18n="nav_users">Usuários</button>
         </div>
 
-        <section id="section-projects" class="space-y-4">
-            <h3 class="text-2xl font-bold mb-6" data-i18n="active_projects">Obras Ativas</h3>
-            <div id="projects-grid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6"></div>
+        <!-- Section: Active Projects -->
+        <section id="section-projects" class="space-y-6">
+            <h3 class="text-2xl font-bold tracking-tight mb-8" data-i18n="active_projects">Obras em Andamento</h3>
+            <div id="projects-grid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+                <!-- Projects injected here -->
+            </div>
         </section>
 
-        <section id="section-new" class="hidden max-w-2xl mx-auto">
-            <div class="glass p-6">
-                <h3 class="text-xl font-bold mb-6" id="form-title" data-i18n="form_new">Novo Cadastro</h3>
-                <form id="main-form" onsubmit="handleFormSubmit(event)" class="space-y-4">
+        <!-- Section: New/Edit Form -->
+        <section id="section-new" class="hidden max-w-3xl mx-auto">
+            <div class="glass p-8">
+                <h3 class="text-xl font-bold mb-8 text-amber-500" id="form-title" data-i18n="form_new">Novo Cadastro de Obra</h3>
+                <form id="main-form" onsubmit="handleFormSubmit(event)" class="space-y-6">
                     <input type="hidden" id="edit-id">
-                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
                         <div>
-                            <label class="text-xs text-gray-400 block mb-1" data-i18n="field_client">Cliente</label>
+                            <label class="text-[10px] text-slate-500 uppercase font-bold tracking-widest block mb-2 ml-1" data-i18n="field_client">Cliente</label>
                             <input type="text" name="cliente" required class="glass-input">
                         </div>
                         <div>
-                            <label class="text-xs text-gray-400 block mb-1" data-i18n="field_vendedor">Vendedor</label>
+                            <label class="text-[10px] text-slate-500 uppercase font-bold tracking-widest block mb-2 ml-1" data-i18n="field_vendedor">Vendedor Responsável</label>
                             <input type="text" name="vendedor" required class="glass-input">
                         </div>
                     </div>
-                    <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+                    <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
                         <div>
-                            <label class="text-xs text-gray-400 block mb-1" data-i18n="field_value">Valor Total ($)</label>
+                            <label class="text-[10px] text-slate-500 uppercase font-bold tracking-widest block mb-2 ml-1" data-i18n="field_value">Valor Total ($)</label>
                             <input type="number" step="0.01" name="valorTotal" required class="glass-input">
                         </div>
                         <div>
-                            <label class="text-xs text-gray-400 block mb-1" data-i18n="field_method">Método</label>
+                            <label class="text-[10px] text-slate-500 uppercase font-bold tracking-widest block mb-2 ml-1" data-i18n="field_method">Forma de Pagamento</label>
                             <select name="metodo" class="glass-input">
                                 <option value="Zelle">Zelle</option>
                                 <option value="CC">Cartão de Crédito (-3%)</option>
@@ -136,22 +186,22 @@
                             </select>
                         </div>
                         <div>
-                            <label class="text-xs text-gray-400 block mb-1" data-i18n="field_commission">% Comis.</label>
+                            <label class="text-[10px] text-slate-500 uppercase font-bold tracking-widest block mb-2 ml-1" data-i18n="field_commission">% Comissão</label>
                             <input type="number" name="percComissao" value="10" class="glass-input">
                         </div>
                     </div>
-                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
                         <div>
-                            <label class="text-xs text-gray-400 block mb-1" data-i18n="field_start">Início</label>
+                            <label class="text-[10px] text-slate-500 uppercase font-bold tracking-widest block mb-2 ml-1" data-i18n="field_start">Data de Início</label>
                             <input type="date" name="dataInicio" required class="glass-input">
                         </div>
                         <div>
-                            <label class="text-xs text-gray-400 block mb-1" data-i18n="field_end">Previsão</label>
+                            <label class="text-[10px] text-slate-500 uppercase font-bold tracking-widest block mb-2 ml-1" data-i18n="field_end">Previsão de Entrega</label>
                             <input type="date" name="dataEntrega" required class="glass-input">
                         </div>
                     </div>
                     <div>
-                        <label class="text-xs text-gray-400 block mb-1" data-i18n="field_status">Status</label>
+                        <label class="text-[10px] text-slate-500 uppercase font-bold tracking-widest block mb-2 ml-1" data-i18n="field_status">Status de Execução</label>
                         <select name="status" class="glass-input">
                             <option value="Cotação">Cotação</option>
                             <option value="Aguardando Início">Aguardando Início</option>
@@ -159,49 +209,51 @@
                             <option value="Finalizado">Finalizado</option>
                         </select>
                     </div>
-                    <div class="flex gap-4 pt-4">
-                        <button type="submit" class="flex-1 bg-blue-600 p-3 btn-action" data-i18n="btn_save">Salvar</button>
-                        <button type="button" onclick="showSection('projects')" class="px-6 py-3 text-gray-400" data-i18n="btn_cancel">Cancelar</button>
+                    <div class="flex gap-4 pt-8">
+                        <button type="submit" class="flex-1 bg-amber-600 hover:bg-amber-500 p-4 btn-action text-white shadow-lg" data-i18n="btn_save">Confirmar e Salvar</button>
+                        <button type="button" onclick="showSection('projects')" class="px-8 py-4 text-slate-400 font-bold hover:text-white transition-colors" data-i18n="btn_cancel">Cancelar</button>
                     </div>
                 </form>
             </div>
         </section>
 
+        <!-- Section: Reports -->
         <section id="section-reports" class="hidden">
-            <div class="no-print glass p-6 mb-8">
-                <div class="grid grid-cols-1 md:grid-cols-4 gap-4 items-end">
+            <div class="no-print glass p-8 mb-10">
+                <div class="grid grid-cols-1 md:grid-cols-4 gap-6 items-end">
                     <div>
-                        <label class="text-xs text-gray-400 block mb-1" data-i18n="field_company">Empresa</label>
+                        <label class="text-[10px] text-slate-500 uppercase font-bold tracking-widest block mb-2 ml-1" data-i18n="field_company">Filtrar Empresa</label>
                         <select id="report-filter-company" class="glass-input">
-                            <option value="All" data-i18n="all">Geral</option>
-                            <option value="Smart Home">Smart Home</option>
-                            <option value="HVAC">HVAC</option>
+                            <option value="All" data-i18n="all">Todas as Divisões</option>
+                            <option value="Smart Home">D2 Smart Home</option>
+                            <option value="HVAC">D2 HVAC Solutions</option>
                         </select>
                     </div>
                     <div>
-                        <label class="text-xs text-gray-400 block mb-1" data-i18n="field_status">Status</label>
+                        <label class="text-[10px] text-slate-500 uppercase font-bold tracking-widest block mb-2 ml-1" data-i18n="field_status">Status</label>
                         <select id="report-filter-status" class="glass-input">
-                            <option value="All" data-i18n="all">Todos</option>
+                            <option value="All" data-i18n="all">Todos os Status</option>
                             <option value="Em Execução" data-i18n="executing">Em Execução</option>
                             <option value="Finalizado" data-i18n="finished">Finalizado</option>
                         </select>
                     </div>
-                    <button onclick="generateReport()" class="bg-blue-600 p-2.5 btn-action" data-i18n="btn_apply">Filtrar</button>
-                    <button onclick="window.print()" class="bg-gray-700 p-2.5 btn-action" data-i18n="btn_print">Imprimir / PDF</button>
+                    <button onclick="generateReport()" class="bg-amber-600 hover:bg-amber-500 p-3 btn-action text-white" data-i18n="btn_apply">Gerar Relatório</button>
+                    <button onclick="window.print()" class="bg-slate-800 hover:bg-slate-700 p-3 btn-action text-white" data-i18n="btn_print">Imprimir / Salvar PDF</button>
                 </div>
             </div>
             <div id="report-output"></div>
         </section>
 
+        <!-- Section: Audit Logs -->
         <section id="section-logs" class="hidden">
             <div class="glass overflow-hidden">
                 <table class="w-full text-left text-sm">
-                    <thead class="bg-white/5 text-gray-400 uppercase text-[10px] tracking-widest">
+                    <thead class="bg-white/5 text-slate-500 uppercase text-[10px] font-bold tracking-widest">
                         <tr>
-                            <th class="p-4" data-i18n="log_date">Data</th>
-                            <th class="p-4" data-i18n="log_user">Usuário</th>
-                            <th class="p-4" data-i18n="log_action">Ação</th>
-                            <th class="p-4" data-i18n="log_details">Detalhes</th>
+                            <th class="p-5" data-i18n="log_date">Data/Hora</th>
+                            <th class="p-5" data-i18n="log_user">Usuário</th>
+                            <th class="p-5" data-i18n="log_action">Ação</th>
+                            <th class="p-5" data-i18n="log_details">Detalhes do Evento</th>
                         </tr>
                     </thead>
                     <tbody id="logs-body"></tbody>
@@ -209,8 +261,9 @@
             </div>
         </section>
 
+        <!-- Section: Users Management -->
         <section id="section-users" class="hidden">
-            <div id="users-list" class="space-y-4"></div>
+            <div id="users-list" class="grid grid-cols-1 md:grid-cols-2 gap-6"></div>
         </section>
     </main>
 </div>
@@ -220,7 +273,6 @@
     import { getAuth, signInWithEmailAndPassword, onAuthStateChanged, signOut, sendPasswordResetEmail } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
     import { getFirestore, doc, setDoc, getDoc, getDocs, collection, query, onSnapshot, addDoc, updateDoc, deleteDoc, serverTimestamp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
 
-    // --- CREDENCIAIS CONFIGURADAS CONFORME PAINEL FIREBASE ---
     const firebaseConfig = {
         apiKey: "AIzaSyDrLFiOuBwZblwKPuxBRK3R4fQpjQQbnDE",
         authDomain: "d2-project-management.firebaseapp.com",
@@ -234,7 +286,6 @@
     const auth = getAuth(app);
     const db = getFirestore(app);
 
-    // O appId deve ser idêntico ao definido nas Security Rules do Firestore
     const appId = 'd2-Project-Management'; 
     const SUPER_ADMIN = "dante.frota@allcablingtech.com";
 
@@ -242,31 +293,31 @@
 
     const translations = {
         pt: { 
-            login_subtitle: "Faça login para continuar", field_password: "Senha", btn_login: "Entrar", forgot_password: "Esqueceu a senha?",
-            nav_projects: "Projetos", nav_new: "+ Nova Obra", nav_reports: "Relatórios", nav_logs: "Logs", nav_users: "Usuários",
-            active_projects: "Obras Ativas", field_client: "Cliente", field_vendedor: "Vendedor", field_value: "Valor Total",
-            field_method: "Método", field_commission: "% Comis.", field_start: "Início", field_end: "Previsão", field_status: "Status",
-            btn_save: "Salvar", btn_cancel: "Cancelar", btn_print: "Imprimir / PDF", all: "Geral", log_date: "Data",
-            log_user: "Usuário", log_action: "Ação", log_details: "Detalhes", field_company: "Empresa", btn_apply: "Filtrar",
-            executing: "Em Execução", finished: "Finalizado", form_new: "Novo Cadastro", form_edit: "Editar Cadastro"
+            login_subtitle: "Faça login para gerenciar suas divisões", field_password: "Senha de Acesso", btn_login: "Entrar no Sistema", forgot_password: "Recuperar acesso?",
+            nav_projects: "Projetos", nav_new: "+ Nova Obra", nav_reports: "Relatórios", nav_logs: "Auditoria", nav_users: "Equipe",
+            active_projects: "Obras em Andamento", field_client: "Cliente", field_vendedor: "Vendedor Responsável", field_value: "Valor Total",
+            field_method: "Forma de Pagamento", field_commission: "% Comissão", field_start: "Início", field_end: "Entrega", field_status: "Status",
+            btn_save: "Confirmar e Salvar", btn_cancel: "Cancelar", btn_print: "Imprimir / PDF", all: "Todas as Divisões", log_date: "Data/Hora",
+            log_user: "Usuário", log_action: "Ação", log_details: "Detalhes", field_company: "Empresa", btn_apply: "Gerar Relatório",
+            executing: "Em Execução", finished: "Finalizado", form_new: "Novo Cadastro de Obra", form_edit: "Atualizar Cadastro"
         },
         en: {
-            login_subtitle: "Login to continue", field_password: "Password", btn_login: "Sign In", forgot_password: "Forgot password?",
-            nav_projects: "Projects", nav_new: "+ New Work", nav_reports: "Reports", nav_logs: "Logs", nav_users: "Users",
-            active_projects: "Active Projects", field_client: "Client", field_vendedor: "Salesperson", field_value: "Total Value",
-            field_method: "Method", field_commission: "% Comm.", field_start: "Start", field_end: "Estimated", field_status: "Status",
-            btn_save: "Save", btn_cancel: "Cancel", btn_print: "Print / PDF", all: "General", log_date: "Date",
-            log_user: "User", log_action: "Action", log_details: "Details", field_company: "Company", btn_apply: "Apply",
-            executing: "In Progress", finished: "Finished", form_new: "New Entry", form_edit: "Edit Entry"
+            login_subtitle: "Login to manage your divisions", field_password: "Access Password", btn_login: "Sign In", forgot_password: "Reset password?",
+            nav_projects: "Projects", nav_new: "+ New Project", nav_reports: "Reports", nav_logs: "Audit", nav_users: "Team",
+            active_projects: "Ongoing Projects", field_client: "Client", field_vendedor: "Sales Rep", field_value: "Total Value",
+            field_method: "Payment Method", field_commission: "% Comm.", field_start: "Start", field_end: "Delivery", field_status: "Status",
+            btn_save: "Confirm & Save", btn_cancel: "Cancel", btn_print: "Print / PDF", all: "All Divisions", log_date: "Date/Time",
+            log_user: "User", log_action: "Action", log_details: "Details", field_company: "Company", btn_apply: "Generate Report",
+            executing: "In Progress", finished: "Finished", form_new: "New Project Registry", form_edit: "Update Registry"
         },
         es: {
-            login_subtitle: "Inicie sesión para continuar", field_password: "Clave", btn_login: "Entrar", forgot_password: "Olvidó su clave?",
-            nav_projects: "Proyectos", nav_new: "+ Nueva Obra", nav_reports: "Informes", nav_logs: "Logs", nav_users: "Usuarios",
-            active_projects: "Obras Activas", field_client: "Cliente", field_vendedor: "Vendedor", field_value: "Valor Total",
-            field_method: "Método", field_commission: "% Comis.", field_start: "Inicio", field_end: "Previsión", field_status: "Estado",
-            btn_save: "Guardar", btn_cancel: "Cancelar", btn_print: "Imprimir / PDF", all: "General", log_date: "Fecha",
-            log_user: "Usuario", log_action: "Acción", log_details: "Detalles", field_company: "Empresa", btn_apply: "Filtrar",
-            executing: "En Ejecución", finished: "Finalizado", form_new: "Nuevo Registro", form_edit: "Editar Registro"
+            login_subtitle: "Inicie sesión para gestionar sus divisiones", field_password: "Contraseña de Acceso", btn_login: "Entrar al Sistema", forgot_password: "¿Olvidó su clave?",
+            nav_projects: "Proyectos", nav_new: "+ Nueva Obra", nav_reports: "Informes", nav_logs: "Auditoría", nav_users: "Equipo",
+            active_projects: "Obras en Curso", field_client: "Cliente", field_vendedor: "Vendedor Responsable", field_value: "Valor Total",
+            field_method: "Forma de Pago", field_commission: "% Comisión", field_start: "Inicio", field_end: "Entrega", field_status: "Estado",
+            btn_save: "Confirmar y Guardar", btn_cancel: "Cancelar", btn_print: "Imprimir / PDF", all: "Todas as Divisiones", log_date: "Fecha/Hora",
+            log_user: "Usuario", log_action: "Acción", log_details: "Detalles", field_company: "Empresa", btn_apply: "Generar Informe",
+            executing: "En Ejecución", finished: "Finalizado", form_new: "Nuevo Registro de Obra", form_edit: "Actualizar Registro"
         }
     };
 
@@ -384,27 +435,31 @@
             let base = p.valorTotal * (p.metodo === 'CC' ? 0.97 : 1);
             const comm = (base * (p.percComissao / 100)).toFixed(2);
             const card = document.createElement('div');
-            card.className = 'glass p-5 space-y-4 border-l-4 ' + (p.status === 'Finalizado' ? 'border-green-500' : 'border-blue-500');
+            card.className = 'glass p-6 space-y-5 border-l-4 transition-transform hover:scale-[1.02] ' + (p.status === 'Finalizado' ? 'border-emerald-500' : 'border-amber-500');
             card.innerHTML = `
                 <div class="flex justify-between items-start">
                     <div>
-                        <h4 class="font-bold text-lg">${p.cliente}</h4>
-                        <p class="text-[10px] text-gray-400 uppercase tracking-widest">${p.vendedor} | ${p.metodo}</p>
+                        <h4 class="font-bold text-lg text-white">${p.cliente}</h4>
+                        <p class="text-[10px] text-slate-400 uppercase font-bold tracking-widest">${p.vendedor} • ${p.metodo}</p>
                     </div>
                     <div class="flex gap-2">
-                        <button onclick="editProject('${p.id}')" class="p-1 hover:text-blue-400">✏️</button>
-                        <button onclick="deleteProject('${p.id}', '${p.cliente}')" class="p-1 hover:text-red-400">🗑️</button>
+                        <button onclick="editProject('${p.id}')" class="p-2 hover:bg-white/10 rounded-lg text-slate-400 hover:text-white transition-colors">✏️</button>
+                        <button onclick="deleteProject('${p.id}', '${p.cliente}')" class="p-2 hover:bg-red-500/10 rounded-lg text-slate-400 hover:text-red-400 transition-colors">🗑️</button>
                     </div>
                 </div>
-                <div class="grid grid-cols-2 text-sm bg-black/30 p-3 rounded-lg border border-white/5">
+                <div class="grid grid-cols-2 gap-4 text-sm bg-black/40 p-4 rounded-xl border border-white/5">
                     <div>
-                        <p class="text-[9px] text-gray-500 font-bold uppercase">Total</p>
-                        <p class="font-bold">$ ${p.valorTotal.toLocaleString()}</p>
+                        <p class="text-[9px] text-slate-500 font-bold uppercase mb-1">Total Obra</p>
+                        <p class="font-bold text-white">$ ${p.valorTotal.toLocaleString()}</p>
                     </div>
                     <div>
-                        <p class="text-[9px] text-gray-500 font-bold uppercase">Comissão</p>
-                        <p class="text-green-400 font-bold">$ ${comm}</p>
+                        <p class="text-[9px] text-slate-500 font-bold uppercase mb-1">Comissão Liq.</p>
+                        <p class="text-amber-500 font-bold">$ ${comm}</p>
                     </div>
+                </div>
+                <div class="flex justify-between items-center text-[11px] font-medium">
+                    <span class="px-2 py-1 rounded-md bg-white/5 text-slate-300 uppercase tracking-tighter">${p.status}</span>
+                    <span class="text-slate-500">${new Date(p.dataEntrega).toLocaleDateString()}</span>
                 </div>
             `;
             grid.appendChild(card);
@@ -413,20 +468,23 @@
 
     async function renderUserManagement() {
         const container = document.getElementById('users-list');
-        container.innerHTML = '<h3 class="font-bold text-xl mb-4 text-blue-500">Controle de Usuários</h3>';
+        container.innerHTML = '';
         const snap = await getDocs(collection(db, 'artifacts', appId, 'public', 'data', 'user_credentials'));
         snap.forEach(d => {
             const u = d.data();
             const el = document.createElement('div');
-            el.className = 'glass p-4 flex justify-between items-center';
+            el.className = 'glass p-6 flex justify-between items-center';
             el.innerHTML = `
                 <div>
-                    <p class="font-bold text-sm">${u.email}</p>
-                    <div class="flex items-center gap-2 mt-1">
-                        <span class="text-[10px] text-gray-500">PASSWORD:</span>
+                    <p class="font-bold text-white mb-1">${u.email}</p>
+                    <div class="flex items-center gap-3">
+                        <span class="text-[10px] text-slate-500 font-bold uppercase">Password:</span>
                         <input type="password" value="${u.password}" id="p-view-${d.id}" readonly class="pass-list-input">
-                        <button onclick="togglePasswordVisibility('p-view-${d.id}')" class="text-xs opacity-50 hover:opacity-100">👁️</button>
+                        <button onclick="togglePasswordVisibility('p-view-${d.id}')" class="text-xs text-slate-500 hover:text-amber-400">👁️</button>
                     </div>
+                </div>
+                <div class="text-[10px] text-slate-600 text-right">
+                    D2 Equipe
                 </div>
             `;
             container.appendChild(el);
@@ -439,11 +497,11 @@
         const sorted = [...logs].sort((a,b) => (b.timestamp?.seconds || 0) - (a.timestamp?.seconds || 0));
         sorted.slice(0, 30).forEach(l => {
             body.innerHTML += `
-                <tr class="log-row border-b border-white/5">
-                    <td class="p-4 text-xs text-gray-500">${l.timestamp?.toDate().toLocaleString() || '...'}</td>
-                    <td class="p-4 text-xs font-semibold">${l.user}</td>
-                    <td class="p-4 text-xs font-bold text-blue-400 uppercase">${l.action}</td>
-                    <td class="p-4 text-xs text-gray-400">${l.details}</td>
+                <tr class="log-row border-b border-white/5 hover:bg-white/[0.02] transition-colors">
+                    <td class="p-5 text-[11px] text-slate-500">${l.timestamp?.toDate().toLocaleString() || '...'}</td>
+                    <td class="p-5 text-xs font-bold text-slate-300">${l.user}</td>
+                    <td class="p-5 text-[10px] font-black text-amber-500 uppercase tracking-widest">${l.action}</td>
+                    <td class="p-5 text-xs text-slate-400">${l.details}</td>
                 </tr>
             `;
         });
@@ -454,17 +512,40 @@
         const cF = document.getElementById('report-filter-company').value;
         const sF = document.getElementById('report-filter-status').value;
         const filtered = state.projects.filter(p => (cF === 'All' || p.empresa === cF) && (sF === 'All' || p.status === sF));
+        
+        const logoUrl = cF === 'HVAC' ? 'logo-D2-HVAC-Solutions-preto.png' : 
+                      (cF === 'Smart Home' ? 'logo-D2-SmartHome-preto.png' : 'logo-D2-Group-preto.png');
+
         let totalV = 0, totalC = 0;
         const rows = filtered.map(p => {
             let com = p.valorTotal * (p.metodo === 'CC' ? 0.97 : 1) * (p.percComissao / 100);
             totalV += p.valorTotal; totalC += com;
-            return `<tr class="border-b"><td class="py-2 text-xs">${p.cliente}</td><td>${p.vendedor}</td><td class="text-right">$ ${p.valorTotal.toFixed(2)}</td><td class="text-right font-bold">$ ${com.toFixed(2)}</td></tr>`;
+            return `<tr class="border-b border-gray-100"><td class="py-3 text-xs font-bold">${p.cliente}</td><td class="text-xs text-gray-600">${p.vendedor}</td><td class="text-right text-xs">$ ${p.valorTotal.toFixed(2)}</td><td class="text-right text-xs font-bold text-amber-600">$ ${com.toFixed(2)}</td></tr>`;
         }).join('');
+        
         out.innerHTML = `
-            <div class="p-10 bg-white text-black rounded-2xl shadow-xl">
-                <h2 class="text-2xl font-bold uppercase tracking-tighter border-b-2 border-blue-600 mb-6">D2 Management Report</h2>
-                <table class="w-full text-sm mb-6"><thead><tr class="text-left bg-gray-50"><th>Cliente</th><th>Vendedor</th><th class="text-right">Total</th><th class="text-right">Comissão</th></tr></thead><tbody>${rows}</tbody></table>
-                <div class="text-right"><p class="text-xs text-gray-400 uppercase">Gross Revenue</p><p class="text-2xl font-bold">$ ${totalV.toLocaleString()}</p></div>
+            <div class="p-10 bg-white text-slate-900 rounded-3xl shadow-2xl report-card">
+                <div class="flex justify-between items-start border-b-2 border-slate-100 pb-8 mb-8">
+                    <img src="${logoUrl}" alt="D2 Logo" style="max-height: 70px;">
+                    <div class="text-right">
+                        <h2 class="text-xl font-black uppercase tracking-tighter text-slate-800">Relatório de Gestão</h2>
+                        <p class="text-slate-400 text-[10px] font-bold uppercase tracking-widest mt-1">Gerado em: ${new Date().toLocaleDateString()}</p>
+                    </div>
+                </div>
+                <table class="w-full text-sm mb-10">
+                    <thead><tr class="text-left bg-slate-50 text-slate-500 text-[10px] font-black uppercase"><th class="p-3">Cliente</th><th class="p-3">Vendedor</th><th class="p-3 text-right">Faturamento</th><th class="p-3 text-right">Comissão Liq.</th></tr></thead>
+                    <tbody>${rows}</tbody>
+                </table>
+                <div class="flex justify-end gap-12 pt-8 border-t-2 border-slate-100">
+                    <div class="text-right">
+                        <p class="text-[10px] text-slate-400 uppercase font-black tracking-widest mb-1">Faturamento Total</p>
+                        <p class="text-3xl font-black text-slate-900">$ ${totalV.toLocaleString(undefined, {minimumFractionDigits: 2})}</p>
+                    </div>
+                    <div class="text-right">
+                        <p class="text-[10px] text-amber-500 uppercase font-black tracking-widest mb-1">Comissões Totais</p>
+                        <p class="text-3xl font-black text-amber-600">$ ${totalC.toLocaleString(undefined, {minimumFractionDigits: 2})}</p>
+                    </div>
+                </div>
             </div>`;
     };
 
@@ -479,9 +560,23 @@
 
     window.switchCompany = (c) => {
         state.company = c;
-        document.getElementById('header-company').innerText = c;
-        document.getElementById('btn-smart').classList.toggle('bg-blue-600', c === 'Smart Home');
-        document.getElementById('btn-hvac').classList.toggle('bg-blue-600', c === 'HVAC');
+        const logoEl = document.getElementById('header-logo');
+        const btnS = document.getElementById('btn-smart');
+        const btnH = document.getElementById('btn-hvac');
+        
+        if(c === 'Smart Home') {
+            logoEl.src = 'logo-D2-SmartHome-preto.png';
+            btnS.classList.add('bg-amber-600', 'text-white');
+            btnS.classList.remove('text-slate-400');
+            btnH.classList.remove('bg-amber-600', 'text-white');
+            btnH.classList.add('text-slate-400');
+        } else {
+            logoEl.src = 'logo-D2-HVAC-Solutions-preto.png';
+            btnH.classList.add('bg-amber-600', 'text-white');
+            btnH.classList.remove('text-slate-400');
+            btnS.classList.remove('bg-amber-600', 'text-white');
+            btnS.classList.add('text-slate-400');
+        }
         renderProjects();
     };
 
