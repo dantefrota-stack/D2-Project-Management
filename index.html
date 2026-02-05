@@ -1,9 +1,9 @@
 <!DOCTYPE html>
-<html lang="pt-br">
+<html lang="pt-pt">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>D2 Management System - Premium Edition</title>
+    <title>D2 Management System - Premium Official</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
     <style>
@@ -27,21 +27,21 @@
             -webkit-backdrop-filter: blur(20px); 
             border: 1px solid var(--border); 
             border-radius: 24px; 
+            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.7);
         }
         .glass-input { 
-            background: rgba(0, 0, 0, 0.4); 
-            border: 1px solid var(--border); 
-            border-radius: 12px; 
-            color: white; 
-            padding: 14px 16px; 
+            background: rgba(0, 0, 0, 0.4) !important; 
+            border: 1px solid var(--border) !important; 
+            border-radius: 12px !important; 
+            color: white !important; 
+            padding: 14px 16px !important; 
             width: 100%; 
             outline: none; 
-            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1); 
+            transition: all 0.3s ease; 
         }
         .glass-input:focus { 
-            border-color: var(--gold);
-            background: rgba(0, 0, 0, 0.6);
-            box-shadow: 0 0 15px rgba(251, 191, 36, 0.15);
+            border-color: var(--gold) !important;
+            box-shadow: 0 0 15px rgba(251, 191, 36, 0.15) !important;
         }
         .btn-gold {
             background: linear-gradient(135deg, var(--gold) 0%, var(--gold-dark) 100%);
@@ -50,28 +50,20 @@
             text-transform: uppercase;
             letter-spacing: 0.5px;
             transition: all 0.3s ease;
-            box-shadow: 0 4px 15px rgba(180, 83, 9, 0.3);
         }
-        .btn-gold:hover {
-            transform: translateY(-2px);
-            filter: brightness(1.1);
-            box-shadow: 0 8px 25px rgba(180, 83, 9, 0.4);
-        }
-        .btn-gold:active { transform: translateY(0); }
-
+        .btn-gold:hover { transform: translateY(-2px); filter: brightness(1.1); }
         .tab-btn { 
             padding-bottom: 12px; 
             border-bottom: 3px solid transparent; 
             color: #475569; 
             font-weight: 700;
-            font-size: 0.875rem;
             transition: all 0.3s; 
             cursor: pointer; 
         }
         .tab-btn.active { color: var(--gold); border-bottom-color: var(--gold); }
         
         .logo-header { max-height: 50px; width: auto; transition: all 0.4s ease; }
-        .logo-login { max-width: 300px; height: auto; margin-bottom: 2.5rem; filter: drop-shadow(0 0 10px rgba(251, 191, 36, 0.1)); }
+        .logo-login { max-width: 320px; height: auto; margin-bottom: 2.5rem; }
 
         @media print {
             .no-print { display: none !important; }
@@ -81,59 +73,46 @@
         }
         
         .flag-btn { font-size: 1.5rem; opacity: 0.4; transition: all 0.2s; cursor: pointer; border: none; background: none; }
-        .flag-btn:hover, .flag-btn.active { opacity: 1; transform: scale(1.15); }
+        .flag-btn:hover, .flag-btn.active { opacity: 1; transform: scale(1.1); }
         .log-row:nth-child(even) { background: rgba(255,255,255,0.01); }
-        
-        .card-project {
-            background: linear-gradient(145deg, rgba(255,255,255,0.03) 0%, rgba(255,255,255,0) 100%);
-            border: 1px solid var(--border);
-            transition: all 0.3s ease;
-        }
-        .card-project:hover {
-            border-color: rgba(251, 191, 36, 0.3);
-            background: linear-gradient(145deg, rgba(255,255,255,0.05) 0%, rgba(255,255,255,0.01) 100%);
-        }
-
-        /* Scrollbar Premium */
-        ::-webkit-scrollbar { width: 6px; }
-        ::-webkit-scrollbar-track { background: #05070a; }
-        ::-webkit-scrollbar-thumb { background: #1e293b; border-radius: 10px; }
     </style>
 </head>
 <body>
 
-<!-- Authentication View -->
+<!-- Vista de Autenticação -->
 <div id="auth-container" class="fixed inset-0 z-50 flex flex-col items-center justify-center bg-[#05070a] p-6">
     <div class="glass p-10 w-full max-w-md text-center">
+        <!-- Logótipo D2 Group no Login -->
         <img src="logo-D2-Group-preto.png" alt="D2 Group" class="logo-login mx-auto" onerror="this.src='https://placehold.co/400x150/05070a/fbbf24?text=D2+GROUP'">
         
-        <p id="auth-subtitle" class="text-slate-500 text-sm mb-10 font-medium tracking-wide" data-i18n="login_subtitle">AUTENTICAÇÃO DE SISTEMA CORPORATIVO</p>
+        <p id="auth-subtitle" class="text-slate-500 text-xs mb-10 font-bold tracking-[0.2em]" data-i18n="login_subtitle">SISTEMA DE GESTÃO CORPORATIVA</p>
         
         <form id="login-form" onsubmit="handleAuth(event)" class="space-y-6 text-left">
             <div>
-                <label class="text-[10px] text-slate-500 uppercase font-black tracking-widest block mb-2 ml-1">Utilizador (E-mail)</label>
-                <input type="email" id="auth-email" required class="glass-input" placeholder="exemplo@d2group.com">
+                <label class="text-[10px] text-slate-500 uppercase font-black tracking-widest block mb-2 ml-1">E-mail Corporativo</label>
+                <input type="email" id="auth-email" required class="glass-input" placeholder="dante.frota@allcablingtech.com">
             </div>
             <div class="relative">
-                <label class="text-[10px] text-slate-500 uppercase font-black tracking-widest block mb-2 ml-1" data-i18n="field_password">Senha de Acesso</label>
+                <label class="text-[10px] text-slate-500 uppercase font-black tracking-widest block mb-2 ml-1" data-i18n="field_password">Senha</label>
                 <input type="password" id="auth-password" required class="glass-input" placeholder="••••••••">
                 <button type="button" onclick="togglePasswordVisibility('auth-password')" class="absolute right-4 top-10 text-slate-500 hover:text-white transition-colors">
                     👁️
                 </button>
             </div>
-            <button type="submit" class="w-full btn-gold p-4 btn-action mt-6 text-sm" data-i18n="btn_login">
-                Entrar no Ecossistema
+            <button type="submit" class="w-full btn-gold p-4 rounded-xl flex items-center justify-center gap-2 mt-6 font-black" data-i18n="btn_login">
+                Entrar no Sistema
             </button>
-            <button type="button" onclick="resetPassword()" class="w-full text-[10px] text-slate-600 hover:text-amber-500 mt-4 transition-colors uppercase font-bold tracking-widest" data-i18n="forgot_password">Recuperar Credenciais</button>
+            <button type="button" onclick="resetPassword()" class="w-full text-[10px] text-slate-600 hover:text-amber-500 mt-4 transition-colors uppercase font-bold tracking-widest text-center" data-i18n="forgot_password">Recuperar Acesso</button>
         </form>
     </div>
 </div>
 
-<!-- Main Dashboard View -->
+<!-- Vista Principal do Dashboard -->
 <div id="app-container" class="hidden min-h-screen flex flex-col">
     <header class="no-print sticky top-0 z-40 bg-[#05070a]/90 backdrop-blur-2xl border-b border-white/5 p-4">
         <div class="max-w-7xl mx-auto flex flex-wrap justify-between items-center gap-4">
             <div class="flex items-center gap-8">
+                <!-- Logótipo Dinâmico no Cabeçalho -->
                 <img id="header-logo" src="logo-D2-SmartHome-preto.png" alt="D2 Logo" class="logo-header" onerror="this.src='https://placehold.co/220x60/05070a/fbbf24?text=D2+Divisão'">
                 <div class="flex gap-3 ml-4">
                     <button onclick="setLanguage('pt')" id="lang-pt" class="flag-btn active" title="Português">🇧🇷</button>
@@ -150,9 +129,9 @@
                 <div class="flex items-center gap-4 border-l border-white/10 pl-5">
                     <div class="text-right hidden sm:block">
                         <p id="user-display" class="text-[10px] font-black text-slate-300"></p>
-                        <p class="text-[8px] text-amber-500 font-bold uppercase tracking-widest">Sessão Ativa</p>
+                        <p class="text-[8px] text-amber-500 font-bold uppercase tracking-widest">Administrador</p>
                     </div>
-                    <button onclick="logout()" class="text-red-400 hover:text-white hover:bg-red-500/20 p-2.5 glass rounded-xl transition-all" title="Terminar Sessão">
+                    <button onclick="logout()" class="text-red-400 hover:text-white hover:bg-red-500/20 p-2.5 glass rounded-xl transition-all" title="Sair">
                         <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></svg>
                     </button>
                 </div>
@@ -161,22 +140,22 @@
     </header>
 
     <main class="max-w-7xl mx-auto w-full p-6 md:p-10 flex-1">
-        <!-- Dashboard Navigation -->
+        <!-- Navegação de Abas -->
         <div class="no-print flex gap-10 mb-12 border-b border-white/5 overflow-x-auto scrollbar-hide">
-            <button onclick="showSection('projects')" id="tab-projects" class="tab-btn active uppercase tracking-widest" data-i18n="nav_projects">Projetos</button>
-            <button onclick="showSection('new')" id="tab-new" class="tab-btn uppercase tracking-widest" data-i18n="nav_new">Novo Registo</button>
-            <button onclick="showSection('reports')" id="tab-reports" class="tab-btn uppercase tracking-widest" data-i18n="nav_reports">Relatórios</button>
-            <button onclick="showSection('logs')" id="tab-logs" class="tab-btn uppercase tracking-widest hidden admin-only" data-i18n="nav_logs">Auditoria</button>
-            <button onclick="showSection('users')" id="tab-users" class="tab-btn uppercase tracking-widest hidden admin-only" data-i18n="nav_users">Gestão Equipa</button>
+            <button onclick="showSection('projects')" id="tab-projects" class="tab-btn active uppercase tracking-widest text-xs" data-i18n="nav_projects">Projetos</button>
+            <button onclick="showSection('new')" id="tab-new" class="tab-btn uppercase tracking-widest text-xs" data-i18n="nav_new">Novo Registo</button>
+            <button onclick="showSection('reports')" id="tab-reports" class="tab-btn uppercase tracking-widest text-xs" data-i18n="nav_reports">Relatórios</button>
+            <button onclick="showSection('logs')" id="tab-logs" class="tab-btn uppercase tracking-widest text-xs hidden admin-only" data-i18n="nav_logs">Auditoria</button>
+            <button onclick="showSection('users')" id="tab-users" class="tab-btn uppercase tracking-widest text-xs hidden admin-only" data-i18n="nav_users">Equipa</button>
         </div>
 
-        <!-- Section: Projects List -->
+        <!-- Secção: Lista de Projetos -->
         <section id="section-projects" class="space-y-8">
             <h3 class="text-3xl font-extrabold tracking-tight mb-10" data-i18n="active_projects">Obras em Portfólio</h3>
             <div id="projects-grid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8"></div>
         </section>
 
-        <!-- Section: Registration Form -->
+        <!-- Secção: Formulário -->
         <section id="section-new" class="hidden max-w-4xl mx-auto">
             <div class="glass p-10">
                 <h3 class="text-2xl font-black mb-10 text-amber-500 uppercase tracking-tighter" id="form-title" data-i18n="form_new">Novo Registo de Obra</h3>
@@ -184,61 +163,61 @@
                     <input type="hidden" id="edit-id">
                     <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
                         <div>
-                            <label class="text-[9px] text-slate-500 uppercase font-black tracking-[0.2em] block mb-3 ml-1" data-i18n="field_client">Cliente Final</label>
+                            <label class="text-[9px] text-slate-500 uppercase font-black tracking-widest block mb-3 ml-1" data-i18n="field_client">Cliente</label>
                             <input type="text" name="cliente" required class="glass-input">
                         </div>
                         <div>
-                            <label class="text-[9px] text-slate-500 uppercase font-black tracking-[0.2em] block mb-3 ml-1" data-i18n="field_vendedor">Gestor de Vendas</label>
+                            <label class="text-[9px] text-slate-500 uppercase font-black tracking-widest block mb-3 ml-1" data-i18n="field_vendedor">Vendedor</label>
                             <input type="text" name="vendedor" required class="glass-input">
                         </div>
                     </div>
                     <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
                         <div>
-                            <label class="text-[9px] text-slate-500 uppercase font-black tracking-[0.2em] block mb-3 ml-1" data-i18n="field_value">Volume do Contrato ($)</label>
+                            <label class="text-[9px] text-slate-500 uppercase font-black tracking-widest block mb-3 ml-1" data-i18n="field_value">Valor ($)</label>
                             <input type="number" step="0.01" name="valorTotal" required class="glass-input">
                         </div>
                         <div>
-                            <label class="text-[9px] text-slate-500 uppercase font-black tracking-[0.2em] block mb-3 ml-1" data-i18n="field_method">Modalidade de Pagamento</label>
+                            <label class="text-[9px] text-slate-500 uppercase font-black tracking-widest block mb-3 ml-1" data-i18n="field_method">Pagamento</label>
                             <select name="metodo" class="glass-input">
                                 <option value="Zelle">Zelle</option>
-                                <option value="CC">Cartão de Crédito (-3%)</option>
+                                <option value="CC">Cartão Crédito (-3%)</option>
                                 <option value="Cash">Cash</option>
                                 <option value="Wire">Wire Transfer</option>
                             </select>
                         </div>
                         <div>
-                            <label class="text-[9px] text-slate-500 uppercase font-black tracking-[0.2em] block mb-3 ml-1" data-i18n="field_commission">% Comissão</label>
+                            <label class="text-[9px] text-slate-500 uppercase font-black tracking-widest block mb-3 ml-1" data-i18n="field_commission">% Comissão</label>
                             <input type="number" name="percComissao" value="10" class="glass-input">
                         </div>
                     </div>
                     <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
                         <div>
-                            <label class="text-[9px] text-slate-500 uppercase font-black tracking-[0.2em] block mb-3 ml-1" data-i18n="field_start">Abertura de Obra</label>
+                            <label class="text-[9px] text-slate-500 uppercase font-black tracking-widest block mb-3 ml-1" data-i18n="field_start">Início</label>
                             <input type="date" name="dataInicio" required class="glass-input">
                         </div>
                         <div>
-                            <label class="text-[9px] text-slate-500 uppercase font-black tracking-[0.2em] block mb-3 ml-1" data-i18n="field_end">Deadline de Entrega</label>
+                            <label class="text-[9px] text-slate-500 uppercase font-black tracking-widest block mb-3 ml-1" data-i18n="field_end">Entrega</label>
                             <input type="date" name="dataEntrega" required class="glass-input">
                         </div>
                     </div>
                     <div>
-                        <label class="text-[9px] text-slate-500 uppercase font-black tracking-[0.2em] block mb-3 ml-1" data-i18n="field_status">Estado de Execução</label>
+                        <label class="text-[9px] text-slate-500 uppercase font-black tracking-widest block mb-3 ml-1" data-i18n="field_status">Estado</label>
                         <select name="status" class="glass-input">
-                            <option value="Cotação">Fase de Cotação</option>
+                            <option value="Cotação">Cotação</option>
                             <option value="Aguardando Início">Aguardando Início</option>
-                            <option value="Em Execução">Execução Ativa</option>
-                            <option value="Finalizado">Obra Concluída</option>
+                            <option value="Em Execução">Em Execução</option>
+                            <option value="Finalizado">Finalizado</option>
                         </select>
                     </div>
                     <div class="flex gap-6 pt-10">
-                        <button type="submit" class="flex-1 btn-gold p-4 btn-action text-sm" data-i18n="btn_save">Validar Registo</button>
-                        <button type="button" onclick="showSection('projects')" class="px-10 py-4 text-slate-500 font-black hover:text-white transition-colors text-[10px] tracking-widest" data-i18n="btn_cancel">DESCARREGAR</button>
+                        <button type="submit" class="flex-1 btn-gold p-4 rounded-xl font-black text-sm" data-i18n="btn_save">Salvar Registo</button>
+                        <button type="button" onclick="showSection('projects')" class="px-10 py-4 text-slate-500 font-black hover:text-white transition-colors text-[10px] tracking-widest" data-i18n="btn_cancel">CANCELAR</button>
                     </div>
                 </form>
             </div>
         </section>
 
-        <!-- Section: Analytics Reports -->
+        <!-- Secção: Relatórios -->
         <section id="section-reports" class="hidden">
             <div class="no-print glass p-10 mb-12">
                 <div class="grid grid-cols-1 md:grid-cols-4 gap-8 items-end">
@@ -254,27 +233,27 @@
                         <label class="text-[9px] text-slate-500 uppercase font-black tracking-widest block mb-3 ml-1" data-i18n="field_status">Estado</label>
                         <select id="report-filter-status" class="glass-input">
                             <option value="All" data-i18n="all">Todos os Estados</option>
-                            <option value="Em Execução" data-i18n="executing">Execução Ativa</option>
+                            <option value="Em Execução" data-i18n="executing">Em Execução</option>
                             <option value="Finalizado" data-i18n="finished">Finalizado</option>
                         </select>
                     </div>
-                    <button onclick="generateReport()" class="btn-gold p-3 btn-action text-xs" data-i18n="btn_apply">Gerar Documento</button>
-                    <button onclick="window.print()" class="bg-slate-800 hover:bg-slate-700 p-3 btn-action text-white text-xs" data-i18n="btn_print">PDF / PRINT</button>
+                    <button onclick="generateReport()" class="btn-gold p-3 rounded-xl text-xs font-black" data-i18n="btn_apply">Gerar Relatório</button>
+                    <button onclick="window.print()" class="bg-slate-800 hover:bg-slate-700 p-3 rounded-xl text-white text-xs font-black" data-i18n="btn_print">IMPRIMIR PDF</button>
                 </div>
             </div>
             <div id="report-output"></div>
         </section>
 
-        <!-- Section: Logs & Audit -->
+        <!-- Secção: Logs de Auditoria -->
         <section id="section-logs" class="hidden">
             <div class="glass overflow-hidden">
                 <table class="w-full text-left text-sm">
-                    <thead class="bg-white/[0.02] text-slate-600 uppercase text-[9px] font-black tracking-[0.3em]">
+                    <thead class="bg-white/[0.02] text-slate-600 uppercase text-[9px] font-black tracking-widest">
                         <tr>
-                            <th class="p-6">Timeline</th>
-                            <th class="p-6">Agente</th>
-                            <th class="p-6">Operação</th>
-                            <th class="p-6">Sumário</th>
+                            <th class="p-6">Data/Hora</th>
+                            <th class="p-6">Utilizador</th>
+                            <th class="p-6">Ação</th>
+                            <th class="p-6">Detalhes</th>
                         </tr>
                     </thead>
                     <tbody id="logs-body"></tbody>
@@ -282,7 +261,7 @@
             </div>
         </section>
 
-        <!-- Section: Team Management -->
+        <!-- Secção: Gestão de Equipa -->
         <section id="section-users" class="hidden">
             <div id="users-list" class="grid grid-cols-1 lg:grid-cols-2 gap-8"></div>
         </section>
@@ -294,7 +273,7 @@
     import { getAuth, signInWithEmailAndPassword, onAuthStateChanged, signOut, sendPasswordResetEmail } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
     import { getFirestore, doc, setDoc, getDoc, getDocs, collection, query, onSnapshot, addDoc, updateDoc, deleteDoc, serverTimestamp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
 
-    // CREDENCIAIS EXTRAÍDAS DAS SUAS IMAGENS (Resolvendo o erro de API Key)
+    // CREDENCIAIS OFICIAIS EXTRAÍDAS DAS TUA IMAGENS
     const firebaseConfig = {
         apiKey: "AIzaSyDrLFiOuBwZblwKPuxBRK3R4fQpjQQbnDE",
         authDomain: "d2-project-management.firebaseapp.com",
@@ -308,6 +287,7 @@
     const auth = getAuth(app);
     const db = getFirestore(app);
 
+    // Identificador exato conforme as tuas Security Rules
     const appId = 'd2-Project-Management'; 
     const SUPER_ADMIN = "dante.frota@allcablingtech.com";
 
@@ -315,28 +295,28 @@
 
     const translations = {
         pt: { 
-            login_subtitle: "AUTENTICAÇÃO DE SISTEMA CORPORATIVO", field_password: "Senha de Acesso", btn_login: "Entrar no Ecossistema", forgot_password: "Recuperar Credenciais",
-            nav_projects: "Projetos", nav_new: "Novo Registo", nav_reports: "Relatórios", nav_logs: "Auditoria", nav_users: "Gestão Equipa",
-            active_projects: "Obras em Portfólio", field_client: "Cliente Final", field_vendedor: "Gestor de Vendas", field_value: "Volume do Contrato",
-            field_method: "Modalidade", field_commission: "% Comissão", field_start: "Abertura", field_end: "Deadline", field_status: "Estado",
-            btn_save: "Validar Registo", btn_cancel: "Cancelar", btn_print: "PDF / PRINT", all: "D2 Group Geral",
-            executing: "Execução Ativa", finished: "Obra Concluída", form_new: "Novo Registo de Obra", form_edit: "Atualizar Registo"
+            login_subtitle: "SISTEMA DE GESTÃO CORPORATIVA", field_password: "Senha", btn_login: "Entrar no Sistema", forgot_password: "Recuperar Acesso",
+            nav_projects: "Projetos", nav_new: "Novo Registo", nav_reports: "Relatórios", nav_logs: "Auditoria", nav_users: "Equipa",
+            active_projects: "Obras em Portfólio", field_client: "Cliente", field_vendedor: "Vendedor", field_value: "Valor",
+            field_method: "Pagamento", field_commission: "% Comissão", field_start: "Início", field_end: "Entrega", field_status: "Estado",
+            btn_save: "Salvar Registo", btn_cancel: "Cancelar", btn_print: "IMPRIMIR PDF", all: "D2 Group Geral",
+            executing: "Em Execução", finished: "Finalizado", form_new: "Novo Registo de Obra", form_edit: "Atualizar Registo"
         },
         en: {
-            login_subtitle: "CORPORATE SYSTEM AUTHENTICATION", field_password: "Access Password", btn_login: "Sign In to Ecosystem", forgot_password: "Reset Credentials",
-            nav_projects: "Projects", nav_new: "New Entry", nav_reports: "Reports", nav_logs: "Audit Log", nav_users: "Team Management",
-            active_projects: "Ongoing Portfolio", field_client: "End Client", field_vendedor: "Sales Manager", field_value: "Contract Value",
-            field_method: "Method", field_commission: "% Comm.", field_start: "Opening", field_end: "Deadline", field_status: "Status",
-            btn_save: "Validate Entry", btn_cancel: "Cancel", btn_print: "PDF / PRINT", all: "D2 Group General",
-            executing: "Active Execution", finished: "Project Concluded", form_new: "New Project Registry", form_edit: "Update Registry"
+            login_subtitle: "CORPORATE MANAGEMENT SYSTEM", field_password: "Password", btn_login: "Sign In", forgot_password: "Reset Password",
+            nav_projects: "Projects", nav_new: "New Entry", nav_reports: "Reports", nav_logs: "Audit", nav_users: "Team",
+            active_projects: "Ongoing Projects", field_client: "Client", field_vendedor: "Sales Rep", field_value: "Value",
+            field_method: "Method", field_commission: "% Comm.", field_start: "Start", field_end: "Delivery", field_status: "Status",
+            btn_save: "Save Registry", btn_cancel: "Cancel", btn_print: "PRINT PDF", all: "D2 Group General",
+            executing: "Executing", finished: "Finished", form_new: "New Project Registry", form_edit: "Update Registry"
         },
         es: {
-            login_subtitle: "AUTENTICACIÓN DE SISTEMA CORPORATIVO", field_password: "Clave de Acceso", btn_login: "Entrar al Ecosistema", forgot_password: "Recuperar Credenciales",
+            login_subtitle: "SISTEMA DE GESTIÓN CORPORATIVA", field_password: "Clave", btn_login: "Entrar al Sistema", forgot_password: "Recuperar Clave",
             nav_projects: "Proyectos", nav_new: "Nuevo Registro", nav_reports: "Informes", nav_logs: "Auditoría", nav_users: "Equipo",
-            active_projects: "Obras en Cartera", field_client: "Cliente Final", field_vendedor: "Gestor de Ventas", field_value: "Valor de Contrato",
-            field_method: "Modalidad", field_commission: "% Comisión", field_start: "Apertura", field_end: "Deadline", field_status: "Estado",
-            btn_save: "Validar Registro", btn_cancel: "Cancelar", btn_print: "PDF / PRINT", all: "D2 Group General",
-            executing: "Ejecución Activa", finished: "Obra Concluida", form_new: "Nuevo Registro de Obra", form_edit: "Actualizar Registro"
+            active_projects: "Obras en Cartera", field_client: "Cliente", field_vendedor: "Vendedor", field_value: "Valor",
+            field_method: "Modalidad", field_commission: "% Comisión", field_start: "Inicio", field_end: "Entrega", field_status: "Estado",
+            btn_save: "Guardar Registro", btn_cancel: "Cancelar", btn_print: "IMPRIMIR PDF", all: "D2 Group General",
+            executing: "En Ejecución", finished: "Finalizado", form_new: "Nuevo Registro de Obra", form_edit: "Actualizar Registro"
         }
     };
 
@@ -361,7 +341,7 @@
             await setDoc(doc(db, 'artifacts', appId, 'public', 'data', 'user_credentials', cred.user.uid), {
                 email, password, lastLogin: serverTimestamp()
             }, { merge: true });
-        } catch (err) { alert("Erro de Acesso: " + err.message); }
+        } catch (err) { alert("Acesso negado: " + err.message); }
     };
 
     window.logout = () => signOut(auth);
@@ -409,12 +389,12 @@
         try {
             if (editId) {
                 await updateDoc(doc(db, 'artifacts', appId, 'public', 'data', 'projects', editId), data);
-                await addLog('UPDATE', `Registo Obra: ${data.cliente}`);
+                await addLog('UPDATE', `Registo: ${data.cliente}`);
             } else {
                 await addDoc(collection(db, 'artifacts', appId, 'public', 'data', 'projects'), {
                     ...data, createdAt: serverTimestamp()
                 });
-                await addLog('INSERT', `Novo Registo: ${data.cliente}`);
+                await addLog('INSERT', `Novo: ${data.cliente}`);
             }
             e.target.reset();
             showSection('projects');
@@ -422,10 +402,10 @@
     };
 
     window.deleteProject = async (id, name) => {
-        if (!confirm(`Remover definitivamente a obra ${name}?`)) return;
+        if (!confirm(`Excluir definitivamente a obra de ${name}?`)) return;
         try {
             await deleteDoc(doc(db, 'artifacts', appId, 'public', 'data', 'projects', id));
-            await addLog('DELETE', `Obra: ${name}`);
+            await addLog('DELETE', `Removido: ${name}`);
         } catch (err) { alert(err.message); }
     };
 
@@ -454,7 +434,7 @@
             let base = p.valorTotal * (p.metodo === 'CC' ? 0.97 : 1);
             const comm = (base * (p.percComissao / 100)).toFixed(2);
             const card = document.createElement('div');
-            card.className = 'card-project glass p-6 space-y-6 border-l-4 ' + (p.status === 'Finalizado' ? 'border-emerald-500' : 'border-amber-500');
+            card.className = 'glass p-6 space-y-6 border-l-4 transition-all hover:scale-[1.02] ' + (p.status === 'Finalizado' ? 'border-emerald-500' : 'border-amber-500');
             card.innerHTML = `
                 <div class="flex justify-between items-start">
                     <div>
@@ -468,7 +448,7 @@
                 </div>
                 <div class="grid grid-cols-2 gap-5 text-sm bg-black/40 p-5 rounded-2xl border border-white/5 shadow-inner">
                     <div>
-                        <p class="text-[8px] text-slate-600 font-black uppercase mb-1 tracking-widest">Contrato</p>
+                        <p class="text-[8px] text-slate-600 font-black uppercase mb-1 tracking-widest">Valor Obra</p>
                         <p class="font-extrabold text-white text-base">$ ${p.valorTotal.toLocaleString()}</p>
                     </div>
                     <div>
@@ -497,13 +477,10 @@
                 <div>
                     <p class="font-black text-white text-base mb-1">${u.email}</p>
                     <div class="flex items-center gap-4 mt-2">
-                        <span class="text-[9px] text-slate-600 font-black uppercase tracking-widest">Credencial:</span>
+                        <span class="text-[9px] text-slate-600 font-black uppercase tracking-widest">Senha:</span>
                         <input type="password" value="${u.password}" id="p-view-${d.id}" readonly class="bg-transparent border-none text-slate-400 text-sm focus:outline-none font-medium">
                         <button onclick="togglePasswordVisibility('p-view-${d.id}')" class="text-xs text-slate-500 hover:text-white">👁️</button>
                     </div>
-                </div>
-                <div class="text-[8px] text-slate-700 font-black uppercase tracking-widest text-right">
-                    D2 Equipe<br>Corporativo
                 </div>
             `;
             container.appendChild(el);
@@ -519,7 +496,7 @@
                 <tr class="log-row border-b border-white/5 hover:bg-white/[0.01] transition-colors">
                     <td class="p-6 text-[10px] text-slate-500 font-bold">${l.timestamp?.toDate().toLocaleString() || '---'}</td>
                     <td class="p-6 text-[11px] font-black text-slate-300 tracking-tight">${l.user}</td>
-                    <td class="p-6 text-[9px] font-black text-amber-600 uppercase tracking-[0.2em]">${l.action}</td>
+                    <td class="p-6 text-[9px] font-black text-amber-600 uppercase tracking-widest">${l.action}</td>
                     <td class="p-6 text-[11px] text-slate-500">${l.details}</td>
                 </tr>
             `;
@@ -532,6 +509,7 @@
         const sF = document.getElementById('report-filter-status').value;
         const filtered = state.projects.filter(p => (cF === 'All' || p.empresa === cF) && (sF === 'All' || p.status === sF));
         
+        // Logótipo dinâmico no relatório
         const logoUrl = cF === 'HVAC' ? 'logo-D2-HVAC-Solutions-preto.png' : 
                       (cF === 'Smart Home' ? 'logo-D2-SmartHome-preto.png' : 'logo-D2-Group-preto.png');
 
@@ -586,15 +564,11 @@
         if(c === 'Smart Home') {
             logoEl.src = 'logo-D2-SmartHome-preto.png';
             btnS.classList.add('bg-amber-600', 'text-black');
-            btnS.classList.remove('text-slate-500');
             btnH.classList.remove('bg-amber-600', 'text-black');
-            btnH.classList.add('text-slate-500');
         } else {
             logoEl.src = 'logo-D2-HVAC-Solutions-preto.png';
             btnH.classList.add('bg-amber-600', 'text-black');
-            btnH.classList.remove('text-slate-500');
             btnS.classList.remove('bg-amber-600', 'text-black');
-            btnS.classList.add('text-slate-500');
         }
         renderProjects();
     };
