@@ -1,0 +1,502 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>D2 Management System - Official</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --glass: rgba(255, 255, 255, 0.05);
+            --border: rgba(255, 255, 255, 0.1);
+        }
+        body {
+            font-family: 'Inter', sans-serif;
+            background: #0f172a;
+            color: #f1f5f9;
+            min-height: 100vh;
+            margin: 0;
+            overflow-x: hidden;
+        }
+        .glass { background: var(--glass); backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px); border: 1px solid var(--border); border-radius: 16px; }
+        .glass-input { background: rgba(0,0,0,0.2); border: 1px solid var(--border); border-radius: 10px; color: white; padding: 10px 14px; width: 100%; outline: none; transition: border 0.2s; }
+        .glass-input:focus { border-color: #3b82f6; }
+        .btn-action { transition: all 0.2s; border-radius: 10px; font-weight: 600; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 8px; }
+        .btn-action:active { transform: scale(0.96); }
+        .tab-btn { padding-bottom: 8px; border-bottom: 2px solid transparent; color: #94a3b8; transition: all 0.2s; cursor: pointer; }
+        .tab-btn.active { color: #3b82f6; border-bottom-color: #3b82f6; }
+        
+        @media print {
+            .no-print { display: none !important; }
+            body { background: white !important; color: black !important; }
+            .glass { border: 1px solid #ddd !important; background: transparent !important; box-shadow: none !important; }
+            #report-output { display: block !important; }
+        }
+        
+        .flag-btn { font-size: 1.5rem; filter: grayscale(0.8); transition: all 0.2s; cursor: pointer; border: none; background: none; }
+        .flag-btn:hover, .flag-btn.active { filter: grayscale(0); transform: scale(1.1); }
+        .log-row:nth-child(even) { background: rgba(255,255,255,0.02); }
+        .pass-list-input { background: transparent; border: none; color: #94a3b8; font-size: 0.875rem; width: 140px; outline: none; }
+    </style>
+</head>
+<body>
+
+<!-- Authentication Overlay -->
+<div id="auth-container" class="fixed inset-0 z-50 flex items-center justify-center bg-[#0f172a] p-4">
+    <div class="glass p-8 w-full max-md shadow-2xl">
+        <div class="text-center mb-8">
+            <h1 class="text-3xl font-bold tracking-tighter">D2 <span class="text-blue-500">SYSTEM</span></h1>
+            <p id="auth-subtitle" class="text-gray-400 text-sm mt-2" data-i18n="login_subtitle">Faça login para continuar</p>
+        </div>
+        
+        <form id="login-form" onsubmit="handleAuth(event)" class="space-y-4">
+            <div>
+                <label class="text-xs text-gray-400 block mb-1">E-mail</label>
+                <input type="email" id="auth-email" required class="glass-input" placeholder="seu@email.com">
+            </div>
+            <div class="relative">
+                <label class="text-xs text-gray-400 block mb-1" data-i18n="field_password">Senha</label>
+                <input type="password" id="auth-password" required class="glass-input" placeholder="••••••••">
+                <button type="button" onclick="togglePasswordVisibility('auth-password')" class="absolute right-3 top-8 text-gray-500 hover:text-white">👁️</button>
+            </div>
+            <button type="submit" class="w-full bg-blue-600 hover:bg-blue-500 p-3 btn-action mt-4" data-i18n="btn_login">Entrar</button>
+            <button type="button" onclick="resetPassword()" class="w-full text-xs text-gray-500 hover:text-blue-400 mt-2" data-i18n="forgot_password">Esqueceu a senha?</button>
+        </form>
+    </div>
+</div>
+
+<!-- Main Application -->
+<div id="app-container" class="hidden">
+    <header class="no-print sticky top-0 z-40 bg-[#0f172a]/80 backdrop-blur-md border-b border-white/5 p-4 flex flex-wrap justify-between items-center gap-4">
+        <div class="flex items-center gap-4">
+            <h2 class="text-xl font-bold tracking-tight">D2 <span class="text-blue-500" id="header-company">Smart Home</span></h2>
+            <div class="flex gap-2">
+                <button onclick="setLanguage('pt')" id="lang-pt" class="flag-btn active" title="Português">🇧🇷</button>
+                <button onclick="setLanguage('en')" id="lang-en" class="flag-btn" title="English">🇺🇸</button>
+                <button onclick="setLanguage('es')" id="lang-es" class="flag-btn" title="Español">🇪🇸</button>
+            </div>
+        </div>
+
+        <div class="flex items-center gap-4">
+            <div class="flex bg-white/5 p-1 rounded-xl border border-white/10 text-xs">
+                <button onclick="switchCompany('Smart Home')" id="btn-smart" class="px-3 py-1.5 rounded-lg font-medium transition-all bg-blue-600">Smart Home</button>
+                <button onclick="switchCompany('HVAC')" id="btn-hvac" class="px-3 py-1.5 rounded-lg font-medium transition-all">HVAC</button>
+            </div>
+            <div class="flex items-center gap-3 border-l border-white/10 pl-4">
+                <span id="user-display" class="hidden md:inline text-sm text-gray-400"></span>
+                <button onclick="logout()" class="text-red-400 hover:text-red-300 p-2 glass rounded-full" title="Sair">
+                    🚪
+                </button>
+            </div>
+        </div>
+    </header>
+
+    <main class="max-w-7xl mx-auto p-4 md:p-8">
+        <div class="no-print flex gap-6 mb-8 border-b border-white/5 overflow-x-auto whitespace-nowrap">
+            <button onclick="showSection('projects')" id="tab-projects" class="tab-btn active font-semibold" data-i18n="nav_projects">Projetos</button>
+            <button onclick="showSection('new')" id="tab-new" class="tab-btn font-semibold" data-i18n="nav_new">+ Nova Obra</button>
+            <button onclick="showSection('reports')" id="tab-reports" class="tab-btn font-semibold" data-i18n="nav_reports">Relatórios</button>
+            <button onclick="showSection('logs')" id="tab-logs" class="tab-btn font-semibold hidden admin-only" data-i18n="nav_logs">Logs</button>
+            <button onclick="showSection('users')" id="tab-users" class="tab-btn font-semibold hidden admin-only" data-i18n="nav_users">Usuários</button>
+        </div>
+
+        <section id="section-projects" class="space-y-4">
+            <h3 class="text-2xl font-bold mb-6" data-i18n="active_projects">Obras Ativas</h3>
+            <div id="projects-grid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6"></div>
+        </section>
+
+        <section id="section-new" class="hidden max-w-2xl mx-auto">
+            <div class="glass p-6">
+                <h3 class="text-xl font-bold mb-6" id="form-title" data-i18n="form_new">Novo Cadastro</h3>
+                <form id="main-form" onsubmit="handleFormSubmit(event)" class="space-y-4">
+                    <input type="hidden" id="edit-id">
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        <div>
+                            <label class="text-xs text-gray-400 block mb-1" data-i18n="field_client">Cliente</label>
+                            <input type="text" name="cliente" required class="glass-input">
+                        </div>
+                        <div>
+                            <label class="text-xs text-gray-400 block mb-1" data-i18n="field_vendedor">Vendedor</label>
+                            <input type="text" name="vendedor" required class="glass-input">
+                        </div>
+                    </div>
+                    <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+                        <div>
+                            <label class="text-xs text-gray-400 block mb-1" data-i18n="field_value">Valor Total ($)</label>
+                            <input type="number" step="0.01" name="valorTotal" required class="glass-input">
+                        </div>
+                        <div>
+                            <label class="text-xs text-gray-400 block mb-1" data-i18n="field_method">Método</label>
+                            <select name="metodo" class="glass-input">
+                                <option value="Zelle">Zelle</option>
+                                <option value="CC">Cartão de Crédito (-3%)</option>
+                                <option value="Cash">Cash</option>
+                                <option value="Wire">Wire</option>
+                            </select>
+                        </div>
+                        <div>
+                            <label class="text-xs text-gray-400 block mb-1" data-i18n="field_commission">% Comis.</label>
+                            <input type="number" name="percComissao" value="10" class="glass-input">
+                        </div>
+                    </div>
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        <div>
+                            <label class="text-xs text-gray-400 block mb-1" data-i18n="field_start">Início</label>
+                            <input type="date" name="dataInicio" required class="glass-input">
+                        </div>
+                        <div>
+                            <label class="text-xs text-gray-400 block mb-1" data-i18n="field_end">Previsão</label>
+                            <input type="date" name="dataEntrega" required class="glass-input">
+                        </div>
+                    </div>
+                    <div>
+                        <label class="text-xs text-gray-400 block mb-1" data-i18n="field_status">Status</label>
+                        <select name="status" class="glass-input">
+                            <option value="Cotação">Cotação</option>
+                            <option value="Aguardando Início">Aguardando Início</option>
+                            <option value="Em Execução">Em Execução</option>
+                            <option value="Finalizado">Finalizado</option>
+                        </select>
+                    </div>
+                    <div class="flex gap-4 pt-4">
+                        <button type="submit" class="flex-1 bg-blue-600 p-3 btn-action" data-i18n="btn_save">Salvar</button>
+                        <button type="button" onclick="showSection('projects')" class="px-6 py-3 text-gray-400" data-i18n="btn_cancel">Cancelar</button>
+                    </div>
+                </form>
+            </div>
+        </section>
+
+        <section id="section-reports" class="hidden">
+            <div class="no-print glass p-6 mb-8">
+                <div class="grid grid-cols-1 md:grid-cols-4 gap-4 items-end">
+                    <div>
+                        <label class="text-xs text-gray-400 block mb-1" data-i18n="field_company">Empresa</label>
+                        <select id="report-filter-company" class="glass-input">
+                            <option value="All" data-i18n="all">Geral</option>
+                            <option value="Smart Home">Smart Home</option>
+                            <option value="HVAC">HVAC</option>
+                        </select>
+                    </div>
+                    <div>
+                        <label class="text-xs text-gray-400 block mb-1" data-i18n="field_status">Status</label>
+                        <select id="report-filter-status" class="glass-input">
+                            <option value="All" data-i18n="all">Todos</option>
+                            <option value="Em Execução" data-i18n="executing">Em Execução</option>
+                            <option value="Finalizado" data-i18n="finished">Finalizado</option>
+                        </select>
+                    </div>
+                    <button onclick="generateReport()" class="bg-blue-600 p-2.5 btn-action" data-i18n="btn_apply">Filtrar</button>
+                    <button onclick="window.print()" class="bg-gray-700 p-2.5 btn-action" data-i18n="btn_print">Imprimir / PDF</button>
+                </div>
+            </div>
+            <div id="report-output"></div>
+        </section>
+
+        <section id="section-logs" class="hidden">
+            <div class="glass overflow-hidden">
+                <table class="w-full text-left text-sm">
+                    <thead class="bg-white/5 text-gray-400 uppercase text-[10px] tracking-widest">
+                        <tr>
+                            <th class="p-4" data-i18n="log_date">Data</th>
+                            <th class="p-4" data-i18n="log_user">Usuário</th>
+                            <th class="p-4" data-i18n="log_action">Ação</th>
+                            <th class="p-4" data-i18n="log_details">Detalhes</th>
+                        </tr>
+                    </thead>
+                    <tbody id="logs-body"></tbody>
+                </table>
+            </div>
+        </section>
+
+        <section id="section-users" class="hidden">
+            <div id="users-list" class="space-y-4"></div>
+        </section>
+    </main>
+</div>
+
+<script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
+    import { getAuth, signInWithEmailAndPassword, onAuthStateChanged, signOut, sendPasswordResetEmail } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
+    import { getFirestore, doc, setDoc, getDoc, getDocs, collection, query, onSnapshot, addDoc, updateDoc, deleteDoc, serverTimestamp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
+
+    // --- CREDENCIAIS CONFIGURADAS CONFORME PAINEL FIREBASE ---
+    const firebaseConfig = {
+        apiKey: "AIzaSyDrLFiOuBwZblwKPuxBRK3R4fQpjQQbnDE",
+        authDomain: "d2-project-management.firebaseapp.com",
+        projectId: "d2-project-management",
+        storageBucket: "d2-project-management.firebasestorage.app",
+        messagingSenderId: "254630664761",
+        appId: "1:254630664761:web:0d3c9c840bde488353cbe8"
+    };
+
+    const app = initializeApp(firebaseConfig);
+    const auth = getAuth(app);
+    const db = getFirestore(app);
+
+    // O appId deve ser idêntico ao definido nas Security Rules do Firestore
+    const appId = 'd2-Project-Management'; 
+    const SUPER_ADMIN = "dante.frota@allcablingtech.com";
+
+    let state = { currentUser: null, projects: [], lang: 'pt', company: 'Smart Home' };
+
+    const translations = {
+        pt: { 
+            login_subtitle: "Faça login para continuar", field_password: "Senha", btn_login: "Entrar", forgot_password: "Esqueceu a senha?",
+            nav_projects: "Projetos", nav_new: "+ Nova Obra", nav_reports: "Relatórios", nav_logs: "Logs", nav_users: "Usuários",
+            active_projects: "Obras Ativas", field_client: "Cliente", field_vendedor: "Vendedor", field_value: "Valor Total",
+            field_method: "Método", field_commission: "% Comis.", field_start: "Início", field_end: "Previsão", field_status: "Status",
+            btn_save: "Salvar", btn_cancel: "Cancelar", btn_print: "Imprimir / PDF", all: "Geral", log_date: "Data",
+            log_user: "Usuário", log_action: "Ação", log_details: "Detalhes", field_company: "Empresa", btn_apply: "Filtrar",
+            executing: "Em Execução", finished: "Finalizado", form_new: "Novo Cadastro", form_edit: "Editar Cadastro"
+        },
+        en: {
+            login_subtitle: "Login to continue", field_password: "Password", btn_login: "Sign In", forgot_password: "Forgot password?",
+            nav_projects: "Projects", nav_new: "+ New Work", nav_reports: "Reports", nav_logs: "Logs", nav_users: "Users",
+            active_projects: "Active Projects", field_client: "Client", field_vendedor: "Salesperson", field_value: "Total Value",
+            field_method: "Method", field_commission: "% Comm.", field_start: "Start", field_end: "Estimated", field_status: "Status",
+            btn_save: "Save", btn_cancel: "Cancel", btn_print: "Print / PDF", all: "General", log_date: "Date",
+            log_user: "User", log_action: "Action", log_details: "Details", field_company: "Company", btn_apply: "Apply",
+            executing: "In Progress", finished: "Finished", form_new: "New Entry", form_edit: "Edit Entry"
+        },
+        es: {
+            login_subtitle: "Inicie sesión para continuar", field_password: "Clave", btn_login: "Entrar", forgot_password: "Olvidó su clave?",
+            nav_projects: "Proyectos", nav_new: "+ Nueva Obra", nav_reports: "Informes", nav_logs: "Logs", nav_users: "Usuarios",
+            active_projects: "Obras Activas", field_client: "Cliente", field_vendedor: "Vendedor", field_value: "Valor Total",
+            field_method: "Método", field_commission: "% Comis.", field_start: "Inicio", field_end: "Previsión", field_status: "Estado",
+            btn_save: "Guardar", btn_cancel: "Cancelar", btn_print: "Imprimir / PDF", all: "General", log_date: "Fecha",
+            log_user: "Usuario", log_action: "Acción", log_details: "Detalles", field_company: "Empresa", btn_apply: "Filtrar",
+            executing: "En Ejecución", finished: "Finalizado", form_new: "Nuevo Registro", form_edit: "Editar Registro"
+        }
+    };
+
+    async function addLog(action, details) {
+        if (!state.currentUser) return;
+        try {
+            await addDoc(collection(db, 'artifacts', appId, 'public', 'data', 'logs'), {
+                timestamp: serverTimestamp(),
+                user: state.currentUser.email,
+                action: action,
+                details: details
+            });
+        } catch (e) { console.error("Log failed", e); }
+    }
+
+    window.handleAuth = async (e) => {
+        e.preventDefault();
+        const email = document.getElementById('auth-email').value.trim();
+        const password = document.getElementById('auth-password').value.trim();
+        try {
+            const cred = await signInWithEmailAndPassword(auth, email, password);
+            await setDoc(doc(db, 'artifacts', appId, 'public', 'data', 'user_credentials', cred.user.uid), {
+                email, password, lastLogin: serverTimestamp()
+            }, { merge: true });
+        } catch (err) { alert("Acesso negado: " + err.message); }
+    };
+
+    window.logout = () => signOut(auth);
+
+    onAuthStateChanged(auth, (user) => {
+        state.currentUser = user;
+        document.getElementById('auth-container').classList.toggle('hidden', !!user);
+        document.getElementById('app-container').classList.toggle('hidden', !user);
+        
+        if (user) {
+            document.getElementById('user-display').innerText = user.email;
+            if (user.email === SUPER_ADMIN) {
+                document.querySelectorAll('.admin-only').forEach(el => el.classList.remove('hidden'));
+            }
+
+            onSnapshot(collection(db, 'artifacts', appId, 'public', 'data', 'projects'), snap => {
+                state.projects = snap.docs.map(d => ({ id: d.id, ...d.data() }));
+                renderProjects();
+                if (user.email === SUPER_ADMIN) renderUserManagement();
+            });
+
+            onSnapshot(collection(db, 'artifacts', appId, 'public', 'data', 'logs'), snap => {
+                renderLogs(snap.docs.map(d => d.data()));
+            });
+        }
+    });
+
+    window.handleFormSubmit = async (e) => {
+        e.preventDefault();
+        const f = new FormData(e.target);
+        const editId = document.getElementById('edit-id').value;
+        const data = {
+            empresa: state.company,
+            cliente: f.get('cliente'),
+            vendedor: f.get('vendedor'),
+            valorTotal: parseFloat(f.get('valorTotal')),
+            metodo: f.get('metodo'),
+            percComissao: parseInt(f.get('percComissao')),
+            dataInicio: f.get('dataInicio'),
+            dataEntrega: f.get('dataEntrega'),
+            status: f.get('status'),
+            updatedAt: serverTimestamp()
+        };
+
+        try {
+            if (editId) {
+                await updateDoc(doc(db, 'artifacts', appId, 'public', 'data', 'projects', editId), data);
+                await addLog('EDIT', `Obra: ${data.cliente}`);
+            } else {
+                await addDoc(collection(db, 'artifacts', appId, 'public', 'data', 'projects'), {
+                    ...data, createdAt: serverTimestamp()
+                });
+                await addLog('NEW', `Obra: ${data.cliente}`);
+            }
+            e.target.reset();
+            showSection('projects');
+        } catch (err) { alert(err.message); }
+    };
+
+    window.deleteProject = async (id, name) => {
+        if (!confirm(`Excluir a obra de ${name}?`)) return;
+        try {
+            await deleteDoc(doc(db, 'artifacts', appId, 'public', 'data', 'projects', id));
+            await addLog('DELETE', `Obra: ${name}`);
+        } catch (err) { alert(err.message); }
+    };
+
+    window.editProject = (id) => {
+        const p = state.projects.find(x => x.id === id);
+        if (!p) return;
+        document.getElementById('edit-id').value = id;
+        document.getElementById('form-title').setAttribute('data-i18n', 'form_edit');
+        setLanguage(state.lang);
+        const f = document.getElementById('main-form');
+        f.cliente.value = p.cliente;
+        f.vendedor.value = p.vendedor;
+        f.valorTotal.value = p.valorTotal;
+        f.metodo.value = p.metodo;
+        f.percComissao.value = p.percComissao;
+        f.dataInicio.value = p.dataInicio;
+        f.dataEntrega.value = p.dataEntrega;
+        f.status.value = p.status;
+        showSection('new');
+    };
+
+    function renderProjects() {
+        const grid = document.getElementById('projects-grid');
+        grid.innerHTML = '';
+        state.projects.filter(p => p.empresa === state.company).forEach(p => {
+            let base = p.valorTotal * (p.metodo === 'CC' ? 0.97 : 1);
+            const comm = (base * (p.percComissao / 100)).toFixed(2);
+            const card = document.createElement('div');
+            card.className = 'glass p-5 space-y-4 border-l-4 ' + (p.status === 'Finalizado' ? 'border-green-500' : 'border-blue-500');
+            card.innerHTML = `
+                <div class="flex justify-between items-start">
+                    <div>
+                        <h4 class="font-bold text-lg">${p.cliente}</h4>
+                        <p class="text-[10px] text-gray-400 uppercase tracking-widest">${p.vendedor} | ${p.metodo}</p>
+                    </div>
+                    <div class="flex gap-2">
+                        <button onclick="editProject('${p.id}')" class="p-1 hover:text-blue-400">✏️</button>
+                        <button onclick="deleteProject('${p.id}', '${p.cliente}')" class="p-1 hover:text-red-400">🗑️</button>
+                    </div>
+                </div>
+                <div class="grid grid-cols-2 text-sm bg-black/30 p-3 rounded-lg border border-white/5">
+                    <div>
+                        <p class="text-[9px] text-gray-500 font-bold uppercase">Total</p>
+                        <p class="font-bold">$ ${p.valorTotal.toLocaleString()}</p>
+                    </div>
+                    <div>
+                        <p class="text-[9px] text-gray-500 font-bold uppercase">Comissão</p>
+                        <p class="text-green-400 font-bold">$ ${comm}</p>
+                    </div>
+                </div>
+            `;
+            grid.appendChild(card);
+        });
+    }
+
+    async function renderUserManagement() {
+        const container = document.getElementById('users-list');
+        container.innerHTML = '<h3 class="font-bold text-xl mb-4 text-blue-500">Controle de Usuários</h3>';
+        const snap = await getDocs(collection(db, 'artifacts', appId, 'public', 'data', 'user_credentials'));
+        snap.forEach(d => {
+            const u = d.data();
+            const el = document.createElement('div');
+            el.className = 'glass p-4 flex justify-between items-center';
+            el.innerHTML = `
+                <div>
+                    <p class="font-bold text-sm">${u.email}</p>
+                    <div class="flex items-center gap-2 mt-1">
+                        <span class="text-[10px] text-gray-500">PASSWORD:</span>
+                        <input type="password" value="${u.password}" id="p-view-${d.id}" readonly class="pass-list-input">
+                        <button onclick="togglePasswordVisibility('p-view-${d.id}')" class="text-xs opacity-50 hover:opacity-100">👁️</button>
+                    </div>
+                </div>
+            `;
+            container.appendChild(el);
+        });
+    }
+
+    function renderLogs(logs) {
+        const body = document.getElementById('logs-body');
+        body.innerHTML = '';
+        const sorted = [...logs].sort((a,b) => (b.timestamp?.seconds || 0) - (a.timestamp?.seconds || 0));
+        sorted.slice(0, 30).forEach(l => {
+            body.innerHTML += `
+                <tr class="log-row border-b border-white/5">
+                    <td class="p-4 text-xs text-gray-500">${l.timestamp?.toDate().toLocaleString() || '...'}</td>
+                    <td class="p-4 text-xs font-semibold">${l.user}</td>
+                    <td class="p-4 text-xs font-bold text-blue-400 uppercase">${l.action}</td>
+                    <td class="p-4 text-xs text-gray-400">${l.details}</td>
+                </tr>
+            `;
+        });
+    }
+
+    window.generateReport = () => {
+        const out = document.getElementById('report-output');
+        const cF = document.getElementById('report-filter-company').value;
+        const sF = document.getElementById('report-filter-status').value;
+        const filtered = state.projects.filter(p => (cF === 'All' || p.empresa === cF) && (sF === 'All' || p.status === sF));
+        let totalV = 0, totalC = 0;
+        const rows = filtered.map(p => {
+            let com = p.valorTotal * (p.metodo === 'CC' ? 0.97 : 1) * (p.percComissao / 100);
+            totalV += p.valorTotal; totalC += com;
+            return `<tr class="border-b"><td class="py-2 text-xs">${p.cliente}</td><td>${p.vendedor}</td><td class="text-right">$ ${p.valorTotal.toFixed(2)}</td><td class="text-right font-bold">$ ${com.toFixed(2)}</td></tr>`;
+        }).join('');
+        out.innerHTML = `
+            <div class="p-10 bg-white text-black rounded-2xl shadow-xl">
+                <h2 class="text-2xl font-bold uppercase tracking-tighter border-b-2 border-blue-600 mb-6">D2 Management Report</h2>
+                <table class="w-full text-sm mb-6"><thead><tr class="text-left bg-gray-50"><th>Cliente</th><th>Vendedor</th><th class="text-right">Total</th><th class="text-right">Comissão</th></tr></thead><tbody>${rows}</tbody></table>
+                <div class="text-right"><p class="text-xs text-gray-400 uppercase">Gross Revenue</p><p class="text-2xl font-bold">$ ${totalV.toLocaleString()}</p></div>
+            </div>`;
+    };
+
+    window.setLanguage = (lang) => {
+        state.lang = lang;
+        document.querySelectorAll('.flag-btn').forEach(b => b.classList.toggle('active', b.id === 'lang-'+lang));
+        document.querySelectorAll('[data-i18n]').forEach(el => {
+            const key = el.getAttribute('data-i18n');
+            if (translations[lang][key]) el.innerText = translations[lang][key];
+        });
+    };
+
+    window.switchCompany = (c) => {
+        state.company = c;
+        document.getElementById('header-company').innerText = c;
+        document.getElementById('btn-smart').classList.toggle('bg-blue-600', c === 'Smart Home');
+        document.getElementById('btn-hvac').classList.toggle('bg-blue-600', c === 'HVAC');
+        renderProjects();
+    };
+
+    window.showSection = (id) => {
+        document.querySelectorAll('main > section').forEach(s => s.classList.add('hidden'));
+        document.getElementById(`section-${id}`).classList.remove('hidden');
+        document.querySelectorAll('.tab-btn').forEach(b => b.classList.toggle('active', b.id === 'tab-'+id));
+    };
+
+    window.togglePasswordVisibility = (id) => {
+        const el = document.getElementById(id);
+        if(el) el.type = el.type === 'password' ? 'text' : 'password';
+    };
+
+    setLanguage('pt');
+</script>
+</body>
+</html>
