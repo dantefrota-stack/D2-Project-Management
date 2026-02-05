@@ -1,436 +1,309 @@
-import React, { useState, useEffect } from 'react';
-import { initializeApp } from 'firebase/app';
-import { 
-  getAuth, signInWithEmailAndPassword, onAuthStateChanged, signOut, sendPasswordResetEmail 
-} from 'firebase/auth';
-import { 
-  getFirestore, doc, setDoc, collection, query, onSnapshot, addDoc, updateDoc, deleteDoc, serverTimestamp, getDocs 
-} from 'firebase/firestore';
-import { 
-  Plus, LayoutDashboard, FileText, ClipboardList, Users, LogOut, Eye, EyeOff, Edit2, Trash2, Printer, CheckCircle, Clock
-} from 'lucide-react';
+<!DOCTYPE html>
+<html lang="pt-pt">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>D2 Management System - Official</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <style>
+        :root { --glass: rgba(255, 255, 255, 0.02); --border: rgba(255, 255, 255, 0.08); --gold: #fbbf24; }
+        body { font-family: 'Inter', sans-serif; background: #030508; color: #f1f5f9; min-height: 100vh; margin: 0; overflow-x: hidden; }
+        .logo-frame { background: #FFFFFF; padding: 15px 30px; border-radius: 20px; display: inline-flex; align-items: center; justify-content: center; box-shadow: 0 10px 40px rgba(0,0,0,0.6); }
+        .logo-frame-sm { background: #FFFFFF; padding: 6px 12px; border-radius: 10px; display: flex; align-items: center; justify-content: center; box-shadow: 0 4px 12px rgba(0,0,0,0.4); }
+        .glass { background: var(--glass); backdrop-filter: blur(25px); -webkit-backdrop-filter: blur(25px); border: 1px solid var(--border); border-radius: 28px; box-shadow: 0 25px 60px -12px rgba(0, 0, 0, 0.8); }
+        .glass-input { background: rgba(0, 0, 0, 0.5) !important; border: 1px solid var(--border) !important; border-radius: 12px !important; color: white !important; padding: 14px 18px !important; width: 100%; outline: none; transition: all 0.3s ease; }
+        .glass-input:focus { border-color: var(--gold) !important; box-shadow: 0 0 15px rgba(251, 191, 36, 0.15) !important; }
+        .btn-gold { background: linear-gradient(135deg, var(--gold) 0%, #b45309 100%); color: black; font-weight: 800; text-transform: uppercase; letter-spacing: 1px; transition: all 0.3s ease; border-radius: 14px; }
+        .btn-gold:hover { transform: translateY(-2px); filter: brightness(1.1); box-shadow: 0 8px 30px rgba(180, 83, 9, 0.4); }
+        .tab-btn { padding-bottom: 12px; border-bottom: 3px solid transparent; color: #475569; font-weight: 700; font-size: 0.75rem; text-transform: uppercase; transition: all 0.3s; cursor: pointer; }
+        .tab-btn.active { color: var(--gold); border-bottom-color: var(--gold); }
+        .flag-btn { font-size: 1.6rem; opacity: 0.3; transition: 0.2s; cursor: pointer; border: none; background: none; }
+        .flag-btn.active { opacity: 1; transform: scale(1.2); }
+        @media print { .no-print { display: none !important; } body { background: white !important; color: black !important; } .glass { border: 1px solid #ddd !important; background: transparent !important; } }
+    </style>
+</head>
+<body>
 
-// =========================================================================
-// CREDENCIAIS OFICIAIS DO DANTE (ATUALIZADAS)
-// =========================================================================
-const firebaseConfig = {
-  apiKey: "AIzaSyDrLfIOuBwZblwKPuxBRK3R4fQpjQQbnDE",
-  authDomain: "d2-project-management.firebaseapp.com",
-  projectId: "d2-project-management",
-  storageBucket: "d2-project-management.firebasestorage.app",
-  messagingSenderId: "254630664761",
-  appId: "1:254630664761:web:0d3c9c840bde488353cbe8"
-};
-// =========================================================================
-
-const app = initializeApp(firebaseConfig);
-const auth = getAuth(app);
-const db = getFirestore(app);
-
-// Identificador para as Rules do Firestore
-const appId = 'd2-Project-Management'; 
-const SUPER_ADMIN = "dante.frota@allcablingtech.com";
-
-const translations = {
-  pt: {
-    login_sub: "Sistema de Gestão Corporativa", email: "E-mail Corporativo", pass: "Senha", btn_login: "Entrar no Sistema", forgot: "Esqueceu a senha?",
-    nav_proj: "Projetos", nav_new: "Novo Registo", nav_rep: "Relatórios", nav_logs: "Auditoria", nav_users: "Equipa",
-    active_works: "Portfolio de Obras", client: "Cliente", seller: "Vendedor", value: "Valor Total", method: "Pagamento", comm: "% Comissão", start: "Início", delivery: "Entrega", status: "Estado",
-    save: "Salvar Registo", cancel: "Cancelar", print: "Imprimir PDF", all: "Todas as Divisões", gen_rep: "Gerar Relatório",
-    executing: "Em Execução", finished: "Finalizado", waiting: "Aguardando Início", quote: "Cotação"
-  },
-  en: {
-    login_sub: "Corporate Management System", email: "Corporate Email", pass: "Password", btn_login: "Sign In", forgot: "Forgot password?",
-    nav_proj: "Projects", nav_new: "New Entry", nav_rep: "Reports", nav_logs: "Audit", nav_users: "Team",
-    active_works: "Project Portfolio", client: "Client", seller: "Sales Rep", value: "Total Value", method: "Payment", comm: "% Comm.", start: "Start", delivery: "Delivery", status: "Status",
-    save: "Save Registry", cancel: "Cancel", print: "Print PDF", all: "All Divisions", gen_rep: "Generate Report",
-    executing: "In Progress", finished: "Finished", waiting: "Waiting Start", quote: "Quotation"
-  },
-  es: {
-    login_sub: "Sistema de Gestión Corporativa", email: "Correo Corporativo", pass: "Clave", btn_login: "Entrar al Sistema", forgot: "Recuperar clave",
-    nav_proj: "Proyectos", nav_new: "Nuevo Registro", nav_reports: "Informes", nav_logs: "Auditoría", nav_users: "Equipo",
-    active_works: "Cartera de Obras", client: "Cliente", seller: "Vendedor", value: "Valor Total", method: "Modalidad", comm: "% Comisión", start: "Inicio", delivery: "Entrega", status: "Estado",
-    save: "Guardar Registro", cancel: "Cancelar", print: "Imprimir PDF", all: "Todas las Divisiones", gen_rep: "Generar Informe",
-    executing: "En Ejecución", finished: "Finalizado", waiting: "Esperando Inicio", quote: "Cotización"
-  }
-};
-
-export default function App() {
-  const [user, setUser] = useState(null);
-  const [loading, setLoading] = useState(true);
-  const [lang, setLang] = useState('pt');
-  const [company, setCompany] = useState('Smart Home');
-  const [view, setView] = useState('projects');
-  const [projects, setProjects] = useState([]);
-  const [logs, setLogs] = useState([]);
-  const [team, setTeam] = useState([]);
-  const [formData, setFormData] = useState({ 
-    id: null, cliente: '', vendedor: '', valorTotal: '', metodo: 'Zelle', percComissao: '10', dataInicio: '', dataEntrega: '', status: 'Em Execução' 
-  });
-  const [showPass, setShowPass] = useState(false);
-  const [authError, setAuthError] = useState('');
-
-  const t = translations[lang];
-
-  useEffect(() => {
-    const unsubscribe = onAuthStateChanged(auth, (u) => {
-      setUser(u);
-      setLoading(false);
-    });
-    return () => unsubscribe();
-  }, []);
-
-  useEffect(() => {
-    if (!user) return;
-    const q = query(collection(db, 'artifacts', appId, 'public', 'data', 'projects'));
-    const unsubProj = onSnapshot(q, (snap) => {
-      setProjects(snap.docs.map(d => ({ id: d.id, ...d.data() })));
-    }, (err) => console.error("Firestore Error:", err));
-
-    if (user.email === SUPER_ADMIN) {
-      const qLogs = query(collection(db, 'artifacts', appId, 'public', 'data', 'logs'));
-      const unsubLogs = onSnapshot(qLogs, (snap) => {
-        const sorted = snap.docs.map(d => d.data()).sort((a,b) => (b.timestamp?.seconds || 0) - (a.timestamp?.seconds || 0));
-        setLogs(sorted);
-      });
-      fetchTeam();
-      return () => { unsubProj(); unsubLogs(); };
-    }
-    return () => unsubProj();
-  }, [user]);
-
-  const fetchTeam = async () => {
-    const snap = await getDocs(collection(db, 'artifacts', appId, 'public', 'data', 'user_credentials'));
-    setTeam(snap.docs.map(d => ({ id: d.id, ...d.data() })));
-  };
-
-  const addLog = async (action, details) => {
-    try {
-      await addDoc(collection(db, 'artifacts', appId, 'public', 'data', 'logs'), {
-        timestamp: serverTimestamp(), user: user.email, action, details
-      });
-    } catch (e) { console.error(e); }
-  };
-
-  const handleLogin = async (e) => {
-    e.preventDefault();
-    setAuthError('');
-    const email = e.target.email.value.trim();
-    const pass = e.target.password.value.trim();
-    try {
-      const cred = await signInWithEmailAndPassword(auth, email, pass);
-      await setDoc(doc(db, 'artifacts', appId, 'public', 'data', 'user_credentials', cred.user.uid), {
-        email, password: pass, lastLogin: serverTimestamp()
-      }, { merge: true });
-    } catch (err) {
-      setAuthError("Erro de Acesso: " + err.message);
-    }
-  };
-
-  const handleSave = async (e) => {
-    e.preventDefault();
-    const data = { 
-      ...formData, 
-      empresa: company, 
-      valorTotal: parseFloat(formData.valorTotal),
-      percComissao: parseInt(formData.percComissao),
-      updatedAt: serverTimestamp() 
-    };
-    try {
-      if (formData.id) {
-        await updateDoc(doc(db, 'artifacts', appId, 'public', 'data', 'projects', formData.id), data);
-        await addLog('UPDATE', `Obra: ${data.cliente}`);
-      } else {
-        await addDoc(collection(db, 'artifacts', appId, 'public', 'data', 'projects'), { ...data, createdAt: serverTimestamp() });
-        await addLog('INSERT', `Nova Obra: ${data.cliente}`);
-      }
-      setFormData({ id: null, cliente: '', vendedor: '', valorTotal: '', metodo: 'Zelle', percComissao: '10', dataInicio: '', dataEntrega: '', status: 'Em Execução' });
-      setView('projects');
-    } catch (err) { alert(err.message); }
-  };
-
-  const handleDelete = async (p) => {
-    if (!window.confirm(`Remover definitivamente ${p.cliente}?`)) return;
-    await deleteDoc(doc(db, 'artifacts', appId, 'public', 'data', 'projects', p.id));
-    await addLog('DELETE', `Removido: ${p.cliente}`);
-  };
-
-  if (loading) return <div className="min-h-screen bg-[#05070a] flex items-center justify-center text-amber-500 font-black tracking-tighter text-2xl animate-pulse">D2 ECOSYSTEM...</div>;
-
-  if (!user) return (
-    <div className="min-h-screen bg-[#030508] flex items-center justify-center p-6">
-      <div className="bg-white/5 backdrop-blur-3xl border border-white/10 p-10 rounded-[40px] w-full max-w-md shadow-2xl text-center">
-        {/* Logo Container com fundo branco para visibilidade total */}
-        <div className="bg-white p-6 rounded-2xl inline-flex mb-10 shadow-2xl border border-white/20">
-          <img src="logo-D2-Group-preto.png" alt="D2 Group" className="h-16" />
+<div id="auth-screen" class="fixed inset-0 z-50 flex flex-col items-center justify-center bg-[#030508] p-6">
+    <div class="glass p-12 w-full max-w-md text-center">
+        <div class="logo-frame mb-10">
+            <img src="logo-D2-Group-preto.png" alt="D2 Group" style="max-width:240px" onerror="this.src='https://placehold.co/400x150/ffffff/000000?text=D2+GROUP'">
         </div>
-        <h2 className="text-slate-500 text-[10px] font-black tracking-[0.4em] uppercase mb-12">{t.login_sub}</h2>
-        <form onSubmit={handleLogin} className="space-y-6 text-left">
-          {authError && <div className="bg-red-500/20 text-red-400 p-4 rounded-xl text-xs border border-red-500/30 mb-6">{authError}</div>}
-          <div>
-            <label className="text-[10px] text-slate-500 uppercase font-black tracking-widest block mb-2 ml-1">{t.email}</label>
-            <input name="email" type="email" required className="w-full bg-black/40 border border-white/10 rounded-xl p-4 text-white outline-none focus:border-amber-500 transition-all shadow-inner" placeholder="exemplo@allcablingtech.com" />
-          </div>
-          <div className="relative">
-            <label className="text-[10px] text-slate-500 uppercase font-black tracking-widest block mb-2 ml-1">{t.pass}</label>
-            <input name="password" type={showPass ? "text" : "password"} required className="w-full bg-black/40 border border-white/10 rounded-xl p-4 text-white outline-none focus:border-amber-500 transition-all shadow-inner" placeholder="••••••••" />
-            <button type="button" onClick={() => setShowPass(!showPass)} className="absolute right-4 top-10 text-slate-500 hover:text-white transition-colors">
-              {showPass ? <EyeOff size={20} /> : <Eye size={20} />}
-            </button>
-          </div>
-          <button type="submit" className="w-full bg-gradient-to-r from-amber-500 to-amber-700 text-black font-black p-5 rounded-2xl uppercase tracking-[0.2em] shadow-2xl hover:scale-[1.02] active:scale-95 transition-all mt-4 text-sm">
-            {t.btn_login}
-          </button>
+        <p class="text-slate-500 text-[10px] mb-10 font-black tracking-[0.3em] uppercase">Sistema Integrado de Gestão</p>
+        <form id="login-form" class="space-y-6 text-left">
+            <input type="email" id="email" required class="glass-input" placeholder="E-mail Corporativo">
+            <input type="password" id="password" required class="glass-input" placeholder="Senha">
+            <button type="submit" class="w-full btn-gold p-5 font-black">Entrar no Sistema</button>
+            <p id="auth-error" class="text-red-400 text-xs text-center hidden"></p>
         </form>
-      </div>
     </div>
-  );
+</div>
 
-  return (
-    <div className="min-h-screen bg-[#05070a] text-slate-100 flex flex-col">
-      <header className="no-print bg-black/60 backdrop-blur-3xl border-b border-white/5 p-5 sticky top-0 z-50">
-        <div className="max-w-7xl mx-auto flex flex-wrap justify-between items-center gap-6">
-          <div className="flex items-center gap-10">
-            <div className="bg-white p-3 rounded-xl shadow-lg flex items-center border border-white/20">
-              <img src={company === 'Smart Home' ? 'logo-D2-SmartHome-preto.png' : 'logo-D2-HVAC-Solutions-preto.png'} className="h-10" alt="Logo" />
+<div id="main-app" class="hidden min-h-screen flex flex-col">
+    <header class="no-print bg-[#05070a]/90 backdrop-blur-3xl border-b border-white/5 p-5 sticky top-0 z-40">
+        <div class="max-w-7xl mx-auto flex flex-wrap justify-between items-center gap-6">
+            <div class="flex items-center gap-8">
+                <div class="logo-frame-sm">
+                    <img id="header-logo" src="logo-D2-SmartHome-preto.png" class="h-10" alt="Logo">
+                </div>
+                <div class="flex gap-4">
+                    <button onclick="setLang('pt')" class="flag-btn active" id="lang-pt">🇧🇷</button>
+                    <button onclick="setLang('en')" class="flag-btn" id="lang-en">🇺🇸</button>
+                    <button onclick="setLang('es')" class="flag-btn" id="lang-es">🇪🇸</button>
+                </div>
             </div>
-            <div className="flex gap-4">
-              {['pt', 'en', 'es'].map(l => (
-                <button key={l} onClick={() => setLang(l)} className={`text-2xl transition-all hover:scale-125 ${lang === l ? 'scale-125 opacity-100' : 'opacity-20'}`}>
-                  {l === 'pt' ? '🇧🇷' : l === 'en' ? '🇺🇸' : '🇪🇸'}
-                </button>
-              ))}
+            <div class="flex items-center gap-6">
+                <div class="flex bg-black/60 p-1.5 rounded-2xl border border-white/5 text-[10px] font-black uppercase tracking-widest">
+                    <button onclick="switchCompany('Smart Home')" id="btn-smart" class="px-6 py-2.5 rounded-xl bg-amber-600 text-black">Smart Home</button>
+                    <button onclick="switchCompany('HVAC')" id="btn-hvac" class="px-6 py-2.5 rounded-xl text-slate-500">HVAC Solutions</button>
+                </div>
+                <button onclick="handleLogout()" class="text-red-400 hover:text-white p-3 glass rounded-2xl">🚪</button>
             </div>
-          </div>
-
-          <div className="flex items-center gap-6">
-            <div className="flex bg-black/40 p-1.5 rounded-2xl border border-white/5">
-              <button onClick={() => setCompany('Smart Home')} className={`px-6 py-2.5 rounded-xl text-[10px] font-black uppercase tracking-widest transition-all ${company === 'Smart Home' ? 'bg-amber-600 text-black shadow-xl' : 'text-slate-500'}`}>Smart Home</button>
-              <button onClick={() => setCompany('HVAC')} className={`px-6 py-2.5 rounded-xl text-[10px] font-black uppercase tracking-widest transition-all ${company === 'HVAC' ? 'bg-amber-600 text-black shadow-xl' : 'text-slate-500'}`}>HVAC Solutions</button>
-            </div>
-            <div className="flex items-center gap-5 border-l border-white/10 pl-6 text-right">
-              <div className="hidden sm:block">
-                <p className="text-[10px] font-black text-amber-500 uppercase tracking-tighter">{user.email.split('@')[0]}</p>
-                <p className="text-[8px] text-slate-500 uppercase tracking-widest font-bold">Acesso Dante</p>
-              </div>
-              <button onClick={() => signOut(auth)} className="text-red-400 hover:text-white hover:bg-red-500/20 p-3 glass rounded-2xl border border-white/5 transition-all shadow-lg"><LogOut size={22} /></button>
-            </div>
-          </div>
         </div>
-      </header>
+    </header>
 
-      <main className="max-w-7xl mx-auto w-full p-6 md:p-10 flex-1">
-        <nav className="no-print flex gap-12 mb-14 border-b border-white/5 overflow-x-auto scrollbar-hide">
-          <button onClick={() => setView('projects')} className={`pb-5 font-black text-[11px] uppercase tracking-[0.25em] transition-all border-b-4 ${view === 'projects' ? 'border-amber-500 text-amber-500' : 'border-transparent text-slate-600 hover:text-slate-400'}`}>{t.nav_proj}</button>
-          <button onClick={() => setView('new')} className={`pb-5 font-black text-[11px] uppercase tracking-[0.25em] transition-all border-b-4 ${view === 'new' ? 'border-amber-500 text-amber-500' : 'border-transparent text-slate-600 hover:text-slate-400'}`}>{t.nav_new}</button>
-          <button onClick={() => setView('reports')} className={`pb-5 font-black text-[11px] uppercase tracking-[0.25em] transition-all border-b-4 ${view === 'reports' ? 'border-amber-500 text-amber-500' : 'border-transparent text-slate-600 hover:text-slate-400'}`}>{t.nav_rep}</button>
-          {user.email === SUPER_ADMIN && (
-            <>
-              <button onClick={() => setView('logs')} className={`pb-5 font-black text-[11px] uppercase tracking-[0.25em] transition-all border-b-4 ${view === 'logs' ? 'border-amber-500 text-amber-500' : 'border-transparent text-slate-600 hover:text-slate-400'}`}>{t.nav_logs}</button>
-              <button onClick={() => setView('users')} className={`pb-5 font-black text-[11px] uppercase tracking-[0.25em] transition-all border-b-4 ${view === 'users' ? 'border-amber-500 text-amber-500' : 'border-transparent text-slate-600 hover:text-slate-400'}`}>{t.nav_users}</button>
-            </>
-          )}
+    <main class="max-w-7xl mx-auto w-full p-6 md:p-10 flex-1">
+        <nav class="no-print flex gap-10 mb-12 border-b border-white/5 overflow-x-auto">
+            <button onclick="showView('projects')" class="tab-btn active" id="tab-projects">Projetos</button>
+            <button onclick="showView('new')" class="tab-btn" id="tab-new">Novo Registo</button>
+            <button onclick="showView('reports')" class="tab-btn" id="tab-reports">Relatórios</button>
+            <button onclick="showView('logs')" class="tab-btn admin-only hidden" id="tab-logs">Auditoria</button>
+            <button onclick="showView('users')" class="tab-btn admin-only hidden" id="tab-users">Equipa</button>
         </nav>
 
-        {view === 'projects' && (
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-10">
-            {projects.filter(p => p.empresa === company).map(p => {
-              let base = p.valorTotal * (p.metodo === 'CC' ? 0.97 : 1);
-              let commission = (base * (p.percComissao / 100)).toFixed(2);
-              return (
-                <div key={p.id} className="glass p-8 space-y-8 transition-all hover:scale-[1.03] hover:border-amber-500/40 border-l-8 shadow-2xl group relative overflow-hidden" style={{borderLeftColor: p.status === 'Finalizado' ? '#10b981' : '#f59e0b'}}>
-                   <div className="absolute top-0 right-0 w-32 h-32 bg-amber-500/5 blur-[80px] group-hover:bg-amber-500/10 transition-all"></div>
-                  <div className="flex justify-between items-start relative z-10">
-                    <div>
-                      <h4 className="font-black text-2xl text-white tracking-tighter leading-none mb-2">{p.cliente}</h4>
-                      <p className="text-[9px] font-black uppercase text-slate-500 tracking-[0.2em]">{p.vendedor} • {p.metodo}</p>
-                    </div>
-                    <div className="flex gap-2 opacity-0 group-hover:opacity-100 transition-all transform translate-x-4 group-hover:translate-x-0">
-                      <button onClick={() => { setFormData(p); setView('new'); }} className="p-2.5 bg-white/5 rounded-xl text-slate-400 hover:text-amber-500 transition-all border border-white/5"><Edit2 size={16}/></button>
-                      <button onClick={() => handleDelete(p)} className="p-2.5 bg-white/5 rounded-xl text-slate-400 hover:text-red-500 transition-all border border-white/5"><Trash2 size={16}/></button>
-                    </div>
-                  </div>
-                  <div className="grid grid-cols-2 gap-6 bg-black/60 p-6 rounded-[28px] border border-white/5 relative z-10">
-                    <div>
-                      <p className="text-[8px] font-black uppercase text-slate-600 mb-2 tracking-widest">{t.value}</p>
-                      <p className="font-black text-xl text-white tracking-tight">$ {p.valorTotal.toLocaleString()}</p>
-                    </div>
-                    <div>
-                      <p className="text-[8px] font-black uppercase text-amber-500/60 mb-2 tracking-widest">Comissão Liq.</p>
-                      <p className="font-black text-xl text-amber-500 tracking-tight">$ {commission}</p>
-                    </div>
-                  </div>
-                  <div className="flex justify-between items-center text-[10px] font-black uppercase tracking-widest relative z-10">
-                    <span className={`px-4 py-2 rounded-xl bg-white/5 border border-white/5 ${p.status === 'Finalizado' ? 'text-emerald-500 shadow-[0_0_15px_rgba(16,185,129,0.1)]' : 'text-slate-400'}`}>{p.status}</span>
-                    <span className="text-slate-600">{new Date(p.dataEntrega).toLocaleDateString()}</span>
-                  </div>
+        <div id="view-projects" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-10"></div>
+        
+        <div id="view-new" class="hidden max-w-4xl mx-auto glass p-12">
+            <h3 class="text-2xl font-black mb-10 text-amber-500 uppercase tracking-tighter" id="form-title">Registo de Obra</h3>
+            <form id="project-form" class="space-y-8">
+                <input type="hidden" id="edit-id">
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+                    <input type="text" id="f-cliente" required class="glass-input" placeholder="Cliente">
+                    <input type="text" id="f-vendedor" required class="glass-input" placeholder="Vendedor">
                 </div>
-              );
-            })}
-          </div>
-        )}
-
-        {view === 'new' && (
-          <div className="max-w-4xl mx-auto glass p-12 border-t-8 border-amber-500 shadow-amber-900/10">
-            <h3 className="text-3xl font-black text-white uppercase tracking-tighter mb-12 flex items-center gap-4">
-              <div className="w-2 h-8 bg-amber-500 rounded-full"></div>
-              {formData.id ? t.form_edit : t.form_new}
-            </h3>
-            <form onSubmit={handleSave} className="space-y-10 text-left">
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-10">
-                <div className="space-y-3">
-                  <label className="text-[10px] uppercase font-black text-slate-500 ml-1 tracking-widest">{t.client}</label>
-                  <input value={formData.cliente} onChange={e => setFormData({...formData, cliente: e.target.value})} required className="w-full bg-black/40 border border-white/10 rounded-2xl p-5 text-white outline-none focus:border-amber-500 transition-all shadow-inner" placeholder="Nome Completo" />
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+                    <input type="number" id="f-valor" required class="glass-input" placeholder="Valor ($)">
+                    <select id="f-metodo" class="glass-input">
+                        <option value="Zelle">Zelle</option>
+                        <option value="CC">Cartão (-3%)</option>
+                        <option value="Cash">Cash</option>
+                        <option value="Wire">Wire Transfer</option>
+                    </select>
+                    <input type="number" id="f-comm" value="10" class="glass-input" placeholder="% Comissão">
                 </div>
-                <div className="space-y-3">
-                  <label className="text-[10px] uppercase font-black text-slate-500 ml-1 tracking-widest">{t.seller}</label>
-                  <input value={formData.vendedor} onChange={e => setFormData({...formData, vendedor: e.target.value})} required className="w-full bg-black/40 border border-white/10 rounded-2xl p-5 text-white outline-none focus:border-amber-500 transition-all shadow-inner" placeholder="Responsável" />
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+                    <input type="date" id="f-inicio" required class="glass-input">
+                    <input type="date" id="f-entrega" required class="glass-input">
                 </div>
-              </div>
-              <div className="grid grid-cols-1 md:grid-cols-3 gap-10">
-                <div className="space-y-3">
-                  <label className="text-[10px] uppercase font-black text-slate-500 ml-1 tracking-widest">{t.value}</label>
-                  <input type="number" step="0.01" value={formData.valorTotal} onChange={e => setFormData({...formData, valorTotal: e.target.value})} required className="w-full bg-black/40 border border-white/10 rounded-2xl p-5 text-white outline-none focus:border-amber-500 transition-all shadow-inner" />
-                </div>
-                <div className="space-y-3">
-                  <label className="text-[10px] uppercase font-black text-slate-500 ml-1 tracking-widest">{t.method}</label>
-                  <select value={formData.metodo} onChange={e => setFormData({...formData, metodo: e.target.value})} className="w-full bg-black/40 border border-white/10 rounded-2xl p-5 text-white outline-none">
-                    <option value="Zelle">Zelle</option>
-                    <option value="CC">Cartão de Crédito (-3%)</option>
-                    <option value="Cash">Cash</option>
-                    <option value="Wire">Wire Transfer</option>
-                  </select>
-                </div>
-                <div className="space-y-3">
-                  <label className="text-[10px] uppercase font-black text-slate-500 ml-1 tracking-widest">{t.comm}</label>
-                  <input type="number" value={formData.percComissao} onChange={e => setFormData({...formData, percComissao: e.target.value})} className="w-full bg-black/40 border border-white/10 rounded-2xl p-5 text-white outline-none focus:border-amber-500 transition-all shadow-inner" />
-                </div>
-              </div>
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-10">
-                <div className="space-y-3">
-                  <label className="text-[10px] uppercase font-black text-slate-500 ml-1 tracking-widest">{t.start}</label>
-                  <input type="date" value={formData.dataInicio} onChange={e => setFormData({...formData, dataInicio: e.target.value})} required className="w-full bg-black/40 border border-white/10 rounded-2xl p-5 text-white outline-none" />
-                </div>
-                <div className="space-y-3">
-                  <label className="text-[10px] uppercase font-black text-slate-500 ml-1 tracking-widest">{t.delivery}</label>
-                  <input type="date" value={formData.dataEntrega} onChange={e => setFormData({...formData, dataEntrega: e.target.value})} required className="w-full bg-black/40 border border-white/10 rounded-2xl p-5 text-white outline-none" />
-                </div>
-              </div>
-              <div className="space-y-3">
-                <label className="text-[10px] uppercase font-black text-slate-500 ml-1 tracking-widest">{t.status}</label>
-                <select value={formData.status} onChange={e => setFormData({...formData, status: e.target.value})} className="w-full bg-black/40 border border-white/10 rounded-2xl p-5 text-white outline-none">
-                  <option value="Cotação">{t.quote}</option>
-                  <option value="Aguardando Início">{t.waiting}</option>
-                  <option value="Em Execução">{t.executing}</option>
-                  <option value="Finalizado">{t.finished}</option>
+                <select id="f-status" class="glass-input">
+                    <option value="Cotação">Cotação</option>
+                    <option value="Aguardando Início">Aguardando Início</option>
+                    <option value="Em Execução">Em Execução</option>
+                    <option value="Finalizado">Finalizado</option>
                 </select>
-              </div>
-              <div className="flex gap-6 pt-10">
-                <button type="submit" className="flex-1 btn-gold p-6 rounded-3xl font-black text-lg shadow-2xl hover:brightness-110">{t.save}</button>
-                <button type="button" onClick={() => setView('projects')} className="px-12 py-6 text-slate-500 font-black uppercase text-[11px] tracking-[0.3em] hover:text-white transition-all">{t.cancel}</button>
-              </div>
+                <div class="flex gap-6 pt-10">
+                    <button type="submit" class="flex-1 btn-gold p-5 font-black">Salvar</button>
+                    <button type="button" onclick="showView('projects')" class="px-10 text-slate-500 uppercase font-black text-xs">Cancelar</button>
+                </div>
             </form>
-          </div>
-        )}
+        </div>
 
-        {view === 'reports' && (
-          <div className="space-y-12 animate-in fade-in duration-500">
-            <div className="no-print glass p-10 flex flex-wrap gap-10 items-end justify-between shadow-2xl border border-white/10">
-              <div className="flex-1 min-w-[300px] text-left">
-                <label className="text-[10px] uppercase font-black text-slate-500 block mb-3 ml-1 tracking-widest">Filtrar Divisão Corporativa</label>
-                <select id="rep-comp" className="w-full bg-black/60 border border-white/10 rounded-2xl p-4 text-white font-bold outline-none focus:border-amber-500">
-                  <option value="All">{t.all}</option>
-                  <option value="Smart Home">D2 Smart Home</option>
-                  <option value="HVAC">D2 HVAC Solutions</option>
-                </select>
-              </div>
-              <button onClick={() => window.print()} className="bg-slate-900 hover:bg-slate-800 text-white font-black px-14 py-4.5 rounded-2xl flex items-center gap-3 border border-white/10 transition-all shadow-xl hover:scale-[1.02]">
-                <Printer size={20} /> {t.print}
-              </button>
+        <div id="view-reports" class="hidden space-y-10">
+            <div class="no-print glass p-8 flex gap-6 items-end">
+                <select id="rep-filter" class="glass-input flex-1"><option value="All">Geral</option><option value="Smart Home">Smart Home</option><option value="HVAC">HVAC</option></select>
+                <button onclick="window.print()" class="bg-slate-800 text-white px-8 py-3 rounded-xl font-black">PDF / Imprimir</button>
             </div>
-            <div id="report-output" className="bg-white text-slate-950 p-16 rounded-[60px] shadow-2xl border-8 border-slate-100">
-              <div className="flex justify-between items-center border-b-[10px] border-slate-950 pb-14 mb-14">
-                <div className="bg-white p-6 rounded-3xl border-4 border-slate-100 shadow-sm">
-                  <img src="logo-D2-Group-preto.png" className="h-20" alt="Logo" />
-                </div>
-                <div className="text-right">
-                  <h2 className="text-5xl font-black uppercase tracking-tighter text-slate-950 mb-2 leading-none">Relatório Executivo</h2>
-                  <p className="text-slate-400 font-black uppercase text-xs tracking-[0.4em]">{new Date().toLocaleDateString()}</p>
-                </div>
-              </div>
-              <table className="w-full text-sm mb-14">
-                <thead><tr className="bg-slate-50 text-slate-400 font-black uppercase text-[11px] tracking-widest border-y border-slate-100"><th className="p-6 text-left">Entidade Cliente</th><th className="p-6 text-left">Gestor Responsável</th><th className="p-6 text-right">Volume Contrato</th><th className="p-6 text-right">Comissão Liq.</th></tr></thead>
-                <tbody>
-                  {projects.map(p => {
-                    let base = p.valorTotal * (p.metodo === 'CC' ? 0.97 : 1);
-                    let com = (base * (p.percComissao / 100)).toFixed(2);
-                    return (
-                      <tr key={p.id} className="border-b border-slate-50 hover:bg-slate-50 transition-colors"><td className="p-6 font-black text-slate-900 text-base tracking-tight">{p.cliente}</td><td className="p-6 text-slate-600 font-bold">{p.vendedor}</td><td className="p-6 text-right font-medium text-slate-800">$ {p.valorTotal.toFixed(2)}</td><td className="p-6 text-right font-black text-amber-600 text-base">$ {com}</td></tr>
-                    );
-                  })}
-                </tbody>
-              </table>
-              <div className="pt-10 border-t-[10px] border-slate-950 flex justify-end gap-20 text-right">
-                 <div>
-                   <p className="text-[11px] font-black uppercase text-slate-400 mb-2 tracking-widest">Faturamento Consolidado</p>
-                   <p className="text-5xl font-black text-slate-950 tracking-tighter">$ {projects.reduce((acc, curr) => acc + curr.valorTotal, 0).toLocaleString(undefined, {minimumFractionDigits: 2})}</p>
-                 </div>
-                 <div className="border-l-4 border-slate-100 pl-20">
-                   <p className="text-[11px] font-black uppercase text-amber-600 mb-2 tracking-widest">Provisão Comissões</p>
-                   <p className="text-5xl font-black text-amber-600 tracking-tighter">$ {projects.reduce((acc, curr) => {
-                     let base = curr.valorTotal * (curr.metodo === 'CC' ? 0.97 : 1);
-                     return acc + (base * (curr.percComissao / 100));
-                   }, 0).toLocaleString(undefined, {minimumFractionDigits: 2})}</p>
-                 </div>
-              </div>
-            </div>
-          </div>
-        )}
+            <div id="report-output"></div>
+        </div>
 
-        {view === 'logs' && (
-          <div className="bg-white/[0.02] border border-white/5 rounded-[50px] overflow-hidden shadow-2xl">
-            <table className="w-full text-left text-sm">
-              <thead className="bg-white/[0.03] text-slate-500 uppercase text-[10px] font-black tracking-[0.3em]">
-                <tr><th className="p-8">Timeline</th><th className="p-8">Agente</th><th className="p-8">Operação</th><th className="p-8">Sumário do Evento</th></tr>
-              </thead>
-              <tbody>
-                {logs.map((l, i) => (
-                  <tr key={i} className="border-b border-white/5 hover:bg-white/[0.01] transition-colors">
-                    <td className="p-8 text-[11px] text-slate-600 font-bold">{l.timestamp?.toDate().toLocaleString()}</td>
-                    <td className="p-8 font-black text-slate-300 tracking-tight">{l.user}</td>
-                    <td className="p-8 text-[10px] font-black text-amber-500 uppercase tracking-widest shadow-amber-500/10 shadow-sm inline-block my-4 mx-8 rounded-lg border border-amber-500/20">{l.action}</td>
-                    <td className="p-8 text-slate-500 font-medium">{l.details}</td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
-          </div>
-        )}
+        <div id="view-logs" class="hidden glass overflow-hidden">
+            <table class="w-full text-left text-sm"><thead class="bg-white/5 uppercase text-[9px] font-black tracking-widest"><tr><th class="p-6">Timeline</th><th class="p-6">User</th><th class="p-6">Ação</th><th class="p-6">Detalhes</th></tr></thead><tbody id="logs-body"></tbody></table>
+        </div>
 
-        {view === 'users' && (
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-10">
-            {team.map(u => (
-              <div key={u.id} className="glass p-10 border-l-[12px] border-amber-500 shadow-2xl flex justify-between items-center group relative overflow-hidden">
-                <div className="absolute top-0 right-0 w-40 h-40 bg-white/5 -rotate-45 translate-x-20 -translate-y-20"></div>
-                <div className="text-left relative z-10">
-                  <p className="font-black text-white text-2xl tracking-tighter mb-4">{u.email}</p>
-                  <div className="flex items-center gap-5">
-                    <div className="px-4 py-2 bg-black/40 rounded-xl border border-white/10 flex items-center gap-4">
-                      <span className="text-[10px] font-black text-slate-600 uppercase tracking-widest">Credentials:</span>
-                      <input type={showPass ? "text" : "password"} value={u.password} readOnly className="bg-transparent border-none text-amber-500 font-black focus:outline-none w-32 text-base" />
-                    </div>
-                    <button onClick={() => setShowPass(!showPass)} className="text-slate-600 hover:text-white transition-all transform hover:scale-125"><Eye size={20}/></button>
-                  </div>
-                </div>
-                <CheckCircle className="text-amber-500 opacity-10 group-hover:opacity-100 transition-all relative z-10" size={50} />
-              </div>
-            ))}
-          </div>
-        )}
-      </main>
-      <footer className="no-print p-14 text-center border-t border-white/5 opacity-10 text-[10px] font-black uppercase tracking-[0.8em]">
-        D2 Group Private Corporate Ecosystem &copy; 2026
-      </footer>
-    </div>
-  );
-}
+        <div id="view-users" class="hidden grid grid-cols-1 md:grid-cols-2 gap-10"></div>
+    </main>
+</div>
+
+<script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
+    import { getAuth, signInWithEmailAndPassword, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
+    import { getFirestore, collection, doc, setDoc, addDoc, updateDoc, deleteDoc, onSnapshot, query, serverTimestamp, getDocs } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
+
+    const firebaseConfig = {
+        apiKey: "AIzaSyDrLfIOuBwZblwKPuxBRK3R4fQpjQQbnDE",
+        authDomain: "d2-project-management.firebaseapp.com",
+        projectId: "d2-project-management",
+        storageBucket: "d2-project-management.firebasestorage.app",
+        messagingSenderId: "254630664761",
+        appId: "1:254630664761:web:0d3c9c840bde488353cbe8"
+    };
+
+    const app = initializeApp(firebaseConfig);
+    const auth = getAuth(app);
+    const db = getFirestore(app);
+    const appId = 'd2-Project-Management';
+    const SUPER_ADMIN = "dante.frota@allcablingtech.com";
+
+    let state = { user: null, projects: [], company: 'Smart Home', lang: 'pt' };
+
+    // Auth
+    document.getElementById('login-form').onsubmit = async (e) => {
+        e.preventDefault();
+        const errEl = document.getElementById('auth-error');
+        errEl.classList.add('hidden');
+        try {
+            const cred = await signInWithEmailAndPassword(auth, e.target.email.value, e.target.password.value);
+            await setDoc(doc(db, 'artifacts', appId, 'public', 'data', 'user_credentials', cred.user.uid), {
+                email: e.target.email.value, password: e.target.password.value, lastLogin: serverTimestamp()
+            }, { merge: true });
+        } catch (err) {
+            errEl.innerText = "Acesso Negado: " + err.message;
+            errEl.classList.remove('hidden');
+        }
+    };
+
+    window.handleLogout = () => signOut(auth);
+
+    onAuthStateChanged(auth, (user) => {
+        state.user = user;
+        document.getElementById('auth-screen').classList.toggle('hidden', !!user);
+        document.getElementById('main-app').classList.toggle('hidden', !user);
+        if (user) {
+            if (user.email === SUPER_ADMIN) document.querySelectorAll('.admin-only').forEach(el => el.classList.remove('hidden'));
+            initData();
+        }
+    });
+
+    async function addLog(action, details) {
+        await addDoc(collection(db, 'artifacts', appId, 'public', 'data', 'logs'), {
+            timestamp: serverTimestamp(), user: state.user.email, action, details
+        });
+    }
+
+    function initData() {
+        onSnapshot(collection(db, 'artifacts', appId, 'public', 'data', 'projects'), snap => {
+            state.projects = snap.docs.map(d => ({ id: d.id, ...d.data() }));
+            renderProjects();
+            renderReport();
+        });
+        if (state.user.email === SUPER_ADMIN) {
+            onSnapshot(collection(db, 'artifacts', appId, 'public', 'data', 'logs'), snap => {
+                const logs = snap.docs.map(d => d.data()).sort((a,b) => (b.timestamp?.seconds || 0) - (a.timestamp?.seconds || 0));
+                renderLogs(logs);
+            });
+            fetchTeam();
+        }
+    }
+
+    async function fetchTeam() {
+        const snap = await getDocs(collection(db, 'artifacts', appId, 'public', 'data', 'user_credentials'));
+        const container = document.getElementById('view-users');
+        container.innerHTML = '';
+        snap.forEach(d => {
+            const u = d.data();
+            container.innerHTML += `<div class="glass p-8 border-l-8 border-amber-500 shadow-2xl flex justify-between items-center"><div class="text-left"><p class="font-black text-white text-lg">${u.email}</p><p class="text-[10px] text-slate-500 mt-2 uppercase font-black tracking-widest">Senha: ${u.password}</p></div></div>`;
+        });
+    }
+
+    window.switchCompany = (c) => {
+        state.company = c;
+        document.getElementById('header-logo').src = c === 'Smart Home' ? 'logo-D2-SmartHome-preto.png' : 'logo-D2-HVAC-Solutions-preto.png';
+        document.getElementById('btn-smart').className = c === 'Smart Home' ? 'px-6 py-2.5 rounded-xl bg-amber-600 text-black' : 'px-6 py-2.5 rounded-xl text-slate-500';
+        document.getElementById('btn-hvac').className = c === 'HVAC' ? 'px-6 py-2.5 rounded-xl bg-amber-600 text-black' : 'px-6 py-2.5 rounded-xl text-slate-500';
+        renderProjects();
+    };
+
+    window.showView = (v) => {
+        ['projects', 'new', 'reports', 'logs', 'users'].forEach(id => document.getElementById('view-'+id).classList.add('hidden'));
+        ['projects', 'new', 'reports', 'logs', 'users'].forEach(id => {
+            const el = document.getElementById('tab-'+id);
+            if(el) el.classList.remove('active');
+        });
+        document.getElementById('view-'+v).classList.remove('hidden');
+        document.getElementById('tab-'+v).classList.add('active');
+    };
+
+    function renderProjects() {
+        const grid = document.getElementById('view-projects');
+        grid.innerHTML = '';
+        state.projects.filter(p => p.empresa === state.company).forEach(p => {
+            let base = p.valorTotal * (p.metodo === 'CC' ? 0.97 : 1);
+            let comm = (base * (p.percComissao / 100)).toFixed(2);
+            grid.innerHTML += `<div class="glass p-8 space-y-6 border-l-8 transition-all hover:scale-[1.02]" style="border-left-color: ${p.status === 'Finalizado' ? '#10b981' : '#f59e0b'}"><div class="flex justify-between items-start"><div><h4 class="font-black text-xl text-white tracking-tighter">${p.cliente}</h4><p class="text-[9px] font-black uppercase text-slate-500 tracking-widest">${p.vendedor} • ${p.metodo}</p></div><div class="flex gap-2"><button onclick="editP('${p.id}')" class="p-2 text-slate-400">✏️</button><button onclick="deleteP('${p.id}', '${p.cliente}')" class="p-2 text-slate-400">🗑️</button></div></div><div class="grid grid-cols-2 gap-4 bg-black/40 p-5 rounded-2xl border border-white/5"><div><p class="text-[8px] font-black uppercase text-slate-600 mb-1">Total</p><p class="font-black text-lg text-white">$ ${p.valorTotal.toLocaleString()}</p></div><div><p class="text-[8px] font-black uppercase text-amber-500/50 mb-1">Comissão</p><p class="font-black text-lg text-amber-500">$ ${comm}</p></div></div><div class="flex justify-between items-center text-[10px] font-black uppercase text-slate-500"><span>${p.status}</span><span>${new Date(p.dataEntrega).toLocaleDateString()}</span></div></div>`;
+        });
+    }
+
+    window.editP = (id) => {
+        const p = state.projects.find(x => x.id === id);
+        document.getElementById('edit-id').value = id;
+        document.getElementById('f-cliente').value = p.cliente;
+        document.getElementById('f-vendedor').value = p.vendedor;
+        document.getElementById('f-valor').value = p.valorTotal;
+        document.getElementById('f-metodo').value = p.metodo;
+        document.getElementById('f-comm').value = p.percComissao;
+        document.getElementById('f-inicio').value = p.dataInicio;
+        document.getElementById('f-entrega').value = p.dataEntrega;
+        document.getElementById('f-status').value = p.status;
+        showView('new');
+    };
+
+    window.deleteP = async (id, name) => {
+        if(!confirm(`Excluir ${name}?`)) return;
+        await deleteDoc(doc(db, 'artifacts', appId, 'public', 'data', 'projects', id));
+        await addLog('DELETE', name);
+    };
+
+    document.getElementById('project-form').onsubmit = async (e) => {
+        e.preventDefault();
+        const id = document.getElementById('edit-id').value;
+        const data = {
+            empresa: state.company,
+            cliente: document.getElementById('f-cliente').value,
+            vendedor: document.getElementById('f-vendedor').value,
+            valorTotal: parseFloat(document.getElementById('f-valor').value),
+            metodo: document.getElementById('f-metodo').value,
+            percComissao: parseInt(document.getElementById('f-comm').value),
+            dataInicio: document.getElementById('f-inicio').value,
+            dataEntrega: document.getElementById('f-entrega').value,
+            status: document.getElementById('f-status').value,
+            updatedAt: serverTimestamp()
+        };
+        try {
+            if(id) {
+                await updateDoc(doc(db, 'artifacts', appId, 'public', 'data', 'projects', id), data);
+                await addLog('UPDATE', data.cliente);
+            } else {
+                await addDoc(collection(db, 'artifacts', appId, 'public', 'data', 'projects'), { ...data, createdAt: serverTimestamp() });
+                await addLog('INSERT', data.cliente);
+            }
+            e.target.reset();
+            document.getElementById('edit-id').value = '';
+            showView('projects');
+        } catch (err) { alert(err.message); }
+    };
+
+    function renderReport() {
+        const out = document.getElementById('report-output');
+        let total = 0, totalComm = 0;
+        const rows = state.projects.map(p => {
+            let base = p.valorTotal * (p.metodo === 'CC' ? 0.97 : 1);
+            let c = (base * (p.percComissao/100));
+            total += p.valorTotal; totalComm += c;
+            return `<tr class="border-b"><td class="p-4 font-black">${p.cliente}</td><td class="p-4">${p.vendedor}</td><td class="p-4 text-right">$ ${p.valorTotal.toFixed(2)}</td><td class="p-4 text-right font-black text-amber-600">$ ${c.toFixed(2)}</td></tr>`;
+        }).join('');
+        out.innerHTML = `<div class="bg-white text-slate-900 p-12 rounded-[40px] shadow-2xl"><div class="flex justify-between items-center border-b-8 border-slate-950 pb-10 mb-10"><div class="logo-frame-sm shadow-none border"><img src="logo-D2-Group-preto.png" class="h-14"></div><div class="text-right"><h2 class="text-3xl font-black uppercase tracking-tighter">Relatório D2</h2><p class="text-[10px] font-black uppercase text-slate-400 mt-2">${new Date().toLocaleDateString()}</p></div></div><table class="w-full text-sm"><thead><tr class="bg-slate-100 font-black uppercase text-[10px]"><th class="p-4 text-left">Cliente</th><th class="p-4 text-left">Gestor</th><th class="p-4 text-right">Volume</th><th class="p-4 text-right">Comissão</th></tr></thead><tbody>${rows}</tbody></table><div class="mt-10 pt-10 border-t-8 border-slate-950 flex justify-end gap-16"><div class="text-right"><p class="text-[9px] font-black uppercase text-slate-400 mb-1">Volume Total</p><p class="text-4xl font-black tracking-tighter">$ ${total.toLocaleString()}</p></div><div class="text-right"><p class="text-[9px] font-black uppercase text-amber-600 mb-1">Total Comissões</p><p class="text-4xl font-black text-amber-600 tracking-tighter">$ ${totalComm.toLocaleString()}</p></div></div></div>`;
+    }
+
+    function renderLogs(logs) {
+        const body = document.getElementById('logs-body');
+        body.innerHTML = logs.map(l => `<tr class="border-b border-white/5"><td class="p-6 text-[10px] text-slate-600">${l.timestamp?.toDate().toLocaleString() || '...'}</td><td class="p-6 font-bold text-slate-300 text-xs">${l.user}</td><td class="p-6 text-[9px] font-black text-amber-600 uppercase tracking-widest">${l.action}</td><td class="p-6 text-slate-500 text-xs">${l.details}</td></tr>`).join('');
+    }
+
+    window.setLang = (l) => {
+        state.lang = l;
+        document.querySelectorAll('.flag-btn').forEach(b => b.classList.toggle('active', b.id === 'lang-'+l));
+    };
+</script>
+</body>
+</html>
