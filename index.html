@@ -15,7 +15,7 @@
         }
         body {
             font-family: 'Inter', sans-serif;
-            background: #05070a;
+            background: #030508;
             color: #f1f5f9;
             min-height: 100vh;
             margin: 0;
@@ -30,19 +30,29 @@
             border-radius: 28px; 
             box-shadow: 0 25px 60px -12px rgba(0, 0, 0, 0.8);
         }
+        /* Container para Logo para evitar "Preto no Preto" */
+        .logo-backdrop {
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(10px);
+            padding: 15px 25px;
+            border-radius: 20px;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            display: inline-block;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+        }
         .glass-input { 
-            background: rgba(0, 0, 0, 0.4) !important; 
+            background: rgba(0, 0, 0, 0.5) !important; 
             border: 1px solid var(--border) !important; 
             border-radius: 14px !important; 
             color: white !important; 
             padding: 14px 18px !important; 
             width: 100%; 
             outline: none; 
-            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1); 
+            transition: all 0.3s ease; 
         }
         .glass-input:focus { 
             border-color: var(--gold) !important;
-            background: rgba(0, 0, 0, 0.6) !important;
+            background: rgba(0, 0, 0, 0.7) !important;
             box-shadow: 0 0 20px rgba(251, 191, 36, 0.15) !important;
         }
         .btn-gold {
@@ -52,11 +62,8 @@
             text-transform: uppercase;
             letter-spacing: 1px;
             transition: all 0.3s ease;
-            box-shadow: 0 4px 20px rgba(180, 83, 9, 0.2);
         }
         .btn-gold:hover { transform: translateY(-2px); filter: brightness(1.1); box-shadow: 0 8px 30px rgba(180, 83, 9, 0.4); }
-        .btn-gold:active { transform: translateY(0); }
-
         .tab-btn { 
             padding-bottom: 14px; 
             border-bottom: 3px solid transparent; 
@@ -64,14 +71,13 @@
             font-weight: 700;
             font-size: 0.75rem;
             text-transform: uppercase;
-            letter-spacing: 1px;
             transition: all 0.3s; 
             cursor: pointer; 
         }
         .tab-btn.active { color: var(--gold); border-bottom-color: var(--gold); }
         
-        .logo-header { max-height: 55px; width: auto; transition: all 0.5s ease; filter: drop-shadow(0 2px 4px rgba(0,0,0,0.3)); }
-        .logo-login { max-width: 340px; height: auto; margin-bottom: 2.5rem; filter: drop-shadow(0 0 15px rgba(251, 191, 36, 0.1)); }
+        .logo-header { max-height: 50px; width: auto; transition: all 0.5s ease; }
+        .logo-login { max-width: 280px; height: auto; }
 
         @media print {
             .no-print { display: none !important; }
@@ -83,10 +89,7 @@
         .flag-btn { font-size: 1.6rem; opacity: 0.3; transition: all 0.2s; cursor: pointer; border: none; background: none; }
         .flag-btn:hover, .flag-btn.active { opacity: 1; transform: scale(1.2); }
         .log-row:nth-child(even) { background: rgba(255,255,255,0.01); }
-        
-        /* Ocultar barra de scroll sem perder função */
         .scrollbar-hide::-webkit-scrollbar { display: none; }
-        .scrollbar-hide { -ms-overflow-style: none; scrollbar-width: none; }
     </style>
 </head>
 <body>
@@ -94,20 +97,22 @@
 <!-- Authentication Overlay -->
 <div id="auth-container" class="fixed inset-0 z-50 flex flex-col items-center justify-center bg-[#030508] p-6">
     <div class="glass p-12 w-full max-w-md text-center">
-        <!-- Logo Principal D2 Group -->
-        <img src="logo-D2-Group-preto.png" alt="D2 Group" class="logo-login mx-auto" onerror="this.src='https://placehold.co/400x150/05070a/fbbf24?text=D2+GROUP'">
+        <!-- Logo D2 Group com fundo claro para visibilidade -->
+        <div class="logo-backdrop mb-8">
+            <img src="logo-D2-Group-preto.png" alt="D2 Group" class="logo-login mx-auto" onerror="this.src='https://placehold.co/400x150/ffffff/000000?text=D2+GROUP'">
+        </div>
         
-        <p id="auth-subtitle" class="text-slate-500 text-[10px] mb-12 font-black tracking-[0.3em] uppercase" data-i18n="login_subtitle">Sistema Integrado de Gestão</p>
+        <p id="auth-subtitle" class="text-slate-500 text-[10px] mb-10 font-black tracking-[0.3em] uppercase" data-i18n="login_subtitle">SISTEMA INTEGRADO DE GESTÃO</p>
         
         <form id="login-form" onsubmit="handleAuth(event)" class="space-y-6 text-left">
             <div>
-                <label class="text-[9px] text-slate-500 uppercase font-black tracking-widest block mb-2 ml-1">Utilizador Corporativo</label>
+                <label class="text-[9px] text-slate-500 uppercase font-black tracking-widest block mb-2 ml-1">E-mail Corporativo</label>
                 <input type="email" id="auth-email" required class="glass-input" placeholder="dante.frota@allcablingtech.com">
             </div>
             <div class="relative">
                 <label class="text-[9px] text-slate-500 uppercase font-black tracking-widest block mb-2 ml-1" data-i18n="field_password">Chave de Acesso</label>
                 <input type="password" id="auth-password" required class="glass-input" placeholder="••••••••">
-                <button type="button" onclick="togglePasswordVisibility('auth-password')" class="absolute right-4 top-10 text-slate-500 hover:text-white transition-colors">
+                <button type="button" onclick="togglePasswordVisibility('auth-password')" class="absolute right-4 top-10 text-slate-500 hover:text-white">
                     👁️
                 </button>
             </div>
@@ -121,30 +126,32 @@
 
 <!-- Main Application Interface -->
 <div id="app-container" class="hidden min-h-screen flex flex-col">
-    <header class="no-print sticky top-0 z-40 bg-[#05070a]/90 backdrop-blur-3xl border-b border-white/5 p-5">
+    <header class="no-print sticky top-0 z-40 bg-[#030508]/90 backdrop-blur-3xl border-b border-white/5 p-5">
         <div class="max-w-7xl mx-auto flex flex-wrap justify-between items-center gap-6">
             <div class="flex items-center gap-10">
-                <!-- Logotipo Dinâmico conforme a divisão -->
-                <img id="header-logo" src="logo-D2-SmartHome-preto.png" alt="D2 Logo" class="logo-header" onerror="this.src='https://placehold.co/220x60/05070a/fbbf24?text=D2+MANAGEMENT'">
+                <!-- Logotipo da Divisão com fundo claro no cabeçalho -->
+                <div class="logo-backdrop py-2 px-4 rounded-xl">
+                    <img id="header-logo" src="logo-D2-SmartHome-preto.png" alt="D2 Logo" class="logo-header" onerror="this.src='https://placehold.co/220x60/ffffff/000000?text=D2+DIVISION'">
+                </div>
                 <div class="flex gap-4">
-                    <button onclick="setLanguage('pt')" id="lang-pt" class="flag-btn active" title="Português">🇧🇷</button>
-                    <button onclick="setLanguage('en')" id="lang-en" class="flag-btn" title="English">🇺🇸</button>
-                    <button onclick="setLanguage('es')" id="lang-es" class="flag-btn" title="Español">🇪🇸</button>
+                    <button onclick="setLanguage('pt')" id="lang-pt" class="flag-btn active">🇧🇷</button>
+                    <button onclick="setLanguage('en')" id="lang-en" class="flag-btn">🇺🇸</button>
+                    <button onclick="setLanguage('es')" id="lang-es" class="flag-btn">🇪🇸</button>
                 </div>
             </div>
 
             <div class="flex items-center gap-6">
-                <div class="flex bg-black/40 p-1.5 rounded-2xl border border-white/5 text-[10px] font-black uppercase tracking-[0.15em]">
+                <div class="flex bg-black/60 p-1.5 rounded-2xl border border-white/5 text-[10px] font-black uppercase tracking-widest">
                     <button onclick="switchCompany('Smart Home')" id="btn-smart" class="px-6 py-3 rounded-xl transition-all bg-amber-600 text-black">Smart Home</button>
                     <button onclick="switchCompany('HVAC')" id="btn-hvac" class="px-6 py-3 rounded-xl transition-all text-slate-500 hover:text-white">HVAC Solutions</button>
                 </div>
                 <div class="flex items-center gap-5 border-l border-white/10 pl-6">
                     <div class="text-right hidden sm:block">
                         <p id="user-display" class="text-[10px] font-black text-slate-300"></p>
-                        <p class="text-[8px] text-amber-500 font-bold uppercase tracking-widest">Sessão Segura</p>
+                        <p class="text-[8px] text-amber-500 font-bold uppercase tracking-widest">Administrador</p>
                     </div>
-                    <button onclick="logout()" class="text-red-400 hover:text-white hover:bg-red-500/20 p-3 glass rounded-2xl transition-all" title="Sair">
-                        <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></svg>
+                    <button onclick="logout()" class="text-red-400 hover:text-white hover:bg-red-500/20 p-3 glass rounded-2xl transition-all">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></svg>
                     </button>
                 </div>
             </div>
@@ -152,7 +159,6 @@
     </header>
 
     <main class="max-w-7xl mx-auto w-full p-6 md:p-10 flex-1">
-        <!-- Tabs Navigation -->
         <div class="no-print flex gap-10 mb-12 border-b border-white/5 overflow-x-auto scrollbar-hide">
             <button onclick="showSection('projects')" id="tab-projects" class="tab-btn active" data-i18n="nav_projects">Projetos</button>
             <button onclick="showSection('new')" id="tab-new" class="tab-btn" data-i18n="nav_new">Novo Registo</button>
@@ -161,35 +167,33 @@
             <button onclick="showSection('users')" id="tab-users" class="tab-btn hidden admin-only" data-i18n="nav_users">Equipa</button>
         </div>
 
-        <!-- Section: Projects -->
         <section id="section-projects" class="space-y-8">
             <h3 class="text-3xl font-black tracking-tighter mb-10 uppercase" data-i18n="active_projects">Portfolio de Obras</h3>
             <div id="projects-grid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-10"></div>
         </section>
 
-        <!-- Section: Form -->
         <section id="section-new" class="hidden max-w-4xl mx-auto">
             <div class="glass p-12">
-                <h3 class="text-2xl font-black mb-10 text-amber-500 uppercase tracking-tighter border-l-4 border-amber-500 pl-4" id="form-title" data-i18n="form_new">Novo Registo de Obra</h3>
+                <h3 class="text-2xl font-black mb-10 text-amber-500 uppercase tracking-tighter" id="form-title" data-i18n="form_new">Novo Registo de Obra</h3>
                 <form id="main-form" onsubmit="handleFormSubmit(event)" class="space-y-8">
                     <input type="hidden" id="edit-id">
                     <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
                         <div>
-                            <label class="text-[9px] text-slate-500 uppercase font-black tracking-[0.2em] block mb-3 ml-1" data-i18n="field_client">Cliente</label>
+                            <label class="text-[9px] text-slate-500 uppercase font-black tracking-widest block mb-3 ml-1" data-i18n="field_client">Cliente</label>
                             <input type="text" name="cliente" required class="glass-input">
                         </div>
                         <div>
-                            <label class="text-[9px] text-slate-500 uppercase font-black tracking-[0.2em] block mb-3 ml-1" data-i18n="field_vendedor">Vendedor</label>
+                            <label class="text-[9px] text-slate-500 uppercase font-black tracking-widest block mb-3 ml-1" data-i18n="field_vendedor">Vendedor</label>
                             <input type="text" name="vendedor" required class="glass-input">
                         </div>
                     </div>
                     <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
                         <div>
-                            <label class="text-[9px] text-slate-500 uppercase font-black tracking-[0.2em] block mb-3 ml-1" data-i18n="field_value">Valor Total ($)</label>
+                            <label class="text-[9px] text-slate-500 uppercase font-black tracking-widest block mb-3 ml-1" data-i18n="field_value">Valor ($)</label>
                             <input type="number" step="0.01" name="valorTotal" required class="glass-input">
                         </div>
                         <div>
-                            <label class="text-[9px] text-slate-500 uppercase font-black tracking-[0.2em] block mb-3 ml-1" data-i18n="field_method">Método Pagamento</label>
+                            <label class="text-[9px] text-slate-500 uppercase font-black tracking-widest block mb-3 ml-1" data-i18n="field_method">Pagamento</label>
                             <select name="metodo" class="glass-input">
                                 <option value="Zelle">Zelle</option>
                                 <option value="CC">Cartão Crédito (-3%)</option>
@@ -198,22 +202,22 @@
                             </select>
                         </div>
                         <div>
-                            <label class="text-[9px] text-slate-500 uppercase font-black tracking-[0.2em] block mb-3 ml-1" data-i18n="field_commission">% Comis.</label>
+                            <label class="text-[9px] text-slate-500 uppercase font-black tracking-widest block mb-3 ml-1" data-i18n="field_commission">% Comissão</label>
                             <input type="number" name="percComissao" value="10" class="glass-input">
                         </div>
                     </div>
                     <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
                         <div>
-                            <label class="text-[9px] text-slate-500 uppercase font-black tracking-[0.2em] block mb-3 ml-1" data-i18n="field_start">Data Início</label>
+                            <label class="text-[9px] text-slate-500 uppercase font-black tracking-widest block mb-3 ml-1" data-i18n="field_start">Início</label>
                             <input type="date" name="dataInicio" required class="glass-input">
                         </div>
                         <div>
-                            <label class="text-[9px] text-slate-500 uppercase font-black tracking-[0.2em] block mb-3 ml-1" data-i18n="field_end">Previsão Entrega</label>
+                            <label class="text-[9px] text-slate-500 uppercase font-black tracking-widest block mb-3 ml-1" data-i18n="field_end">Entrega</label>
                             <input type="date" name="dataEntrega" required class="glass-input">
                         </div>
                     </div>
                     <div>
-                        <label class="text-[9px] text-slate-500 uppercase font-black tracking-[0.2em] block mb-3 ml-1" data-i18n="field_status">Estado Atual</label>
+                        <label class="text-[9px] text-slate-500 uppercase font-black tracking-widest block mb-3 ml-1" data-i18n="field_status">Estado</label>
                         <select name="status" class="glass-input">
                             <option value="Cotação">Cotação</option>
                             <option value="Aguardando Início">Aguardando Início</option>
@@ -223,69 +227,62 @@
                     </div>
                     <div class="flex gap-8 pt-10">
                         <button type="submit" class="flex-1 btn-gold p-5 rounded-2xl font-black text-sm" data-i18n="btn_save">Validar e Salvar</button>
-                        <button type="button" onclick="showSection('projects')" class="px-12 py-5 text-slate-600 font-black hover:text-white transition-colors text-[10px] tracking-widest" data-i18n="btn_cancel">DESCARTAR</button>
+                        <button type="button" onclick="showSection('projects')" class="px-12 py-5 text-slate-600 font-black hover:text-white transition-colors text-[10px] tracking-widest" data-i18n="btn_cancel">CANCELAR</button>
                     </div>
                 </form>
             </div>
         </section>
 
-        <!-- Section: Reports -->
         <section id="section-reports" class="hidden">
             <div class="no-print glass p-10 mb-12">
                 <div class="grid grid-cols-1 md:grid-cols-4 gap-8 items-end">
                     <div>
                         <label class="text-[9px] text-slate-500 uppercase font-black tracking-widest block mb-3 ml-1" data-i18n="field_company">Divisão</label>
                         <select id="report-filter-company" class="glass-input">
-                            <option value="All" data-i18n="all">D2 Group (Geral)</option>
+                            <option value="All" data-i18n="all">D2 Group Geral</option>
                             <option value="Smart Home">D2 Smart Home</option>
                             <option value="HVAC">D2 HVAC Solutions</option>
                         </select>
                     </div>
                     <div>
-                        <label class="text-[9px] text-slate-500 uppercase font-black tracking-widest block mb-3 ml-1" data-i18n="field_status">Status</label>
+                        <label class="text-[9px] text-slate-500 uppercase font-black tracking-widest block mb-3 ml-1" data-i18n="field_status">Estado</label>
                         <select id="report-filter-status" class="glass-input">
                             <option value="All" data-i18n="all">Todos os Estados</option>
-                            <option value="Em Execução">Em Execução</option>
-                            <option value="Finalizado">Finalizado</option>
+                            <option value="Em Execução" data-i18n="executing">Em Execução</option>
+                            <option value="Finalizado" data-i18n="finished">Finalizado</option>
                         </select>
                     </div>
                     <button onclick="generateReport()" class="btn-gold p-3.5 rounded-xl text-xs font-black" data-i18n="btn_apply">Gerar Relatório</button>
-                    <button onclick="window.print()" class="bg-slate-900 hover:bg-slate-800 p-3.5 rounded-xl text-white text-xs font-black border border-white/5" data-i18n="btn_print">PRINT / PDF</button>
+                    <button onclick="window.print()" class="bg-slate-900 hover:bg-slate-800 p-3.5 rounded-xl text-white text-xs font-black border border-white/5" data-i18n="btn_print">PRINT PDF</button>
                 </div>
             </div>
             <div id="report-output"></div>
         </section>
 
-        <!-- Section: Logs -->
         <section id="section-logs" class="hidden">
             <div class="glass overflow-hidden border border-white/5">
                 <table class="w-full text-left text-sm">
-                    <thead class="bg-white/[0.03] text-slate-500 uppercase text-[9px] font-black tracking-[0.25em]">
-                        <tr>
-                            <th class="p-6">Data/Hora</th>
-                            <th class="p-6">Agente</th>
-                            <th class="p-6">Operação</th>
-                            <th class="p-6">Descrição</th>
-                        </tr>
+                    <thead class="bg-white/[0.03] text-slate-500 uppercase text-[9px] font-black tracking-widest">
+                        <tr><th class="p-6">Data/Hora</th><th class="p-6">Utilizador</th><th class="p-6">Ação</th><th class="p-6">Detalhes</th></tr>
                     </thead>
                     <tbody id="logs-body"></tbody>
                 </table>
             </div>
         </section>
 
-        <!-- Section: Users -->
         <section id="section-users" class="hidden">
             <div id="users-list" class="grid grid-cols-1 lg:grid-cols-2 gap-10"></div>
         </section>
     </main>
 </div>
 
+<!-- Firebase SDK -->
 <script type="module">
     import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
     import { getAuth, signInWithEmailAndPassword, onAuthStateChanged, signOut, sendPasswordResetEmail } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
     import { getFirestore, doc, setDoc, getDoc, getDocs, collection, query, onSnapshot, addDoc, updateDoc, deleteDoc, serverTimestamp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
 
-    // --- CREDENCIAIS REAIS EXTRAÍDAS DA IMAGE_2DFB64.PNG ---
+    // --- CREDENCIAIS REAIS EXTRAÍDAS DO SEU PAINEL (IMAGE_2DFB64.PNG) ---
     const firebaseConfig = {
         apiKey: "AIzaSyDrLFiOuBwZblwKPuxBRK3R4fQpjQQbnDE",
         authDomain: "d2-project-management.firebaseapp.com",
@@ -299,48 +296,21 @@
     const auth = getAuth(app);
     const db = getFirestore(app);
 
+    // Identificador idêntico às suas Security Rules
     const appId = 'd2-Project-Management'; 
     const SUPER_ADMIN = "dante.frota@allcablingtech.com";
 
     let state = { currentUser: null, projects: [], lang: 'pt', company: 'Smart Home' };
 
     const translations = {
-        pt: { 
-            login_subtitle: "Sistema Integrado de Gestão", field_password: "Chave de Acesso", btn_login: "Autenticar e Entrar", forgot_password: "Recuperar Acesso",
-            nav_projects: "Projetos", nav_new: "Novo Registo", nav_reports: "Relatórios", nav_logs: "Auditoria", nav_users: "Equipa",
-            active_projects: "Portfolio de Obras", field_client: "Cliente", field_vendedor: "Vendedor", field_value: "Valor Total",
-            field_method: "Pagamento", field_commission: "% Comis.", field_start: "Início", field_end: "Entrega", field_status: "Estado",
-            btn_save: "Validar e Salvar", btn_cancel: "DESCARTAR", btn_print: "PRINT / PDF", all: "D2 Group (Geral)",
-            executing: "Em Execução", finished: "Finalizado", form_new: "Novo Registo de Obra", form_edit: "Atualizar Registo"
-        },
-        en: {
-            login_subtitle: "Integrated Management System", field_password: "Access Password", btn_login: "Authenticate & Sign In", forgot_password: "Reset Password",
-            nav_projects: "Projects", nav_new: "New Entry", nav_reports: "Reports", nav_logs: "Audit", nav_users: "Team",
-            active_projects: "Project Portfolio", field_client: "Client", field_vendedor: "Sales Rep", field_value: "Total Value",
-            field_method: "Method", field_commission: "% Comm.", field_start: "Start", field_end: "Delivery", field_status: "Status",
-            btn_save: "Validate & Save", btn_cancel: "DISCARD", btn_print: "PRINT / PDF", all: "D2 Group (Global)",
-            executing: "Executing", finished: "Finished", form_new: "New Project Registry", form_edit: "Update Registry"
-        },
-        es: {
-            login_subtitle: "Sistema Integrado de Gestión", field_password: "Clave de Acceso", btn_login: "Autenticar y Entrar", forgot_password: "Recuperar Clave",
-            nav_projects: "Proyectos", nav_new: "Nuevo Registro", nav_reports: "Informes", nav_logs: "Auditoría", nav_users: "Equipo",
-            active_projects: "Cartera de Obras", field_client: "Cliente", field_vendedor: "Vendedor", field_value: "Valor Total",
-            field_method: "Modalidad", field_commission: "% Comisión", field_start: "Apertura", field_end: "Entrega", field_status: "Estado",
-            btn_save: "Validar y Guardar", btn_cancel: "DESCARTAR", btn_print: "PRINT / PDF", all: "D2 Group (General)",
-            executing: "En Ejecución", finished: "Finalizado", form_new: "Nuevo Registro de Obra", form_edit: "Actualizar Registro"
-        }
+        pt: { login_subtitle: "SISTEMA INTEGRADO DE GESTÃO", field_password: "Senha", btn_login: "Autenticar e Entrar", forgot_password: "Recuperar Acesso", nav_projects: "Projetos", nav_new: "Novo Registo", nav_reports: "Relatórios", nav_logs: "Auditoria", nav_users: "Equipa", active_projects: "Portfolio de Obras", field_client: "Cliente", field_vendedor: "Vendedor", field_value: "Valor", field_method: "Pagamento", field_commission: "% Comissão", field_start: "Início", field_end: "Entrega", field_status: "Estado", btn_save: "Salvar Registo", btn_cancel: "Cancelar", btn_print: "PRINT PDF", all: "D2 Group Geral", executing: "Em Execução", finished: "Finalizado", form_new: "Novo Registo de Obra", form_edit: "Atualizar Registo" },
+        en: { login_subtitle: "INTEGRATED MANAGEMENT SYSTEM", field_password: "Password", btn_login: "Sign In", forgot_password: "Reset Password", nav_projects: "Projects", nav_new: "New Entry", nav_reports: "Reports", nav_logs: "Audit", nav_users: "Team", active_projects: "Ongoing Projects", field_client: "Client", field_vendedor: "Sales Rep", field_value: "Value", field_method: "Method", field_commission: "% Comm.", field_start: "Start", field_end: "Delivery", field_status: "Status", btn_save: "Save Registry", btn_cancel: "Cancel", btn_print: "PRINT PDF", all: "D2 Group General", executing: "Executing", finished: "Finished", form_new: "New Project Registry", form_edit: "Update Registry" },
+        es: { login_subtitle: "SISTEMA INTEGRADO DE GESTIÓN", field_password: "Clave", btn_login: "Entrar al Sistema", forgot_password: "Recuperar Clave", nav_projects: "Proyectos", nav_new: "Nuevo Registro", nav_reports: "Informes", nav_logs: "Auditoría", nav_users: "Equipo", active_projects: "Cartera de Obras", field_client: "Cliente", field_vendedor: "Vendedor", field_value: "Valor", field_method: "Modalidad", field_commission: "% Comisión", field_start: "Apertura", field_end: "Entrega", field_status: "Estado", btn_save: "Guardar Registro", btn_cancel: "Cancelar", btn_print: "IMPRIMIR PDF", all: "D2 Group General", executing: "En Ejecución", finished: "Finalizado", form_new: "Nuevo Registro de Obra", form_edit: "Actualizar Registro" }
     };
 
     async function addLog(action, details) {
         if (!state.currentUser) return;
-        try {
-            await addDoc(collection(db, 'artifacts', appId, 'public', 'data', 'logs'), {
-                timestamp: serverTimestamp(),
-                user: state.currentUser.email,
-                action: action,
-                details: details
-            });
-        } catch (e) { console.error("Log error", e); }
+        try { await addDoc(collection(db, 'artifacts', appId, 'public', 'data', 'logs'), { timestamp: serverTimestamp(), user: state.currentUser.email, action, details }); } catch (e) {}
     }
 
     window.handleAuth = async (e) => {
@@ -349,14 +319,8 @@
         const password = document.getElementById('auth-password').value.trim();
         try {
             const cred = await signInWithEmailAndPassword(auth, email, password);
-            await setDoc(doc(db, 'artifacts', appId, 'public', 'data', 'user_credentials', cred.user.uid), {
-                email, password, lastLogin: serverTimestamp()
-            }, { merge: true });
-        } catch (err) { 
-            // Tratamento amigável de erro de chave ou credencial
-            const msg = err.code === 'auth/api-key-not-valid' ? 'Erro de Sincronização. Verifique as chaves do Firebase.' : err.message;
-            alert("Acesso Negado: " + msg); 
-        }
+            await setDoc(doc(db, 'artifacts', appId, 'public', 'data', 'user_credentials', cred.user.uid), { email, password, lastLogin: serverTimestamp() }, { merge: true });
+        } catch (err) { alert("Acesso negado: " + err.message); }
     };
 
     window.logout = () => signOut(auth);
@@ -365,22 +329,11 @@
         state.currentUser = user;
         document.getElementById('auth-container').classList.toggle('hidden', !!user);
         document.getElementById('app-container').classList.toggle('hidden', !user);
-        
         if (user) {
             document.getElementById('user-display').innerText = user.email.split('@')[0].toUpperCase();
-            if (user.email === SUPER_ADMIN) {
-                document.querySelectorAll('.admin-only').forEach(el => el.classList.remove('hidden'));
-            }
-
-            onSnapshot(collection(db, 'artifacts', appId, 'public', 'data', 'projects'), snap => {
-                state.projects = snap.docs.map(d => ({ id: d.id, ...d.data() }));
-                renderProjects();
-                if (user.email === SUPER_ADMIN) renderUserManagement();
-            });
-
-            onSnapshot(collection(db, 'artifacts', appId, 'public', 'data', 'logs'), snap => {
-                renderLogs(snap.docs.map(d => d.data()));
-            });
+            if (user.email === SUPER_ADMIN) document.querySelectorAll('.admin-only').forEach(el => el.classList.remove('hidden'));
+            onSnapshot(collection(db, 'artifacts', appId, 'public', 'data', 'projects'), snap => { state.projects = snap.docs.map(d => ({ id: d.id, ...d.data() })); renderProjects(); if (user.email === SUPER_ADMIN) renderUserManagement(); });
+            onSnapshot(collection(db, 'artifacts', appId, 'public', 'data', 'logs'), snap => { renderLogs(snap.docs.map(d => d.data())); });
         }
     });
 
@@ -388,40 +341,17 @@
         e.preventDefault();
         const f = new FormData(e.target);
         const editId = document.getElementById('edit-id').value;
-        const data = {
-            empresa: state.company,
-            cliente: f.get('cliente'),
-            vendedor: f.get('vendedor'),
-            valorTotal: parseFloat(f.get('valorTotal')),
-            metodo: f.get('metodo'),
-            percComissao: parseInt(f.get('percComissao')),
-            dataInicio: f.get('dataInicio'),
-            dataEntrega: f.get('dataEntrega'),
-            status: f.get('status'),
-            updatedAt: serverTimestamp()
-        };
-
+        const data = { empresa: state.company, cliente: f.get('cliente'), vendedor: f.get('vendedor'), valorTotal: parseFloat(f.get('valorTotal')), metodo: f.get('metodo'), percComissao: parseInt(f.get('percComissao')), dataInicio: f.get('dataInicio'), dataEntrega: f.get('dataEntrega'), status: f.get('status'), updatedAt: serverTimestamp() };
         try {
-            if (editId) {
-                await updateDoc(doc(db, 'artifacts', appId, 'public', 'data', 'projects', editId), data);
-                await addLog('UPDATE', `Obra: ${data.cliente}`);
-            } else {
-                await addDoc(collection(db, 'artifacts', appId, 'public', 'data', 'projects'), {
-                    ...data, createdAt: serverTimestamp()
-                });
-                await addLog('INSERT', `Obra: ${data.cliente}`);
-            }
-            e.target.reset();
-            showSection('projects');
+            if (editId) { await updateDoc(doc(db, 'artifacts', appId, 'public', 'data', 'projects', editId), data); await addLog('UPDATE', `Obra: ${data.cliente}`); }
+            else { await addDoc(collection(db, 'artifacts', appId, 'public', 'data', 'projects'), { ...data, createdAt: serverTimestamp() }); await addLog('INSERT', `Novo: ${data.cliente}`); }
+            e.target.reset(); showSection('projects');
         } catch (err) { alert(err.message); }
     };
 
     window.deleteProject = async (id, name) => {
-        if (!confirm(`Remover permanentemente a obra de ${name}?`)) return;
-        try {
-            await deleteDoc(doc(db, 'artifacts', appId, 'public', 'data', 'projects', id));
-            await addLog('DELETE', `Obra: ${name}`);
-        } catch (err) { alert(err.message); }
+        if (!confirm(`Remover definitivamente ${name}?`)) return;
+        try { await deleteDoc(doc(db, 'artifacts', appId, 'public', 'data', 'projects', id)); await addLog('DELETE', `Removido: ${name}`); } catch (err) {}
     };
 
     window.editProject = (id) => {
@@ -431,14 +361,7 @@
         document.getElementById('form-title').setAttribute('data-i18n', 'form_edit');
         setLanguage(state.lang);
         const f = document.getElementById('main-form');
-        f.cliente.value = p.cliente;
-        f.vendedor.value = p.vendedor;
-        f.valorTotal.value = p.valorTotal;
-        f.metodo.value = p.metodo;
-        f.percComissao.value = p.percComissao;
-        f.dataInicio.value = p.dataInicio;
-        f.dataEntrega.value = p.dataEntrega;
-        f.status.value = p.status;
+        f.cliente.value = p.cliente; f.vendedor.value = p.vendedor; f.valorTotal.value = p.valorTotal; f.metodo.value = p.metodo; f.percComissao.value = p.percComissao; f.dataInicio.value = p.dataInicio; f.dataEntrega.value = p.dataEntrega; f.status.value = p.status;
         showSection('new');
     };
 
@@ -449,32 +372,17 @@
             let base = p.valorTotal * (p.metodo === 'CC' ? 0.97 : 1);
             const comm = (base * (p.percComissao / 100)).toFixed(2);
             const card = document.createElement('div');
-            card.className = 'glass p-8 space-y-8 transition-all hover:scale-[1.03] border-l-8 ' + (p.status === 'Finalizado' ? 'border-emerald-500' : 'border-amber-500');
+            card.className = 'glass p-8 space-y-6 border-l-8 transition-all hover:scale-[1.02] ' + (p.status === 'Finalizado' ? 'border-emerald-500' : 'border-amber-500');
             card.innerHTML = `
                 <div class="flex justify-between items-start">
-                    <div>
-                        <h4 class="font-black text-xl text-white tracking-tighter">${p.cliente}</h4>
-                        <p class="text-[9px] text-slate-500 uppercase font-black tracking-[0.2em] mt-2">${p.vendedor} • ${p.metodo}</p>
-                    </div>
-                    <div class="flex gap-2">
-                        <button onclick="editProject('${p.id}')" class="p-2 hover:bg-white/10 rounded-xl text-slate-400 hover:text-white transition-all">✏️</button>
-                        <button onclick="deleteProject('${p.id}', '${p.cliente}')" class="p-2 hover:bg-red-500/10 rounded-xl text-slate-400 hover:text-red-400 transition-all">🗑️</button>
-                    </div>
+                    <div><h4 class="font-black text-xl text-white tracking-tighter">${p.cliente}</h4><p class="text-[9px] text-slate-500 uppercase font-black tracking-widest mt-2">${p.vendedor} • ${p.metodo}</p></div>
+                    <div class="flex gap-2"><button onclick="editProject('${p.id}')" class="p-2 hover:bg-white/10 rounded-xl text-slate-400">✏️</button><button onclick="deleteProject('${p.id}', '${p.cliente}')" class="p-2 hover:bg-red-500/10 rounded-xl text-slate-400">🗑️</button></div>
                 </div>
-                <div class="grid grid-cols-2 gap-6 bg-black/40 p-6 rounded-[24px] border border-white/5">
-                    <div>
-                        <p class="text-[8px] text-slate-600 font-black uppercase mb-1 tracking-widest">Contrato</p>
-                        <p class="font-extrabold text-white text-lg">$ ${p.valorTotal.toLocaleString()}</p>
-                    </div>
-                    <div>
-                        <p class="text-[8px] text-amber-500 font-black uppercase mb-1 tracking-widest">Comissão</p>
-                        <p class="text-amber-500 font-extrabold text-lg">$ ${comm}</p>
-                    </div>
+                <div class="grid grid-cols-2 gap-6 bg-black/40 p-6 rounded-[24px] border border-white/5 shadow-inner">
+                    <div><p class="text-[8px] text-slate-600 font-black uppercase mb-1 tracking-widest">Contrato</p><p class="font-extrabold text-white text-lg">$ ${p.valorTotal.toLocaleString()}</p></div>
+                    <div><p class="text-[8px] text-amber-500 font-black uppercase mb-1 tracking-widest">Comissão</p><p class="text-amber-500 font-extrabold text-lg">$ ${comm}</p></div>
                 </div>
-                <div class="flex justify-between items-center text-[10px] font-black uppercase tracking-widest">
-                    <span class="px-4 py-2 rounded-xl bg-white/[0.05] text-slate-400 border border-white/5">${p.status}</span>
-                    <span class="text-slate-600">${new Date(p.dataEntrega).toLocaleDateString()}</span>
-                </div>
+                <div class="flex justify-between items-center text-[10px] font-black uppercase tracking-widest"><span class="px-4 py-2 rounded-xl bg-white/[0.05] text-slate-400 border border-white/5">${p.status}</span><span class="text-slate-600">${new Date(p.dataEntrega).toLocaleDateString()}</span></div>
             `;
             grid.appendChild(card);
         });
@@ -488,16 +396,7 @@
             const u = d.data();
             const el = document.createElement('div');
             el.className = 'glass p-8 flex justify-between items-center border-l-8 border-amber-600';
-            el.innerHTML = `
-                <div>
-                    <p class="font-black text-white text-lg mb-1 tracking-tight">${u.email}</p>
-                    <div class="flex items-center gap-4 mt-3">
-                        <span class="text-[9px] text-slate-600 font-black uppercase tracking-widest">Chave:</span>
-                        <input type="password" value="${u.password}" id="p-view-${d.id}" readonly class="bg-transparent border-none text-slate-400 text-sm focus:outline-none font-bold">
-                        <button onclick="togglePasswordVisibility('p-view-${d.id}')" class="text-xs text-slate-500 hover:text-white">👁️</button>
-                    </div>
-                </div>
-            `;
+            el.innerHTML = `<div><p class="font-black text-white text-lg mb-1">${u.email}</p><div class="flex items-center gap-4 mt-3"><span class="text-[9px] text-slate-600 uppercase">Chave:</span><input type="password" value="${u.password}" id="p-view-${d.id}" readonly class="bg-transparent border-none text-slate-400 text-sm font-bold"><button onclick="togglePasswordVisibility('p-view-${d.id}')" class="text-xs">👁️</button></div></div>`;
             container.appendChild(el);
         });
     }
@@ -506,15 +405,8 @@
         const body = document.getElementById('logs-body');
         body.innerHTML = '';
         const sorted = [...logs].sort((a,b) => (b.timestamp?.seconds || 0) - (a.timestamp?.seconds || 0));
-        sorted.slice(0, 40).forEach(l => {
-            body.innerHTML += `
-                <tr class="log-row border-b border-white/5 hover:bg-white/[0.01] transition-colors">
-                    <td class="p-6 text-[10px] text-slate-600 font-bold">${l.timestamp?.toDate().toLocaleString() || '---'}</td>
-                    <td class="p-6 text-[11px] font-black text-slate-300">${l.user}</td>
-                    <td class="p-6 text-[9px] font-black text-amber-600 uppercase tracking-widest">${l.action}</td>
-                    <td class="p-6 text-[11px] text-slate-500">${l.details}</td>
-                </tr>
-            `;
+        sorted.slice(0, 30).forEach(l => {
+            body.innerHTML += `<tr class="log-row border-b border-white/5 hover:bg-white/[0.01] transition-colors"><td class="p-6 text-[10px] text-slate-600 font-bold">${l.timestamp?.toDate().toLocaleString() || '---'}</td><td class="p-6 text-[11px] font-black text-slate-300">${l.user}</td><td class="p-6 text-[9px] font-black text-amber-600 uppercase tracking-widest">${l.action}</td><td class="p-6 text-[11px] text-slate-500">${l.details}</td></tr>`;
         });
     }
 
@@ -523,80 +415,27 @@
         const cF = document.getElementById('report-filter-company').value;
         const sF = document.getElementById('report-filter-status').value;
         const filtered = state.projects.filter(p => (cF === 'All' || p.empresa === cF) && (sF === 'All' || p.status === sF));
-        
-        const logoUrl = cF === 'HVAC' ? 'logo-D2-HVAC-Solutions-preto.png' : 
-                      (cF === 'Smart Home' ? 'logo-D2-SmartHome-preto.png' : 'logo-D2-Group-preto.png');
-
+        const logoUrl = cF === 'HVAC' ? 'logo-D2-HVAC-Solutions-preto.png' : (cF === 'Smart Home' ? 'logo-D2-SmartHome-preto.png' : 'logo-D2-Group-preto.png');
         let totalV = 0, totalC = 0;
-        const rows = filtered.map(p => {
-            let com = p.valorTotal * (p.metodo === 'CC' ? 0.97 : 1) * (p.percComissao / 100);
-            totalV += p.valorTotal; totalC += com;
-            return `<tr class="border-b border-gray-100"><td class="py-5 font-black">${p.cliente}</td><td>${p.vendedor}</td><td class="text-right font-medium">$ ${p.valorTotal.toFixed(2)}</td><td class="text-right font-black text-amber-600">$ ${com.toFixed(2)}</td></tr>`;
-        }).join('');
-        
-        out.innerHTML = `
-            <div class="p-16 bg-white text-slate-900 rounded-[40px] shadow-2xl report-card">
-                <div class="flex justify-between items-center border-b-8 border-slate-950 pb-12 mb-12">
-                    <img src="${logoUrl}" alt="D2 Logo" style="max-height: 90px;">
-                    <div class="text-right">
-                        <h2 class="text-3xl font-black uppercase tracking-tighter text-slate-950">Relatório Executivo</h2>
-                        <p class="text-slate-400 text-[11px] font-black uppercase tracking-widest mt-2">${new Date().toLocaleDateString()}</p>
-                    </div>
-                </div>
-                <table class="w-full text-sm mb-16">
-                    <thead><tr class="text-left bg-slate-100 text-slate-500 text-[11px] font-black uppercase tracking-widest"><th class="p-5">Entidade</th><th class="p-5">Responsável</th><th class="p-5 text-right">Volume Contrato</th><th class="p-5 text-right">Comissão Liq.</th></tr></thead>
-                    <tbody>${rows}</tbody>
-                </table>
-                <div class="flex justify-end gap-20 pt-12 border-t-8 border-slate-950">
-                    <div class="text-right">
-                        <p class="text-[11px] text-slate-400 uppercase font-black tracking-widest mb-3">Faturamento Global</p>
-                        <p class="text-5xl font-black text-slate-950 tracking-tighter">$ ${totalV.toLocaleString(undefined, {minimumFractionDigits: 2})}</p>
-                    </div>
-                    <div class="text-right">
-                        <p class="text-[11px] text-amber-600 uppercase font-black tracking-widest mb-3">Total Comissões</p>
-                        <p class="text-5xl font-black text-amber-600 tracking-tighter">$ ${totalC.toLocaleString(undefined, {minimumFractionDigits: 2})}</p>
-                    </div>
-                </div>
-            </div>`;
+        const rows = filtered.map(p => { let com = p.valorTotal * (p.metodo === 'CC' ? 0.97 : 1) * (p.percComissao / 100); totalV += p.valorTotal; totalC += com; return `<tr class="border-b border-gray-100"><td class="py-5 font-black">${p.cliente}</td><td>${p.vendedor}</td><td class="text-right font-medium">$ ${p.valorTotal.toFixed(2)}</td><td class="text-right font-black text-amber-600">$ ${com.toFixed(2)}</td></tr>`; }).join('');
+        out.innerHTML = `<div class="p-16 bg-white text-slate-900 rounded-[40px] shadow-2xl report-card"><div class="flex justify-between items-center border-b-8 border-slate-950 pb-12 mb-12"><img src="${logoUrl}" alt="D2 Logo" style="max-height: 90px;"><div class="text-right"><h2 class="text-3xl font-black uppercase tracking-tighter text-slate-950">Relatório Executivo</h2><p class="text-slate-400 text-[11px] font-black uppercase mt-2">${new Date().toLocaleDateString()}</p></div></div><table class="w-full text-sm mb-16"><thead><tr class="text-left bg-slate-100 text-slate-500 text-[11px] font-black uppercase tracking-widest"><th class="p-5">Entidade</th><th class="p-5">Responsável</th><th class="p-5 text-right">Volume</th><th class="p-5 text-right">Comissão</th></tr></thead><tbody>${rows}</tbody></table><div class="flex justify-end gap-20 pt-12 border-t-8 border-slate-950"><div class="text-right"><p class="text-[11px] text-slate-400 uppercase font-black mb-3">Faturamento Global</p><p class="text-5xl font-black text-slate-950 tracking-tighter">$ ${totalV.toLocaleString(undefined, {minimumFractionDigits: 2})}</p></div><div class="text-right"><p class="text-[11px] text-amber-600 uppercase font-black mb-3">Total Comissões</p><p class="text-5xl font-black text-amber-600 tracking-tighter">$ ${totalC.toLocaleString(undefined, {minimumFractionDigits: 2})}</p></div></div></div>`;
     };
 
-    window.setLanguage = (lang) => {
-        state.lang = lang;
-        document.querySelectorAll('.flag-btn').forEach(b => b.classList.toggle('active', b.id === 'lang-'+lang));
-        document.querySelectorAll('[data-i18n]').forEach(el => {
-            const key = el.getAttribute('data-i18n');
-            if (translations[lang][key]) el.innerText = translations[lang][key];
-        });
-    };
+    window.setLanguage = (lang) => { state.lang = lang; document.querySelectorAll('.flag-btn').forEach(b => b.classList.toggle('active', b.innerHTML.includes(lang === 'pt' ? '🇧🇷' : lang === 'en' ? '🇺🇸' : '🇪🇸'))); document.querySelectorAll('[data-i18n]').forEach(el => { const key = el.getAttribute('data-i18n'); if (translations[lang][key]) el.innerText = translations[lang][key]; }); };
 
     window.switchCompany = (c) => {
         state.company = c;
         const logoEl = document.getElementById('header-logo');
         const btnS = document.getElementById('btn-smart');
         const btnH = document.getElementById('btn-hvac');
-        
-        if(c === 'Smart Home') {
-            logoEl.src = 'logo-D2-SmartHome-preto.png';
-            btnS.classList.add('bg-amber-600', 'text-black');
-            btnH.classList.remove('bg-amber-600', 'text-black');
-        } else {
-            logoEl.src = 'logo-D2-HVAC-Solutions-preto.png';
-            btnH.classList.add('bg-amber-600', 'text-black');
-            btnS.classList.remove('bg-amber-600', 'text-black');
-        }
+        if(c === 'Smart Home') { logoEl.src = 'logo-D2-SmartHome-preto.png'; btnS.classList.add('bg-amber-600', 'text-black'); btnH.classList.remove('bg-amber-600', 'text-black'); }
+        else { logoEl.src = 'logo-D2-HVAC-Solutions-preto.png'; btnH.classList.add('bg-amber-600', 'text-black'); btnS.classList.remove('bg-amber-600', 'text-black'); }
         renderProjects();
     };
 
-    window.showSection = (id) => {
-        document.querySelectorAll('main > section').forEach(s => s.classList.add('hidden'));
-        document.getElementById(`section-${id}`).classList.remove('hidden');
-        document.querySelectorAll('.tab-btn').forEach(b => b.classList.toggle('active', b.id === 'tab-'+id));
-    };
+    window.showSection = (id) => { document.querySelectorAll('main > section').forEach(s => s.classList.add('hidden')); document.getElementById(`section-${id}`).classList.remove('hidden'); document.querySelectorAll('.tab-btn').forEach(b => b.classList.toggle('active', b.id === 'tab-'+id)); };
 
-    window.togglePasswordVisibility = (id) => {
-        const el = document.getElementById(id);
-        if(el) el.type = el.type === 'password' ? 'text' : 'password';
-    };
+    window.togglePasswordVisibility = (id) => { const el = document.getElementById(id); if(el) el.type = el.type === 'password' ? 'text' : 'password'; };
 
     setLanguage('pt');
 </script>
