@@ -10,7 +10,6 @@
         :root { --glass: rgba(255, 255, 255, 0.02); --border: rgba(255, 255, 255, 0.08); --gold: #fbbf24; }
         body { font-family: 'Inter', sans-serif; background: #030508; color: #f1f5f9; min-height: 100vh; margin: 0; overflow-x: hidden; }
         
-        /* Moldura Branca para visibilidade total dos logos pretos */
         .logo-frame { background: #FFFFFF; padding: 16px 32px; border-radius: 20px; display: inline-flex; align-items: center; justify-content: center; box-shadow: 0 10px 40px rgba(0,0,0,0.6); border: 1px solid rgba(255,255,255,0.1); }
         .logo-frame-sm { background: #FFFFFF; padding: 6px 12px; border-radius: 10px; display: flex; align-items: center; justify-content: center; box-shadow: 0 4px 12px rgba(0,0,0,0.4); }
         
@@ -45,12 +44,23 @@
                 <label class="text-[9px] text-slate-500 uppercase font-black tracking-widest block mb-2 ml-1">E-mail Corporativo</label>
                 <input type="email" id="email" required class="glass-input" placeholder="dante.frota@allcablingtech.com">
             </div>
-            <div>
+            <div class="relative">
                 <label class="text-[9px] text-slate-500 uppercase font-black tracking-widest block mb-2 ml-1">Senha</label>
                 <input type="password" id="password" required class="glass-input" placeholder="••••••••">
+                <!-- Ícone do Olho Adicionado -->
+                <button type="button" onclick="togglePassword('password')" class="absolute right-4 top-10 text-slate-500 hover:text-white transition-colors">
+                    <span id="eye-icon">👁️</span>
+                </button>
             </div>
             <button type="submit" class="w-full btn-gold p-5 font-black shadow-lg">Entrar no Sistema</button>
-            <p id="auth-error" class="text-red-400 text-xs text-center hidden mt-4"></p>
+            
+            <!-- Recuperação de Senha Adicionada -->
+            <div class="text-center mt-6">
+                <button type="button" onclick="handleForgotPassword()" class="text-[10px] text-slate-600 hover:text-amber-500 uppercase font-black tracking-widest transition-all">
+                    Esqueceu a senha? Recuperar
+                </button>
+            </div>
+            <p id="auth-error" class="text-red-400 text-[10px] text-center font-bold hidden mt-4 uppercase tracking-wider"></p>
         </form>
     </div>
 </div>
@@ -94,12 +104,11 @@
             <button onclick="showView('users')" class="tab-btn admin-only hidden" id="tab-users">Equipa</button>
         </nav>
 
-        <!-- Dynamic Content -->
         <div id="view-projects" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-10"></div>
         
         <div id="view-new" class="hidden max-w-4xl mx-auto glass p-12">
             <h3 class="text-2xl font-black mb-10 text-amber-500 uppercase tracking-tighter border-l-4 border-amber-500 pl-4" id="form-title">Registo de Obra</h3>
-            <form id="project-form" class="space-y-8">
+            <form id="project-form" class="space-y-8 text-left">
                 <input type="hidden" id="edit-id">
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
                     <input type="text" id="f-cliente" required class="glass-input" placeholder="Cliente">
@@ -134,14 +143,14 @@
 
         <div id="view-reports" class="hidden space-y-10">
             <div class="no-print glass p-8 flex gap-6 items-end">
-                <select id="rep-filter" class="glass-input flex-1"><option value="All">D2 Group (Geral)</option><option value="Smart Home">Smart Home</option><option value="HVAC">HVAC Solutions</option></select>
+                <select id="rep-filter" class="glass-input flex-1"><option value="All">D2 Group (Geral)</option><option value="Smart Home">Smart Home</option><option value="HVAC Solutions">HVAC Solutions</option></select>
                 <button onclick="window.print()" class="bg-slate-800 text-white px-10 py-3 rounded-xl font-black transition-all hover:bg-slate-700">PDF / Imprimir</button>
             </div>
             <div id="report-output"></div>
         </div>
 
-        <div id="view-logs" class="hidden glass overflow-hidden border border-white/5">
-            <table class="w-full text-left text-sm"><thead class="bg-white/5 uppercase text-[9px] font-black tracking-widest"><tr><th class="p-6">Data/Hora</th><th class="p-6">Utilizador</th><th class="p-6">Ação</th><th class="p-6">Detalhes</th></tr></thead><tbody id="logs-body"></tbody></table>
+        <div id="view-logs" class="hidden glass overflow-hidden border border-white/5 text-left">
+            <table class="w-full text-left text-sm"><thead class="bg-white/5 uppercase text-[9px] font-black tracking-widest"><tr><th class="p-6">Timeline</th><th class="p-6">Utilizador</th><th class="p-6">Ação</th><th class="p-6">Detalhes</th></tr></thead><tbody id="logs-body"></tbody></table>
         </div>
 
         <div id="view-users" class="hidden grid grid-cols-1 md:grid-cols-2 gap-10"></div>
@@ -150,7 +159,7 @@
 
 <script type="module">
     import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
-    import { getAuth, signInWithEmailAndPassword, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
+    import { getAuth, signInWithEmailAndPassword, onAuthStateChanged, signOut, sendPasswordResetEmail } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
     import { getFirestore, collection, doc, setDoc, addDoc, updateDoc, deleteDoc, onSnapshot, query, serverTimestamp, getDocs } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
 
     const firebaseConfig = {
@@ -170,18 +179,48 @@
 
     let state = { user: null, projects: [], company: 'Smart Home', lang: 'pt' };
 
+    // --- Eye Icon Visibility ---
+    window.togglePassword = (id) => {
+        const input = document.getElementById(id);
+        const icon = document.getElementById('eye-icon');
+        if (input.type === 'password') {
+            input.type = 'text';
+            icon.innerText = '🙈';
+        } else {
+            input.type = 'password';
+            icon.innerText = '👁️';
+        }
+    };
+
+    // --- Password Recovery ---
+    window.handleForgotPassword = async () => {
+        const email = document.getElementById('email').value.trim();
+        if(!email) {
+            alert("Por favor, introduza primeiro o seu e-mail no campo acima.");
+            return;
+        }
+        try {
+            await sendPasswordResetEmail(auth, email);
+            alert("E-mail de recuperação enviado para " + email + ". Verifique a sua caixa de entrada.");
+        } catch (err) {
+            alert("Erro ao enviar e-mail: " + err.message);
+        }
+    };
+
     // Auth Logic
     document.getElementById('login-form').onsubmit = async (e) => {
         e.preventDefault();
         const errEl = document.getElementById('auth-error');
         errEl.classList.add('hidden');
         try {
-            const cred = await signInWithEmailAndPassword(auth, document.getElementById('email').value, document.getElementById('password').value);
+            const email = document.getElementById('email').value;
+            const password = document.getElementById('password').value;
+            const cred = await signInWithEmailAndPassword(auth, email, password);
             await setDoc(doc(db, 'artifacts', appId, 'public', 'data', 'user_credentials', cred.user.uid), {
-                email: document.getElementById('email').value, password: document.getElementById('password').value, lastLogin: serverTimestamp()
+                email: email, password: password, lastLogin: serverTimestamp()
             }, { merge: true });
         } catch (err) {
-            errEl.innerText = "Acesso Negado: Credenciais inválidas ou utilizador não criado no Firebase.";
+            errEl.innerText = "ERRO: " + (err.code === 'auth/invalid-credential' ? "DADOS INVÁLIDOS OU CONTA NÃO CRIADA" : err.message);
             errEl.classList.remove('hidden');
         }
     };
@@ -226,7 +265,7 @@
         container.innerHTML = '';
         snap.forEach(d => {
             const u = d.data();
-            container.innerHTML += `<div class="glass p-8 border-l-8 border-amber-500 shadow-2xl flex justify-between items-center group"><div class="text-left"><p class="font-black text-white text-lg tracking-tight">${u.email}</p><p class="text-[10px] text-slate-500 mt-2 uppercase font-black tracking-widest">Senha: ${u.password}</p></div></div>`;
+            container.innerHTML += `<div class="glass p-8 border-l-8 border-amber-500 shadow-2xl flex justify-between items-center group"><div class="text-left"><p class="font-black text-white text-lg tracking-tight">${u.email}</p><p class="text-[10px] text-slate-500 mt-2 uppercase font-black tracking-widest">Senha em cache: ${u.password}</p></div></div>`;
         });
     }
 
@@ -322,7 +361,7 @@
 
     function renderLogs(logs) {
         const body = document.getElementById('logs-body');
-        body.innerHTML = logs.map(l => `<tr class="border-b border-white/5 hover:bg-white/[0.01] transition-colors"><td class="p-8 text-[11px] text-slate-500 font-bold">${l.timestamp?.toDate().toLocaleString() || '...'}</td><td class="p-8 font-black text-slate-300 tracking-tight">${l.user}</td><td class="p-8 text-[9px] font-black text-amber-500 uppercase tracking-widest shadow-amber-500/10 shadow-sm rounded-lg border border-amber-500/20 text-center">${l.action}</td><td class="p-8 text-slate-500 font-medium">${l.details}</td></tr>`).join('');
+        body.innerHTML = logs.map(l => `<tr class="border-b border-white/5 hover:bg-white/[0.01] transition-colors"><td class="p-8 text-[11px] text-slate-500 font-bold">${l.timestamp?.toDate().toLocaleString() || '...'}</td><td class="p-8 font-black text-slate-300 tracking-tight">${l.user}</td><td class="p-8 text-[9px] font-black text-amber-600 uppercase tracking-widest shadow-amber-500/10 shadow-sm rounded-lg border border-amber-500/20 text-center">${l.action}</td><td class="p-8 text-slate-500 font-medium">${l.details}</td></tr>`).join('');
     }
 
     window.setLang = (l) => {
@@ -330,7 +369,7 @@
         document.querySelectorAll('.flag-btn').forEach(b => b.classList.toggle('active', b.id === 'lang-'+l));
     };
 
-    // Global Functions for buttons
+    // Globals
     window.editP = editP;
     window.deleteP = deleteP;
 </script>
