@@ -3,28 +3,37 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>D2 Management System - Official</title>
+    <title>D2 Management System - Premium Official</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
     <style>
         :root { --glass: rgba(255, 255, 255, 0.02); --border: rgba(255, 255, 255, 0.08); --gold: #fbbf24; }
         body { font-family: 'Inter', sans-serif; background: #030508; color: #f1f5f9; min-height: 100vh; margin: 0; overflow-x: hidden; }
-        .logo-frame { background: #FFFFFF; padding: 15px 30px; border-radius: 20px; display: inline-flex; align-items: center; justify-content: center; box-shadow: 0 10px 40px rgba(0,0,0,0.6); }
+        
+        /* Moldura Branca para visibilidade total dos logos pretos */
+        .logo-frame { background: #FFFFFF; padding: 16px 32px; border-radius: 20px; display: inline-flex; align-items: center; justify-content: center; box-shadow: 0 10px 40px rgba(0,0,0,0.6); border: 1px solid rgba(255,255,255,0.1); }
         .logo-frame-sm { background: #FFFFFF; padding: 6px 12px; border-radius: 10px; display: flex; align-items: center; justify-content: center; box-shadow: 0 4px 12px rgba(0,0,0,0.4); }
+        
         .glass { background: var(--glass); backdrop-filter: blur(25px); -webkit-backdrop-filter: blur(25px); border: 1px solid var(--border); border-radius: 28px; box-shadow: 0 25px 60px -12px rgba(0, 0, 0, 0.8); }
         .glass-input { background: rgba(0, 0, 0, 0.5) !important; border: 1px solid var(--border) !important; border-radius: 12px !important; color: white !important; padding: 14px 18px !important; width: 100%; outline: none; transition: all 0.3s ease; }
-        .glass-input:focus { border-color: var(--gold) !important; box-shadow: 0 0 15px rgba(251, 191, 36, 0.15) !important; }
+        .glass-input:focus { border-color: var(--gold) !important; box-shadow: 0 0 20px rgba(251, 191, 36, 0.15) !important; }
+        
         .btn-gold { background: linear-gradient(135deg, var(--gold) 0%, #b45309 100%); color: black; font-weight: 800; text-transform: uppercase; letter-spacing: 1px; transition: all 0.3s ease; border-radius: 14px; }
         .btn-gold:hover { transform: translateY(-2px); filter: brightness(1.1); box-shadow: 0 8px 30px rgba(180, 83, 9, 0.4); }
+        
         .tab-btn { padding-bottom: 12px; border-bottom: 3px solid transparent; color: #475569; font-weight: 700; font-size: 0.75rem; text-transform: uppercase; transition: all 0.3s; cursor: pointer; }
         .tab-btn.active { color: var(--gold); border-bottom-color: var(--gold); }
+        
         .flag-btn { font-size: 1.6rem; opacity: 0.3; transition: 0.2s; cursor: pointer; border: none; background: none; }
         .flag-btn.active { opacity: 1; transform: scale(1.2); }
+        
         @media print { .no-print { display: none !important; } body { background: white !important; color: black !important; } .glass { border: 1px solid #ddd !important; background: transparent !important; } }
+        .scrollbar-hide::-webkit-scrollbar { display: none; }
     </style>
 </head>
 <body>
 
+<!-- Authentication Screen -->
 <div id="auth-screen" class="fixed inset-0 z-50 flex flex-col items-center justify-center bg-[#030508] p-6">
     <div class="glass p-12 w-full max-w-md text-center">
         <div class="logo-frame mb-10">
@@ -32,20 +41,27 @@
         </div>
         <p class="text-slate-500 text-[10px] mb-10 font-black tracking-[0.3em] uppercase">Sistema Integrado de Gestão</p>
         <form id="login-form" class="space-y-6 text-left">
-            <input type="email" id="email" required class="glass-input" placeholder="E-mail Corporativo">
-            <input type="password" id="password" required class="glass-input" placeholder="Senha">
-            <button type="submit" class="w-full btn-gold p-5 font-black">Entrar no Sistema</button>
-            <p id="auth-error" class="text-red-400 text-xs text-center hidden"></p>
+            <div>
+                <label class="text-[9px] text-slate-500 uppercase font-black tracking-widest block mb-2 ml-1">E-mail Corporativo</label>
+                <input type="email" id="email" required class="glass-input" placeholder="dante.frota@allcablingtech.com">
+            </div>
+            <div>
+                <label class="text-[9px] text-slate-500 uppercase font-black tracking-widest block mb-2 ml-1">Senha</label>
+                <input type="password" id="password" required class="glass-input" placeholder="••••••••">
+            </div>
+            <button type="submit" class="w-full btn-gold p-5 font-black shadow-lg">Entrar no Sistema</button>
+            <p id="auth-error" class="text-red-400 text-xs text-center hidden mt-4"></p>
         </form>
     </div>
 </div>
 
+<!-- Main Application -->
 <div id="main-app" class="hidden min-h-screen flex flex-col">
     <header class="no-print bg-[#05070a]/90 backdrop-blur-3xl border-b border-white/5 p-5 sticky top-0 z-40">
         <div class="max-w-7xl mx-auto flex flex-wrap justify-between items-center gap-6">
             <div class="flex items-center gap-8">
                 <div class="logo-frame-sm">
-                    <img id="header-logo" src="logo-D2-SmartHome-preto.png" class="h-10" alt="Logo">
+                    <img id="header-logo" src="logo-D2-SmartHome-preto.png" class="h-10" alt="Logo" onerror="this.src='https://placehold.co/150x40/ffffff/000000?text=D2+MANAGEMENT'">
                 </div>
                 <div class="flex gap-4">
                     <button onclick="setLang('pt')" class="flag-btn active" id="lang-pt">🇧🇷</button>
@@ -55,16 +71,22 @@
             </div>
             <div class="flex items-center gap-6">
                 <div class="flex bg-black/60 p-1.5 rounded-2xl border border-white/5 text-[10px] font-black uppercase tracking-widest">
-                    <button onclick="switchCompany('Smart Home')" id="btn-smart" class="px-6 py-2.5 rounded-xl bg-amber-600 text-black">Smart Home</button>
-                    <button onclick="switchCompany('HVAC')" id="btn-hvac" class="px-6 py-2.5 rounded-xl text-slate-500">HVAC Solutions</button>
+                    <button onclick="switchCompany('Smart Home')" id="btn-smart" class="px-6 py-2.5 rounded-xl bg-amber-600 text-black transition-all">Smart Home</button>
+                    <button onclick="switchCompany('HVAC')" id="btn-hvac" class="px-6 py-2.5 rounded-xl text-slate-500 hover:text-white transition-all">HVAC Solutions</button>
                 </div>
-                <button onclick="handleLogout()" class="text-red-400 hover:text-white p-3 glass rounded-2xl">🚪</button>
+                <div class="flex items-center gap-5 border-l border-white/10 pl-6 text-right">
+                    <div class="hidden sm:block">
+                        <p id="user-display" class="text-[10px] font-black text-slate-300"></p>
+                        <p class="text-[8px] text-amber-500 font-bold uppercase tracking-widest">Administrador</p>
+                    </div>
+                    <button onclick="handleLogout()" class="text-red-400 hover:text-white p-3 glass rounded-2xl transition-all">🚪</button>
+                </div>
             </div>
         </div>
     </header>
 
     <main class="max-w-7xl mx-auto w-full p-6 md:p-10 flex-1">
-        <nav class="no-print flex gap-10 mb-12 border-b border-white/5 overflow-x-auto">
+        <nav class="no-print flex gap-10 mb-12 border-b border-white/5 overflow-x-auto scrollbar-hide">
             <button onclick="showView('projects')" class="tab-btn active" id="tab-projects">Projetos</button>
             <button onclick="showView('new')" class="tab-btn" id="tab-new">Novo Registo</button>
             <button onclick="showView('reports')" class="tab-btn" id="tab-reports">Relatórios</button>
@@ -72,10 +94,11 @@
             <button onclick="showView('users')" class="tab-btn admin-only hidden" id="tab-users">Equipa</button>
         </nav>
 
+        <!-- Dynamic Content -->
         <div id="view-projects" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-10"></div>
         
         <div id="view-new" class="hidden max-w-4xl mx-auto glass p-12">
-            <h3 class="text-2xl font-black mb-10 text-amber-500 uppercase tracking-tighter" id="form-title">Registo de Obra</h3>
+            <h3 class="text-2xl font-black mb-10 text-amber-500 uppercase tracking-tighter border-l-4 border-amber-500 pl-4" id="form-title">Registo de Obra</h3>
             <form id="project-form" class="space-y-8">
                 <input type="hidden" id="edit-id">
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
@@ -83,7 +106,7 @@
                     <input type="text" id="f-vendedor" required class="glass-input" placeholder="Vendedor">
                 </div>
                 <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
-                    <input type="number" id="f-valor" required class="glass-input" placeholder="Valor ($)">
+                    <input type="number" id="f-valor" step="0.01" required class="glass-input" placeholder="Valor ($)">
                     <select id="f-metodo" class="glass-input">
                         <option value="Zelle">Zelle</option>
                         <option value="CC">Cartão (-3%)</option>
@@ -103,22 +126,22 @@
                     <option value="Finalizado">Finalizado</option>
                 </select>
                 <div class="flex gap-6 pt-10">
-                    <button type="submit" class="flex-1 btn-gold p-5 font-black">Salvar</button>
-                    <button type="button" onclick="showView('projects')" class="px-10 text-slate-500 uppercase font-black text-xs">Cancelar</button>
+                    <button type="submit" class="flex-1 btn-gold p-5 font-black">Salvar Obra</button>
+                    <button type="button" onclick="showView('projects')" class="px-10 text-slate-500 uppercase font-black text-xs tracking-widest">Cancelar</button>
                 </div>
             </form>
         </div>
 
         <div id="view-reports" class="hidden space-y-10">
             <div class="no-print glass p-8 flex gap-6 items-end">
-                <select id="rep-filter" class="glass-input flex-1"><option value="All">Geral</option><option value="Smart Home">Smart Home</option><option value="HVAC">HVAC</option></select>
-                <button onclick="window.print()" class="bg-slate-800 text-white px-8 py-3 rounded-xl font-black">PDF / Imprimir</button>
+                <select id="rep-filter" class="glass-input flex-1"><option value="All">D2 Group (Geral)</option><option value="Smart Home">Smart Home</option><option value="HVAC">HVAC Solutions</option></select>
+                <button onclick="window.print()" class="bg-slate-800 text-white px-10 py-3 rounded-xl font-black transition-all hover:bg-slate-700">PDF / Imprimir</button>
             </div>
             <div id="report-output"></div>
         </div>
 
-        <div id="view-logs" class="hidden glass overflow-hidden">
-            <table class="w-full text-left text-sm"><thead class="bg-white/5 uppercase text-[9px] font-black tracking-widest"><tr><th class="p-6">Timeline</th><th class="p-6">User</th><th class="p-6">Ação</th><th class="p-6">Detalhes</th></tr></thead><tbody id="logs-body"></tbody></table>
+        <div id="view-logs" class="hidden glass overflow-hidden border border-white/5">
+            <table class="w-full text-left text-sm"><thead class="bg-white/5 uppercase text-[9px] font-black tracking-widest"><tr><th class="p-6">Data/Hora</th><th class="p-6">Utilizador</th><th class="p-6">Ação</th><th class="p-6">Detalhes</th></tr></thead><tbody id="logs-body"></tbody></table>
         </div>
 
         <div id="view-users" class="hidden grid grid-cols-1 md:grid-cols-2 gap-10"></div>
@@ -147,18 +170,18 @@
 
     let state = { user: null, projects: [], company: 'Smart Home', lang: 'pt' };
 
-    // Auth
+    // Auth Logic
     document.getElementById('login-form').onsubmit = async (e) => {
         e.preventDefault();
         const errEl = document.getElementById('auth-error');
         errEl.classList.add('hidden');
         try {
-            const cred = await signInWithEmailAndPassword(auth, e.target.email.value, e.target.password.value);
+            const cred = await signInWithEmailAndPassword(auth, document.getElementById('email').value, document.getElementById('password').value);
             await setDoc(doc(db, 'artifacts', appId, 'public', 'data', 'user_credentials', cred.user.uid), {
-                email: e.target.email.value, password: e.target.password.value, lastLogin: serverTimestamp()
+                email: document.getElementById('email').value, password: document.getElementById('password').value, lastLogin: serverTimestamp()
             }, { merge: true });
         } catch (err) {
-            errEl.innerText = "Acesso Negado: " + err.message;
+            errEl.innerText = "Acesso Negado: Credenciais inválidas ou utilizador não criado no Firebase.";
             errEl.classList.remove('hidden');
         }
     };
@@ -170,6 +193,7 @@
         document.getElementById('auth-screen').classList.toggle('hidden', !!user);
         document.getElementById('main-app').classList.toggle('hidden', !user);
         if (user) {
+            document.getElementById('user-display').innerText = user.email.split('@')[0].toUpperCase();
             if (user.email === SUPER_ADMIN) document.querySelectorAll('.admin-only').forEach(el => el.classList.remove('hidden'));
             initData();
         }
@@ -202,7 +226,7 @@
         container.innerHTML = '';
         snap.forEach(d => {
             const u = d.data();
-            container.innerHTML += `<div class="glass p-8 border-l-8 border-amber-500 shadow-2xl flex justify-between items-center"><div class="text-left"><p class="font-black text-white text-lg">${u.email}</p><p class="text-[10px] text-slate-500 mt-2 uppercase font-black tracking-widest">Senha: ${u.password}</p></div></div>`;
+            container.innerHTML += `<div class="glass p-8 border-l-8 border-amber-500 shadow-2xl flex justify-between items-center group"><div class="text-left"><p class="font-black text-white text-lg tracking-tight">${u.email}</p><p class="text-[10px] text-slate-500 mt-2 uppercase font-black tracking-widest">Senha: ${u.password}</p></div></div>`;
         });
     }
 
@@ -230,7 +254,7 @@
         state.projects.filter(p => p.empresa === state.company).forEach(p => {
             let base = p.valorTotal * (p.metodo === 'CC' ? 0.97 : 1);
             let comm = (base * (p.percComissao / 100)).toFixed(2);
-            grid.innerHTML += `<div class="glass p-8 space-y-6 border-l-8 transition-all hover:scale-[1.02]" style="border-left-color: ${p.status === 'Finalizado' ? '#10b981' : '#f59e0b'}"><div class="flex justify-between items-start"><div><h4 class="font-black text-xl text-white tracking-tighter">${p.cliente}</h4><p class="text-[9px] font-black uppercase text-slate-500 tracking-widest">${p.vendedor} • ${p.metodo}</p></div><div class="flex gap-2"><button onclick="editP('${p.id}')" class="p-2 text-slate-400">✏️</button><button onclick="deleteP('${p.id}', '${p.cliente}')" class="p-2 text-slate-400">🗑️</button></div></div><div class="grid grid-cols-2 gap-4 bg-black/40 p-5 rounded-2xl border border-white/5"><div><p class="text-[8px] font-black uppercase text-slate-600 mb-1">Total</p><p class="font-black text-lg text-white">$ ${p.valorTotal.toLocaleString()}</p></div><div><p class="text-[8px] font-black uppercase text-amber-500/50 mb-1">Comissão</p><p class="font-black text-lg text-amber-500">$ ${comm}</p></div></div><div class="flex justify-between items-center text-[10px] font-black uppercase text-slate-500"><span>${p.status}</span><span>${new Date(p.dataEntrega).toLocaleDateString()}</span></div></div>`;
+            grid.innerHTML += `<div class="glass p-8 space-y-6 border-l-8 transition-all hover:scale-[1.02]" style="border-left-color: ${p.status === 'Finalizado' ? '#10b981' : '#f59e0b'}"><div class="flex justify-between items-start"><div><h4 class="font-black text-xl text-white tracking-tighter">${p.cliente}</h4><p class="text-[9px] font-black uppercase text-slate-500 tracking-widest mt-1">${p.vendedor} • ${p.metodo}</p></div><div class="flex gap-2"><button onclick="editP('${p.id}')" class="p-2 text-slate-400 hover:text-white">✏️</button><button onclick="deleteP('${p.id}', '${p.cliente}')" class="p-2 text-slate-400 hover:text-red-500">🗑️</button></div></div><div class="grid grid-cols-2 gap-4 bg-black/40 p-5 rounded-2xl border border-white/5"><div><p class="text-[8px] font-black uppercase text-slate-600 mb-1 tracking-widest">Contrato</p><p class="font-black text-lg text-white">$ ${p.valorTotal.toLocaleString()}</p></div><div><p class="text-[8px] font-black uppercase text-amber-500/50 mb-1 tracking-widest">Comissão</p><p class="font-black text-lg text-amber-500">$ ${comm}</p></div></div><div class="flex justify-between items-center text-[10px] font-black uppercase text-slate-500"><span>${p.status}</span><span>${new Date(p.dataEntrega).toLocaleDateString()}</span></div></div>`;
         });
     }
 
@@ -249,7 +273,7 @@
     };
 
     window.deleteP = async (id, name) => {
-        if(!confirm(`Excluir ${name}?`)) return;
+        if(!confirm(`Excluir permanentemente ${name}?`)) return;
         await deleteDoc(doc(db, 'artifacts', appId, 'public', 'data', 'projects', id));
         await addLog('DELETE', name);
     };
@@ -290,20 +314,25 @@
             let base = p.valorTotal * (p.metodo === 'CC' ? 0.97 : 1);
             let c = (base * (p.percComissao/100));
             total += p.valorTotal; totalComm += c;
-            return `<tr class="border-b"><td class="p-4 font-black">${p.cliente}</td><td class="p-4">${p.vendedor}</td><td class="p-4 text-right">$ ${p.valorTotal.toFixed(2)}</td><td class="p-4 text-right font-black text-amber-600">$ ${c.toFixed(2)}</td></tr>`;
+            return `<tr class="border-b border-slate-100 hover:bg-slate-50 transition-colors"><td class="p-6 font-black text-slate-900">${p.cliente}</td><td class="p-6 font-medium text-slate-600">${p.vendedor}</td><td class="p-6 text-right font-medium text-slate-800">$ ${p.valorTotal.toFixed(2)}</td><td class="p-6 text-right font-black text-amber-600">$ ${c.toFixed(2)}</td></tr>`;
         }).join('');
-        out.innerHTML = `<div class="bg-white text-slate-900 p-12 rounded-[40px] shadow-2xl"><div class="flex justify-between items-center border-b-8 border-slate-950 pb-10 mb-10"><div class="logo-frame-sm shadow-none border"><img src="logo-D2-Group-preto.png" class="h-14"></div><div class="text-right"><h2 class="text-3xl font-black uppercase tracking-tighter">Relatório D2</h2><p class="text-[10px] font-black uppercase text-slate-400 mt-2">${new Date().toLocaleDateString()}</p></div></div><table class="w-full text-sm"><thead><tr class="bg-slate-100 font-black uppercase text-[10px]"><th class="p-4 text-left">Cliente</th><th class="p-4 text-left">Gestor</th><th class="p-4 text-right">Volume</th><th class="p-4 text-right">Comissão</th></tr></thead><tbody>${rows}</tbody></table><div class="mt-10 pt-10 border-t-8 border-slate-950 flex justify-end gap-16"><div class="text-right"><p class="text-[9px] font-black uppercase text-slate-400 mb-1">Volume Total</p><p class="text-4xl font-black tracking-tighter">$ ${total.toLocaleString()}</p></div><div class="text-right"><p class="text-[9px] font-black uppercase text-amber-600 mb-1">Total Comissões</p><p class="text-4xl font-black text-amber-600 tracking-tighter">$ ${totalComm.toLocaleString()}</p></div></div></div>`;
+        
+        out.innerHTML = `<div class="bg-white text-slate-950 p-16 rounded-[60px] shadow-2xl border-8 border-slate-100"><div class="flex justify-between items-center border-b-[10px] border-slate-950 pb-10 mb-10"><div class="logo-frame-sm shadow-none border border-slate-200"><img src="logo-D2-Group-preto.png" class="h-14"></div><div class="text-right"><h2 class="text-4xl font-black uppercase tracking-tighter text-slate-950">Relatório Executivo</h2><p class="text-slate-400 font-black uppercase text-[10px] tracking-[0.4em] mt-2">${new Date().toLocaleDateString()}</p></div></div><table class="w-full text-sm"><thead><tr class="bg-slate-50 font-black uppercase text-[11px] tracking-widest text-slate-500"><th class="p-6 text-left">Cliente</th><th class="p-6 text-left">Gestor</th><th class="p-6 text-right">Volume</th><th class="p-6 text-right">Comissão</th></tr></thead><tbody>${rows}</tbody></table><div class="mt-10 pt-10 border-t-[10px] border-slate-950 flex justify-end gap-16"><div class="text-right"><p class="text-[11px] font-black uppercase text-slate-400 mb-1 tracking-widest">Faturamento Global</p><p class="text-5xl font-black tracking-tighter">$ ${total.toLocaleString(undefined, {minimumFractionDigits:2})}</p></div><div class="text-right"><p class="text-[11px] font-black uppercase text-amber-600 mb-1 tracking-widest">Total Comissões</p><p class="text-5xl font-black text-amber-600 tracking-tighter">$ ${totalComm.toLocaleString(undefined, {minimumFractionDigits:2})}</p></div></div></div>`;
     }
 
     function renderLogs(logs) {
         const body = document.getElementById('logs-body');
-        body.innerHTML = logs.map(l => `<tr class="border-b border-white/5"><td class="p-6 text-[10px] text-slate-600">${l.timestamp?.toDate().toLocaleString() || '...'}</td><td class="p-6 font-bold text-slate-300 text-xs">${l.user}</td><td class="p-6 text-[9px] font-black text-amber-600 uppercase tracking-widest">${l.action}</td><td class="p-6 text-slate-500 text-xs">${l.details}</td></tr>`).join('');
+        body.innerHTML = logs.map(l => `<tr class="border-b border-white/5 hover:bg-white/[0.01] transition-colors"><td class="p-8 text-[11px] text-slate-500 font-bold">${l.timestamp?.toDate().toLocaleString() || '...'}</td><td class="p-8 font-black text-slate-300 tracking-tight">${l.user}</td><td class="p-8 text-[9px] font-black text-amber-500 uppercase tracking-widest shadow-amber-500/10 shadow-sm rounded-lg border border-amber-500/20 text-center">${l.action}</td><td class="p-8 text-slate-500 font-medium">${l.details}</td></tr>`).join('');
     }
 
     window.setLang = (l) => {
         state.lang = l;
         document.querySelectorAll('.flag-btn').forEach(b => b.classList.toggle('active', b.id === 'lang-'+l));
     };
+
+    // Global Functions for buttons
+    window.editP = editP;
+    window.deleteP = deleteP;
 </script>
 </body>
 </html>
