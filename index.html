@@ -16,7 +16,7 @@
 
         .input-wrapper { position: relative; width: 100%; display: flex; align-items: center; margin-bottom: 1rem; }
         
-        /* BOTÃO DO OLHO: FIXO E VISÍVEL */
+        /* BOTÃO DO OLHO: PRIORIDADE MÁXIMA DE VISIBILIDADE */
         .password-toggle { 
             position: absolute; 
             right: 12px; 
@@ -25,23 +25,24 @@
             z-index: 1000; 
             color: var(--gold); 
             cursor: pointer; 
-            background: rgba(0,0,0,0.2);
+            background: rgba(0,0,0,0.3);
             border-radius: 8px;
-            padding: 6px;
+            padding: 8px;
             display: flex;
             align-items: center;
             justify-content: center;
-            border: 1px solid rgba(251, 191, 36, 0.2);
+            border: 1px solid rgba(251, 191, 36, 0.3);
+            transition: all 0.2s;
         }
-        .password-toggle:hover { background: var(--gold); color: #000; }
+        .password-toggle:hover { background: var(--gold); color: #000; scale: 1.05; }
 
         .modern-input { 
-            width: 100%; padding: 16px 52px 16px 16px; border-radius: 14px; 
+            width: 100%; padding: 16px 55px 16px 16px; border-radius: 14px; 
             border: 1px solid rgba(148, 163, 184, 0.2); background: rgba(0,0,0,0.5); 
             color: inherit; outline: none; transition: all 0.2s; font-size: 14px;
         }
         .light .modern-input { background: #fff; border: 1px solid #cbd5e1; color: #000; }
-        .modern-input:focus { border-color: var(--gold); box-shadow: 0 0 0 3px rgba(251, 191, 36, 0.1); }
+        .modern-input:focus { border-color: var(--gold); box-shadow: 0 0 0 3px rgba(251, 191, 36, 0.15); }
 
         .btn-primary { background: linear-gradient(135deg, var(--gold) 0%, var(--gold-dark) 100%); color: #000; font-weight: 900; border-radius: 14px; transition: all 0.3s; display: flex; align-items: center; justify-content: center; gap: 8px; }
         .btn-primary:hover { transform: translateY(-1px); filter: brightness(1.1); box-shadow: 0 4px 20px rgba(180, 83, 9, 0.4); }
@@ -78,7 +79,6 @@
         <div class="flex justify-center gap-4 mb-8">
             <button onclick="setLang('pt')" class="flag-btn active" id="l-pt"><img src="https://flagcdn.com/w80/br.png" class="flag-icon"></button>
             <button onclick="setLang('en')" class="flag-btn" id="l-en"><img src="https://flagcdn.com/w80/us.png" class="flag-icon"></button>
-            <button onclick="setLang('es')" class="flag-btn" id="l-es"><img src="https://flagcdn.com/w80/es.png" class="flag-icon"></button>
         </div>
 
         <form id="login-form" class="space-y-4 text-left">
@@ -92,7 +92,7 @@
             <div class="input-wrapper">
                 <input type="password" id="password" required class="modern-input" placeholder="Senha">
                 <button type="button" onclick="window.handlePasswordToggle('password', 'eye-login-icon')" class="password-toggle" title="Ver/Esconder">
-                    <i data-lucide="eye" class="w-5 h-5" id="eye-login-icon"></i>
+                    <i data-lucide="eye" class="w-6 h-6" id="eye-login-icon"></i>
                 </button>
             </div>
             <button type="submit" id="btn-entrar" class="w-full btn-primary h-14 uppercase tracking-widest text-sm font-black shadow-lg">
@@ -103,7 +103,7 @@
     </div>
 </div>
 
-<!-- Principal Dashboard -->
+<!-- Dashboard Interface -->
 <div id="main-app" class="hidden min-h-screen flex flex-col">
     <header class="no-print bg-white/80 dark:bg-black/60 backdrop-blur-md border-b border-slate-200 dark:border-white/5 p-4 sticky top-0 z-40">
         <div class="max-w-7xl mx-auto flex justify-between items-center">
@@ -114,7 +114,6 @@
                 <div class="flex gap-2 ml-4">
                     <button onclick="setLang('pt')" class="flag-btn" id="h-l-pt"><img src="https://flagcdn.com/w80/br.png" class="flag-icon"></button>
                     <button onclick="setLang('en')" class="flag-btn" id="h-l-en"><img src="https://flagcdn.com/w80/us.png" class="flag-icon"></button>
-                    <button onclick="setLang('es')" class="flag-btn" id="h-l-es"><img src="https://flagcdn.com/w80/es.png" class="flag-icon"></button>
                 </div>
             </div>
             
@@ -144,6 +143,7 @@
 
         <div id="view-projects" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-10 text-left"></div>
         
+        <!-- Nova Obra -->
         <div id="view-new" class="hidden max-w-3xl mx-auto glass p-10 rounded-[40px] text-left shadow-2xl border border-white/5">
             <h3 class="text-2xl font-black mb-10 flex items-center gap-4 uppercase tracking-tighter">
                 <span class="w-2 h-10 bg-gold rounded-full"></span>
@@ -199,6 +199,7 @@
             </form>
         </div>
 
+        <!-- Equipe -->
         <div id="view-users" class="hidden space-y-10">
             <div class="glass p-10 max-w-lg mx-auto rounded-[32px] border border-white/5 shadow-2xl">
                 <h3 class="text-xl font-black text-gold mb-8 uppercase tracking-tighter text-left" data-i18n="team_title">Gestão de Equipe</h3>
@@ -257,12 +258,12 @@
             form_new_title: "Cadastrar Obra", label_div: "Divisão", label_client: "Cliente", label_seller: "Vendedor", label_value: "Valor Contrato", 
             label_comm: "% Comissão", label_method: "Forma de Pagamento", label_start: "Início", label_end: "Entrega", label_status: "Status",
             btn_save: "Salvar Registro", btn_cancel: "Cancelar", team_title: "Gestão de Equipe", btn_team: "Salvar e Liberar Acesso",
-            timeline: "Timeline", status_overdue: "ATRASADA", status_finished: "CONCLUÍDA", days_left: "DIAS RESTANTES",
+            timeline: "Cronograma", status_overdue: "ATRASADA", status_finished: "CONCLUÍDA", days_left: "DIAS RESTANTES",
             total_contract: "Contrato Total", finance_btn: "FINANCEIRO VENDEDOR", net_base: "Base Líquida", balance: "Saldo Devedor",
             history: "Histórico", pay_btn: "Lançar Pagamento", report_title: "RELATÓRIO EXECUTIVO", col_base: "Base Líquida", col_comm: "Comissão",
             verifying: "VERIFICANDO...", registering: "AUTORIZANDO...", tooltip_edit: "Editar", tooltip_delete: "Excluir", tooltip_fin: "Financeiro", password: "Senha",
             col_obra: "Obra", col_vendedor: "Vendedor", col_periodo: "Período", col_andamento: "Andamento", col_contrato: "Contrato",
-            vol_geral: "Volume Geral", total_comm: "Total Comissões", pay_history: "Histórico de Pagamentos", net_reduct: "* Base Reduzida por taxa de cartão"
+            vol_geral: "Volume Geral", total_comm: "Total Comissões", pay_history: "Histórico de Pagamentos"
         },
         en: { 
             login_sub: "Integrated Management System", login_err: "Invalid data. If you lost your password or username, contact your administrator.", 
@@ -275,20 +276,7 @@
             history: "History", pay_btn: "Post Payment", report_title: "EXECUTIVE REPORT", col_base: "Net Base", col_comm: "Commission",
             verifying: "VERIFYING...", registering: "AUTHORIZING...", tooltip_edit: "Edit", tooltip_delete: "Delete", tooltip_fin: "Finance", password: "Password",
             col_obra: "Project", col_vendedor: "Seller", col_periodo: "Period", col_andamento: "Progress", col_contrato: "Contract",
-            vol_geral: "General Volume", total_comm: "Total Commissions", pay_history: "Payment History", net_reduct: "* Net reduced by card fees"
-        },
-        es: { 
-            login_sub: "Sistema de Gestión Integrado", login_err: "Datos inválidos. Si perdió su contraseña o usuario, contacte a su administrador.", 
-            btn_login: "Entrar al Sistema", admin_panel: "Panel Admin", nav_proj: "Proyectos", nav_new: "Nueva Obra", nav_rep: "Informes", nav_users: "Equipo",
-            form_new_title: "Registrar Obra", label_div: "División", label_client: "Cliente", label_seller: "Vendedor", label_value: "Valor Contrato", 
-            label_comm: "% Comisión", label_method: "Forma de Pago", label_start: "Inicio", label_end: "Entrega", label_status: "Estado",
-            btn_save: "Guardar Registro", btn_cancel: "Cancelar", team_title: "Gestión de Equipo", btn_team: "Guardar y Autorizar Acceso",
-            timeline: "Cronograma", status_overdue: "RETRASADA", status_finished: "CONCLUIDA", days_left: "DÍAS RESTANTES",
-            total_contract: "Contrato Total", finance_btn: "FINANZAS VENDEDOR", net_base: "Base Líquida", balance: "Saldo Deudor",
-            history: "Historial", pay_btn: "Registrar Pago", report_title: "INFORME EJECUTIVO", col_base: "Base Líquida", col_comm: "Comisión",
-            verifying: "VERIFICANDO...", registering: "AUTORIZANDO...", tooltip_edit: "Editar", tooltip_delete: "Eliminar", tooltip_fin: "Finanzas", password: "Clave",
-            col_obra: "Obra", col_vendedor: "Vendedor", col_periodo: "Periodo", col_andamento: "Progreso", col_contrato: "Contrato",
-            vol_geral: "Volumen General", total_comm: "Total Comisiones", pay_history: "Historial de Pagos", net_reduct: "* Base reducida por tasa de tarjeta"
+            vol_geral: "General Volume", total_comm: "Total Commissions", pay_history: "Payment History"
         }
     };
 
@@ -312,9 +300,9 @@
             const key = el.getAttribute('data-i18n');
             if (translations[l][key]) el.innerText = translations[l][key];
         });
-        // Placeholders dinâmicos
+        
         const mailInp = document.getElementById('email');
-        if(mailInp) mailInp.placeholder = l === 'es' ? 'Correo Electrónico' : (l === 'en' ? 'Email' : 'E-mail');
+        if(mailInp) mailInp.placeholder = l === 'en' ? 'Email' : 'E-mail';
         const passInp = document.getElementById('password');
         if(passInp) passInp.placeholder = translations[l].password;
         
@@ -324,7 +312,7 @@
     window.toggleTheme = () => { state.theme = state.theme === 'dark' ? 'light' : 'dark'; document.body.className = state.theme; document.getElementById('theme-icon-light').classList.toggle('hidden'); document.getElementById('theme-icon-dark').classList.toggle('hidden'); };
     window.selectDivision = (div) => { state.company = div; document.querySelectorAll('#auth-screen button').forEach(b => b.classList.remove('border-gold', 'opacity-100')); const t = document.getElementById(div === 'Smart Home' ? 'div-smart' : 'div-hvac'); if(t) t.classList.add('border-gold', 'opacity-100'); const l = document.getElementById('header-logo'); if(l) l.src = div === 'Smart Home' ? 'logo-D2-SmartHome-preto.png' : 'logo-D2-HVAC-Solutions-preto.png'; renderProjects(); renderReport(); };
     window.toggleFinance = (id) => { const el = document.getElementById(`fin-${id}`); if(el) el.classList.toggle('open'); };
-    window.addPayment = async (projectId) => { const v = document.getElementById(`pay-val-${projectId}`).value, d = document.getElementById(`pay-date-${projectId}`).value; if(!v || !d) return alert("Error!"); try { await updateDoc(doc(db, 'artifacts', appId, 'public', 'data', 'projects', projectId), { pagamentosEfetuados: arrayUnion({ valor: parseFloat(v), data: d }) }); } catch(e){alert("Error!");} };
+    window.addPayment = async (projectId) => { const v = document.getElementById(`pay-val-${projectId}`).value, d = document.getElementById(`pay-date-${projectId}`).value; if(!v || !d) return; try { await updateDoc(doc(db, 'artifacts', appId, 'public', 'data', 'projects', projectId), { pagamentosEfetuados: arrayUnion({ valor: parseFloat(v), data: d }) }); } catch(e){} };
     window.editTeam = (id,e,p) => { document.getElementById('t-id').value=id; document.getElementById('t-email').value=e; document.getElementById('t-pass').value=p; };
     window.deleteTeam = async (id) => { if(confirm("REMOVER?")) await deleteDoc(doc(db, 'artifacts', appId, 'public', 'data', 'user_credentials', id)); };
     window.deleteP = async (id) => { if(confirm("EXCLUIR?")) await deleteDoc(doc(db, 'artifacts', appId, 'public', 'data', 'projects', id)); };
