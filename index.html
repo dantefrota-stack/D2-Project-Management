@@ -16,7 +16,7 @@
 
         .input-wrapper { position: relative; width: 100%; display: flex; align-items: center; margin-bottom: 1rem; }
         
-        /* FIX DO OLHO: SVG Puro para visibilidade total */
+        /* BOTÃO DO OLHO: SVG Embutido para máxima fiabilidade visual */
         .password-toggle { 
             position: absolute; right: 12px; top: 50%; transform: translateY(-50%); 
             z-index: 100; color: var(--gold); cursor: pointer; 
@@ -25,7 +25,7 @@
             border: 1px solid rgba(251, 191, 36, 0.3);
         }
         .password-toggle:hover { background: var(--gold); color: #000; }
-        .password-toggle svg { width: 20px; height: 20px; stroke-width: 2.5; }
+        .password-toggle svg { width: 18px; height: 18px; stroke-width: 2.5; }
 
         .modern-input { 
             width: 100%; padding: 14px 45px 14px 16px; border-radius: 12px; 
@@ -35,17 +35,17 @@
         .light .modern-input { background: #fff; border: 1px solid #cbd5e1; color: #000; }
         .modern-input:focus { border-color: var(--gold); box-shadow: 0 0 0 3px rgba(251, 191, 36, 0.1); }
 
-        /* Icon overlays para campos financeiros */
-        .input-icon-left { position: absolute; left: 14px; color: var(--gold); font-weight: bold; pointer-events: none; }
-        .input-icon-right { position: absolute; right: 14px; color: var(--gold); font-weight: bold; pointer-events: none; }
+        /* Overlays financeiros */
+        .input-icon-left { position: absolute; left: 14px; color: var(--gold); font-weight: 800; pointer-events: none; z-index: 10; }
+        .input-icon-right { position: absolute; right: 14px; color: var(--gold); font-weight: 800; pointer-events: none; z-index: 10; }
 
-        /* CALENDÁRIO PREMIUM */
+        /* Calendário Customizado */
         input[type="date"]::-webkit-calendar-picker-indicator {
             background: transparent; bottom: 0; color: transparent; cursor: pointer;
-            height: auto; left: 0; position: absolute; right: 0; top: 0; width: auto; z-index: 10;
+            height: auto; left: 0; position: absolute; right: 0; top: 0; width: auto; z-index: 20;
         }
         .date-container { position: relative; display: flex; align-items: center; width: 100%; }
-        .calendar-icon-overlay { position: absolute; right: 14px; pointer-events: none; color: var(--gold); z-index: 5; }
+        .calendar-icon-overlay { position: absolute; right: 14px; pointer-events: none; color: var(--gold); z-index: 10; }
 
         .btn-primary { background: linear-gradient(135deg, var(--gold) 0%, var(--gold-dark) 100%); color: #000; font-weight: 900; border-radius: 14px; transition: all 0.3s; display: flex; align-items: center; justify-content: center; gap: 8px; }
         .btn-primary:hover { transform: translateY(-1px); filter: brightness(1.1); box-shadow: 0 4px 20px rgba(180, 83, 9, 0.4); }
@@ -62,23 +62,23 @@
 </head>
 <body class="dark">
 
-<!-- Login Screen -->
+<!-- Login Interface -->
 <div id="auth-screen" class="fixed inset-0 z-[2000] flex items-center justify-center p-6 bg-[#030508]">
     <div class="bg-white dark:bg-[#0f172a] p-10 rounded-[40px] w-full max-w-md shadow-2xl text-center border border-white/5">
         <div class="mb-6 flex justify-center">
-             <img src="logo-D2-Group-preto.png" alt="D2 Group" class="h-16 dark:invert">
+             <div class="p-2 bg-white rounded-xl"><img src="logo-D2-Group-preto.png" alt="D2" class="h-14"></div>
         </div>
         <h2 class="text-2xl font-black tracking-tight mb-2 uppercase">D2 Management</h2>
         <p class="text-slate-500 text-xs font-bold uppercase tracking-widest mb-6" data-i18n="login_sub">Sistema Integrado de Gestão</p>
         
         <div class="flex justify-center gap-4 mb-8">
-            <button onclick="setLang('pt')" class="flag-btn active" id="l-pt"><img src="https://flagcdn.com/w80/br.png" class="w-6" alt="PT"></button>
-            <button onclick="setLang('en')" class="flag-btn" id="l-en"><img src="https://flagcdn.com/w80/us.png" class="w-6" alt="EN"></button>
+            <button onclick="setLang('pt')" class="flag-btn active" id="l-pt"><img src="https://flagcdn.com/w80/br.png" class="w-6"></button>
+            <button onclick="setLang('en')" class="flag-btn" id="l-en"><img src="https://flagcdn.com/w80/us.png" class="w-6"></button>
         </div>
 
         <form id="login-form" class="space-y-4 text-left">
-            <div id="login-error-msg" class="hidden p-4 bg-red-500/10 border border-red-500/20 rounded-xl text-red-500 text-[10px] font-black text-center mb-4 uppercase tracking-widest leading-relaxed" data-i18n="login_err">
-                Dados inválidos. Caso tenha perdido sua senha ou usuário, procure seu administrador.
+            <div id="login-error-msg" class="hidden p-4 bg-red-500/10 border border-red-500/20 rounded-xl text-red-500 text-[10px] font-black text-center mb-4 uppercase tracking-widest" data-i18n="login_err">
+                Credenciais inválidas. Contacte o seu administrador.
             </div>
 
             <div class="input-wrapper">
@@ -87,7 +87,7 @@
             <div class="input-wrapper">
                 <input type="password" id="password" required class="modern-input" placeholder="Senha">
                 <button type="button" onclick="window.togglePassword('password', 'eye-login-btn')" class="password-toggle" id="eye-login-btn">
-                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>
                 </button>
             </div>
             <button type="submit" id="btn-entrar" class="w-full btn-primary h-14 uppercase tracking-widest text-sm font-black shadow-lg">
@@ -98,27 +98,20 @@
     </div>
 </div>
 
-<!-- Dashboard Interface -->
+<!-- Principal Dash Interface -->
 <div id="main-app" class="hidden min-h-screen flex flex-col">
     <header class="no-print bg-white/80 dark:bg-black/60 backdrop-blur-md border-b border-slate-200 dark:border-white/5 p-4 sticky top-0 z-40">
         <div class="max-w-7xl mx-auto flex justify-between items-center">
             <div class="flex items-center gap-6">
-                <div class="bg-white p-2 rounded-xl shadow-md border border-slate-100">
-                    <img id="header-logo" src="logo-D2-SmartHome-preto.png" class="h-10" alt="Logo">
-                </div>
+                <div class="bg-white p-2 rounded-xl shadow-md"><img id="header-logo" src="logo-D2-Group-preto.png" class="h-10"></div>
             </div>
             <div class="flex items-center gap-5">
-                <button onclick="toggleTheme()" class="p-3 rounded-2xl bg-slate-100 dark:bg-white/5 hover:bg-gold/20 transition-all">
-                    <i data-lucide="sun" id="theme-icon-light" class="hidden text-gold"></i>
-                    <i data-lucide="moon" id="theme-icon-dark" class="text-slate-400"></i>
-                </button>
+                <button onclick="toggleTheme()" class="p-3 rounded-2xl bg-slate-100 dark:bg-white/5 hover:bg-gold/20 transition-all"><i data-lucide="sun" id="theme-icon-light" class="hidden text-gold"></i><i data-lucide="moon" id="theme-icon-dark" class="text-slate-400"></i></button>
                 <div class="text-right hidden sm:block">
                     <p id="user-display" class="text-xs font-black uppercase text-gold tracking-tight"></p>
-                    <p class="text-[9px] text-slate-500 font-bold uppercase tracking-widest" data-i18n="admin_panel">Painel Admin</p>
+                    <p class="text-[9px] text-slate-500 font-bold uppercase tracking-widest" data-i18n="admin_panel">Gestão Corporativa</p>
                 </div>
-                <button onclick="handleLogout()" class="p-3 rounded-2xl text-red-500 hover:bg-red-500/10 transition-all border border-red-500/20 shadow-sm">
-                    <i data-lucide="log-out" class="w-5 h-5"></i>
-                </button>
+                <button onclick="handleLogout()" class="p-3 rounded-2xl text-red-500 hover:bg-red-500/10 transition-all border border-red-500/20 shadow-sm"><i data-lucide="log-out" class="w-5 h-5"></i></button>
             </div>
         </div>
     </header>
@@ -133,11 +126,10 @@
 
         <div id="view-projects" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-10 text-left"></div>
         
-        <!-- Formulário Nova Obra -->
         <div id="view-new" class="hidden max-w-3xl mx-auto glass p-10 rounded-[40px] text-left shadow-2xl border border-white/5">
             <h3 class="text-2xl font-black mb-10 flex items-center gap-4 uppercase tracking-tighter">
                 <span class="w-2 h-10 bg-gold rounded-full"></span>
-                <span id="form-title" data-i18n="form_new_title">Cadastrar Obra</span>
+                <span id="form-title" data-i18n="form_new_title">Registar Obra</span>
             </h3>
             <form id="project-form" class="grid grid-cols-1 md:grid-cols-2 gap-8">
                 <input type="hidden" id="edit-id">
@@ -168,7 +160,6 @@
                 <div class="space-y-2">
                     <label class="text-[10px] font-black uppercase text-slate-500 ml-1 tracking-widest" data-i18n="label_comm">% Comissão</label>
                     <div class="input-wrapper">
-                        <!-- Corrigido: % para a direita -->
                         <input type="number" id="f-comm" value="5" class="modern-input !pr-10">
                         <span class="input-icon-right">%</span>
                     </div>
@@ -176,23 +167,23 @@
 
                 <div class="col-span-2 space-y-2">
                     <label class="text-[10px] font-black uppercase text-slate-500 ml-1 tracking-widest" data-i18n="label_method">Forma de Pagamento</label>
-                    <select id="f-metodo" class="modern-input !pl-5">
+                    <select id="f-metodo" class="modern-input">
                         <option value="Zelle">Zelle</option>
                         <option value="Wire Transfer">Wire Transfer</option>
                         <option value="Cash">Cash</option>
-                        <option value="CC">Credit Card (Deduction 3% Net)</option>
+                        <option value="CC">Credit Card (Dedução 3% Net)</option>
                     </select>
                 </div>
                 
                 <div class="space-y-2">
-                    <label class="text-[10px] font-black uppercase text-slate-500 ml-1 tracking-widest" data-i18n="label_start">Início</label>
+                    <label class="text-[10px] font-black uppercase text-slate-500 ml-1 tracking-widest" data-i18n="label_start">Data Início</label>
                     <div class="date-container">
                         <input type="date" id="f-inicio" required class="modern-input">
                         <i data-lucide="calendar" class="calendar-icon-overlay w-5 h-5"></i>
                     </div>
                 </div>
                 <div class="space-y-2">
-                    <label class="text-[10px] font-black uppercase text-slate-500 ml-1 tracking-widest" data-i18n="label_end">Entrega</label>
+                    <label class="text-[10px] font-black uppercase text-slate-500 ml-1 tracking-widest" data-i18n="label_end">Data Entrega</label>
                     <div class="date-container">
                         <input type="date" id="f-entrega" required class="modern-input">
                         <i data-lucide="calendar" class="calendar-icon-overlay w-5 h-5"></i>
@@ -200,7 +191,7 @@
                 </div>
 
                 <div class="col-span-2 space-y-2">
-                    <label class="text-[10px] font-black uppercase text-slate-500 ml-1 tracking-widest" data-i18n="label_status">Status</label>
+                    <label class="text-[10px] font-black uppercase text-slate-500 ml-1 tracking-widest" data-i18n="label_status">Status de Obra</label>
                     <select id="f-status" class="modern-input">
                         <option value="Cotação">Cotação</option>
                         <option value="Aguardando Início">Aguardando Início</option>
@@ -209,30 +200,26 @@
                     </select>
                 </div>
                 <div class="col-span-2 flex gap-6 mt-10">
-                    <button type="submit" class="flex-1 btn-primary h-14 uppercase tracking-widest text-sm font-black shadow-xl" data-i18n="btn_save">Salvar Registro</button>
+                    <button type="submit" class="flex-1 btn-primary h-14 uppercase tracking-widest text-sm font-black shadow-xl" data-i18n="btn_save">Confirmar Registo</button>
                     <button type="button" onclick="showView('projects')" class="px-10 text-slate-500 uppercase font-black text-xs hover:text-white transition-all" data-i18n="btn_cancel">Cancelar</button>
                 </div>
             </form>
         </div>
 
-        <!-- Gerenciar Equipe (Dante) -->
+        <!-- Equipa (Dante Access) -->
         <div id="view-users" class="hidden space-y-10">
             <div class="glass p-10 max-w-lg mx-auto rounded-[32px] border border-white/5 shadow-2xl">
-                <h3 class="text-xl font-black text-gold mb-8 uppercase tracking-tighter text-left" data-i18n="team_title">Gestão de Equipe</h3>
+                <h3 class="text-xl font-black text-gold mb-8 uppercase tracking-tighter text-left" data-i18n="team_title">Gestão de Equipa</h3>
                 <form id="team-form" class="space-y-5 text-left">
                     <input type="hidden" id="t-id">
-                    <div class="input-wrapper">
-                        <input type="email" id="t-email" placeholder="E-mail" required class="modern-input">
-                    </div>
+                    <div class="input-wrapper"><input type="email" id="t-email" placeholder="E-mail" required class="modern-input"></div>
                     <div class="input-wrapper">
                         <input type="password" id="t-pass" placeholder="Senha" required class="modern-input">
                         <button type="button" onclick="window.togglePassword('t-pass', 'eye-team-btn')" class="password-toggle" id="eye-team-btn">
-                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>
                         </button>
                     </div>
-                    <button type="submit" id="btn-save-team" class="w-full btn-primary h-14 text-xs font-black uppercase tracking-widest">
-                        <span id="team-btn-text" data-i18n="btn_team">Salvar e Liberar Acesso</span>
-                    </button>
+                    <button type="submit" id="btn-save-team" class="w-full btn-primary h-14 text-xs font-black uppercase tracking-widest" data-i18n="btn_team">Autorizar Acesso</button>
                 </form>
             </div>
             <div id="users-list" class="grid grid-cols-1 md:grid-cols-2 gap-8 text-left max-w-7xl mx-auto"></div>
@@ -268,29 +255,28 @@
 
     const translations = {
         pt: { 
-            login_sub: "Sistema Integrado de Gestão", login_err: "Dados inválidos. Caso tenha perdido sua senha ou usuário, procure seu administrador.", 
-            btn_login: "Entrar no Sistema", admin_panel: "Painel Admin", nav_proj: "Projetos", nav_new: "Nova Obra", nav_rep: "Relatórios", nav_users: "Equipe",
-            form_new_title: "Cadastrar Obra", label_div: "Divisão", label_client: "Cliente", label_seller: "Vendedor", label_value: "Valor Contrato", 
+            login_sub: "Integrated Management", login_err: "Dados inválidos. Caso tenha perdido sua senha ou usuário, procure seu administrador.", 
+            btn_login: "Entrar no Sistema", admin_panel: "Gestão Corporativa", nav_proj: "Projetos", nav_new: "Nova Obra", nav_rep: "Relatórios", nav_users: "Equipe",
+            form_new_title: "Registar Obra", label_div: "Divisão", label_client: "Cliente", label_seller: "Vendedor", label_value: "Valor Bruto", 
             label_comm: "Comissão", label_method: "Pagamento", label_start: "Início", label_end: "Entrega", label_status: "Status",
-            btn_save: "Salvar Registro", btn_cancel: "Cancelar", team_title: "Gestão de Equipe", btn_team: "Salvar e Liberar Acesso",
-            timeline: "Timeline", status_overdue: "ATRASADA", status_finished: "CONCLUÍDA", days_left: "DIAS RESTANTES",
-            total_contract: "Contrato Total", finance_btn: "FINANCEIRO VENDEDOR", net_base: "Base Líquida", balance: "Saldo Devedor",
-            history: "Histórico", pay_btn: "Lançar Pagamento", report_title: "RELATÓRIO EXECUTIVO"
+            btn_save: "Salvar Registo", btn_cancel: "Cancelar", team_title: "Gestão de Equipa", btn_team: "Autorizar Acesso",
+            timeline: "Cronograma", status_overdue: "ATRASADA", status_finished: "CONCLUÍDA", days_left: "DIAS RESTANTES",
+            finance_btn: "FINANCEIRO VENDEDOR", net_base: "Base Líquida", balance: "Saldo Devedor", report_title: "RELATÓRIO EXECUTIVO",
+            col_obra: "Obra", col_vendedor: "Vendedor", col_periodo: "Período", col_andamento: "Andamento (%)", col_contrato: "Contrato", col_base: "Líquido", col_comm: "Comissão"
         },
         en: { 
-            login_sub: "Integrated Management System", login_err: "Invalid credentials. Contact administrator for support.", 
-            btn_login: "Login", admin_panel: "Admin Panel", nav_proj: "Projects", nav_new: "New Entry", nav_rep: "Reports", nav_users: "Team",
-            form_new_title: "Register Project", label_div: "Division", label_client: "Client", label_seller: "Sales Rep", label_value: "Contract Value", 
+            login_sub: "Integrated Management", login_err: "Invalid credentials. Contact your administrator for support.", 
+            btn_login: "Login", admin_panel: "Corporate Management", nav_proj: "Projects", nav_new: "New Entry", nav_rep: "Reports", nav_users: "Team",
+            form_new_title: "Register Project", label_div: "Division", label_client: "Client", label_seller: "Sales Rep", label_value: "Gross Value", 
             label_comm: "Commission", label_method: "Payment", label_start: "Start", label_end: "Deadline", label_status: "Status",
             btn_save: "Save Entry", btn_cancel: "Cancel", team_title: "Team Management", btn_team: "Authorize Access",
             timeline: "Timeline", status_overdue: "OVERDUE", status_finished: "FINISHED", days_left: "DAYS LEFT",
-            total_contract: "Total Contract", finance_btn: "SALES FINANCE", net_base: "Net Base", balance: "Balance",
-            history: "History", pay_btn: "Lançar Pagamento", report_title: "EXECUTIVE REPORT"
+            finance_btn: "SALES FINANCE", net_base: "Net Base", balance: "Balance Due", report_title: "EXECUTIVE REPORT",
+            col_obra: "Project", col_vendedor: "Sales Rep", col_periodo: "Period", col_andamento: "Progress (%)", col_contrato: "Contract", col_base: "Net", col_comm: "Commission"
         }
     };
 
-    // FUNÇÃO FINANCEIRA GLOBAL: CORRIGIDA PARA PADRÃO EN-US (COM VÍRGULAS)
-    const formatCurr = (v) => new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD' }).format(v);
+    const formatCurr = (v) => new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD', minimumFractionDigits: 2 }).format(v);
 
     window.togglePassword = (inputId, btnId) => {
         const el = document.getElementById(inputId);
@@ -299,8 +285,8 @@
             const isPass = el.type === 'password';
             el.type = isPass ? 'text' : 'password';
             btn.innerHTML = isPass 
-                ? '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17.94 17.94A10.07 10.07 0 0 1 12 20c-7 0-11-8-11-8a18.45 18.45 0 0 1 5.06-5.94M9.9 4.24A9.12 9.12 0 0 1 12 4c7 0 11 8 11 8a18.5 18.5 0 0 1-2.16 3.19m-6.72-1.07a3 3 0 1 1-4.24-4.24"></path><line x1="1" y1="1" x2="23" y2="23"></line></svg>'
-                : '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>';
+                ? '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M17.94 17.94A10.07 10.07 0 0 1 12 20c-7 0-11-8-11-8a18.45 18.45 0 0 1 5.06-5.94M9.9 4.24A9.12 9.12 0 0 1 12 4c7 0 11 8 11 8a18.5 18.5 0 0 1-2.16 3.19m-6.72-1.07a3 3 0 1 1-4.24-4.24"></path><line x1="1" y1="1" x2="23" y2="23"></line></svg>'
+                : '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>';
         }
     };
 
@@ -315,17 +301,16 @@
     };
 
     window.toggleTheme = () => { state.theme = state.theme === 'dark' ? 'light' : 'dark'; document.body.className = state.theme; document.getElementById('theme-icon-light').classList.toggle('hidden'); document.getElementById('theme-icon-dark').classList.toggle('hidden'); };
-    window.selectDivision = (div) => { state.company = div; document.querySelectorAll('#auth-screen button').forEach(b => b.classList.remove('border-gold', 'opacity-100')); const t = document.getElementById(div === 'Smart Home' ? 'div-smart' : 'div-hvac'); if(t) t.classList.add('border-gold', 'opacity-100'); const l = document.getElementById('header-logo'); if(l) l.src = div === 'Smart Home' ? 'logo-D2-SmartHome-preto.png' : 'logo-D2-HVAC-Solutions-preto.png'; renderProjects(); renderReport(); };
+    window.selectDivision = (div) => { state.company = div; document.querySelectorAll('#auth-screen button').forEach(b => b.classList.remove('border-gold', 'opacity-100')); const t = document.getElementById(div === 'Smart Home' ? 'div-smart' : 'div-hvac'); if(t) t.classList.add('border-gold', 'opacity-100'); renderProjects(); renderReport(); };
     window.toggleFinance = (id) => { const el = document.getElementById(`fin-${id}`); if(el) el.classList.toggle('open'); };
     window.addPayment = async (projectId) => { const v = document.getElementById(`pay-val-${projectId}`).value, d = document.getElementById(`pay-date-${projectId}`).value; if(!v || !d) return; try { await updateDoc(doc(db, 'artifacts', appId, 'public', 'data', 'projects', projectId), { pagamentosEfetuados: arrayUnion({ valor: parseFloat(v), data: d }) }); } catch(e){} };
-    window.deleteTeam = async (id) => { if(confirm("REMOVER?")) await deleteDoc(doc(db, 'artifacts', appId, 'public', 'data', 'user_credentials', id)); };
-    window.deleteP = async (id) => { if(confirm("EXCLUIR?")) await deleteDoc(doc(db, 'artifacts', appId, 'public', 'data', 'projects', id)); };
+    window.deleteTeam = async (id) => { if(confirm("REMOVER DA EQUIPA?")) await deleteDoc(doc(db, 'artifacts', appId, 'public', 'data', 'user_credentials', id)); };
+    window.deleteP = async (id) => { if(confirm("EXCLUIR REGISTO?")) await deleteDoc(doc(db, 'artifacts', appId, 'public', 'data', 'projects', id)); };
     window.editP = (id) => { const p = state.projects.find(x => x.id === id); if(!p) return; document.getElementById('edit-id').value = id; document.getElementById('f-empresa').value = p.empresa; document.getElementById('f-cliente').value = p.cliente; document.getElementById('f-vendedor').value = p.vendedor; document.getElementById('f-valor').value = p.valorTotal; document.getElementById('f-comm').value = p.percComissao; document.getElementById('f-metodo').value = p.metodo; document.getElementById('f-inicio').value = p.dataInicio; document.getElementById('f-entrega').value = p.dataEntrega; document.getElementById('f-status').value = p.status; window.showView('new'); };
     window.showView = (v) => { ['projects', 'new', 'reports', 'users'].forEach(id => { const el = document.getElementById('view-'+id), tab = document.getElementById('tab-'+id); if(el) el.classList.add('hidden'); if(tab) tab.classList.remove('tab-active'); }); const tv = document.getElementById('view-'+v), tt = document.getElementById('tab-'+v); if(tv) tv.classList.remove('hidden'); if(tt) tt.classList.add('tab-active'); lucide.createIcons(); };
     window.handleLogout = () => signOut(auth);
 
     function getFin(p) {
-        // Lógica: (Bruto - 3% se CC) = Base. Base * comissão = Total.
         let base = p.metodo === 'CC' ? p.valorTotal * 0.97 : p.valorTotal;
         let comm = base * (p.percComissao / 100);
         let pays = p.pagamentosEfetuados || [];
@@ -350,17 +335,17 @@
             grid.innerHTML += `<div class="glass p-8 rounded-[40px] border-l-[8px] relative shadow-2xl" style="border-left-color: ${p.status === 'Finalizado' ? '#10b981' : '#f59e0b'}">
                 <div class="absolute top-6 right-6 flex items-center gap-2"><span class="status-badge ${f.sc}"></span><button onclick="window.editP('${p.id}')"><i data-lucide="edit-3" class="w-4 h-4 text-slate-400"></i></button><button onclick="window.deleteP('${p.id}')"><i data-lucide="trash-2" class="w-4 h-4 text-red-400"></i></button></div>
                 <div class="mb-6"><h4 class="font-black text-xl uppercase truncate pr-20">${p.cliente}</h4><p class="text-[10px] font-bold text-slate-500 uppercase tracking-widest mt-1">${p.vendedor} • ${p.metodo}</p></div>
-                <div class="space-y-3 mb-8"><div class="flex justify-between text-[10px] font-black uppercase text-slate-400"><span>Timeline</span><span class="text-gold">${prog}%</span></div>
+                <div class="space-y-3 mb-8"><div class="flex justify-between text-[10px] font-black uppercase text-slate-400"><span>${t.timeline}</span><span class="text-gold font-black">${prog}%</span></div>
                 <div class="progress-track"><div class="progress-bar-fill ${bc}" style="width: ${prog}%"></div></div>
-                <div class="flex justify-between text-[9px] font-extrabold"><span>${new Date(p.dataInicio).toLocaleDateString()}</span><span class="${n > e && p.status !== 'Finalizado' ? 'text-red-500' : 'text-gold'}">${n > e && p.status !== 'Finalizado' ? t.status_overdue : (prog === 100 ? t.status_finished : days + ' ' + t.days_left)}</span></div></div>
-                <div class="bg-black/30 p-6 rounded-3xl border border-white/5"><p class="text-[9px] font-black text-slate-500 uppercase mb-1 text-center">Contract Total</p><p class="text-2xl font-black text-white text-center">${formatCurr(p.valorTotal)}</p></div>
+                <div class="flex justify-between text-[9px] font-extrabold uppercase"><span>${new Date(p.dataInicio).toLocaleDateString()}</span><span class="${n > e && p.status !== 'Finalizado' ? 'text-red-500' : 'text-gold'}">${n > e && p.status !== 'Finalizado' ? t.status_overdue : (prog === 100 ? t.status_finished : days + ' ' + t.days_left)}</span></div></div>
+                <div class="bg-black/30 p-6 rounded-3xl border border-white/5"><p class="text-[9px] font-black text-slate-500 uppercase mb-1 text-center">${t.col_contrato}</p><p class="text-2xl font-black text-white text-center">${formatCurr(p.valorTotal)}</p></div>
                 <button onclick="window.toggleFinance('${p.id}')" class="w-full mt-6 py-2 text-[10px] font-black uppercase text-gold hover:underline flex items-center justify-center gap-2"><i data-lucide="wallet" class="w-4 h-4"></i> ${t.finance_btn}</button>
                 <div id="fin-${p.id}" class="finance-panel"><div class="bg-gold/5 p-4 rounded-2xl border border-gold/10 space-y-4">
-                <div class="flex justify-between"><div><p class="text-[8px] font-bold text-gold/60 uppercase">Commission</p><p class="text-lg font-black text-gold">${formatCurr(f.comm)}</p></div>
+                <div class="flex justify-between"><div><p class="text-[8px] font-bold text-gold/60 uppercase">${t.col_comm}</p><p class="text-lg font-black text-gold">${formatCurr(f.comm)}</p></div>
                 <div class="text-right"><p class="text-[8px] font-bold text-gold/60 uppercase">${t.balance}</p><p class="text-lg font-black ${f.bal > 0 ? 'text-red-400' : 'text-emerald-400'}">${formatCurr(f.bal)}</p></div></div>
                 <div class="mt-4 pt-4 border-t border-white/5 admin-only ${state.user.email !== SUPER_ADMIN ? 'hidden' : ''}">
                 <div class="grid grid-cols-2 gap-2"><input type="number" id="pay-val-${p.id}" placeholder="$" class="modern-input !pl-4 h-10"><input type="date" id="pay-date-${p.id}" class="modern-input !pl-4 h-10"></div>
-                <button onclick="window.addPayment('${p.id}')" class="w-full mt-2 bg-emerald-600/20 text-emerald-400 border border-emerald-500/30 p-2 rounded-lg text-[9px] font-black uppercase tracking-widest hover:bg-emerald-500 hover:text-black transition-all">POST PAYMENT</button></div></div></div></div>`;
+                <button onclick="window.addPayment('${p.id}')" class="w-full mt-2 bg-emerald-600/20 text-emerald-400 border border-emerald-500/30 p-2 rounded-lg text-[9px] font-black uppercase tracking-widest hover:bg-emerald-500 hover:text-black transition-all">${t.pay_btn}</button></div></div></div></div>`;
         });
         lucide.createIcons();
     }
@@ -374,29 +359,30 @@
             const f = getFin(p); tv += p.valorTotal; tc += f.comm;
             const sD = new Date(p.dataInicio).getTime(), eD = new Date(p.dataEntrega).getTime(), nD = new Date().getTime();
             let prog = nD >= sD ? (nD > eD ? 100 : Math.floor(((nD - sD) / (eD - sD)) * 100)) : 0;
-            return `<tr class="border-b border-slate-100 text-xs text-left text-slate-800">
-                <td class="p-4 font-black uppercase">${p.cliente}</td>
-                <td class="p-4">${p.vendedor}</td>
-                <td class="p-4 text-center">${prog}%</td>
-                <td class="p-4 text-right">${formatCurr(p.valorTotal)}</td>
-                <td class="p-4 text-right text-slate-400 italic">${formatCurr(f.base)}</td>
-                <td class="p-4 text-right font-black text-amber-600">${formatCurr(f.comm)}</td>
-            </tr>`;
+            return `<tr class="border-b border-slate-100 text-[11px] text-left text-slate-800"><td class="p-4 font-black uppercase">${p.cliente}</td><td class="p-4">${p.vendedor}</td><td class="p-4 text-center">${prog}%</td><td class="p-4 text-right">${formatCurr(p.valorTotal)}</td><td class="p-4 text-right text-slate-400 italic">${formatCurr(f.base)}</td><td class="p-4 text-right font-black text-amber-600">${formatCurr(f.comm)}</td></tr>`;
         }).join('');
         out.innerHTML = `<div class="bg-white text-slate-950 p-12 rounded-[50px] shadow-2xl border-8 border-slate-50">
-            <div class="flex justify-between items-center border-b-[8px] border-slate-950 pb-10 mb-10"><div class="logo-frame-sm border"><img src="logo-D2-Group-preto.png" class="h-14"></div><div class="text-right"><h2 class="text-3xl font-black uppercase tracking-tighter">${t.report_title}</h2><p class="text-slate-400 font-black uppercase text-[10px]">${new Date().toLocaleDateString()}</p></div></div>
+            <div class="flex justify-between items-center border-b-[8px] border-slate-950 pb-10 mb-10"><div class="bg-white p-2 border rounded-lg shadow-sm"><img src="logo-D2-Group-preto.png" class="h-14"></div><div class="text-right"><h2 class="text-3xl font-black uppercase tracking-tighter">${t.report_title}</h2><p class="text-slate-400 font-black uppercase text-[10px]">${new Date().toLocaleDateString()}</p></div></div>
             <div class="overflow-x-auto"><table class="w-full"><thead><tr class="bg-slate-50 font-black uppercase text-[10px] text-slate-500 text-left">
-                <th class="p-4">Obra</th><th class="p-4">Vendedor</th><th class="p-4 text-center">Progresso (%)</th><th class="p-4 text-right">Contrato</th><th class="p-4 text-right">${t.net_base}</th><th class="p-4 text-right">Comissão</th>
+                <th class="p-4">${t.col_obra}</th><th class="p-4">${t.col_vendedor}</th><th class="p-4 text-center">${t.col_andamento}</th><th class="p-4 text-right">${t.col_contrato}</th><th class="p-4 text-right">${t.col_base}</th><th class="p-4 text-right">${t.col_comm}</th>
             </tr></thead><tbody>${rows}</tbody></table></div>
-            <div class="mt-10 pt-10 border-t-[8px] border-slate-950 flex justify-end gap-16"><div class="text-right"><p class="text-[11px] font-black uppercase text-slate-400 mb-1">VOLUME GERAL</p><p class="text-4xl font-black">${formatCurr(tv)}</p></div><div class="text-right"><p class="text-[11px] font-black uppercase text-amber-600 mb-1">TOTAL COMISSÕES</p><p class="text-4xl font-black text-amber-600">${formatCurr(tc)}</p></div></div></div>`;
+            <div class="mt-10 pt-10 border-t-[8px] border-slate-950 flex justify-end gap-16"><div class="text-right"><p class="text-[11px] font-black uppercase text-slate-400 mb-1">${t.nav_rep.toUpperCase()}</p><p class="text-4xl font-black">${formatCurr(tv)}</p></div><div class="text-right"><p class="text-[11px] font-black uppercase text-amber-600 mb-1">${t.col_comm.toUpperCase()}</p><p class="text-4xl font-black text-amber-600">${formatCurr(tc)}</p></div></div></div>`;
     }
 
     function renderTeam(team) {
         const container = document.getElementById('users-list');
         if (!container || state.user?.email !== SUPER_ADMIN) return;
-        container.innerHTML = team.map(u => `<div class="glass p-6 rounded-[24px] flex justify-between items-center border-l-8 border-gold shadow-lg transition-all hover:scale-[1.01]">
-            <div class="text-left"><p class="font-black text-slate-100 text-lg">${u.email}</p><p class="text-[11px] text-slate-500 mt-1 uppercase tracking-widest">Senha: <span class="text-gold font-bold normal-case">${u.password}</span></p></div>
-            <div class="flex gap-2"><button onclick="window.deleteTeam('${u.id}')" class="p-2 text-red-500"><i data-lucide="user-minus" size="20"></i></button></div></div>`).join('');
+        const t = translations[state.lang];
+        container.innerHTML = team.map(u => {
+            const uniqueId = `team-pass-${u.id}`;
+            const btnId = `team-eye-${u.id}`;
+            return `<div class="glass p-6 rounded-[24px] flex justify-between items-center border-l-8 border-gold shadow-lg transition-all hover:scale-[1.01]">
+                <div class="text-left"><p class="font-black text-slate-100 text-lg">${u.email}</p>
+                <div class="flex items-center gap-3 mt-1"><p class="text-[11px] text-slate-500 font-medium uppercase tracking-widest">${t.password}:</p>
+                <div class="relative flex items-center"><input type="password" id="${uniqueId}" value="${u.password}" readonly class="bg-transparent text-gold font-bold text-[11px] border-none outline-none w-24">
+                <button onclick="window.togglePassword('${uniqueId}', '${btnId}')" class="ml-2 text-slate-400" id="${btnId}"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" style="width:14px;height:14px;"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg></button></div></div></div>
+                <div class="flex gap-2"><button onclick="window.deleteTeam('${u.id}')" class="p-2 text-red-500"><i data-lucide="user-minus" size="18"></i></button></div></div>`;
+        }).join('');
         lucide.createIcons();
     }
 
@@ -407,15 +393,18 @@
         if(u){ 
             document.getElementById('user-display').innerText = u.email.split('@')[0].toUpperCase(); 
             if(u.email === SUPER_ADMIN) document.querySelectorAll('.admin-only').forEach(e => e.classList.remove('hidden')); 
+            else document.querySelectorAll('.admin-only').forEach(e => e.classList.add('hidden')); 
             initData(); 
+        } else {
+            document.getElementById('btn-text').innerText = "Entrar no Sistema";
+            document.getElementById('btn-spinner').classList.add('hidden');
         }
         setLang(state.lang);
     });
 
     function initData() { 
         onSnapshot(collection(db, 'artifacts', appId, 'public', 'data', 'projects'), snap => { state.projects = snap.docs.map(d => ({ id: d.id, ...d.data() })); renderProjects(); renderReport(); }); 
-        if(state.user.email === SUPER_ADMIN) { onSnapshot(collection(db, 'artifacts', appId, 'public', 'data', 'user_credentials'), snap => { renderTeam(snap.docs.map(d => ({ id: d.id, ...d.data() }))); }); }
-        lucide.createIcons(); 
+        if(state.user?.email === SUPER_ADMIN) { onSnapshot(collection(db, 'artifacts', appId, 'public', 'data', 'user_credentials'), snap => { renderTeam(snap.docs.map(d => ({ id: d.id, ...d.data() }))); }); }
     }
 
     document.addEventListener('DOMContentLoaded', () => {
