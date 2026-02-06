@@ -1,15 +1,16 @@
 <!DOCTYPE html>
-<html lang="pt-pt">
+<html lang="pt-br">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>D2 Management System - Premium Official</title>
+    <title>D2 Management System - Official BR</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
     <style>
         :root { --glass: rgba(255, 255, 255, 0.02); --border: rgba(255, 255, 255, 0.08); --gold: #fbbf24; }
         body { font-family: 'Inter', sans-serif; background: #030508; color: #f1f5f9; min-height: 100vh; margin: 0; overflow-x: hidden; }
         
+        /* Moldura Branca para visibilidade total dos logos pretos */
         .logo-frame { background: #FFFFFF; padding: 16px 32px; border-radius: 20px; display: inline-flex; align-items: center; justify-content: center; box-shadow: 0 10px 40px rgba(0,0,0,0.6); border: 1px solid rgba(255,255,255,0.1); }
         .logo-frame-sm { background: #FFFFFF; padding: 6px 12px; border-radius: 10px; display: flex; align-items: center; justify-content: center; box-shadow: 0 4px 12px rgba(0,0,0,0.4); }
         
@@ -23,8 +24,9 @@
         .tab-btn { padding-bottom: 12px; border-bottom: 3px solid transparent; color: #475569; font-weight: 700; font-size: 0.75rem; text-transform: uppercase; transition: all 0.3s; cursor: pointer; }
         .tab-btn.active { color: var(--gold); border-bottom-color: var(--gold); }
         
-        .flag-btn { font-size: 1.6rem; opacity: 0.3; transition: 0.2s; cursor: pointer; border: none; background: none; }
-        .flag-btn.active { opacity: 1; transform: scale(1.2); }
+        /* Bandeiras Maiores */
+        .flag-btn { font-size: 1.8rem; opacity: 0.3; transition: 0.2s; cursor: pointer; border: none; background: none; filter: drop-shadow(0 2px 4px rgba(0,0,0,0.5)); }
+        .flag-btn:hover, .flag-btn.active { opacity: 1; transform: scale(1.2); }
         
         @media print { .no-print { display: none !important; } body { background: white !important; color: black !important; } .glass { border: 1px solid #ddd !important; background: transparent !important; } }
         .scrollbar-hide::-webkit-scrollbar { display: none; }
@@ -32,31 +34,29 @@
 </head>
 <body>
 
-<!-- Authentication Screen -->
+<!-- Tela de Autenticação -->
 <div id="auth-screen" class="fixed inset-0 z-50 flex flex-col items-center justify-center bg-[#030508] p-6">
     <div class="glass p-12 w-full max-w-md text-center">
         <div class="logo-frame mb-10">
             <img src="logo-D2-Group-preto.png" alt="D2 Group" style="max-width:240px" onerror="this.src='https://placehold.co/400x150/ffffff/000000?text=D2+GROUP'">
         </div>
-        <p class="text-slate-500 text-[10px] mb-10 font-black tracking-[0.3em] uppercase">Sistema Integrado de Gestão</p>
+        <p class="text-slate-500 text-[10px] mb-10 font-black tracking-[0.3em] uppercase" id="login-title-label">Sistema Integrado de Gestão</p>
         <form id="login-form" class="space-y-6 text-left">
             <div>
-                <label class="text-[9px] text-slate-500 uppercase font-black tracking-widest block mb-2 ml-1">E-mail Corporativo</label>
-                <input type="email" id="email" required class="glass-input" placeholder="dante.frota@allcablingtech.com">
+                <label class="text-[9px] text-slate-500 uppercase font-black tracking-widest block mb-2 ml-1" data-i18n="email">E-mail Corporativo</label>
+                <input type="email" id="email" required class="glass-input" placeholder="seu@email.com">
             </div>
             <div class="relative">
-                <label class="text-[9px] text-slate-500 uppercase font-black tracking-widest block mb-2 ml-1">Senha</label>
+                <label class="text-[9px] text-slate-500 uppercase font-black tracking-widest block mb-2 ml-1" data-i18n="pass">Senha</label>
                 <input type="password" id="password" required class="glass-input" placeholder="••••••••">
-                <!-- Ícone do Olho Adicionado -->
                 <button type="button" onclick="togglePassword('password')" class="absolute right-4 top-10 text-slate-500 hover:text-white transition-colors">
                     <span id="eye-icon">👁️</span>
                 </button>
             </div>
-            <button type="submit" class="w-full btn-gold p-5 font-black shadow-lg">Entrar no Sistema</button>
+            <button type="submit" class="w-full btn-gold p-5 font-black shadow-lg" data-i18n="btn_login">Entrar no Sistema</button>
             
-            <!-- Recuperação de Senha Adicionada -->
             <div class="text-center mt-6">
-                <button type="button" onclick="handleForgotPassword()" class="text-[10px] text-slate-600 hover:text-amber-500 uppercase font-black tracking-widest transition-all">
+                <button type="button" onclick="handleForgotPassword()" class="text-[10px] text-slate-600 hover:text-amber-500 uppercase font-black tracking-widest transition-all" data-i18n="forgot">
                     Esqueceu a senha? Recuperar
                 </button>
             </div>
@@ -65,18 +65,19 @@
     </div>
 </div>
 
-<!-- Main Application -->
+<!-- Aplicação Principal -->
 <div id="main-app" class="hidden min-h-screen flex flex-col">
     <header class="no-print bg-[#05070a]/90 backdrop-blur-3xl border-b border-white/5 p-5 sticky top-0 z-40">
         <div class="max-w-7xl mx-auto flex flex-wrap justify-between items-center gap-6">
-            <div class="flex items-center gap-8">
+            <div class="flex items-center gap-10">
                 <div class="logo-frame-sm">
                     <img id="header-logo" src="logo-D2-SmartHome-preto.png" class="h-10" alt="Logo" onerror="this.src='https://placehold.co/150x40/ffffff/000000?text=D2+MANAGEMENT'">
                 </div>
-                <div class="flex gap-4">
-                    <button onclick="setLang('pt')" class="flag-btn active" id="lang-pt">🇧🇷</button>
-                    <button onclick="setLang('en')" class="flag-btn" id="lang-en">🇺🇸</button>
-                    <button onclick="setLang('es')" class="flag-btn" id="lang-es">🇪🇸</button>
+                <!-- Bandeiras de Idioma -->
+                <div class="flex gap-5 border-l border-white/10 pl-5">
+                    <button onclick="setLang('pt')" class="flag-btn active" id="lang-pt" title="Português (BR)">🇧🇷</button>
+                    <button onclick="setLang('en')" class="flag-btn" id="lang-en" title="English">🇺🇸</button>
+                    <button onclick="setLang('es')" class="flag-btn" id="lang-es" title="Español">🇪🇸</button>
                 </div>
             </div>
             <div class="flex items-center gap-6">
@@ -87,9 +88,9 @@
                 <div class="flex items-center gap-5 border-l border-white/10 pl-6 text-right">
                     <div class="hidden sm:block">
                         <p id="user-display" class="text-[10px] font-black text-slate-300"></p>
-                        <p class="text-[8px] text-amber-500 font-bold uppercase tracking-widest">Administrador</p>
+                        <p class="text-[8px] text-amber-500 font-bold uppercase tracking-widest">Painel Admin</p>
                     </div>
-                    <button onclick="handleLogout()" class="text-red-400 hover:text-white p-3 glass rounded-2xl transition-all">🚪</button>
+                    <button onclick="handleLogout()" class="text-red-400 hover:text-white p-3 glass rounded-2xl transition-all" title="Sair">🚪</button>
                 </div>
             </div>
         </div>
@@ -97,60 +98,84 @@
 
     <main class="max-w-7xl mx-auto w-full p-6 md:p-10 flex-1">
         <nav class="no-print flex gap-10 mb-12 border-b border-white/5 overflow-x-auto scrollbar-hide">
-            <button onclick="showView('projects')" class="tab-btn active" id="tab-projects">Projetos</button>
-            <button onclick="showView('new')" class="tab-btn" id="tab-new">Novo Registo</button>
-            <button onclick="showView('reports')" class="tab-btn" id="tab-reports">Relatórios</button>
-            <button onclick="showView('logs')" class="tab-btn admin-only hidden" id="tab-logs">Auditoria</button>
-            <button onclick="showView('users')" class="tab-btn admin-only hidden" id="tab-users">Equipa</button>
+            <button onclick="showView('projects')" class="tab-btn active" id="tab-projects" data-i18n="nav_proj">Projetos</button>
+            <button onclick="showView('new')" class="tab-btn" id="tab-new" data-i18n="nav_new">Nova Obra</button>
+            <button onclick="showView('reports')" class="tab-btn" id="tab-reports" data-i18n="nav_rep">Relatórios</button>
+            <button onclick="showView('logs')" class="tab-btn admin-only hidden" id="tab-logs" data-i18n="nav_logs">Auditoria</button>
+            <button onclick="showView('users')" class="tab-btn admin-only hidden" id="tab-users" data-i18n="nav_users">Equipe</button>
         </nav>
 
         <div id="view-projects" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-10"></div>
         
-        <div id="view-new" class="hidden max-w-4xl mx-auto glass p-12">
-            <h3 class="text-2xl font-black mb-10 text-amber-500 uppercase tracking-tighter border-l-4 border-amber-500 pl-4" id="form-title">Registo de Obra</h3>
-            <form id="project-form" class="space-y-8 text-left">
+        <div id="view-new" class="hidden max-w-4xl mx-auto glass p-12 text-left">
+            <h3 class="text-2xl font-black mb-10 text-amber-500 uppercase tracking-tighter border-l-4 border-amber-500 pl-4" id="form-title" data-i18n="form_new">Nova Obra</h3>
+            <form id="project-form" class="space-y-8">
                 <input type="hidden" id="edit-id">
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
-                    <input type="text" id="f-cliente" required class="glass-input" placeholder="Cliente">
-                    <input type="text" id="f-vendedor" required class="glass-input" placeholder="Vendedor">
+                    <div class="space-y-2">
+                        <label class="text-[9px] uppercase font-black text-slate-500 ml-1" data-i18n="client">Cliente</label>
+                        <input type="text" id="f-cliente" required class="glass-input">
+                    </div>
+                    <div class="space-y-2">
+                        <label class="text-[9px] uppercase font-black text-slate-500 ml-1" data-i18n="seller">Vendedor</label>
+                        <input type="text" id="f-vendedor" required class="glass-input">
+                    </div>
                 </div>
                 <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
-                    <input type="number" id="f-valor" step="0.01" required class="glass-input" placeholder="Valor ($)">
-                    <select id="f-metodo" class="glass-input">
-                        <option value="Zelle">Zelle</option>
-                        <option value="CC">Cartão (-3%)</option>
-                        <option value="Cash">Cash</option>
-                        <option value="Wire">Wire Transfer</option>
-                    </select>
-                    <input type="number" id="f-comm" value="10" class="glass-input" placeholder="% Comissão">
+                    <div class="space-y-2">
+                        <label class="text-[9px] uppercase font-black text-slate-500 ml-1" data-i18n="value">Valor Total</label>
+                        <input type="number" id="f-valor" step="0.01" required class="glass-input">
+                    </div>
+                    <div class="space-y-2">
+                        <label class="text-[9px] uppercase font-black text-slate-500 ml-1" data-i18n="method">Pagamento</label>
+                        <select id="f-metodo" class="glass-input">
+                            <option value="Zelle">Zelle</option>
+                            <option value="CC">Cartão (-3%)</option>
+                            <option value="Cash">Cash</option>
+                            <option value="Wire">Wire Transfer</option>
+                        </select>
+                    </div>
+                    <div class="space-y-2">
+                        <label class="text-[9px] uppercase font-black text-slate-500 ml-1" data-i18n="comm">% Comissão</label>
+                        <input type="number" id="f-comm" value="10" class="glass-input">
+                    </div>
                 </div>
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
-                    <input type="date" id="f-inicio" required class="glass-input">
-                    <input type="date" id="f-entrega" required class="glass-input">
+                    <div class="space-y-2">
+                        <label class="text-[9px] uppercase font-black text-slate-500 ml-1" data-i18n="start">Início</label>
+                        <input type="date" id="f-inicio" required class="glass-input">
+                    </div>
+                    <div class="space-y-2">
+                        <label class="text-[9px] uppercase font-black text-slate-500 ml-1" data-i18n="delivery">Entrega</label>
+                        <input type="date" id="f-entrega" required class="glass-input">
+                    </div>
                 </div>
-                <select id="f-status" class="glass-input">
-                    <option value="Cotação">Cotação</option>
-                    <option value="Aguardando Início">Aguardando Início</option>
-                    <option value="Em Execução">Em Execução</option>
-                    <option value="Finalizado">Finalizado</option>
-                </select>
+                <div class="space-y-2">
+                    <label class="text-[9px] uppercase font-black text-slate-500 ml-1" data-i18n="status">Status</label>
+                    <select id="f-status" class="glass-input">
+                        <option value="Cotação">Cotação</option>
+                        <option value="Aguardando Início">Aguardando Início</option>
+                        <option value="Em Execução">Em Execução</option>
+                        <option value="Finalizado">Finalizado</option>
+                    </select>
+                </div>
                 <div class="flex gap-6 pt-10">
-                    <button type="submit" class="flex-1 btn-gold p-5 font-black">Salvar Obra</button>
-                    <button type="button" onclick="showView('projects')" class="px-10 text-slate-500 uppercase font-black text-xs tracking-widest">Cancelar</button>
+                    <button type="submit" class="flex-1 btn-gold p-5 font-black" data-i18n="btn_save">Confirmar e Salvar</button>
+                    <button type="button" onclick="showView('projects')" class="px-10 text-slate-500 uppercase font-black text-xs tracking-widest" data-i18n="cancel">Cancelar</button>
                 </div>
             </form>
         </div>
 
         <div id="view-reports" class="hidden space-y-10">
             <div class="no-print glass p-8 flex gap-6 items-end">
-                <select id="rep-filter" class="glass-input flex-1"><option value="All">D2 Group (Geral)</option><option value="Smart Home">Smart Home</option><option value="HVAC Solutions">HVAC Solutions</option></select>
-                <button onclick="window.print()" class="bg-slate-800 text-white px-10 py-3 rounded-xl font-black transition-all hover:bg-slate-700">PDF / Imprimir</button>
+                <select id="rep-filter" class="glass-input flex-1"><option value="All">Todas as Divisões</option><option value="Smart Home">D2 Smart Home</option><option value="HVAC">D2 HVAC Solutions</option></select>
+                <button onclick="window.print()" class="bg-slate-800 text-white px-10 py-3 rounded-xl font-black transition-all hover:bg-slate-700" data-i18n="print">PDF / Imprimir</button>
             </div>
             <div id="report-output"></div>
         </div>
 
         <div id="view-logs" class="hidden glass overflow-hidden border border-white/5 text-left">
-            <table class="w-full text-left text-sm"><thead class="bg-white/5 uppercase text-[9px] font-black tracking-widest"><tr><th class="p-6">Timeline</th><th class="p-6">Utilizador</th><th class="p-6">Ação</th><th class="p-6">Detalhes</th></tr></thead><tbody id="logs-body"></tbody></table>
+            <table class="w-full text-left text-sm"><thead class="bg-white/5 uppercase text-[9px] font-black tracking-widest"><tr><th class="p-6">Data/Hora</th><th class="p-6">Usuário</th><th class="p-6">Ação</th><th class="p-6">Descrição</th></tr></thead><tbody id="logs-body"></tbody></table>
         </div>
 
         <div id="view-users" class="hidden grid grid-cols-1 md:grid-cols-2 gap-10"></div>
@@ -179,35 +204,53 @@
 
     let state = { user: null, projects: [], company: 'Smart Home', lang: 'pt' };
 
-    // --- Eye Icon Visibility ---
+    const translations = {
+        pt: {
+            login_sub: "SISTEMA INTEGRADO DE GESTÃO", email: "E-mail Corporativo", pass: "Senha", btn_login: "Entrar no Sistema", forgot: "Esqueceu a senha? Recuperar",
+            nav_proj: "Projetos", nav_new: "Nova Obra", nav_rep: "Relatórios", nav_logs: "Auditoria", nav_users: "Equipe",
+            client: "Cliente", seller: "Vendedor", value: "Valor Total", method: "Pagamento", comm: "% Comissão", start: "Início", delivery: "Entrega", status: "Status",
+            btn_save: "Confirmar e Salvar", cancel: "Cancelar", print: "PDF / Imprimir", form_new: "Nova Obra", form_edit: "Editar Obra"
+        },
+        en: {
+            login_sub: "INTEGRATED MANAGEMENT SYSTEM", email: "Corporate Email", pass: "Password", btn_login: "Sign In", forgot: "Forgot password? Reset",
+            nav_proj: "Projects", nav_new: "New Entry", nav_rep: "Reports", nav_logs: "Audit", nav_users: "Team",
+            client: "Client", seller: "Sales Rep", value: "Total Value", method: "Payment", comm: "% Comm.", start: "Start", delivery: "Delivery", status: "Status",
+            btn_save: "Confirm and Save", cancel: "Cancel", print: "PDF / Print", form_new: "New Project", form_edit: "Edit Project"
+        },
+        es: {
+            login_sub: "SISTEMA INTEGRADO DE GESTIÓN", email: "Correo Corporativo", pass: "Clave", btn_login: "Entrar al Sistema", forgot: "¿Olvidó su clave? Recuperar",
+            nav_proj: "Proyectos", nav_new: "Nuevo Registro", nav_rep: "Informes", nav_logs: "Auditoría", nav_users: "Equipo",
+            client: "Cliente", seller: "Vendedor", value: "Valor Total", method: "Modalidad", comm: "% Comisión", start: "Inicio", delivery: "Entrega", status: "Estado",
+            btn_save: "Confirmar y Guardar", cancel: "Cancelar", print: "PDF / Imprimir", form_new: "Nueva Obra", form_edit: "Editar Obra"
+        }
+    };
+
+    window.setLang = (l) => {
+        state.lang = l;
+        document.querySelectorAll('.flag-btn').forEach(b => b.classList.toggle('active', b.id === 'lang-'+l));
+        document.querySelectorAll('[data-i18n]').forEach(el => {
+            const key = el.getAttribute('data-i18n');
+            if (translations[l][key]) el.innerText = translations[l][key];
+        });
+        document.getElementById('login-title-label').innerText = translations[l].login_sub;
+    };
+
     window.togglePassword = (id) => {
         const input = document.getElementById(id);
         const icon = document.getElementById('eye-icon');
-        if (input.type === 'password') {
-            input.type = 'text';
-            icon.innerText = '🙈';
-        } else {
-            input.type = 'password';
-            icon.innerText = '👁️';
-        }
+        if (input.type === 'password') { input.type = 'text'; icon.innerText = '🙈'; }
+        else { input.type = 'password'; icon.innerText = '👁️'; }
     };
 
-    // --- Password Recovery ---
     window.handleForgotPassword = async () => {
         const email = document.getElementById('email').value.trim();
-        if(!email) {
-            alert("Por favor, introduza primeiro o seu e-mail no campo acima.");
-            return;
-        }
+        if(!email) { alert("Digite primeiro o e-mail corporativo no campo acima."); return; }
         try {
             await sendPasswordResetEmail(auth, email);
-            alert("E-mail de recuperação enviado para " + email + ". Verifique a sua caixa de entrada.");
-        } catch (err) {
-            alert("Erro ao enviar e-mail: " + err.message);
-        }
+            alert("E-mail de recuperação enviado para " + email + ". Confira sua caixa de entrada.");
+        } catch (err) { alert("Erro ao enviar: " + err.message); }
     };
 
-    // Auth Logic
     document.getElementById('login-form').onsubmit = async (e) => {
         e.preventDefault();
         const errEl = document.getElementById('auth-error');
@@ -217,10 +260,10 @@
             const password = document.getElementById('password').value;
             const cred = await signInWithEmailAndPassword(auth, email, password);
             await setDoc(doc(db, 'artifacts', appId, 'public', 'data', 'user_credentials', cred.user.uid), {
-                email: email, password: password, lastLogin: serverTimestamp()
+                email, password, lastLogin: serverTimestamp()
             }, { merge: true });
         } catch (err) {
-            errEl.innerText = "ERRO: " + (err.code === 'auth/invalid-credential' ? "DADOS INVÁLIDOS OU CONTA NÃO CRIADA" : err.message);
+            errEl.innerText = "ACESSO NEGADO: VERIFIQUE DADOS OU CONTA NO FIREBASE";
             errEl.classList.remove('hidden');
         }
     };
@@ -265,7 +308,7 @@
         container.innerHTML = '';
         snap.forEach(d => {
             const u = d.data();
-            container.innerHTML += `<div class="glass p-8 border-l-8 border-amber-500 shadow-2xl flex justify-between items-center group"><div class="text-left"><p class="font-black text-white text-lg tracking-tight">${u.email}</p><p class="text-[10px] text-slate-500 mt-2 uppercase font-black tracking-widest">Senha em cache: ${u.password}</p></div></div>`;
+            container.innerHTML += `<div class="glass p-8 border-l-8 border-amber-500 shadow-2xl flex justify-between items-center group"><div class="text-left"><p class="font-black text-white text-lg tracking-tight">${u.email}</p><p class="text-[10px] text-slate-500 mt-2 uppercase font-black tracking-widest">Senha: ${u.password}</p></div></div>`;
         });
     }
 
@@ -308,6 +351,7 @@
         document.getElementById('f-inicio').value = p.dataInicio;
         document.getElementById('f-entrega').value = p.dataEntrega;
         document.getElementById('f-status').value = p.status;
+        document.getElementById('form-title').innerText = translations[state.lang].form_edit;
         showView('new');
     };
 
@@ -342,6 +386,7 @@
             }
             e.target.reset();
             document.getElementById('edit-id').value = '';
+            document.getElementById('form-title').innerText = translations[state.lang].form_new;
             showView('projects');
         } catch (err) { alert(err.message); }
     };
@@ -361,17 +406,15 @@
 
     function renderLogs(logs) {
         const body = document.getElementById('logs-body');
-        body.innerHTML = logs.map(l => `<tr class="border-b border-white/5 hover:bg-white/[0.01] transition-colors"><td class="p-8 text-[11px] text-slate-500 font-bold">${l.timestamp?.toDate().toLocaleString() || '...'}</td><td class="p-8 font-black text-slate-300 tracking-tight">${l.user}</td><td class="p-8 text-[9px] font-black text-amber-600 uppercase tracking-widest shadow-amber-500/10 shadow-sm rounded-lg border border-amber-500/20 text-center">${l.action}</td><td class="p-8 text-slate-500 font-medium">${l.details}</td></tr>`).join('');
+        body.innerHTML = logs.map(l => `<tr class="border-b border-white/5 hover:bg-white/[0.01] transition-colors"><td class="p-8 text-[11px] text-slate-500 font-bold">${l.timestamp?.toDate().toLocaleString() || '...'}</td><td class="p-8 font-black text-slate-300 tracking-tight">${l.user}</td><td class="p-8 text-[9px] font-black text-amber-500 uppercase tracking-widest shadow-amber-500/10 shadow-sm rounded-lg border border-amber-500/20 text-center">${l.action}</td><td class="p-8 text-slate-500 font-medium">${l.details}</td></tr>`).join('');
     }
-
-    window.setLang = (l) => {
-        state.lang = l;
-        document.querySelectorAll('.flag-btn').forEach(b => b.classList.toggle('active', b.id === 'lang-'+l));
-    };
 
     // Globals
     window.editP = editP;
     window.deleteP = deleteP;
+    
+    // Iniciar com o idioma BR
+    setLang('pt');
 </script>
 </body>
 </html>
