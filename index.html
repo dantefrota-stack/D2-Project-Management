@@ -16,29 +16,31 @@
 
         .input-wrapper { position: relative; width: 100%; display: flex; align-items: center; margin-bottom: 1rem; }
         
+        /* BOTÃO DO OLHO: FIXO E VISÍVEL */
         .password-toggle { 
             position: absolute; 
-            right: 14px; 
+            right: 12px; 
             top: 50%; 
             transform: translateY(-50%); 
-            z-index: 100; 
+            z-index: 1000; 
             color: var(--gold); 
             cursor: pointer; 
-            background: transparent;
-            border: none;
+            background: rgba(0,0,0,0.2);
+            border-radius: 8px;
+            padding: 6px;
             display: flex;
             align-items: center;
             justify-content: center;
-            padding: 8px;
+            border: 1px solid rgba(251, 191, 36, 0.2);
         }
-        .password-toggle:hover { color: white; transform: translateY(-50%) scale(1.1); }
+        .password-toggle:hover { background: var(--gold); color: #000; }
 
         .modern-input { 
-            width: 100%; padding: 16px 50px 16px 16px; border-radius: 14px; 
+            width: 100%; padding: 16px 52px 16px 16px; border-radius: 14px; 
             border: 1px solid rgba(148, 163, 184, 0.2); background: rgba(0,0,0,0.5); 
             color: inherit; outline: none; transition: all 0.2s; font-size: 14px;
         }
-        .light .modern-input { background: #fff; border: 1px solid #cbd5e1; }
+        .light .modern-input { background: #fff; border: 1px solid #cbd5e1; color: #000; }
         .modern-input:focus { border-color: var(--gold); box-shadow: 0 0 0 3px rgba(251, 191, 36, 0.1); }
 
         .btn-primary { background: linear-gradient(135deg, var(--gold) 0%, var(--gold-dark) 100%); color: #000; font-weight: 900; border-radius: 14px; transition: all 0.3s; display: flex; align-items: center; justify-content: center; gap: 8px; }
@@ -46,44 +48,37 @@
         .btn-primary:disabled { opacity: 0.6; cursor: wait; }
 
         .tab-active { color: var(--gold); border-bottom: 3px solid var(--gold); }
+        .status-badge { width: 12px; height: 12px; border-radius: 50%; display: inline-block; box-shadow: 0 0 10px currentColor; }
         
         .progress-track { height: 16px; border-radius: 8px; background: rgba(255,255,255,0.05); overflow: hidden; border: 1px solid rgba(255,255,255,0.05); }
         .progress-bar-fill { height: 100%; transition: width 1.5s cubic-bezier(0.4, 0, 0.2, 1); border-radius: 8px; }
 
+        .flag-btn { opacity: 0.3; transition: 0.3s; padding: 4px; border-radius: 8px; cursor: pointer; }
+        .flag-btn.active { opacity: 1; transform: scale(1.1); background: rgba(255,255,255,0.15); border: 1px solid var(--gold); }
+        .flag-icon { width: 24px; border-radius: 2px; }
+
         @keyframes spin { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }
         .animate-spin-custom { animation: spin 1s linear infinite; }
         .scrollbar-hide::-webkit-scrollbar { display: none; }
-        .flag-btn { opacity: 0.4; transition: 0.3s; padding: 4px; border-radius: 8px; cursor: pointer; }
-        .flag-btn:hover, .flag-btn.active { opacity: 1; transform: scale(1.1); background: rgba(255,255,255,0.1); }
-        .flag-icon { width: 28px; border-radius: 4px; }
+        
+        @media print { .no-print { display: none !important; } }
     </style>
 </head>
 <body class="dark">
 
-<!-- Login Screen -->
-<div id="auth-screen" class="fixed inset-0 z-[200] flex items-center justify-center p-6 bg-[#030508]">
+<!-- Login Interface -->
+<div id="auth-screen" class="fixed inset-0 z-[2000] flex items-center justify-center p-6 bg-[#030508]">
     <div class="bg-white dark:bg-[#0f172a] p-10 rounded-[40px] w-full max-w-md shadow-2xl text-center border border-white/5">
         <div class="mb-6 flex justify-center">
              <img src="logo-D2-Group-preto.png" alt="D2 Group" class="h-16 dark:invert">
         </div>
         <h2 class="text-2xl font-black tracking-tight mb-2 uppercase">D2 Management</h2>
-        <p class="text-slate-500 text-xs font-bold uppercase tracking-widest mb-8" data-i18n="login_sub">Sistema Integrado de Gestão</p>
+        <p class="text-slate-500 text-xs font-bold uppercase tracking-widest mb-6" data-i18n="login_sub">Sistema Integrado de Gestão</p>
         
         <div class="flex justify-center gap-4 mb-8">
             <button onclick="setLang('pt')" class="flag-btn active" id="l-pt"><img src="https://flagcdn.com/w80/br.png" class="flag-icon"></button>
             <button onclick="setLang('en')" class="flag-btn" id="l-en"><img src="https://flagcdn.com/w80/us.png" class="flag-icon"></button>
             <button onclick="setLang('es')" class="flag-btn" id="l-es"><img src="https://flagcdn.com/w80/es.png" class="flag-icon"></button>
-        </div>
-
-        <div class="grid grid-cols-2 gap-4 mb-8">
-            <button onclick="selectDivision('Smart Home')" id="div-smart" class="p-4 border-2 border-gold rounded-2xl bg-gold/5 transition-all">
-                <img src="logo-D2-SmartHome-preto.png" class="h-8 mx-auto mb-2 dark:invert">
-                <span class="text-[9px] font-black uppercase tracking-widest">Smart Home</span>
-            </button>
-            <button onclick="selectDivision('HVAC')" id="div-hvac" class="p-4 border-2 border-transparent rounded-2xl bg-slate-100 dark:bg-slate-800 transition-all opacity-40">
-                <img src="logo-D2-HVAC-Solutions-preto.png" class="h-8 mx-auto mb-2 dark:invert">
-                <span class="text-[9px] font-black uppercase tracking-widest">HVAC</span>
-            </button>
         </div>
 
         <form id="login-form" class="space-y-4 text-left">
@@ -92,12 +87,12 @@
             </div>
 
             <div class="input-wrapper">
-                <input type="email" id="email" required class="modern-input !pl-4 h-14" placeholder="E-mail">
+                <input type="email" id="email" required class="modern-input" placeholder="E-mail">
             </div>
             <div class="input-wrapper">
-                <input type="password" id="password" required class="modern-input !pl-4 h-14" placeholder="Senha">
-                <button type="button" onclick="window.handlePasswordToggle('password', 'eye-login-icon')" class="password-toggle">
-                    <i data-lucide="eye" class="w-6 h-6" id="eye-login-icon"></i>
+                <input type="password" id="password" required class="modern-input" placeholder="Senha">
+                <button type="button" onclick="window.handlePasswordToggle('password', 'eye-login-icon')" class="password-toggle" title="Ver/Esconder">
+                    <i data-lucide="eye" class="w-5 h-5" id="eye-login-icon"></i>
                 </button>
             </div>
             <button type="submit" id="btn-entrar" class="w-full btn-primary h-14 uppercase tracking-widest text-sm font-black shadow-lg">
@@ -108,13 +103,18 @@
     </div>
 </div>
 
-<!-- Principal App Interface -->
+<!-- Principal Dashboard -->
 <div id="main-app" class="hidden min-h-screen flex flex-col">
     <header class="no-print bg-white/80 dark:bg-black/60 backdrop-blur-md border-b border-slate-200 dark:border-white/5 p-4 sticky top-0 z-40">
         <div class="max-w-7xl mx-auto flex justify-between items-center">
             <div class="flex items-center gap-6">
                 <div class="bg-white p-2 rounded-xl shadow-md border border-slate-100">
                     <img id="header-logo" src="logo-D2-SmartHome-preto.png" class="h-10" alt="Logo">
+                </div>
+                <div class="flex gap-2 ml-4">
+                    <button onclick="setLang('pt')" class="flag-btn" id="h-l-pt"><img src="https://flagcdn.com/w80/br.png" class="flag-icon"></button>
+                    <button onclick="setLang('en')" class="flag-btn" id="h-l-en"><img src="https://flagcdn.com/w80/us.png" class="flag-icon"></button>
+                    <button onclick="setLang('es')" class="flag-btn" id="h-l-es"><img src="https://flagcdn.com/w80/es.png" class="flag-icon"></button>
                 </div>
             </div>
             
@@ -204,9 +204,11 @@
                 <h3 class="text-xl font-black text-gold mb-8 uppercase tracking-tighter text-left" data-i18n="team_title">Gestão de Equipe</h3>
                 <form id="team-form" class="space-y-5 text-left">
                     <input type="hidden" id="t-id">
-                    <input type="email" id="t-email" placeholder="E-mail" required class="modern-input !pl-4 h-14">
                     <div class="input-wrapper">
-                        <input type="password" id="t-pass" placeholder="Senha" required class="modern-input !pl-4 h-14">
+                        <input type="email" id="t-email" placeholder="E-mail" required class="modern-input">
+                    </div>
+                    <div class="input-wrapper">
+                        <input type="password" id="t-pass" placeholder="Senha" required class="modern-input">
                         <button type="button" onclick="window.handlePasswordToggle('t-pass', 'eye-team-icon')" class="password-toggle">
                             <i data-lucide="eye" class="w-6 h-6" id="eye-team-icon"></i>
                         </button>
@@ -258,7 +260,9 @@
             timeline: "Timeline", status_overdue: "ATRASADA", status_finished: "CONCLUÍDA", days_left: "DIAS RESTANTES",
             total_contract: "Contrato Total", finance_btn: "FINANCEIRO VENDEDOR", net_base: "Base Líquida", balance: "Saldo Devedor",
             history: "Histórico", pay_btn: "Lançar Pagamento", report_title: "RELATÓRIO EXECUTIVO", col_base: "Base Líquida", col_comm: "Comissão",
-            verifying: "VERIFICANDO...", registering: "AUTORIZANDO...", tooltip_edit: "Editar", tooltip_delete: "Excluir", tooltip_fin: "Financeiro", password: "Senha"
+            verifying: "VERIFICANDO...", registering: "AUTORIZANDO...", tooltip_edit: "Editar", tooltip_delete: "Excluir", tooltip_fin: "Financeiro", password: "Senha",
+            col_obra: "Obra", col_vendedor: "Vendedor", col_periodo: "Período", col_andamento: "Andamento", col_contrato: "Contrato",
+            vol_geral: "Volume Geral", total_comm: "Total Comissões", pay_history: "Histórico de Pagamentos", net_reduct: "* Base Reduzida por taxa de cartão"
         },
         en: { 
             login_sub: "Integrated Management System", login_err: "Invalid data. If you lost your password or username, contact your administrator.", 
@@ -269,7 +273,9 @@
             timeline: "Timeline", status_overdue: "OVERDUE", status_finished: "FINISHED", days_left: "DAYS LEFT",
             total_contract: "Total Contract", finance_btn: "SALES FINANCE", net_base: "Net Base", balance: "Balance Due",
             history: "History", pay_btn: "Post Payment", report_title: "EXECUTIVE REPORT", col_base: "Net Base", col_comm: "Commission",
-            verifying: "VERIFYING...", registering: "AUTHORIZING...", tooltip_edit: "Edit", tooltip_delete: "Delete", tooltip_fin: "Finance", password: "Password"
+            verifying: "VERIFYING...", registering: "AUTHORIZING...", tooltip_edit: "Edit", tooltip_delete: "Delete", tooltip_fin: "Finance", password: "Password",
+            col_obra: "Project", col_vendedor: "Seller", col_periodo: "Period", col_andamento: "Progress", col_contrato: "Contract",
+            vol_geral: "General Volume", total_comm: "Total Commissions", pay_history: "Payment History", net_reduct: "* Net reduced by card fees"
         },
         es: { 
             login_sub: "Sistema de Gestión Integrado", login_err: "Datos inválidos. Si perdió su contraseña o usuario, contacte a su administrador.", 
@@ -280,11 +286,13 @@
             timeline: "Cronograma", status_overdue: "RETRASADA", status_finished: "CONCLUIDA", days_left: "DÍAS RESTANTES",
             total_contract: "Contrato Total", finance_btn: "FINANZAS VENDEDOR", net_base: "Base Líquida", balance: "Saldo Deudor",
             history: "Historial", pay_btn: "Registrar Pago", report_title: "INFORME EJECUTIVO", col_base: "Base Líquida", col_comm: "Comisión",
-            verifying: "VERIFICANDO...", registering: "AUTORIZANDO...", tooltip_edit: "Editar", tooltip_delete: "Eliminar", tooltip_fin: "Finanzas", password: "Clave"
+            verifying: "VERIFICANDO...", registering: "AUTORIZANDO...", tooltip_edit: "Editar", tooltip_delete: "Eliminar", tooltip_fin: "Finanzas", password: "Clave",
+            col_obra: "Obra", col_vendedor: "Vendedor", col_periodo: "Periodo", col_andamento: "Progreso", col_contrato: "Contrato",
+            vol_geral: "Volumen General", total_comm: "Total Comisiones", pay_history: "Historial de Pagos", net_reduct: "* Base reducida por tasa de tarjeta"
         }
     };
 
-    const formatUSD = (v) => new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD' }).format(v);
+    const formatCurr = (v) => new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD' }).format(v);
 
     window.handlePasswordToggle = (inputId, iconId) => {
         const el = document.getElementById(inputId);
@@ -299,21 +307,24 @@
 
     window.setLang = (l) => {
         state.lang = l;
-        document.querySelectorAll('.flag-btn').forEach(b => b.classList.toggle('active', b.id === 'l-'+l));
+        document.querySelectorAll('.flag-btn').forEach(b => b.classList.toggle('active', b.id.includes(l)));
         document.querySelectorAll('[data-i18n]').forEach(el => {
             const key = el.getAttribute('data-i18n');
             if (translations[l][key]) el.innerText = translations[l][key];
         });
-        // Atualizar placeholders
-        document.getElementById('email').placeholder = l === 'pt' ? 'E-mail' : (l === 'en' ? 'Email' : 'Correo Electrónico');
-        document.getElementById('password').placeholder = translations[l].password;
+        // Placeholders dinâmicos
+        const mailInp = document.getElementById('email');
+        if(mailInp) mailInp.placeholder = l === 'es' ? 'Correo Electrónico' : (l === 'en' ? 'Email' : 'E-mail');
+        const passInp = document.getElementById('password');
+        if(passInp) passInp.placeholder = translations[l].password;
+        
         renderProjects(); renderReport();
     };
 
     window.toggleTheme = () => { state.theme = state.theme === 'dark' ? 'light' : 'dark'; document.body.className = state.theme; document.getElementById('theme-icon-light').classList.toggle('hidden'); document.getElementById('theme-icon-dark').classList.toggle('hidden'); };
     window.selectDivision = (div) => { state.company = div; document.querySelectorAll('#auth-screen button').forEach(b => b.classList.remove('border-gold', 'opacity-100')); const t = document.getElementById(div === 'Smart Home' ? 'div-smart' : 'div-hvac'); if(t) t.classList.add('border-gold', 'opacity-100'); const l = document.getElementById('header-logo'); if(l) l.src = div === 'Smart Home' ? 'logo-D2-SmartHome-preto.png' : 'logo-D2-HVAC-Solutions-preto.png'; renderProjects(); renderReport(); };
     window.toggleFinance = (id) => { const el = document.getElementById(`fin-${id}`); if(el) el.classList.toggle('open'); };
-    window.addPayment = async (projectId) => { const v = document.getElementById(`pay-val-${projectId}`).value, d = document.getElementById(`pay-date-${projectId}`).value; if(!v || !d) return alert("Preencha!"); try { await updateDoc(doc(db, 'artifacts', appId, 'public', 'data', 'projects', projectId), { pagamentosEfetuados: arrayUnion({ valor: parseFloat(v), data: d }) }); } catch(e){alert("Erro!");} };
+    window.addPayment = async (projectId) => { const v = document.getElementById(`pay-val-${projectId}`).value, d = document.getElementById(`pay-date-${projectId}`).value; if(!v || !d) return alert("Error!"); try { await updateDoc(doc(db, 'artifacts', appId, 'public', 'data', 'projects', projectId), { pagamentosEfetuados: arrayUnion({ valor: parseFloat(v), data: d }) }); } catch(e){alert("Error!");} };
     window.editTeam = (id,e,p) => { document.getElementById('t-id').value=id; document.getElementById('t-email').value=e; document.getElementById('t-pass').value=p; };
     window.deleteTeam = async (id) => { if(confirm("REMOVER?")) await deleteDoc(doc(db, 'artifacts', appId, 'public', 'data', 'user_credentials', id)); };
     window.deleteP = async (id) => { if(confirm("EXCLUIR?")) await deleteDoc(doc(db, 'artifacts', appId, 'public', 'data', 'projects', id)); };
@@ -369,7 +380,7 @@
                     </div>
                     <div class="bg-black/30 p-6 rounded-3xl border border-white/5 shadow-inner">
                         <p class="text-[9px] font-black text-slate-500 uppercase mb-1">${t.total_contract}</p>
-                        <p class="text-2xl font-black text-white">${formatUSD(p.valorTotal)}</p>
+                        <p class="text-2xl font-black text-white">${formatCurr(p.valorTotal)}</p>
                     </div>
                     <button onclick="window.toggleFinance('${p.id}')" title="${t.tooltip_fin}" class="w-full mt-6 py-2 text-[10px] font-black uppercase tracking-[0.2em] text-gold hover:underline flex items-center justify-center gap-2">
                         <i data-lucide="wallet" class="w-4 h-4"></i> ${t.finance_btn}
@@ -377,8 +388,8 @@
                     <div id="fin-${p.id}" class="finance-panel text-left">
                         <div class="bg-gold/5 p-4 rounded-2xl border border-gold/10 space-y-4">
                             <div class="flex justify-between">
-                                <div><p class="text-[8px] font-bold uppercase text-gold/60 mb-1">Comissão Líquida</p><p class="text-lg font-black text-gold">${formatUSD(fin.totalCommToPay)}</p></div>
-                                <div class="text-right"><p class="text-[8px] font-bold uppercase text-gold/60">${t.balance}</p><p class="text-lg font-black ${fin.balance > 0 ? 'text-red-400' : 'text-emerald-400'}">${formatUSD(fin.balance)}</p></div>
+                                <div><p class="text-[8px] font-bold uppercase text-gold/60 mb-1">${t.col_comm}</p><p class="text-lg font-black text-gold">${formatCurr(fin.totalCommToPay)}</p></div>
+                                <div class="text-right"><p class="text-[8px] font-bold uppercase text-gold/60">${t.balance}</p><p class="text-lg font-black ${fin.balance > 0 ? 'text-red-400' : 'text-emerald-400'}">${formatCurr(fin.balance)}</p></div>
                             </div>
                             <div class="mt-4 pt-4 border-t border-white/5 admin-only ${state.user.email !== SUPER_ADMIN ? 'hidden' : ''}">
                                 <div class="grid grid-cols-2 gap-2"><input type="number" id="pay-val-${p.id}" placeholder="$" class="modern-input !pl-4 h-10"><input type="date" id="pay-date-${p.id}" class="modern-input !pl-4 h-10"></div>
@@ -401,20 +412,22 @@
             totalVal += p.valorTotal; totalComm += fin.totalCommToPay;
             const sD = new Date(p.dataInicio).getTime(), eD = new Date(p.dataEntrega).getTime(), nD = new Date().getTime();
             let prog = 0; if (nD >= sD) prog = nD > eD ? 100 : Math.floor(((nD - sD) / (eD - sD)) * 100);
-            return `<tr class="border-b border-slate-100 text-xs text-left">
-                <td class="p-4 font-black uppercase text-slate-800">${p.cliente}</td>
+            return `<tr class="border-b border-slate-100 text-xs text-left text-slate-800">
+                <td class="p-4 font-black uppercase">${p.cliente}</td>
                 <td class="p-4">${p.vendedor}</td>
                 <td class="p-4">${new Date(p.dataInicio).toLocaleDateString()} - ${new Date(p.dataEntrega).toLocaleDateString()}</td>
                 <td class="p-4 font-bold text-gold text-center">${prog}%</td>
-                <td class="p-4 text-right">${formatUSD(p.valorTotal)}</td>
-                <td class="p-4 text-right text-slate-400 italic">${formatUSD(fin.calculationBase)}</td>
-                <td class="p-4 text-right font-black text-amber-600">${formatUSD(fin.totalCommToPay)}</td>
+                <td class="p-4 text-right">${formatCurr(p.valorTotal)}</td>
+                <td class="p-4 text-right text-slate-400 italic">${formatCurr(fin.calculationBase)}</td>
+                <td class="p-4 text-right font-black text-amber-600">${formatCurr(fin.totalCommToPay)}</td>
             </tr>`;
         }).join('');
-        out.innerHTML = `<div class="bg-white text-slate-950 p-12 rounded-[50px] shadow-2xl border-8 border-slate-100">
+        out.innerHTML = `<div class="bg-white text-slate-950 p-12 rounded-[50px] shadow-2xl border-8 border-slate-50">
             <div class="flex justify-between items-center border-b-[8px] border-slate-950 pb-10 mb-10"><div class="logo-frame-sm border"><img src="logo-D2-Group-preto.png" class="h-14"></div><div class="text-right"><h2 class="text-3xl font-black uppercase tracking-tighter">${t.report_title}</h2><p class="text-slate-400 font-black uppercase text-[10px]">${new Date().toLocaleDateString()}</p></div></div>
-            <div class="overflow-x-auto"><table class="w-full"><thead><tr class="bg-slate-50 font-black uppercase text-[10px] text-slate-500 text-left"><th class="p-4">Obra</th><th class="p-4">Vendedor</th><th class="p-4">Período</th><th class="p-4 text-center">Progresso</th><th class="p-4 text-right">Contrato</th><th class="p-4 text-right">${t.col_base}</th><th class="p-4 text-right">${t.col_comm}</th></tr></thead><tbody>${rows}</tbody></table></div>
-            <div class="mt-10 pt-10 border-t-[8px] border-slate-950 flex justify-end gap-16"><div class="text-right"><p class="text-[11px] font-black uppercase text-slate-400 mb-1">Volume Geral</p><p class="text-4xl font-black">${formatUSD(totalVal)}</p></div><div class="text-right"><p class="text-[11px] font-black uppercase text-amber-600 mb-1">Total Comissões</p><p class="text-4xl font-black text-amber-600">${formatUSD(totalComm)}</p></div></div></div>`;
+            <div class="overflow-x-auto"><table class="w-full"><thead><tr class="bg-slate-50 font-black uppercase text-[10px] text-slate-500 text-left">
+                <th class="p-4">${t.col_obra}</th><th class="p-4">${t.col_vendedor}</th><th class="p-4">${t.col_periodo}</th><th class="p-4 text-center">${t.col_andamento}</th><th class="p-4 text-right">${t.col_contrato}</th><th class="p-4 text-right">${t.col_base}</th><th class="p-4 text-right">${t.col_comm}</th>
+            </tr></thead><tbody>${rows}</tbody></table></div>
+            <div class="mt-10 pt-10 border-t-[8px] border-slate-950 flex justify-end gap-16"><div class="text-right"><p class="text-[11px] font-black uppercase text-slate-400 mb-1">${t.vol_geral}</p><p class="text-4xl font-black">${formatCurr(totalVal)}</p></div><div class="text-right"><p class="text-[11px] font-black uppercase text-amber-600 mb-1">${t.total_comm}</p><p class="text-4xl font-black text-amber-600">${formatCurr(totalComm)}</p></div></div></div>`;
     }
 
     function renderTeam(team) {
@@ -425,11 +438,11 @@
             <div class="glass p-6 rounded-[24px] flex justify-between items-center border-l-8 border-gold shadow-lg transition-all hover:scale-[1.01]">
                 <div class="text-left">
                     <p class="font-black text-slate-100 text-lg">${u.email}</p>
-                    <p class="text-[11px] text-slate-500 mt-1 font-medium uppercase tracking-widest">Senha: <span class="text-gold font-bold normal-case">${u.password}</span></p>
+                    <p class="text-[11px] text-slate-500 mt-1 uppercase tracking-widest">${t.password}: <span class="text-gold font-bold normal-case">${u.password}</span></p>
                 </div>
                 <div class="flex gap-2">
-                    <button onclick="window.editTeam('${u.id}','${u.email}','${u.password}')" title="Configurar" class="p-2 text-gold"><i data-lucide="user-cog" size="20"></i></button>
-                    <button onclick="window.deleteTeam('${u.id}')" title="Remover" class="p-2 text-red-500"><i data-lucide="user-minus" size="20"></i></button>
+                    <button onclick="window.editTeam('${u.id}','${u.email}','${u.password}')" title="${t.tooltip_edit}" class="p-2 text-gold"><i data-lucide="user-cog" size="20"></i></button>
+                    <button onclick="window.deleteTeam('${u.id}')" title="${t.tooltip_delete}" class="p-2 text-red-500"><i data-lucide="user-minus" size="20"></i></button>
                 </div>
             </div>`).join('');
         lucide.createIcons();
