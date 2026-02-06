@@ -3,202 +3,203 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>D2 Management System - Premium BR</title>
+    <title>D2 Management System</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
     <script src="https://unpkg.com/lucide@latest"></script>
     <style>
-        :root { --glass: rgba(255, 255, 255, 0.02); --border: rgba(255, 255, 255, 0.08); --gold: #fbbf24; color-scheme: dark; }
-        body { font-family: 'Inter', sans-serif; background: #030508; color: #f1f5f9; min-height: 100vh; margin: 0; overflow-x: hidden; }
+        :root { --gold: #fbbf24; --gold-dark: #b45309; }
+        body { font-family: 'Inter', sans-serif; transition: background-color 0.3s, color 0.3s; }
         
-        .logo-frame { background: #FFFFFF; padding: 16px 32px; border-radius: 20px; display: inline-flex; align-items: center; justify-content: center; box-shadow: 0 10px 40px rgba(0,0,0,0.6); border: 1px solid rgba(255,255,255,0.1); }
-        .logo-frame-sm { background: #FFFFFF; padding: 6px 12px; border-radius: 10px; display: flex; align-items: center; justify-content: center; box-shadow: 0 4px 12px rgba(0,0,0,0.4); }
-        
-        .glass { background: var(--glass); backdrop-filter: blur(25px); -webkit-backdrop-filter: blur(25px); border: 1px solid var(--border); border-radius: 28px; box-shadow: 0 25px 60px -12px rgba(0, 0, 0, 0.8); }
-        .glass-input { background: rgba(0, 0, 0, 0.5) !important; border: 1px solid var(--border) !important; border-radius: 12px !important; color: white !important; padding: 14px 18px !important; width: 100%; outline: none; transition: all 0.3s ease; }
-        .glass-input:focus { border-color: var(--gold) !important; box-shadow: 0 0 20px rgba(251, 191, 36, 0.15) !important; }
-        
-        input[type="date"] { position: relative; }
-        input[type="date"]::-webkit-calendar-picker-indicator {
-            background: transparent; bottom: 0; color: transparent; cursor: pointer; height: auto; left: 0; position: absolute; right: 0; top: 0; width: auto; z-index: 2;
-        }
+        .glass { background: rgba(255, 255, 255, 0.03); backdrop-filter: blur(12px); border: 1px solid rgba(255, 255, 255, 0.1); }
+        .light .glass { background: rgba(255, 255, 255, 0.8); border: 1px solid rgba(0, 0, 0, 0.05); }
 
-        .btn-gold { background: linear-gradient(135deg, var(--gold) 0%, #b45309 100%); color: black; font-weight: 800; text-transform: uppercase; letter-spacing: 1px; transition: all 0.3s ease; border-radius: 14px; }
-        .btn-gold:hover { transform: translateY(-2px); filter: brightness(1.1); box-shadow: 0 8px 30px rgba(180, 83, 9, 0.4); }
-        
-        .tab-btn { padding-bottom: 12px; border-bottom: 3px solid transparent; color: #475569; font-weight: 700; font-size: 0.75rem; text-transform: uppercase; transition: all 0.3s; cursor: pointer; }
-        .tab-btn.active { color: var(--gold); border-bottom-color: var(--gold); }
-        
-        .flag-icon { width: 32px; height: 22px; object-fit: cover; border-radius: 4px; border: 1px solid rgba(255,255,255,0.1); }
+        .input-group { position: relative; display: flex; align-items: center; width: 100%; }
+        .input-prefix { position: absolute; left: 14px; font-weight: 800; color: var(--gold); pointer-events: none; }
+        .modern-input { width: 100%; padding: 12px 14px 12px 35px; border-radius: 12px; border: 1px solid rgba(148, 163, 184, 0.2); background: rgba(0,0,0,0.2); color: inherit; outline: none; transition: all 0.2s; }
+        .light .modern-input { background: #fff; border: 1px solid #cbd5e1; }
+        .modern-input:focus { border-color: var(--gold); box-shadow: 0 0 0 3px rgba(251, 191, 36, 0.1); }
+
+        input[type="date"]::-webkit-calendar-picker-indicator { cursor: pointer; opacity: 0.6; transition: 0.2s; filter: invert(0.5); }
+        .dark input[type="date"]::-webkit-calendar-picker-indicator { filter: invert(1); }
+
+        .progress-track { height: 10px; border-radius: 5px; background: rgba(148, 163, 184, 0.1); overflow: hidden; position: relative; }
+        .progress-bar-fill { height: 100%; transition: width 1.5s cubic-bezier(0.4, 0, 0.2, 1); border-radius: 5px; }
+
+        .flag-icon { width: 32px; height: 22px; object-fit: cover; border-radius: 4px; box-shadow: 0 2px 4px rgba(0,0,0,0.2); }
         .flag-btn { opacity: 0.4; transition: 0.3s; padding: 4px; border-radius: 6px; border: none; background: none; cursor: pointer; }
-        .flag-btn:hover, .flag-btn.active { opacity: 1; transform: scale(1.1); background: rgba(255,255,255,0.05); }
-        
-        .progress-container { background: rgba(255,255,255,0.05); height: 10px; border-radius: 5px; overflow: hidden; position: relative; }
-        .progress-bar { height: 100%; transition: width 1s ease-in-out; border-radius: 5px; }
+        .flag-btn:hover, .flag-btn.active { opacity: 1; transform: scale(1.1); background: rgba(255,255,255,0.1); }
 
-        @media print { .no-print { display: none !important; } body { background: white !important; color: black !important; } .glass { border: 1px solid #ddd !important; background: transparent !important; } }
+        .btn-primary { background: linear-gradient(135deg, var(--gold) 0%, var(--gold-dark) 100%); color: #000; font-weight: 900; border-radius: 12px; transition: all 0.3s; }
+        .btn-primary:hover { transform: translateY(-1px); filter: brightness(1.1); box-shadow: 0 4px 15px rgba(180, 83, 9, 0.3); }
+
+        .tab-active { color: var(--gold); border-bottom: 3px solid var(--gold); }
+        .dark { background-color: #030508; color: #f1f5f9; }
+        .light { background-color: #f8fafc; color: #0f172a; }
+        
         .scrollbar-hide::-webkit-scrollbar { display: none; }
     </style>
 </head>
-<body>
+<body class="dark">
 
-<!-- Login Screen -->
-<div id="auth-screen" class="fixed inset-0 z-50 flex flex-col items-center justify-center bg-[#030508] p-6 text-center">
-    <div class="glass p-12 w-full max-w-md">
-        <div class="logo-frame mb-10">
-            <img src="logo-D2-Group-preto.png" alt="D2 Group" style="max-width:240px" onerror="this.src='https://placehold.co/400x150/ffffff/000000?text=D2+GROUP'">
+<!-- Login Modernizado D2 Management -->
+<div id="auth-screen" class="fixed inset-0 z-50 flex items-center justify-center p-6 bg-slate-950">
+    <div class="bg-white dark:bg-slate-900 p-10 rounded-[40px] w-full max-w-md shadow-2xl text-center border border-white/5">
+        <img src="logo-D2-Group-preto.png" alt="D2 Group" class="h-16 mx-auto mb-6 dark:invert">
+        <h2 class="text-2xl font-black tracking-tight mb-2 uppercase">D2 Management</h2>
+        <p class="text-slate-500 text-xs font-bold uppercase tracking-widest mb-10">Integrated Management System</p>
+        
+        <div class="grid grid-cols-2 gap-4 mb-8">
+            <button onclick="selectDivision('Smart Home')" id="div-smart" class="p-4 border-2 border-gold rounded-2xl bg-gold/5 transition-all">
+                <img src="logo-D2-SmartHome-preto.png" class="h-8 mx-auto mb-2 dark:invert">
+                <span class="text-[10px] font-black uppercase tracking-widest">Smart Home</span>
+            </button>
+            <button onclick="selectDivision('HVAC')" id="div-hvac" class="p-4 border-2 border-transparent rounded-2xl bg-slate-100 dark:bg-slate-800 transition-all opacity-40">
+                <img src="logo-D2-HVAC-Solutions-preto.png" class="h-8 mx-auto mb-2 dark:invert">
+                <span class="text-[10px] font-black uppercase tracking-widest">HVAC</span>
+            </button>
         </div>
-        <p class="text-slate-500 text-[10px] mb-10 font-black tracking-[0.3em] uppercase" data-i18n="login_sub">Sistema Integrado de Gestão</p>
-        <form id="login-form" class="space-y-6 text-left">
-            <div>
-                <label class="text-[9px] text-slate-500 uppercase font-black tracking-widest block mb-2 ml-1" data-i18n="email_label">E-mail Corporativo</label>
-                <input type="email" id="email" required class="glass-input" placeholder="seu@email.com">
-            </div>
+
+        <form id="login-form" class="space-y-4 text-left">
+            <input type="email" id="email" required class="modern-input !pl-4 h-14" placeholder="E-mail Corporativo">
             <div class="relative">
-                <label class="text-[9px] text-slate-500 uppercase font-black tracking-widest block mb-2 ml-1" data-i18n="pass_label">Senha</label>
-                <input type="password" id="password" required class="glass-input" placeholder="••••••••">
-                <button type="button" onclick="togglePassword('password')" class="absolute right-4 top-10 text-slate-500 hover:text-white">
-                    <i data-lucide="eye" id="eye-icon"></i>
+                <input type="password" id="password" required class="modern-input !pl-4 h-14" placeholder="Senha de Acesso">
+                <button type="button" onclick="togglePassword('password')" class="absolute right-4 top-4 text-slate-400">
+                    <i data-lucide="eye" class="w-5 h-5"></i>
                 </button>
             </div>
-            <button type="submit" class="w-full btn-gold p-5 font-black shadow-lg" data-i18n="btn_login">Entrar no Sistema</button>
-            <div class="text-center mt-6">
-                <button type="button" onclick="handleForgotPassword()" class="text-[10px] text-slate-600 hover:text-amber-500 uppercase font-black tracking-widest transition-all" data-i18n="forgot">Esqueceu a senha? Recuperar</button>
+            <button type="submit" class="w-full btn-primary h-14 uppercase tracking-widest text-sm font-black shadow-lg">Entrar no Sistema</button>
+            <div class="text-center pt-2">
+                <button type="button" onclick="handleForgotPassword()" class="text-[10px] text-slate-500 hover:text-gold uppercase font-black tracking-widest transition-all">Esqueceu a senha?</button>
             </div>
-            <p id="auth-error" class="text-red-400 text-[10px] text-center font-bold hidden mt-4 uppercase tracking-wider"></p>
         </form>
     </div>
 </div>
 
-<!-- App Interface -->
+<!-- Main Dashboard -->
 <div id="main-app" class="hidden min-h-screen flex flex-col">
-    <header class="no-print bg-[#05070a]/90 backdrop-blur-3xl border-b border-white/5 p-5 sticky top-0 z-40">
-        <div class="max-w-7xl mx-auto flex flex-wrap justify-between items-center gap-6">
-            <div class="flex items-center gap-10">
-                <div class="logo-frame-sm">
+    <header class="no-print bg-white/80 dark:bg-black/60 backdrop-blur-md border-b border-slate-200 dark:border-white/5 p-4 sticky top-0 z-40">
+        <div class="max-w-7xl mx-auto flex justify-between items-center">
+            <div class="flex items-center gap-6">
+                <div class="bg-white p-2 rounded-xl shadow-md">
                     <img id="header-logo" src="logo-D2-SmartHome-preto.png" class="h-10" alt="Logo">
                 </div>
-                <!-- Language Flags -->
-                <div class="flex gap-4 border-l border-white/10 pl-5">
-                    <button onclick="setLang('pt')" class="flag-btn active" id="lang-pt"><img src="https://flagcdn.com/w80/br.png" class="flag-icon" alt="BR"></button>
-                    <button onclick="setLang('en')" class="flag-btn" id="lang-en"><img src="https://flagcdn.com/w80/us.png" class="flag-icon" alt="US"></button>
-                    <button onclick="setLang('es')" class="flag-btn" id="lang-es"><img src="https://flagcdn.com/w80/es.png" class="flag-icon" alt="ES"></button>
+                <div class="flex gap-4 border-l border-slate-200 dark:border-white/10 pl-6">
+                    <button onclick="setLang('pt')" class="flag-btn active" id="lang-pt"><img src="https://flagcdn.com/w80/br.png" class="flag-icon"></button>
+                    <button onclick="setLang('en')" class="flag-btn" id="lang-en"><img src="https://flagcdn.com/w80/us.png" class="flag-icon"></button>
+                    <button onclick="setLang('es')" class="flag-btn" id="lang-es"><img src="https://flagcdn.com/w80/es.png" class="flag-icon"></button>
                 </div>
             </div>
-            <div class="flex items-center gap-6">
-                <div class="flex bg-black/60 p-1.5 rounded-2xl border border-white/5 text-[10px] font-black uppercase tracking-widest">
-                    <button onclick="switchCompany('Smart Home')" id="btn-smart" class="px-6 py-2.5 rounded-xl bg-amber-600 text-black">Smart Home</button>
-                    <button onclick="switchCompany('HVAC')" id="btn-hvac" class="px-6 py-2.5 rounded-xl text-slate-500">HVAC Solutions</button>
+            
+            <div class="flex items-center gap-5">
+                <button onclick="toggleTheme()" class="p-3 rounded-2xl bg-slate-100 dark:bg-white/5 hover:bg-gold/20 transition-all">
+                    <i data-lucide="sun" id="theme-icon-light" class="hidden text-gold"></i>
+                    <i data-lucide="moon" id="theme-icon-dark" class="text-slate-400"></i>
+                </button>
+                <div class="h-10 w-[1px] bg-slate-200 dark:bg-white/10 mx-2"></div>
+                <div class="text-right hidden sm:block">
+                    <p id="user-display" class="text-xs font-black uppercase text-gold"></p>
+                    <p class="text-[9px] text-slate-500 font-bold uppercase tracking-widest" data-i18n="admin_label">Administrador</p>
                 </div>
-                <button onclick="handleLogout()" class="text-red-400 hover:text-white p-3 glass rounded-2xl transition-all">
-                    <i data-lucide="log-out"></i>
+                <button onclick="handleLogout()" class="p-3 rounded-2xl text-red-500 hover:bg-red-500/10 transition-all border border-red-500/20">
+                    <i data-lucide="log-out" class="w-5 h-5"></i>
                 </button>
             </div>
         </div>
     </header>
 
-    <main class="max-w-7xl mx-auto w-full p-6 md:p-10 flex-1">
-        <nav class="no-print flex gap-10 mb-12 border-b border-white/5 overflow-x-auto scrollbar-hide justify-center">
-            <button onclick="showView('projects')" class="tab-btn active" id="tab-projects" data-i18n="nav_proj">Projetos</button>
-            <button onclick="showView('new')" class="tab-btn" id="tab-new" data-i18n="nav_new">Nova Obra</button>
-            <button onclick="showView('reports')" class="tab-btn" id="tab-reports" data-i18n="nav_rep">Relatórios</button>
-            <button onclick="showView('logs')" class="tab-btn admin-only hidden" id="tab-logs" data-i18n="nav_logs">Auditoria</button>
-            <button onclick="showView('users')" class="tab-btn admin-only hidden" id="tab-users" data-i18n="nav_users">Equipe</button>
+    <main class="max-w-7xl mx-auto w-full p-6 flex-1">
+        <nav class="no-print flex gap-10 mb-10 border-b border-slate-200 dark:border-white/5 overflow-x-auto scrollbar-hide">
+            <button onclick="showView('projects')" class="tab-btn pb-4 font-black text-xs uppercase tracking-[0.2em] tab-active" id="tab-projects" data-i18n="nav_proj">Projetos</button>
+            <button onclick="showView('new')" class="tab-btn pb-4 font-black text-xs uppercase tracking-[0.2em]" id="tab-new" data-i18n="nav_new">Nova Obra</button>
+            <button onclick="showView('reports')" class="tab-btn pb-4 font-black text-xs uppercase tracking-[0.2em]" id="tab-reports" data-i18n="nav_rep">Relatórios</button>
+            <button onclick="showView('users')" class="tab-btn pb-4 font-black text-xs uppercase tracking-[0.2em] admin-only hidden" id="tab-users" data-i18n="nav_users">Equipe</button>
         </nav>
 
         <div id="view-projects" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-10"></div>
         
-        <!-- Registration Form -->
-        <div id="view-new" class="hidden max-w-4xl mx-auto glass p-12 text-left">
-            <h3 class="text-2xl font-black mb-10 text-gold uppercase tracking-tighter border-l-4 border-gold pl-4" id="form-title" data-i18n="form_new">Nova Obra</h3>
-            <form id="project-form" class="space-y-8">
+        <!-- Formulário Obra Profissional -->
+        <div id="view-new" class="hidden max-w-3xl mx-auto glass p-10 rounded-[40px] text-left shadow-2xl">
+            <h3 class="text-3xl font-black mb-10 flex items-center gap-4">
+                <span class="w-2.5 h-10 bg-gold rounded-full"></span>
+                <span id="form-title" data-i18n="form_new">Nova Obra</span>
+            </h3>
+            <form id="project-form" class="grid grid-cols-1 md:grid-cols-2 gap-8">
                 <input type="hidden" id="edit-id">
-                <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
-                    <div class="space-y-2">
-                        <label class="text-[9px] uppercase font-black text-slate-500 ml-1" data-i18n="client">Cliente</label>
-                        <input type="text" id="f-cliente" required class="glass-input" data-i18n-placeholder="placeholder_client">
-                    </div>
-                    <div class="space-y-2">
-                        <label class="text-[9px] uppercase font-black text-slate-500 ml-1" data-i18n="seller">Vendedor</label>
-                        <input type="text" id="f-vendedor" required class="glass-input" data-i18n-placeholder="placeholder_seller">
-                    </div>
+                <div class="space-y-2 col-span-2 md:col-span-1">
+                    <label class="text-[10px] font-black uppercase text-slate-500 ml-1 tracking-widest" data-i18n="client">Cliente</label>
+                    <input type="text" id="f-cliente" required class="modern-input !pl-5" data-i18n-placeholder="placeholder_client">
                 </div>
-                <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
-                    <div class="space-y-2">
-                        <label class="text-[9px] uppercase font-black text-slate-500 ml-1" data-i18n="value">Valor Total</label>
-                        <div class="relative">
-                            <span class="absolute left-4 top-[14px] text-slate-500 font-bold">$</span>
-                            <input type="number" id="f-valor" step="0.01" required class="glass-input pl-10">
-                        </div>
-                    </div>
-                    <div class="space-y-2">
-                        <label class="text-[9px] uppercase font-black text-slate-500 ml-1" data-i18n="method">Pagamento</label>
-                        <select id="f-metodo" class="glass-input">
-                            <option value="Zelle">Zelle</option>
-                            <option value="CC">CC (-3%)</option>
-                            <option value="Cash">Cash</option>
-                            <option value="Wire">Wire</option>
-                        </select>
-                    </div>
-                    <div class="space-y-2">
-                        <label class="text-[9px] uppercase font-black text-slate-500 ml-1" data-i18n="comm">% Comissão</label>
-                        <input type="number" id="f-comm" value="5" class="glass-input">
-                    </div>
+                <div class="space-y-2 col-span-2 md:col-span-1">
+                    <label class="text-[10px] font-black uppercase text-slate-500 ml-1 tracking-widest" data-i18n="seller">Vendedor</label>
+                    <input type="text" id="f-vendedor" required class="modern-input !pl-5" data-i18n-placeholder="placeholder_seller">
                 </div>
-                <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
-                    <div class="space-y-2 relative">
-                        <label class="text-[9px] uppercase font-black text-slate-500 ml-1" data-i18n="start">Data de Início</label>
-                        <div class="relative">
-                            <input type="date" id="f-inicio" required class="glass-input pr-12">
-                            <i data-lucide="calendar" class="absolute right-4 top-[14px] text-slate-500 pointer-events-none"></i>
-                        </div>
-                    </div>
-                    <div class="space-y-2 relative">
-                        <label class="text-[9px] uppercase font-black text-slate-500 ml-1" data-i18n="delivery">Entrega Prevista</label>
-                        <div class="relative">
-                            <input type="date" id="f-entrega" required class="glass-input pr-12">
-                            <i data-lucide="calendar" class="absolute right-4 top-[14px] text-slate-500 pointer-events-none"></i>
-                        </div>
+                
+                <div class="space-y-2">
+                    <label class="text-[10px] font-black uppercase text-slate-500 ml-1 tracking-widest" data-i18n="value">Valor Total</label>
+                    <div class="input-group">
+                        <span class="input-prefix">$</span>
+                        <input type="number" id="f-valor" step="0.01" required class="modern-input pl-10">
                     </div>
                 </div>
                 <div class="space-y-2">
-                    <label class="text-[9px] uppercase font-black text-slate-500 ml-1" data-i18n="status">Status</label>
-                    <select id="f-status" class="glass-input">
+                    <label class="text-[10px] font-black uppercase text-slate-500 ml-1 tracking-widest" data-i18n="method">Pagamento</label>
+                    <select id="f-metodo" class="modern-input !pl-5">
+                        <option value="Zelle">Zelle</option>
+                        <option value="CC">Cartão de Crédito (-3%)</option>
+                        <option value="Cash">Dinheiro vivo</option>
+                        <option value="Wire">Transferência Bancária</option>
+                    </select>
+                </div>
+                <div class="space-y-2">
+                    <label class="text-[10px] font-black uppercase text-slate-500 ml-1 tracking-widest" data-i18n="comm">% Comissão</label>
+                    <div class="input-group">
+                        <span class="input-prefix">%</span>
+                        <input type="number" id="f-comm" value="5" class="modern-input pl-10">
+                    </div>
+                </div>
+                <div class="space-y-2">
+                    <label class="text-[10px] font-black uppercase text-slate-500 ml-1 tracking-widest" data-i18n="status">Status</label>
+                    <select id="f-status" class="modern-input !pl-5">
                         <option value="Cotação">Cotação</option>
+                        <option value="Aguardando Início">Aguardando Início</option>
                         <option value="Em Execução">Em Execução</option>
                         <option value="Finalizado">Finalizado</option>
                     </select>
                 </div>
-                <div class="flex gap-6 pt-10">
-                    <button type="submit" class="flex-1 btn-gold p-5 font-black" data-i18n="btn_save">Salvar Registro</button>
-                    <button type="button" onclick="showView('projects')" class="px-10 text-slate-500 uppercase font-black text-xs tracking-widest" data-i18n="cancel">Cancelar</button>
+
+                <div class="space-y-2">
+                    <label class="text-[10px] font-black uppercase text-slate-500 ml-1 tracking-widest" data-i18n="start">Data de Início</label>
+                    <input type="date" id="f-inicio" required class="modern-input !pl-5">
+                </div>
+                <div class="space-y-2">
+                    <label class="text-[10px] font-black uppercase text-slate-500 ml-1 tracking-widest" data-i18n="delivery">Entrega Prevista</label>
+                    <input type="date" id="f-entrega" required class="modern-input !pl-5">
+                </div>
+
+                <div class="col-span-2 flex gap-6 mt-10">
+                    <button type="submit" class="flex-1 btn-primary p-5 font-black uppercase tracking-widest shadow-xl">Salvar Registro</button>
+                    <button type="button" onclick="showView('projects')" class="px-10 text-slate-500 uppercase font-black text-xs tracking-widest hover:text-white transition-all">Cancelar</button>
                 </div>
             </form>
         </div>
 
-        <!-- Team Management -->
+        <!-- Gerenciar Equipe -->
         <div id="view-users" class="hidden space-y-10">
-            <div class="glass p-10 max-w-xl mx-auto text-left shadow-2xl">
+            <div class="glass p-10 max-w-lg mx-auto rounded-[32px] border border-white/5">
                 <h3 class="text-xl font-black text-gold mb-8 uppercase tracking-tighter" data-i18n="team_manage">Gerenciar Equipe</h3>
-                <form id="team-form" class="space-y-6">
+                <form id="team-form" class="space-y-5 text-left">
                     <input type="hidden" id="t-id">
-                    <div class="space-y-4">
-                        <input type="email" id="t-email" placeholder="E-mail" required class="glass-input">
-                        <input type="text" id="t-pass" placeholder="Senha" required class="glass-input">
-                    </div>
-                    <button type="submit" class="w-full btn-gold p-4 font-black" data-i18n="btn_save_team">Salvar Membro</button>
+                    <input type="email" id="t-email" placeholder="E-mail do Membro" required class="modern-input !pl-5">
+                    <input type="text" id="t-pass" placeholder="Senha Sugerida" required class="modern-input !pl-5">
+                    <button type="submit" class="w-full btn-primary p-4 text-xs font-black uppercase tracking-widest">Salvar no Time</button>
                 </form>
             </div>
             <div id="users-list" class="grid grid-cols-1 md:grid-cols-2 gap-8"></div>
         </div>
 
-        <div id="view-reports" class="hidden space-y-10">
-            <div class="no-print glass p-8 flex gap-6 items-end shadow-xl">
-                <select id="rep-filter" class="glass-input flex-1"><option value="All">Geral</option><option value="Smart Home">Smart Home</option><option value="HVAC">HVAC</option></select>
-                <button onclick="window.print()" class="bg-slate-800 text-white px-10 py-3.5 rounded-xl font-black" data-i18n="print">PDF</button>
-            </div>
-            <div id="report-output"></div>
-        </div>
+        <!-- Portfolio Grid -->
+        <div id="report-output"></div>
     </main>
 </div>
 
@@ -222,75 +223,78 @@
     const appId = 'd2-Project-Management';
     const SUPER_ADMIN = "dante.frota@allcablingtech.com";
 
-    let state = { user: null, projects: [], company: 'Smart Home', lang: 'pt' };
+    let state = { user: null, projects: [], company: 'Smart Home', lang: 'pt', theme: 'dark' };
 
     const translations = {
         pt: { 
-            login_sub: "SISTEMA INTEGRADO DE GESTÃO", email_label: "E-mail Corporativo", pass_label: "Senha", btn_login: "Entrar no Sistema", forgot: "Esqueceu a senha? Recuperar",
-            nav_proj: "Projetos", nav_new: "Nova Obra", nav_rep: "Relatórios", nav_logs: "Auditoria", nav_users: "Equipe", 
-            client: "Cliente", seller: "Vendedor", value: "Valor Total", method: "Pagamento", comm: "% Comissão", start: "Início", delivery: "Entrega", status: "Status",
-            btn_save: "Confirmar e Salvar", cancel: "Cancelar", print: "Imprimir PDF", form_new: "Nova Obra", form_edit: "Editar Obra",
-            placeholder_client: "Nome da Entidade", placeholder_seller: "Responsável D2", team_manage: "Gerenciar Equipe", btn_save_team: "Salvar Membro",
-            days_left: "dias restantes", concluded: "Concluído", work_stage: "Estágio da Obra"
+            login_sub: "SISTEMA INTEGRADO DE GESTÃO", admin_label: "ADMINISTRADOR",
+            nav_proj: "Projetos", nav_new: "Nova Obra", nav_rep: "Relatórios", nav_users: "Equipe", 
+            client: "Cliente", seller: "Vendedor", value: "Valor Total", method: "Pagamento", comm: "% Comissão", start: "Data de Início", delivery: "Previsão de Entrega", status: "Status",
+            btn_save: "Salvar Registro", cancel: "Cancelar", print: "Gerar PDF", form_new: "Nova Obra", form_edit: "Editar Obra",
+            placeholder_client: "Nome da Entidade", placeholder_seller: "Responsável D2", team_manage: "Gerenciar Equipe", work_stage: "Acompanhamento da Obra", days_left: "dias restantes", concluded: "Concluído"
         },
         en: { 
-            login_sub: "INTEGRATED MANAGEMENT SYSTEM", email_label: "Corporate Email", pass_label: "Password", btn_login: "Sign In", forgot: "Forgot password? Reset",
-            nav_proj: "Projects", nav_new: "New Project", nav_rep: "Reports", nav_logs: "Audit", nav_users: "Team",
-            client: "Client", seller: "Sales Rep", value: "Total Value", method: "Payment", comm: "% Comm.", start: "Start", delivery: "Delivery", status: "Status",
-            btn_save: "Confirm and Save", cancel: "Cancel", print: "Print PDF", form_new: "New Project", form_edit: "Edit Project",
-            placeholder_client: "Entity Name", placeholder_seller: "D2 Manager", team_manage: "Team Management", btn_save_team: "Save Member",
-            days_left: "days left", concluded: "Concluded", work_stage: "Work Progress"
+            login_sub: "INTEGRATED MANAGEMENT SYSTEM", admin_label: "ADMINISTRATOR",
+            nav_proj: "Projects", nav_new: "New Entry", nav_rep: "Reports", nav_users: "Team",
+            client: "Client", seller: "Sales Rep", value: "Total Value", method: "Payment", comm: "% Comm.", start: "Start Date", delivery: "Delivery Date", status: "Status",
+            btn_save: "Save Entry", cancel: "Cancel", print: "Print PDF", form_new: "New Project", form_edit: "Edit Project",
+            placeholder_client: "Entity Name", placeholder_seller: "D2 Manager", team_manage: "Manage Team", work_stage: "Project Progress", days_left: "days left", concluded: "Concluded"
         },
         es: { 
-            login_sub: "SISTEMA INTEGRADO DE GESTIÓN", email_label: "Correo Corporativo", pass_label: "Clave", btn_login: "Entrar al Sistema", forgot: "¿Olvidó su clave? Recuperar",
-            nav_proj: "Proyectos", nav_new: "Nueva Obra", nav_rep: "Informes", nav_logs: "Auditoría", nav_users: "Equipo",
+            login_sub: "SISTEMA INTEGRADO DE GESTIÓN", admin_label: "ADMINISTRADOR",
+            nav_proj: "Proyectos", nav_new: "Nueva Obra", nav_rep: "Informes", nav_users: "Equipo",
             client: "Cliente", seller: "Vendedor", value: "Valor Total", method: "Modalidad", comm: "% Comisión", start: "Inicio", delivery: "Entrega", status: "Estado",
-            btn_save: "Confirmar y Guardar", cancel: "Cancelar", print: "Imprimir PDF", form_new: "Nueva Obra", form_edit: "Editar Obra",
-            placeholder_client: "Nombre de Entidad", placeholder_seller: "Responsable D2", team_manage: "Gestión de Equipo", btn_save_team: "Guardar Miembro",
-            days_left: "días restantes", concluded: "Concluido", work_stage: "Progreso de Obra"
+            btn_save: "Guardar Registro", cancel: "Cancelar", print: "Imprimir PDF", form_new: "Nueva Obra", form_edit: "Editar Obra",
+            placeholder_client: "Nombre Entidad", placeholder_seller: "Responsable D2", team_manage: "Gestión de Equipo", work_stage: "Seguimiento de Obra", days_left: "días restantes", concluded: "Concluido"
         }
+    };
+
+    window.toggleTheme = () => {
+        state.theme = state.theme === 'dark' ? 'light' : 'dark';
+        document.body.className = state.theme;
+        document.getElementById('theme-icon-light').classList.toggle('hidden');
+        document.getElementById('theme-icon-dark').classList.toggle('hidden');
+    };
+
+    window.selectDivision = (div) => {
+        state.company = div;
+        const s = document.getElementById('div-smart');
+        const h = document.getElementById('div-hvac');
+        if(div === 'Smart Home') {
+            s.classList.add('border-gold', 'bg-gold/5', 'opacity-100'); s.classList.remove('border-transparent', 'bg-slate-100', 'dark:bg-slate-800', 'opacity-40');
+            h.classList.remove('border-gold', 'bg-gold/5', 'opacity-100'); h.classList.add('border-transparent', 'bg-slate-100', 'dark:bg-slate-800', 'opacity-40');
+        } else {
+            h.classList.add('border-gold', 'bg-gold/5', 'opacity-100'); h.classList.remove('border-transparent', 'bg-slate-100', 'dark:bg-slate-800', 'opacity-40');
+            s.classList.remove('border-gold', 'bg-gold/5', 'opacity-100'); s.classList.add('border-transparent', 'bg-slate-100', 'dark:bg-slate-800', 'opacity-40');
+        }
+        document.getElementById('header-logo').src = div === 'Smart Home' ? 'logo-D2-SmartHome-preto.png' : 'logo-D2-HVAC-Solutions-preto.png';
     };
 
     window.setLang = (l) => {
         state.lang = l;
         document.querySelectorAll('.flag-btn').forEach(b => b.classList.toggle('active', b.id === 'lang-'+l));
-        
-        // Tradução de textos estáticos
-        document.querySelectorAll('[data-i18n]').forEach(el => {
-            const key = el.getAttribute('data-i18n');
-            if (translations[l][key]) el.innerText = translations[l][key];
-        });
-
-        // Tradução de placeholders
-        document.querySelectorAll('[data-i18n-placeholder]').forEach(el => {
-            const key = el.getAttribute('data-i18n-placeholder');
-            if (translations[l][key]) el.placeholder = translations[l][key];
-        });
-
-        // Recarregar grids dinâmicos
+        document.querySelectorAll('[data-i18n]').forEach(el => { const key = el.getAttribute('data-i18n'); if (translations[l][key]) el.innerText = translations[l][key]; });
+        document.querySelectorAll('[data-i18n-placeholder]').forEach(el => { const key = el.getAttribute('data-i18n-placeholder'); if (translations[l][key]) el.placeholder = translations[l][key]; });
         renderProjects();
-        renderReport();
-        lucide.createIcons();
     };
 
     window.togglePassword = (id) => {
         const input = document.getElementById(id);
-        const icon = document.getElementById('eye-icon');
-        if (input.type === 'password') { input.type = 'text'; icon.setAttribute('data-lucide', 'eye-off'); }
-        else { input.type = 'password'; icon.setAttribute('data-lucide', 'eye'); }
-        lucide.createIcons();
+        input.type = input.type === 'password' ? 'text' : 'password';
     };
 
     window.handleForgotPassword = async () => {
         const email = document.getElementById('email').value.trim();
-        if(!email) { alert("E-mail?"); return; }
-        try { await sendPasswordResetEmail(auth, email); alert("E-mail OK!"); } catch (err) { alert(err.message); }
+        if(!email) { alert("Informe o e-mail no campo acima."); return; }
+        try { await sendPasswordResetEmail(auth, email); alert("E-mail de recuperação enviado para " + email); } catch (err) { alert(err.message); }
     };
 
     document.getElementById('login-form').onsubmit = async (e) => {
         e.preventDefault();
-        try { await signInWithEmailAndPassword(auth, document.getElementById('email').value, document.getElementById('password').value); } 
-        catch (err) { alert("ERRO LOGIN"); }
+        const errEl = document.getElementById('auth-error');
+        try {
+            await signInWithEmailAndPassword(auth, document.getElementById('email').value, document.getElementById('password').value);
+        } catch (err) { errEl.innerText = "DADOS INVÁLIDOS"; errEl.classList.remove('hidden'); }
     };
 
     onAuthStateChanged(auth, (user) => {
@@ -298,7 +302,7 @@
         document.getElementById('auth-screen').classList.toggle('hidden', !!user);
         document.getElementById('main-app').classList.toggle('hidden', !user);
         if (user) {
-            document.getElementById('user-display').innerText = user.email.split('@')[0].toUpperCase();
+            document.getElementById('user-display').innerText = user.email.split('@')[0];
             if (user.email === SUPER_ADMIN) document.querySelectorAll('.admin-only').forEach(el => el.classList.remove('hidden'));
             initData();
         }
@@ -307,14 +311,20 @@
     function initData() {
         onSnapshot(collection(db, 'artifacts', appId, 'public', 'data', 'projects'), snap => {
             state.projects = snap.docs.map(d => ({ id: d.id, ...d.data() }));
-            renderProjects(); renderReport();
+            renderProjects();
         });
-        if (state.user?.email === SUPER_ADMIN) {
+        if(state.user?.email === SUPER_ADMIN) {
             onSnapshot(collection(db, 'artifacts', appId, 'public', 'data', 'user_credentials'), snap => {
                 renderTeam(snap.docs.map(d => ({ id: d.id, ...d.data() })));
             });
         }
-        setLang(state.lang);
+        lucide.createIcons();
+    }
+
+    function calculateProgress(start, end) {
+        const s = new Date(start).getTime(); const e = new Date(end).getTime(); const n = new Date().getTime();
+        if (n < s) return 0; if (n > e) return 100;
+        return Math.floor(((n - s) / (e - s)) * 100);
     }
 
     function renderProjects() {
@@ -323,42 +333,87 @@
         const t = translations[state.lang];
         
         state.projects.filter(p => p.empresa === state.company).forEach(p => {
-            const s = new Date(p.dataInicio).getTime(); const e = new Date(p.dataEntrega).getTime(); const n = new Date().getTime();
-            let prog = 0; if (n >= s) prog = n > e ? 100 : Math.floor(((n - s) / (e - s)) * 100);
-            const days = Math.ceil((e - n) / (1000 * 3600 * 24));
+            const prog = calculateProgress(p.dataInicio, p.dataEntrega);
+            const daysLeft = Math.max(0, Math.ceil((new Date(p.dataEntrega).getTime() - new Date().getTime()) / (1000 * 3600 * 24)));
             const comm = (p.valorTotal * (p.metodo === 'CC' ? 0.97 : 1) * (p.percComissao / 100)).toFixed(2);
             
             grid.innerHTML += `
-                <div class="glass p-8 space-y-6 border-l-8 transition-all hover:scale-[1.02]" style="border-left-color: ${p.status === 'Finalizado' ? '#10b981' : '#f59e0b'}">
-                    <div class="flex justify-between items-start">
-                        <div class="text-left"><h4 class="font-black text-xl text-white uppercase leading-tight">${p.cliente}</h4><p class="text-[9px] font-black text-slate-500 mt-1 uppercase">${p.vendedor} • ${p.metodo}</p></div>
-                        <div class="flex gap-2"><button onclick="editP('${p.id}')" class="text-slate-400"><i data-lucide="edit-3" size="16"></i></button><button onclick="deleteP('${p.id}')" class="text-slate-400"><i data-lucide="trash-2" size="16"></i></button></div>
+                <div class="glass p-8 rounded-[40px] border-l-[8px] transition-all hover:scale-[1.02] shadow-xl group" style="border-left-color: ${p.status === 'Finalizado' ? '#10b981' : '#f59e0b'}">
+                    <div class="flex justify-between mb-8">
+                        <div class="text-left"><h4 class="font-black text-xl uppercase tracking-tighter">${p.cliente}</h4><p class="text-[9px] font-black text-slate-500 uppercase tracking-widest mt-1">${p.vendedor} • ${p.metodo}</p></div>
+                        <div class="flex gap-2 opacity-0 group-hover:opacity-100 transition-opacity">
+                            <button onclick="editP('${p.id}')" class="p-2.5 bg-white/5 rounded-xl border border-white/5"><i data-lucide="edit-3" class="w-4 h-4 text-slate-400"></i></button>
+                            <button onclick="deleteP('${p.id}')" class="p-2.5 bg-white/5 rounded-xl border border-white/5"><i data-lucide="trash-2" class="w-4 h-4 text-red-500"></i></button>
+                        </div>
                     </div>
-                    <div class="space-y-2 text-left">
-                        <div class="flex justify-between text-[10px] font-bold uppercase text-slate-400"><span>${t.work_stage}</span><span>${prog}%</span></div>
-                        <div class="progress-container"><div class="progress-bar ${prog === 100 ? 'bg-emerald-500' : 'bg-gold'}" style="width: ${prog}%"></div></div>
-                        <div class="flex justify-between text-[9px] text-slate-500 uppercase"><span>${new Date(p.dataInicio).toLocaleDateString()}</span><span>${days > 0 ? days + ' ' + t.days_left : t.concluded}</span></div>
+                    
+                    <div class="space-y-3 mb-8 text-left">
+                        <div class="flex justify-between text-[10px] font-black uppercase text-slate-500"><span>${t.work_stage}</span><span class="text-gold">${prog}%</span></div>
+                        <div class="progress-track"><div class="progress-bar-fill ${prog === 100 ? 'bg-emerald-500' : 'bg-gold'}" style="width: ${prog}%"></div></div>
+                        <div class="flex justify-between text-[9px] font-bold uppercase tracking-widest">
+                            <span class="text-slate-500">${new Date(p.dataInicio).toLocaleDateString()}</span>
+                            <span class="${daysLeft < 7 ? 'text-red-500' : 'text-gold'}">${prog === 100 ? t.concluded : daysLeft + ' ' + t.days_left}</span>
+                        </div>
                     </div>
-                    <div class="grid grid-cols-2 gap-4 bg-black/40 p-5 rounded-2xl border border-white/5 text-left shadow-inner">
-                        <div><p class="text-[8px] font-black uppercase text-slate-600 mb-1">${t.value}</p><p class="font-black text-lg text-white">$ ${p.valorTotal.toLocaleString()}</p></div>
-                        <div><p class="text-[8px] font-black uppercase text-gold mb-1">${t.comm}</p><p class="font-black text-lg text-gold">$ ${comm}</p></div>
+
+                    <div class="grid grid-cols-2 gap-4 bg-slate-900/40 p-6 rounded-3xl border border-white/5 text-left mb-4 shadow-inner">
+                        <div><p class="text-[8px] font-black uppercase text-slate-500 mb-1">Faturamento</p><p class="text-lg font-black tracking-tight">$ ${p.valorTotal.toLocaleString()}</p></div>
+                        <div><p class="text-[8px] font-black uppercase text-gold mb-1">Comissão Liq.</p><p class="text-lg font-black text-gold tracking-tight">$ ${comm}</p></div>
                     </div>
                 </div>`;
         });
         lucide.createIcons();
     }
 
+    window.editP = (id) => {
+        const p = state.projects.find(x => x.id === id);
+        document.getElementById('edit-id').value = id;
+        document.getElementById('f-cliente').value = p.cliente;
+        document.getElementById('f-vendedor').value = p.vendedor;
+        document.getElementById('f-valor').value = p.valorTotal;
+        document.getElementById('f-metodo').value = p.metodo;
+        document.getElementById('f-comm').value = p.percComissao;
+        document.getElementById('f-inicio').value = p.dataInicio;
+        document.getElementById('f-entrega').value = p.dataEntrega;
+        document.getElementById('f-status').value = p.status;
+        document.getElementById('form-title').innerText = "Editar Registro";
+        showView('new');
+    };
+
+    window.deleteP = async (id) => { if(confirm("Deseja mesmo excluir esta obra?")) await deleteDoc(doc(db, 'artifacts', appId, 'public', 'data', 'projects', id)); };
+
+    document.getElementById('project-form').onsubmit = async (e) => {
+        e.preventDefault();
+        const id = document.getElementById('edit-id').value;
+        const data = {
+            empresa: state.company,
+            cliente: document.getElementById('f-cliente').value,
+            vendedor: document.getElementById('f-vendedor').value,
+            valorTotal: parseFloat(document.getElementById('f-valor').value),
+            metodo: document.getElementById('f-metodo').value,
+            percComissao: parseInt(document.getElementById('f-comm').value),
+            dataInicio: document.getElementById('f-inicio').value,
+            dataEntrega: document.getElementById('f-entrega').value,
+            status: document.getElementById('f-status').value,
+            updatedAt: serverTimestamp()
+        };
+        try {
+            if(id) await updateDoc(doc(db, 'artifacts', appId, 'public', 'data', 'projects', id), data);
+            else await addDoc(collection(db, 'artifacts', appId, 'public', 'data', 'projects'), { ...data, createdAt: serverTimestamp() });
+            e.target.reset(); document.getElementById('edit-id').value = ''; showView('projects');
+        } catch (err) { alert(err.message); }
+    };
+
     function renderTeam(team) {
         const container = document.getElementById('users-list');
         container.innerHTML = '';
         team.forEach(u => {
-            container.innerHTML += `<div class="glass p-8 border-l-8 border-gold flex justify-between items-center"><div class="text-left"><p class="font-black text-white">${u.email}</p><p class="text-[10px] text-slate-500 uppercase">Acesso: ${u.password}</p></div><div class="flex gap-3"><button onclick="editTeam('${u.id}', '${u.email}', '${u.password}')" class="p-2 text-slate-400"><i data-lucide="user-cog" size="18"></i></button><button onclick="deleteTeam('${u.id}')" class="p-2 text-slate-400"><i data-lucide="user-minus" size="18"></i></button></div></div>`;
+            container.innerHTML += `<div class="glass p-8 rounded-[28px] border-l-[10px] border-gold flex justify-between items-center shadow-xl"><div class="text-left"><p class="font-black text-lg">${u.email}</p><p class="text-[10px] text-slate-500 uppercase tracking-widest mt-1">Acesso: ${u.password}</p></div><div class="flex gap-2"><button onclick="editTeam('${u.id}','${u.email}','${u.password}')" class="p-3 bg-white/5 rounded-xl border border-white/5 text-gold hover:bg-gold hover:text-black transition-all"><i data-lucide="user-cog" class="w-5 h-5"></i></button><button onclick="deleteTeam('${u.id}')" class="p-3 bg-white/5 rounded-xl border border-white/5 text-red-500 hover:bg-red-500 hover:text-white transition-all"><i data-lucide="user-minus" class="w-5 h-5"></i></button></div></div>`;
         });
         lucide.createIcons();
     }
-
-    window.editTeam = (id, email, pass) => { document.getElementById('t-id').value = id; document.getElementById('t-email').value = email; document.getElementById('t-pass').value = pass; };
-    window.deleteTeam = async (id) => { if(confirm("EXCLUIR?")) await deleteDoc(doc(db, 'artifacts', appId, 'public', 'data', 'user_credentials', id)); };
+    window.editTeam = (id,e,p) => { document.getElementById('t-id').value=id; document.getElementById('t-email').value=e; document.getElementById('t-pass').value=p; };
+    window.deleteTeam = async (id) => { if(confirm("Remover membro?")) await deleteDoc(doc(db, 'artifacts', appId, 'public', 'data', 'user_credentials', id)); };
     document.getElementById('team-form').onsubmit = async (e) => {
         e.preventDefault();
         const id = document.getElementById('t-id').value;
@@ -368,49 +423,13 @@
         e.target.reset(); document.getElementById('t-id').value = '';
     };
 
-    window.editP = (id) => {
-        const p = state.projects.find(x => x.id === id);
-        document.getElementById('edit-id').value = id; document.getElementById('f-cliente').value = p.cliente; document.getElementById('f-vendedor').value = p.vendedor;
-        document.getElementById('f-valor').value = p.valorTotal; document.getElementById('f-metodo').value = p.metodo; document.getElementById('f-comm').value = p.percComissao;
-        document.getElementById('f-inicio').value = p.dataInicio; document.getElementById('f-entrega').value = p.dataEntrega; document.getElementById('f-status').value = p.status;
-        showView('new');
-    };
-
-    window.deleteP = async (id) => { if(confirm("EXCLUIR?")) await deleteDoc(doc(db, 'artifacts', appId, 'public', 'data', 'projects', id)); };
-    
-    document.getElementById('project-form').onsubmit = async (e) => {
-        e.preventDefault();
-        const id = document.getElementById('edit-id').value;
-        const data = { empresa: state.company, cliente: document.getElementById('f-cliente').value, vendedor: document.getElementById('f-vendedor').value, valorTotal: parseFloat(document.getElementById('f-valor').value), metodo: document.getElementById('f-metodo').value, percComissao: parseInt(document.getElementById('f-comm').value), dataInicio: document.getElementById('f-inicio').value, dataEntrega: document.getElementById('f-entrega').value, status: document.getElementById('f-status').value, updatedAt: serverTimestamp() };
-        if(id) await updateDoc(doc(db, 'artifacts', appId, 'public', 'data', 'projects', id), data);
-        else await addDoc(collection(db, 'artifacts', appId, 'public', 'data', 'projects'), { ...data, createdAt: serverTimestamp() });
-        e.target.reset(); document.getElementById('edit-id').value = ''; document.getElementById('f-comm').value = '5'; showView('projects');
-    };
-
-    function renderReport() {
-        const out = document.getElementById('report-output');
-        let total = 0; let totalComm = 0;
-        const rows = state.projects.map(p => {
-            let base = p.valorTotal * (p.metodo === 'CC' ? 0.97 : 1);
-            let c = (base * (p.percComissao/100)); total += p.valorTotal; totalComm += c;
-            return `<tr class="border-b border-slate-100 text-xs"><td class="p-4 font-black">${p.cliente}</td><td class="p-4">${p.vendedor}</td><td class="p-4 text-right font-medium">$ ${p.valorTotal.toFixed(2)}</td><td class="p-4 text-right font-black text-amber-600">$ ${c.toFixed(2)}</td></tr>`;
-        }).join('');
-        out.innerHTML = `<div class="bg-white text-slate-950 p-12 rounded-[50px] shadow-2xl border-8 border-slate-100"><div class="flex justify-between items-center border-b-[8px] border-slate-950 pb-10 mb-10"><div class="logo-frame-sm shadow-none border"><img src="logo-D2-Group-preto.png" class="h-14"></div><div class="text-right"><h2 class="text-3xl font-black uppercase tracking-tighter">Relatório D2</h2><p class="text-slate-400 font-black uppercase text-[10px]">${new Date().toLocaleDateString()}</p></div></div><table class="w-full text-sm"><thead><tr class="bg-slate-50 font-black uppercase text-[11px] text-slate-500"><th class="p-4 text-left">Cliente</th><th class="p-4 text-left">Vendedor</th><th class="p-4 text-right">Volume</th><th class="p-4 text-right">Comissão</th></tr></thead><tbody>${rows}</tbody></table><div class="mt-10 pt-10 border-t-[8px] border-slate-950 flex justify-end gap-16"><div class="text-right"><p class="text-[11px] font-black uppercase text-slate-400 mb-1">Total Geral</p><p class="text-4xl font-black">$ ${total.toLocaleString(undefined, {minimumFractionDigits:2})}</p></div><div class="text-right"><p class="text-[11px] font-black uppercase text-amber-600 mb-1">Comissões</p><p class="text-4xl font-black text-amber-600">$ ${totalComm.toLocaleString(undefined, {minimumFractionDigits:2})}</p></div></div></div>`;
-    }
-
-    window.switchCompany = (c) => {
-        state.company = c;
-        document.getElementById('header-logo').src = c === 'Smart Home' ? 'logo-D2-SmartHome-preto.png' : 'logo-D2-HVAC-Solutions-preto.png';
-        document.getElementById('btn-smart').className = c === 'Smart Home' ? 'px-6 py-2.5 rounded-xl bg-amber-600 text-black font-black' : 'px-6 py-2.5 rounded-xl text-slate-500 font-black';
-        document.getElementById('btn-hvac').className = c === 'HVAC' ? 'px-6 py-2.5 rounded-xl bg-amber-600 text-black font-black' : 'px-6 py-2.5 rounded-xl text-slate-500 font-black';
-        renderProjects();
-    };
-
     window.showView = (v) => {
-        ['projects', 'new', 'reports', 'users'].forEach(id => document.getElementById('view-'+id).classList.add('hidden'));
-        ['projects', 'new', 'reports', 'users'].forEach(id => { const el = document.getElementById('tab-'+id); if(el) el.classList.remove('active'); });
+        ['projects', 'new', 'reports', 'users'].forEach(id => {
+            const el = document.getElementById('view-'+id); if(el) el.classList.add('hidden');
+            const tab = document.getElementById('tab-'+id); if(tab) tab.classList.remove('tab-active');
+        });
         document.getElementById('view-'+v).classList.remove('hidden');
-        document.getElementById('tab-'+v).classList.add('active');
+        document.getElementById('tab-'+v).classList.add('tab-active');
         lucide.createIcons();
     };
 
