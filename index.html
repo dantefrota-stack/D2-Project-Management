@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>D2 Management System - Premium</title>
+    <title>D2 Management System - Premium Official</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
     <script src="https://unpkg.com/lucide@latest"></script>
@@ -16,7 +16,7 @@
 
         .input-wrapper { position: relative; width: 100%; display: flex; align-items: center; margin-bottom: 1rem; }
         
-        /* BOTÃO DO OLHO: PRIORIDADE MÁXIMA DE VISIBILIDADE */
+        /* FIX DEFINITIVO DO OLHO: Botão com SVG embutido para não falhar */
         .password-toggle { 
             position: absolute; 
             right: 12px; 
@@ -34,15 +34,16 @@
             border: 1px solid rgba(251, 191, 36, 0.3);
             transition: all 0.2s;
         }
-        .password-toggle:hover { background: var(--gold); color: #000; scale: 1.05; }
+        .password-toggle:hover { background: var(--gold); color: #000; }
+        .password-toggle svg { width: 20px; height: 20px; stroke-width: 2.5; }
 
         .modern-input { 
-            width: 100%; padding: 16px 55px 16px 16px; border-radius: 14px; 
+            width: 100%; padding: 16px 52px 16px 16px; border-radius: 14px; 
             border: 1px solid rgba(148, 163, 184, 0.2); background: rgba(0,0,0,0.5); 
             color: inherit; outline: none; transition: all 0.2s; font-size: 14px;
         }
         .light .modern-input { background: #fff; border: 1px solid #cbd5e1; color: #000; }
-        .modern-input:focus { border-color: var(--gold); box-shadow: 0 0 0 3px rgba(251, 191, 36, 0.15); }
+        .modern-input:focus { border-color: var(--gold); box-shadow: 0 0 0 3px rgba(251, 191, 36, 0.1); }
 
         .btn-primary { background: linear-gradient(135deg, var(--gold) 0%, var(--gold-dark) 100%); color: #000; font-weight: 900; border-radius: 14px; transition: all 0.3s; display: flex; align-items: center; justify-content: center; gap: 8px; }
         .btn-primary:hover { transform: translateY(-1px); filter: brightness(1.1); box-shadow: 0 4px 20px rgba(180, 83, 9, 0.4); }
@@ -67,7 +68,7 @@
 </head>
 <body class="dark">
 
-<!-- Login Interface -->
+<!-- Tela de Login -->
 <div id="auth-screen" class="fixed inset-0 z-[2000] flex items-center justify-center p-6 bg-[#030508]">
     <div class="bg-white dark:bg-[#0f172a] p-10 rounded-[40px] w-full max-w-md shadow-2xl text-center border border-white/5">
         <div class="mb-6 flex justify-center">
@@ -87,12 +88,13 @@
             </div>
 
             <div class="input-wrapper">
-                <input type="email" id="email" required class="modern-input" placeholder="E-mail">
+                <input type="email" id="email" required class="modern-input" placeholder="E-mail Corporativo">
             </div>
             <div class="input-wrapper">
                 <input type="password" id="password" required class="modern-input" placeholder="Senha">
-                <button type="button" onclick="window.handlePasswordToggle('password', 'eye-login-icon')" class="password-toggle" title="Ver/Esconder">
-                    <i data-lucide="eye" class="w-6 h-6" id="eye-login-icon"></i>
+                <button type="button" onclick="window.togglePassword('password', 'eye-login-btn')" class="password-toggle" id="eye-login-btn">
+                    <!-- SVG embutido para nunca falhar -->
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>
                 </button>
             </div>
             <button type="submit" id="btn-entrar" class="w-full btn-primary h-14 uppercase tracking-widest text-sm font-black shadow-lg">
@@ -103,7 +105,7 @@
     </div>
 </div>
 
-<!-- Dashboard Interface -->
+<!-- Principal Dash -->
 <div id="main-app" class="hidden min-h-screen flex flex-col">
     <header class="no-print bg-white/80 dark:bg-black/60 backdrop-blur-md border-b border-slate-200 dark:border-white/5 p-4 sticky top-0 z-40">
         <div class="max-w-7xl mx-auto flex justify-between items-center">
@@ -143,7 +145,6 @@
 
         <div id="view-projects" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-10 text-left"></div>
         
-        <!-- Nova Obra -->
         <div id="view-new" class="hidden max-w-3xl mx-auto glass p-10 rounded-[40px] text-left shadow-2xl border border-white/5">
             <h3 class="text-2xl font-black mb-10 flex items-center gap-4 uppercase tracking-tighter">
                 <span class="w-2 h-10 bg-gold rounded-full"></span>
@@ -199,7 +200,7 @@
             </form>
         </div>
 
-        <!-- Equipe -->
+        <!-- Equipe (Dante Only) -->
         <div id="view-users" class="hidden space-y-10">
             <div class="glass p-10 max-w-lg mx-auto rounded-[32px] border border-white/5 shadow-2xl">
                 <h3 class="text-xl font-black text-gold mb-8 uppercase tracking-tighter text-left" data-i18n="team_title">Gestão de Equipe</h3>
@@ -210,8 +211,8 @@
                     </div>
                     <div class="input-wrapper">
                         <input type="password" id="t-pass" placeholder="Senha" required class="modern-input">
-                        <button type="button" onclick="window.handlePasswordToggle('t-pass', 'eye-team-icon')" class="password-toggle">
-                            <i data-lucide="eye" class="w-6 h-6" id="eye-team-icon"></i>
+                        <button type="button" onclick="window.togglePassword('t-pass', 'eye-team-btn')" class="password-toggle" id="eye-team-btn">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>
                         </button>
                     </div>
                     <button type="submit" id="btn-save-team" class="w-full btn-primary h-14 text-xs font-black uppercase tracking-widest">
@@ -258,12 +259,12 @@
             form_new_title: "Cadastrar Obra", label_div: "Divisão", label_client: "Cliente", label_seller: "Vendedor", label_value: "Valor Contrato", 
             label_comm: "% Comissão", label_method: "Forma de Pagamento", label_start: "Início", label_end: "Entrega", label_status: "Status",
             btn_save: "Salvar Registro", btn_cancel: "Cancelar", team_title: "Gestão de Equipe", btn_team: "Salvar e Liberar Acesso",
-            timeline: "Cronograma", status_overdue: "ATRASADA", status_finished: "CONCLUÍDA", days_left: "DIAS RESTANTES",
+            timeline: "Timeline", status_overdue: "ATRASADA", status_finished: "CONCLUÍDA", days_left: "DIAS RESTANTES",
             total_contract: "Contrato Total", finance_btn: "FINANCEIRO VENDEDOR", net_base: "Base Líquida", balance: "Saldo Devedor",
             history: "Histórico", pay_btn: "Lançar Pagamento", report_title: "RELATÓRIO EXECUTIVO", col_base: "Base Líquida", col_comm: "Comissão",
             verifying: "VERIFICANDO...", registering: "AUTORIZANDO...", tooltip_edit: "Editar", tooltip_delete: "Excluir", tooltip_fin: "Financeiro", password: "Senha",
             col_obra: "Obra", col_vendedor: "Vendedor", col_periodo: "Período", col_andamento: "Andamento", col_contrato: "Contrato",
-            vol_geral: "Volume Geral", total_comm: "Total Comissões", pay_history: "Histórico de Pagamentos"
+            vol_geral: "Volume Geral", total_comm: "Total Comissões", pay_history: "Histórico"
         },
         en: { 
             login_sub: "Integrated Management System", login_err: "Invalid data. If you lost your password or username, contact your administrator.", 
@@ -276,20 +277,23 @@
             history: "History", pay_btn: "Post Payment", report_title: "EXECUTIVE REPORT", col_base: "Net Base", col_comm: "Commission",
             verifying: "VERIFYING...", registering: "AUTHORIZING...", tooltip_edit: "Edit", tooltip_delete: "Delete", tooltip_fin: "Finance", password: "Password",
             col_obra: "Project", col_vendedor: "Seller", col_periodo: "Period", col_andamento: "Progress", col_contrato: "Contract",
-            vol_geral: "General Volume", total_comm: "Total Commissions", pay_history: "Payment History"
+            vol_geral: "General Volume", total_comm: "Total Commissions", pay_history: "History"
         }
     };
 
     const formatCurr = (v) => new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD' }).format(v);
 
-    window.handlePasswordToggle = (inputId, iconId) => {
+    // --- FIX DO OLHO COM SVG PURO ---
+    window.togglePassword = (inputId, btnId) => {
         const el = document.getElementById(inputId);
-        const icon = document.getElementById(iconId);
-        if(el && icon) {
+        const btn = document.getElementById(btnId);
+        if(el && btn) {
             const isPass = el.type === 'password';
             el.type = isPass ? 'text' : 'password';
-            icon.setAttribute('data-lucide', isPass ? 'eye-off' : 'eye');
-            lucide.createIcons();
+            // Troca o SVG internamente sem depender de Lucide
+            btn.innerHTML = isPass 
+                ? '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M17.94 17.94A10.07 10.07 0 0 1 12 20c-7 0-11-8-11-8a18.45 18.45 0 0 1 5.06-5.94M9.9 4.24A9.12 9.12 0 0 1 12 4c7 0 11 8 11 8a18.5 18.5 0 0 1-2.16 3.19m-6.72-1.07a3 3 0 1 1-4.24-4.24"></path><line x1="1" y1="1" x2="23" y2="23"></line></svg>'
+                : '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>';
         }
     };
 
@@ -300,12 +304,6 @@
             const key = el.getAttribute('data-i18n');
             if (translations[l][key]) el.innerText = translations[l][key];
         });
-        
-        const mailInp = document.getElementById('email');
-        if(mailInp) mailInp.placeholder = l === 'en' ? 'Email' : 'E-mail';
-        const passInp = document.getElementById('password');
-        if(passInp) passInp.placeholder = translations[l].password;
-        
         renderProjects(); renderReport();
     };
 
@@ -367,8 +365,8 @@
                         </div>
                     </div>
                     <div class="bg-black/30 p-6 rounded-3xl border border-white/5 shadow-inner">
-                        <p class="text-[9px] font-black text-slate-500 uppercase mb-1">${t.total_contract}</p>
-                        <p class="text-2xl font-black text-white">${formatCurr(p.valorTotal)}</p>
+                        <p class="text-[9px] font-black text-slate-500 uppercase mb-1 text-center">${t.total_contract}</p>
+                        <p class="text-2xl font-black text-white text-center">${formatCurr(p.valorTotal)}</p>
                     </div>
                     <button onclick="window.toggleFinance('${p.id}')" title="${t.tooltip_fin}" class="w-full mt-6 py-2 text-[10px] font-black uppercase tracking-[0.2em] text-gold hover:underline flex items-center justify-center gap-2">
                         <i data-lucide="wallet" class="w-4 h-4"></i> ${t.finance_btn}
