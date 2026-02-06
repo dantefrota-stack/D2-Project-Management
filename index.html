@@ -36,12 +36,9 @@
         .progress-track { height: 14px; border-radius: 7px; background: rgba(148, 163, 184, 0.15); overflow: hidden; position: relative; border: 1px solid rgba(255,255,255,0.05); }
         .progress-bar-fill { height: 100%; transition: width 1.5s cubic-bezier(0.4, 0, 0.2, 1); border-radius: 7px; }
 
-        .flag-icon { width: 32px; height: 22px; object-fit: cover; border-radius: 4px; box-shadow: 0 2px 5px rgba(0,0,0,0.3); }
-        .flag-btn { opacity: 0.4; transition: 0.3s; padding: 4px; border-radius: 8px; border: none; background: none; cursor: pointer; }
-        .flag-btn:hover, .flag-btn.active { opacity: 1; transform: scale(1.1); background: rgba(255,255,255,0.1); }
-
-        .btn-primary { background: linear-gradient(135deg, var(--gold) 0%, var(--gold-dark) 100%); color: #000; font-weight: 900; border-radius: 14px; transition: all 0.3s; }
+        .btn-primary { background: linear-gradient(135deg, var(--gold) 0%, var(--gold-dark) 100%); color: #000; font-weight: 900; border-radius: 14px; transition: all 0.3s; display: flex; align-items: center; justify-content: center; gap: 8px; }
         .btn-primary:hover { transform: translateY(-1px); filter: brightness(1.1); }
+        .btn-primary:disabled { opacity: 0.7; cursor: not-allowed; }
 
         .tab-active { color: var(--gold); border-bottom: 3px solid var(--gold); }
         .dark { background-color: #030508; color: #f1f5f9; }
@@ -52,7 +49,11 @@
         .finance-panel.open { max-height: 1200px; opacity: 1; margin-top: 1.5rem; padding-top: 1rem; border-top: 1px solid rgba(255,255,255,0.05); }
 
         .pay-item { background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.05); padding: 10px 14px; border-radius: 10px; margin-bottom: 8px; display: flex; justify-content: space-between; align-items: center; }
-        
+
+        /* Spinner para o botão */
+        @keyframes spin { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }
+        .animate-spin-custom { animation: spin 1s linear infinite; }
+
         @media print { .no-print { display: none !important; } }
         .scrollbar-hide::-webkit-scrollbar { display: none; }
     </style>
@@ -62,35 +63,39 @@
 <!-- Login Screen -->
 <div id="auth-screen" class="fixed inset-0 z-50 flex items-center justify-center p-6 bg-slate-950">
     <div class="bg-white dark:bg-slate-900 p-10 rounded-[40px] w-full max-w-md shadow-2xl text-center border border-white/5">
-        <img src="logo-D2-Group-preto.png" alt="D2 Group" class="h-16 mx-auto mb-6 dark:invert">
+        <div class="mb-6 flex justify-center">
+             <img src="logo-D2-Group-preto.png" alt="D2 Group" class="h-16 dark:invert" onerror="this.style.display='none'">
+        </div>
         <h2 class="text-2xl font-black tracking-tight mb-2 uppercase">D2 Management</h2>
         <p class="text-slate-500 text-xs font-bold uppercase tracking-widest mb-10">Sistema Integrado de Gestão</p>
         
         <div class="grid grid-cols-2 gap-4 mb-8">
-            <button onclick="selectDivision('Smart Home')" id="div-smart" class="p-4 border-2 border-gold rounded-2xl bg-gold/5 transition-all" title="Selecionar Smart Home">
+            <button onclick="selectDivision('Smart Home')" id="div-smart" class="p-4 border-2 border-gold rounded-2xl bg-gold/5 transition-all" title="Divisão Smart Home">
                 <img src="logo-D2-SmartHome-preto.png" class="h-8 mx-auto mb-2 dark:invert">
                 <span class="text-[10px] font-black uppercase tracking-widest">Smart Home</span>
             </button>
-            <button onclick="selectDivision('HVAC')" id="div-hvac" class="p-4 border-2 border-transparent rounded-2xl bg-slate-100 dark:bg-slate-800 transition-all opacity-40" title="Selecionar HVAC">
+            <button onclick="selectDivision('HVAC')" id="div-hvac" class="p-4 border-2 border-transparent rounded-2xl bg-slate-100 dark:bg-slate-800 transition-all opacity-40" title="Divisão HVAC">
                 <img src="logo-D2-HVAC-Solutions-preto.png" class="h-8 mx-auto mb-2 dark:invert">
                 <span class="text-[10px] font-black uppercase tracking-widest">HVAC</span>
             </button>
         </div>
 
         <form id="login-form" class="space-y-4 text-left">
-            <!-- AVISO DE ERRO DE LOGIN -->
-            <div id="login-error-msg" class="hidden p-3 bg-red-500/10 border border-red-500/20 rounded-xl text-red-500 text-xs font-bold text-center mb-4 uppercase tracking-widest">
-                E-mail ou senha incorretos.
+            <div id="login-error-msg" class="hidden p-3 bg-red-500/10 border border-red-500/20 rounded-xl text-red-500 text-[10px] font-black text-center mb-4 uppercase tracking-widest">
+                Credenciais inválidas ou usuário não cadastrado no Firebase.
             </div>
 
             <input type="email" id="email" required class="modern-input !pl-4 h-14" placeholder="E-mail Corporativo">
             <div class="relative">
                 <input type="password" id="password" required class="modern-input !pl-4 h-14" placeholder="Senha de Acesso">
-                <button type="button" onclick="togglePassword('password')" class="absolute right-4 top-4 text-slate-400" title="Mostrar/Esconder Senha">
+                <button type="button" onclick="togglePassword('password')" class="absolute right-4 top-4 text-slate-400" title="Mostrar/Ocultar Senha">
                     <i data-lucide="eye" class="w-5 h-5"></i>
                 </button>
             </div>
-            <button type="submit" id="btn-entrar" class="w-full btn-primary h-14 uppercase tracking-widest text-sm font-black shadow-lg">Entrar no Sistema</button>
+            <button type="submit" id="btn-entrar" class="w-full btn-primary h-14 uppercase tracking-widest text-sm font-black shadow-lg transition-all">
+                <span id="btn-text">Entrar no Sistema</span>
+                <i id="btn-spinner" data-lucide="loader-2" class="w-5 h-5 hidden animate-spin-custom"></i>
+            </button>
         </form>
     </div>
 </div>
@@ -111,15 +116,15 @@
             </div>
             
             <div class="flex items-center gap-5">
-                <button onclick="toggleTheme()" class="p-3 rounded-2xl bg-slate-100 dark:bg-white/5 hover:bg-gold/20 transition-all" title="Mudar Tema">
+                <button onclick="toggleTheme()" class="p-3 rounded-2xl bg-slate-100 dark:bg-white/5 hover:bg-gold/20 transition-all" title="Alternar Tema">
                     <i data-lucide="sun" id="theme-icon-light" class="hidden text-gold"></i>
                     <i data-lucide="moon" id="theme-icon-dark" class="text-slate-400"></i>
                 </button>
                 <div class="text-right hidden sm:block">
                     <p id="user-display" class="text-xs font-black uppercase text-gold tracking-tight"></p>
-                    <p class="text-[9px] text-slate-500 font-bold uppercase tracking-widest" data-i18n="admin_label">PAINEL GESTÃO</p>
+                    <p class="text-[9px] text-slate-500 font-bold uppercase tracking-widest">Painel Administrativo</p>
                 </div>
-                <button onclick="handleLogout()" class="p-3 rounded-2xl text-red-500 hover:bg-red-500/10 transition-all border border-red-500/20 shadow-sm" title="Sair do Sistema">
+                <button onclick="handleLogout()" class="p-3 rounded-2xl text-red-500 hover:bg-red-500/10 transition-all border border-red-500/20 shadow-sm" title="Sair com segurança">
                     <i data-lucide="log-out" class="w-5 h-5"></i>
                 </button>
             </div>
@@ -145,39 +150,39 @@
             <form id="project-form" class="grid grid-cols-1 md:grid-cols-2 gap-8">
                 <input type="hidden" id="edit-id">
                 <div class="col-span-2 space-y-2">
-                    <label class="text-[10px] font-black uppercase text-slate-500 ml-1 tracking-widest" data-i18n="company_label">Empresa Responsável</label>
+                    <label class="text-[10px] font-black uppercase text-slate-500 ml-1 tracking-widest">Empresa Responsável</label>
                     <select id="f-empresa" class="modern-input !pl-5" required>
                         <option value="Smart Home">D2 Smart Home</option>
                         <option value="HVAC">D2 HVAC Solutions</option>
                     </select>
                 </div>
                 <div class="col-span-2 md:col-span-1 space-y-2">
-                    <label class="text-[10px] font-black uppercase text-slate-500 ml-1 tracking-widest" data-i18n="client">Cliente</label>
+                    <label class="text-[10px] font-black uppercase text-slate-500 ml-1 tracking-widest">Cliente</label>
                     <input type="text" id="f-cliente" required class="modern-input !pl-5" placeholder="Nome da Obra">
                 </div>
                 <div class="col-span-2 md:col-span-1 space-y-2">
-                    <label class="text-[10px] font-black uppercase text-slate-500 ml-1 tracking-widest" data-i18n="seller">Vendedor</label>
+                    <label class="text-[10px] font-black uppercase text-slate-500 ml-1 tracking-widest">Vendedor</label>
                     <input type="text" id="f-vendedor" required class="modern-input !pl-5" placeholder="Responsável">
                 </div>
                 <div class="space-y-2">
-                    <label class="text-[10px] font-black uppercase text-slate-500 ml-1 tracking-widest" data-i18n="value">Valor Total Obra</label>
+                    <label class="text-[10px] font-black uppercase text-slate-500 ml-1 tracking-widest">Valor Total Obra</label>
                     <div class="input-wrapper"><span class="input-icon-left">$</span><input type="number" id="f-valor" step="0.01" required class="modern-input"></div>
                 </div>
                 <div class="space-y-2">
-                    <label class="text-[10px] font-black uppercase text-slate-500 ml-1 tracking-widest" data-i18n="comm">% Comissão</label>
+                    <label class="text-[10px] font-black uppercase text-slate-500 ml-1 tracking-widest">% Comissão</label>
                     <div class="input-wrapper"><span class="input-icon-left">%</span><input type="number" id="f-comm" value="5" class="modern-input"></div>
                 </div>
                 <div class="col-span-2 space-y-2">
-                    <label class="text-[10px] font-black uppercase text-slate-500 ml-1 tracking-widest" data-i18n="method">Modalidade Pagto</label>
+                    <label class="text-[10px] font-black uppercase text-slate-500 ml-1 tracking-widest">Modalidade Pagto</label>
                     <select id="f-metodo" class="modern-input !pl-5">
                         <option value="Zelle">Zelle / Wire / Cash</option>
-                        <option value="CC">Cartão de Crédito (Desconto 3% do Contrato)</option>
+                        <option value="CC">Cartão de Crédito (Dedução 3% da Base)</option>
                     </select>
                 </div>
-                <div class="space-y-2"><label class="text-[10px] font-black uppercase text-slate-500 ml-1 tracking-widest" data-i18n="start">Início</label><input type="date" id="f-inicio" required class="modern-input !pl-5"></div>
-                <div class="space-y-2"><label class="text-[10px] font-black uppercase text-slate-500 ml-1 tracking-widest" data-i18n="delivery">Entrega</label><input type="date" id="f-entrega" required class="modern-input !pl-5"></div>
+                <div class="space-y-2"><label class="text-[10px] font-black uppercase text-slate-500 ml-1 tracking-widest">Início</label><input type="date" id="f-inicio" required class="modern-input !pl-5"></div>
+                <div class="space-y-2"><label class="text-[10px] font-black uppercase text-slate-500 ml-1 tracking-widest">Entrega Prevista</label><input type="date" id="f-entrega" required class="modern-input !pl-5"></div>
                 <div class="col-span-2 space-y-2">
-                    <label class="text-[10px] font-black uppercase text-slate-500 ml-1 tracking-widest" data-i18n="status">Status</label>
+                    <label class="text-[10px] font-black uppercase text-slate-500 ml-1 tracking-widest">Status da Obra</label>
                     <select id="f-status" class="modern-input !pl-5">
                         <option value="Cotação">Cotação</option>
                         <option value="Aguardando Início">Aguardando Início</option>
@@ -186,7 +191,7 @@
                     </select>
                 </div>
                 <div class="col-span-2 flex gap-6 mt-10">
-                    <button type="submit" class="flex-1 btn-primary p-5 font-black uppercase tracking-widest shadow-xl">Salvar Registro</button>
+                    <button type="submit" class="flex-1 btn-primary p-5 font-black uppercase tracking-widest shadow-xl">Salvar Obra</button>
                     <button type="button" onclick="showView('projects')" class="px-10 text-slate-500 uppercase font-black text-xs hover:text-white transition-all">Cancelar</button>
                 </div>
             </form>
@@ -195,7 +200,7 @@
         <!-- Equipe -->
         <div id="view-users" class="hidden space-y-10">
             <div class="glass p-10 max-w-lg mx-auto rounded-[32px] border border-white/5 shadow-2xl">
-                <h3 class="text-xl font-black text-gold mb-8 uppercase tracking-tighter" data-i18n="team_manage">Gerenciar Equipe</h3>
+                <h3 class="text-xl font-black text-gold mb-8 uppercase tracking-tighter">Gerenciar Equipe</h3>
                 <form id="team-form" class="space-y-5 text-left">
                     <input type="hidden" id="t-id">
                     <input type="email" id="t-email" placeholder="E-mail do Membro" required class="modern-input !pl-5">
@@ -237,30 +242,23 @@
     const translations = {
         pt: { 
             nav_proj: "Projetos", nav_new: "Nova Obra", nav_rep: "Relatórios", nav_users: "Equipe",
-            client: "Cliente", seller: "Vendedor", value: "Valor da Obra", comm: "Comissão", status: "Status Obra",
-            start: "Início", delivery: "Entrega", pay_status: "Situação", btn_save: "Salvar Registro",
-            form_new: "Nova Obra", form_edit: "Editar Obra", admin_label: "ADMIN", work_stage: "Timeline",
-            days_left: "dias restantes", concluded: "Concluído", finance: "Financeiro Vendedor", method: "Pagamento",
-            paid_amount: "Já Pago", balance: "Saldo Devedor", register_pay: "Lançar Pagamento", pay_history: "Histórico",
-            company_label: "Empresa Responsável", overdue: "ATRASADA", report_title: "RELATÓRIO EXECUTIVO", net_val: "Base Líquida"
+            client: "Cliente", seller: "Vendedor", value: "Valor Obra", comm: "Comissão", status: "Status",
+            start: "Início", delivery: "Entrega", finance: "Financeiro Vendedor", overdue: "ATRASADA",
+            concluded: "Concluído", days_left: "dias restantes", report_title: "RELATÓRIO EXECUTIVO", net_val: "Base Líquida"
         },
         en: { 
             nav_proj: "Projects", nav_new: "New Entry", nav_rep: "Reports", nav_users: "Team",
             client: "Client", seller: "Sales Rep", value: "Total Value", comm: "Commission", status: "Status",
-            start: "Start", delivery: "Delivery", pay_status: "Status", btn_save: "Save Entry",
-            form_new: "New Project", form_edit: "Edit Project", admin_label: "ADMIN", work_stage: "Timeline",
-            days_left: "days left", concluded: "Finished", finance: "Sales Finance", method: "Payment",
-            paid_amount: "Amount Paid", balance: "Balance", register_pay: "Add Payment", pay_history: "History",
-            company_label: "Division", overdue: "OVERDUE", report_title: "EXECUTIVE REPORT", net_val: "Net Base"
+            start: "Start", delivery: "Delivery", finance: "Sales Finance", overdue: "OVERDUE",
+            concluded: "Finished", days_left: "days left", report_title: "EXECUTIVE REPORT", net_val: "Net Base"
         }
     };
 
-    const formatUSD = (v) => new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD', minimumFractionDigits: 2 }).format(v);
+    const formatUSD = (v) => new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD' }).format(v);
 
-    // --- Helper Functions ---
+    // --- Helpers ---
 
     function getProjectFinancials(p) {
-        // Lógica D2: (Contrato - 3% se cartão) = Base Líquida
         let calculationBase = p.metodo === 'CC' ? p.valorTotal * 0.97 : p.valorTotal;
         let totalCommToPay = calculationBase * (p.percComissao / 100);
         const pays = p.pagamentosEfetuados || [];
@@ -270,6 +268,68 @@
         if (sumPays >= totalCommToPay && totalCommToPay > 0) statusColor = "bg-emerald-500";
         else if (sumPays > 0) statusColor = "bg-orange-500";
         return { calculationBase, totalCommToPay, sumPays, balance, statusColor };
+    }
+
+    function renderProjects() {
+        const grid = document.getElementById('view-projects');
+        if (!grid || !state.user) return;
+        grid.innerHTML = '';
+        const t = translations[state.lang];
+        
+        state.projects.filter(p => p.empresa === state.company).forEach(p => {
+            const start = new Date(p.dataInicio).getTime(), end = new Date(p.dataEntrega).getTime(), now = new Date().getTime();
+            let prog = 0; if (now >= start) prog = now >= end ? 100 : Math.floor(((now - start) / (end - start)) * 100);
+            const daysLeft = Math.ceil((end - now) / (1000 * 3600 * 24));
+            
+            let barColor = "bg-red-500"; 
+            if (p.status === 'Finalizado' || prog >= 100) barColor = "bg-emerald-500 shadow-[0_0_12px_#10b981]";
+            else if (now > end) barColor = "bg-red-800 animate-pulse";
+            else if (prog > 30 && prog <= 70) barColor = "bg-orange-500";
+            else if (prog > 70) barColor = "bg-emerald-400";
+
+            const fin = getProjectFinancials(p);
+
+            grid.innerHTML += `
+                <div class="glass p-8 rounded-[40px] border-l-[8px] group relative shadow-2xl transition-all" style="border-left-color: ${p.status === 'Finalizado' ? '#10b981' : '#f59e0b'}">
+                    <div class="absolute top-6 right-6 flex items-center gap-3">
+                        <span class="status-badge ${fin.statusColor}"></span>
+                        <button onclick="window.editP('${p.id}')" title="Editar Obra" class="p-1.5 hover:text-gold transition-colors"><i data-lucide="edit-3" class="w-4 h-4"></i></button>
+                        <button onclick="window.deleteP('${p.id}')" title="Excluir Obra" class="p-1.5 hover:text-red-500 transition-colors"><i data-lucide="trash-2" class="w-4 h-4"></i></button>
+                    </div>
+                    <div class="text-left mb-6">
+                        <h4 class="font-black text-xl uppercase tracking-tighter truncate pr-20">${p.cliente}</h4>
+                        <p class="text-[10px] font-bold text-slate-500 uppercase tracking-widest mt-1">${p.vendedor} • ${p.metodo}</p>
+                    </div>
+                    <div class="space-y-3 mb-8 text-left">
+                        <div class="flex justify-between text-[10px] font-black uppercase text-slate-400"><span>Timeline</span><span class="text-gold font-black">${prog}%</span></div>
+                        <div class="progress-track"><div class="progress-bar-fill ${barColor}" style="width: ${prog}%"></div></div>
+                        <div class="flex justify-between text-[9px] font-extrabold uppercase">
+                            <span>INC: ${new Date(p.dataInicio).toLocaleDateString()}</span>
+                            <span class="${now > end && p.status !== 'Finalizado' ? 'text-red-500 font-black' : 'text-gold'}">${now > end && p.status !== 'Finalizado' ? t.overdue : (prog === 100 ? t.concluded : daysLeft + ' ' + t.days_left)}</span>
+                        </div>
+                    </div>
+                    <div class="bg-black/30 dark:bg-slate-900/40 p-6 rounded-3xl border border-white/5 text-left shadow-inner">
+                        <p class="text-[9px] font-black text-slate-500 uppercase mb-1 tracking-widest">Contrato Total</p>
+                        <p class="text-2xl font-black tracking-tight">${formatUSD(p.valorTotal)}</p>
+                    </div>
+                    <button onclick="window.toggleFinance('${p.id}')" title="Financeiro Vendedor" class="w-full mt-6 py-2 text-[10px] font-black uppercase tracking-[0.2em] text-gold/60 hover:text-gold transition-all flex items-center justify-center gap-2">
+                        <i data-lucide="wallet" class="w-3.5 h-3.5"></i> ${t.finance}
+                    </button>
+                    <div id="fin-${p.id}" class="finance-panel text-left">
+                        <div class="bg-gold/5 p-4 rounded-2xl border border-gold/10 space-y-4">
+                            <div class="flex justify-between">
+                                <div><p class="text-[8px] font-bold uppercase text-gold/60 mb-1">Comissão Líquida</p><p class="text-lg font-black text-gold">${formatUSD(fin.totalCommToPay)}</p></div>
+                                <div class="text-right"><p class="text-[8px] font-bold uppercase text-gold/60">Saldo Devedor</p><p class="text-lg font-black ${fin.balance > 0 ? 'text-red-400' : 'text-emerald-400'}">${formatUSD(fin.balance)}</p></div>
+                            </div>
+                            <div class="mt-4 pt-4 border-t border-white/5 admin-only ${state.user.email !== SUPER_ADMIN ? 'hidden' : ''}">
+                                <div class="grid grid-cols-2 gap-2"><input type="number" id="pay-val-${p.id}" placeholder="Valor $" class="modern-input !pl-4 !py-2 text-xs"><input type="date" id="pay-date-${p.id}" class="modern-input !pl-4 !py-2 text-xs"></div>
+                                <button onclick="window.addPayment('${p.id}')" title="Confirmar Lançamento" class="w-full mt-2 bg-emerald-600/20 text-emerald-400 border border-emerald-500/30 p-2 rounded-lg text-[9px] font-black uppercase tracking-widest hover:bg-emerald-500 hover:text-black transition-all">Lançar Pagamento</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>`;
+        });
+        lucide.createIcons();
     }
 
     function renderReport() {
@@ -288,7 +348,7 @@
                 <td class="p-4 font-black uppercase text-slate-800 dark:text-slate-200">${p.cliente}</td>
                 <td class="p-4">${p.vendedor}</td>
                 <td class="p-4">${new Date(p.dataInicio).toLocaleDateString()} - ${new Date(p.dataEntrega).toLocaleDateString()}</td>
-                <td class="p-4 font-bold text-gold">${prog}%</td>
+                <td class="p-4 font-bold text-gold text-center">${prog}%</td>
                 <td class="p-4 text-right">${formatUSD(p.valorTotal)}</td>
                 <td class="p-4 text-right text-slate-400 italic">${formatUSD(fin.calculationBase)}</td>
                 <td class="p-4 text-right font-black text-amber-600">${formatUSD(fin.totalCommToPay)}</td>
@@ -301,87 +361,17 @@
                     <div class="logo-frame-sm border"><img src="logo-D2-Group-preto.png" class="h-14"></div>
                     <div class="text-right"><h2 class="text-3xl font-black uppercase tracking-tighter">${t.report_title}</h2><p class="text-slate-400 font-black uppercase text-[10px]">${new Date().toLocaleDateString()}</p></div>
                 </div>
-                <div class="overflow-x-auto">
-                    <table class="w-full">
-                        <thead><tr class="bg-slate-50 font-black uppercase text-[10px] text-slate-500 text-left">
-                            <th class="p-4">${t.client}</th><th class="p-4">${t.seller}</th><th class="p-4">Período</th><th class="p-4">${t.work_stage}</th><th class="p-4 text-right">${t.value}</th><th class="p-4 text-right">${t.net_val}</th><th class="p-4 text-right">${t.comm}</th>
-                        </tr></thead>
-                        <tbody>${rows}</tbody>
-                    </table>
-                </div>
+                <div class="overflow-x-auto"><table class="w-full">
+                    <thead><tr class="bg-slate-50 font-black uppercase text-[10px] text-slate-500 text-left">
+                        <th class="p-4">Cliente</th><th class="p-4">Responsável</th><th class="p-4">Período</th><th class="p-4 text-center">Andamento</th><th class="p-4 text-right">Contrato</th><th class="p-4 text-right">Base Líquida</th><th class="p-4 text-right">Comissão</th>
+                    </tr></thead>
+                    <tbody>${rows}</tbody>
+                </table></div>
                 <div class="mt-10 pt-10 border-t-[8px] border-slate-950 flex justify-end gap-16">
                     <div class="text-right"><p class="text-[11px] font-black uppercase text-slate-400 mb-1">Volume Geral</p><p class="text-4xl font-black">${formatUSD(totalVal)}</p></div>
                     <div class="text-right"><p class="text-[11px] font-black uppercase text-amber-600 mb-1">Total Comissões</p><p class="text-4xl font-black text-amber-600">${formatUSD(totalComm)}</p></div>
                 </div>
             </div>`;
-    }
-
-    function renderProjects() {
-        const grid = document.getElementById('view-projects');
-        if (!grid || !state.user) return;
-        grid.innerHTML = '';
-        const t = translations[state.lang];
-        
-        state.projects.filter(p => p.empresa === state.company).forEach(p => {
-            const start = new Date(p.dataInicio).getTime(), end = new Date(p.dataEntrega).getTime(), now = new Date().getTime();
-            let prog = 0; if (now >= start) prog = now >= end ? 100 : Math.floor(((now - start) / (end - start)) * 100);
-            const daysLeft = Math.ceil((end - now) / (1000 * 3600 * 24));
-            
-            // Lógica Timeline Colorida
-            let barColor = "bg-red-500"; 
-            if (p.status === 'Finalizado' || prog >= 100) barColor = "bg-emerald-500 shadow-[0_0_12px_#10b981]";
-            else if (now > end) barColor = "bg-red-800 animate-pulse";
-            else if (prog > 30 && prog <= 70) barColor = "bg-orange-500";
-            else if (prog > 70) barColor = "bg-emerald-400";
-
-            const fin = getProjectFinancials(p);
-
-            grid.innerHTML += `
-                <div class="glass p-8 rounded-[40px] border-l-[8px] group relative shadow-2xl transition-all" style="border-left-color: ${p.status === 'Finalizado' ? '#10b981' : '#f59e0b'}">
-                    <div class="absolute top-6 right-6 flex items-center gap-3">
-                        <span class="status-badge ${fin.statusColor}"></span>
-                        <button onclick="window.editP('${p.id}')" title="Editar Registro" class="p-1.5 hover:text-gold transition-colors"><i data-lucide="edit-3" class="w-4 h-4"></i></button>
-                        <button onclick="window.deleteP('${p.id}')" title="Excluir Obra" class="p-1.5 hover:text-red-500 transition-colors"><i data-lucide="trash-2" class="w-4 h-4"></i></button>
-                    </div>
-                    <div class="text-left mb-6">
-                        <h4 class="font-black text-xl uppercase tracking-tighter truncate pr-20">${p.cliente}</h4>
-                        <p class="text-[10px] font-bold text-slate-500 uppercase tracking-widest mt-1">${p.vendedor} • ${p.metodo}</p>
-                    </div>
-                    <div class="space-y-3 mb-8 text-left">
-                        <div class="flex justify-between text-[10px] font-black uppercase text-slate-500"><span>${t.work_stage}</span><span class="text-gold font-black">${prog}%</span></div>
-                        <div class="progress-track"><div class="progress-bar-fill ${barColor}" style="width: ${prog}%"></div></div>
-                        <div class="flex justify-between text-[9px] font-extrabold uppercase tracking-widest">
-                            <span>INC: ${new Date(p.dataInicio).toLocaleDateString()}</span>
-                            <span class="${now > end && p.status !== 'Finalizado' ? 'text-red-500 font-black' : 'text-gold'}">${now > end && p.status !== 'Finalizado' ? t.overdue : (prog === 100 ? t.concluded : daysLeft + ' ' + t.days_left)}</span>
-                        </div>
-                    </div>
-                    <div class="bg-black/30 dark:bg-slate-900/40 p-6 rounded-3xl border border-white/5 text-left shadow-inner">
-                        <p class="text-[9px] font-black text-slate-500 uppercase mb-1 tracking-widest">${t.value}</p>
-                        <p class="text-2xl font-black tracking-tight">${formatUSD(p.valorTotal)}</p>
-                    </div>
-                    <button onclick="window.toggleFinance('${p.id}')" title="Ver Financeiro" class="w-full mt-6 py-2 text-[10px] font-black uppercase tracking-[0.2em] text-gold/60 hover:text-gold transition-all flex items-center justify-center gap-2">
-                        <i data-lucide="wallet" class="w-3.5 h-3.5"></i> ${t.finance}
-                    </button>
-                    <div id="fin-${p.id}" class="finance-panel text-left">
-                        <div class="bg-gold/5 p-4 rounded-2xl border border-gold/10 space-y-4">
-                            <div class="flex justify-between">
-                                <div><p class="text-[8px] font-bold uppercase text-gold/60 mb-1">Comissão Líquida</p><p class="text-lg font-black text-gold">${formatUSD(fin.totalCommToPay)}</p></div>
-                                <div class="text-right"><p class="text-[8px] font-bold uppercase text-gold/60">Saldo Devedor</p><p class="text-lg font-black ${fin.balance > 0 ? 'text-red-400' : 'text-emerald-400'}">${formatUSD(fin.balance)}</p></div>
-                            </div>
-                            <div class="mt-4"><p class="text-[9px] font-black text-slate-500 uppercase mb-2 tracking-widest">${t.pay_history}</p>
-                                <div class="max-h-32 overflow-y-auto scrollbar-hide">
-                                    ${(p.pagamentosEfetuados || []).length ? (p.pagamentosEfetuados || []).map(pay => `<div class="pay-item"><span class="text-[10px] font-bold text-slate-400">${new Date(pay.data).toLocaleDateString()}</span><span class="text-[11px] font-black text-emerald-500">+ ${formatUSD(pay.valor)}</span></div>`).join('') : '<p class="text-[9px] text-slate-600 italic">Sem histórico...</p>'}
-                                </div>
-                            </div>
-                            <div class="mt-4 pt-4 border-t border-white/5 admin-only ${state.user.email !== SUPER_ADMIN ? 'hidden' : ''}">
-                                <div class="grid grid-cols-2 gap-2"><input type="number" id="pay-val-${p.id}" placeholder="Valor $" class="modern-input !pl-4 !py-2 text-xs"><input type="date" id="pay-date-${p.id}" class="modern-input !pl-4 !py-2 text-xs"></div>
-                                <button onclick="window.addPayment('${p.id}')" title="Confirmar Lançamento" class="w-full mt-2 bg-emerald-600/20 text-emerald-400 border border-emerald-500/30 p-2 rounded-lg text-[9px] font-black uppercase tracking-widest hover:bg-emerald-500 hover:text-black transition-all">Lançar Pagamento</button>
-                            </div>
-                        </div>
-                    </div>
-                </div>`;
-        });
-        lucide.createIcons();
     }
 
     function renderTeam(team) {
@@ -391,11 +381,11 @@
             <div class="glass p-6 rounded-[24px] flex justify-between items-center border-l-8 border-gold shadow-lg">
                 <div class="text-left">
                     <p class="font-black text-slate-100">${u.email}</p>
-                    <p class="text-[11px] text-slate-500 tracking-wide mt-1">Acesso: <span class="text-gold font-medium">${u.password}</span></p>
+                    <p class="text-[11px] text-slate-500 tracking-wide mt-1">Senha de Acesso: <span class="text-gold font-medium">${u.password}</span></p>
                 </div>
                 <div class="flex gap-2">
-                    <button onclick="window.editTeam('${u.id}','${u.email}','${u.password}')" title="Configurar Acesso" class="p-2 text-gold hover:scale-110 transition-transform"><i data-lucide="user-cog" size="18"></i></button>
-                    <button onclick="window.deleteTeam('${u.id}')" title="Remover Membro" class="p-2 text-red-500 hover:scale-110 transition-transform"><i data-lucide="user-minus" size="18"></i></button>
+                    <button onclick="window.editTeam('${u.id}','${u.email}','${u.password}')" title="Configurar Membro" class="p-2 text-gold hover:scale-110 transition-transform"><i data-lucide="user-cog" size="18"></i></button>
+                    <button onclick="window.deleteTeam('${u.id}')" title="Remover da Equipe" class="p-2 text-red-500 hover:scale-110 transition-transform"><i data-lucide="user-minus" size="18"></i></button>
                 </div>
             </div>`).join('');
         lucide.createIcons();
@@ -425,7 +415,7 @@
     
     window.handleLogout = () => signOut(auth);
 
-    // --- Core Observers ---
+    // --- Core Observer ---
 
     function initData() { 
         if (!state.user) return;
@@ -458,37 +448,29 @@
             e.preventDefault(); 
             const errDiv = document.getElementById('login-error-msg');
             const btn = document.getElementById('btn-entrar');
+            const btnText = document.getElementById('btn-text');
+            const btnSpinner = document.getElementById('btn-spinner');
+
             errDiv.classList.add('hidden');
-            btn.innerText = "Acessando...";
+            btn.disabled = true;
+            btnText.innerText = "Verificando...";
+            btnSpinner.classList.remove('hidden');
 
             try { 
                 await signInWithEmailAndPassword(auth, document.getElementById('email').value, document.getElementById('password').value); 
             } catch(err){ 
                 errDiv.classList.remove('hidden');
-                btn.innerText = "Entrar no Sistema";
+                btn.disabled = false;
+                btnText.innerText = "Entrar no Sistema";
+                btnSpinner.classList.add('hidden');
             } 
         };
 
         document.getElementById('project-form').onsubmit = async (e) => { 
             e.preventDefault(); 
             const id = document.getElementById('edit-id').value; 
-            const d = { 
-                empresa: document.getElementById('f-empresa').value, 
-                cliente: document.getElementById('f-cliente').value, 
-                vendedor: document.getElementById('f-vendedor').value, 
-                valorTotal: parseFloat(document.getElementById('f-valor').value), 
-                metodo: document.getElementById('f-metodo').value, 
-                percComissao: parseInt(document.getElementById('f-comm').value), 
-                dataInicio: document.getElementById('f-inicio').value, 
-                dataEntrega: document.getElementById('f-entrega').value, 
-                status: document.getElementById('f-status').value, 
-                updatedAt: serverTimestamp() 
-            }; 
-            try { 
-                if(id) await updateDoc(doc(db, 'artifacts', appId, 'public', 'data', 'projects', id), d); 
-                else await addDoc(collection(db, 'artifacts', appId, 'public', 'data', 'projects'), { ...d, createdAt: serverTimestamp(), pagamentosEfetuados: [] }); 
-                e.target.reset(); document.getElementById('edit-id').value = ''; window.showView('projects'); 
-            } catch(err){ alert("Erro ao salvar!"); } 
+            const d = { empresa: document.getElementById('f-empresa').value, cliente: document.getElementById('f-cliente').value, vendedor: document.getElementById('f-vendedor').value, valorTotal: parseFloat(document.getElementById('f-valor').value), metodo: document.getElementById('f-metodo').value, percComissao: parseInt(document.getElementById('f-comm').value), dataInicio: document.getElementById('f-inicio').value, dataEntrega: document.getElementById('f-entrega').value, status: document.getElementById('f-status').value, updatedAt: serverTimestamp() }; 
+            try { if(id) await updateDoc(doc(db, 'artifacts', appId, 'public', 'data', 'projects', id), d); else await addDoc(collection(db, 'artifacts', appId, 'public', 'data', 'projects'), { ...d, createdAt: serverTimestamp(), pagamentosEfetuados: [] }); e.target.reset(); document.getElementById('edit-id').value = ''; window.showView('projects'); } catch(err){ alert("Erro!"); } 
         };
 
         document.getElementById('team-form').onsubmit = async (e) => {
@@ -499,7 +481,7 @@
                 if(id) await updateDoc(doc(db, 'artifacts', appId, 'public', 'data', 'user_credentials', id), data); 
                 else await addDoc(collection(db, 'artifacts', appId, 'public', 'data', 'user_credentials'), data); 
                 e.target.reset(); document.getElementById('t-id').value = ''; 
-            } catch(err){ alert("Erro na equipe!"); }
+            } catch(err){ alert("Erro!"); }
         };
     });
 </script>
