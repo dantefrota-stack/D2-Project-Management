@@ -3,18 +3,17 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>D2 Management System - Official BR</title>
+    <title>D2 Management System - Premium BR</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
     <style>
         :root { --glass: rgba(255, 255, 255, 0.02); --border: rgba(255, 255, 255, 0.08); --gold: #fbbf24; }
         body { font-family: 'Inter', sans-serif; background: #030508; color: #f1f5f9; min-height: 100vh; margin: 0; overflow-x: hidden; }
         
-        /* Moldura Branca para visibilidade total dos logos pretos */
         .logo-frame { background: #FFFFFF; padding: 16px 32px; border-radius: 20px; display: inline-flex; align-items: center; justify-content: center; box-shadow: 0 10px 40px rgba(0,0,0,0.6); border: 1px solid rgba(255,255,255,0.1); }
         .logo-frame-sm { background: #FFFFFF; padding: 6px 12px; border-radius: 10px; display: flex; align-items: center; justify-content: center; box-shadow: 0 4px 12px rgba(0,0,0,0.4); }
         
-        .glass { background: var(--glass); backdrop-filter: blur(25px); -webkit-backdrop-filter: blur(25px); border: 1px solid var(--border); border-radius: 28px; box-shadow: 0 25px 60px -12px rgba(0, 0, 0, 0.8); }
+        .glass { background: var(--glass); backdrop-filter: blur(25px); border: 1px solid var(--border); border-radius: 28px; box-shadow: 0 25px 60px -12px rgba(0, 0, 0, 0.8); }
         .glass-input { background: rgba(0, 0, 0, 0.5) !important; border: 1px solid var(--border) !important; border-radius: 12px !important; color: white !important; padding: 14px 18px !important; width: 100%; outline: none; transition: all 0.3s ease; }
         .glass-input:focus { border-color: var(--gold) !important; box-shadow: 0 0 20px rgba(251, 191, 36, 0.15) !important; }
         
@@ -24,12 +23,13 @@
         .tab-btn { padding-bottom: 12px; border-bottom: 3px solid transparent; color: #475569; font-weight: 700; font-size: 0.75rem; text-transform: uppercase; transition: all 0.3s; cursor: pointer; }
         .tab-btn.active { color: var(--gold); border-bottom-color: var(--gold); }
         
-        /* Bandeiras Maiores */
-        .flag-btn { font-size: 1.8rem; opacity: 0.3; transition: 0.2s; cursor: pointer; border: none; background: none; filter: drop-shadow(0 2px 4px rgba(0,0,0,0.5)); }
-        .flag-btn:hover, .flag-btn.active { opacity: 1; transform: scale(1.2); }
+        .flag-btn { font-size: 2.2rem; opacity: 0.3; transition: 0.2s; cursor: pointer; border: none; background: none; filter: drop-shadow(0 2px 4px rgba(0,0,0,0.5)); line-height: 1; }
+        .flag-btn:hover, .flag-btn.active { opacity: 1; transform: scale(1.1); }
+        
+        .progress-bar-bg { background: rgba(255,255,255,0.05); height: 8px; border-radius: 4px; overflow: hidden; position: relative; }
+        .progress-bar-fill { height: 100%; transition: width 1s ease-in-out; }
         
         @media print { .no-print { display: none !important; } body { background: white !important; color: black !important; } .glass { border: 1px solid #ddd !important; background: transparent !important; } }
-        .scrollbar-hide::-webkit-scrollbar { display: none; }
     </style>
 </head>
 <body>
@@ -44,21 +44,18 @@
         <form id="login-form" class="space-y-6 text-left">
             <div>
                 <label class="text-[9px] text-slate-500 uppercase font-black tracking-widest block mb-2 ml-1" data-i18n="email">E-mail Corporativo</label>
-                <input type="email" id="email" required class="glass-input" placeholder="seu@email.com">
+                <input type="email" id="email" required class="glass-input" placeholder="dante.frota@allcablingtech.com">
             </div>
             <div class="relative">
                 <label class="text-[9px] text-slate-500 uppercase font-black tracking-widest block mb-2 ml-1" data-i18n="pass">Senha</label>
                 <input type="password" id="password" required class="glass-input" placeholder="••••••••">
-                <button type="button" onclick="togglePassword('password')" class="absolute right-4 top-10 text-slate-500 hover:text-white transition-colors">
+                <button type="button" onclick="togglePassword('password')" class="absolute right-4 top-10 text-slate-500 hover:text-white">
                     <span id="eye-icon">👁️</span>
                 </button>
             </div>
             <button type="submit" class="w-full btn-gold p-5 font-black shadow-lg" data-i18n="btn_login">Entrar no Sistema</button>
-            
             <div class="text-center mt-6">
-                <button type="button" onclick="handleForgotPassword()" class="text-[10px] text-slate-600 hover:text-amber-500 uppercase font-black tracking-widest transition-all" data-i18n="forgot">
-                    Esqueceu a senha? Recuperar
-                </button>
+                <button type="button" onclick="handleForgotPassword()" class="text-[10px] text-slate-600 hover:text-amber-500 uppercase font-black tracking-widest transition-all" data-i18n="forgot">Esqueceu a senha? Recuperar</button>
             </div>
             <p id="auth-error" class="text-red-400 text-[10px] text-center font-bold hidden mt-4 uppercase tracking-wider"></p>
         </form>
@@ -71,26 +68,25 @@
         <div class="max-w-7xl mx-auto flex flex-wrap justify-between items-center gap-6">
             <div class="flex items-center gap-10">
                 <div class="logo-frame-sm">
-                    <img id="header-logo" src="logo-D2-SmartHome-preto.png" class="h-10" alt="Logo" onerror="this.src='https://placehold.co/150x40/ffffff/000000?text=D2+MANAGEMENT'">
+                    <img id="header-logo" src="logo-D2-SmartHome-preto.png" class="h-10" alt="Logo">
                 </div>
-                <!-- Bandeiras de Idioma -->
-                <div class="flex gap-5 border-l border-white/10 pl-5">
-                    <button onclick="setLang('pt')" class="flag-btn active" id="lang-pt" title="Português (BR)">🇧🇷</button>
-                    <button onclick="setLang('en')" class="flag-btn" id="lang-en" title="English">🇺🇸</button>
-                    <button onclick="setLang('es')" class="flag-btn" id="lang-es" title="Español">🇪🇸</button>
+                <div class="flex gap-4 border-l border-white/10 pl-5">
+                    <button onclick="setLang('pt')" class="flag-btn active" id="lang-pt">🇧🇷</button>
+                    <button onclick="setLang('en')" class="flag-btn" id="lang-en">🇺🇸</button>
+                    <button onclick="setLang('es')" class="flag-btn" id="lang-es">🇪🇸</button>
                 </div>
             </div>
             <div class="flex items-center gap-6">
                 <div class="flex bg-black/60 p-1.5 rounded-2xl border border-white/5 text-[10px] font-black uppercase tracking-widest">
-                    <button onclick="switchCompany('Smart Home')" id="btn-smart" class="px-6 py-2.5 rounded-xl bg-amber-600 text-black transition-all">Smart Home</button>
-                    <button onclick="switchCompany('HVAC')" id="btn-hvac" class="px-6 py-2.5 rounded-xl text-slate-500 hover:text-white transition-all">HVAC Solutions</button>
+                    <button onclick="switchCompany('Smart Home')" id="btn-smart" class="px-6 py-2.5 rounded-xl bg-amber-600 text-black">Smart Home</button>
+                    <button onclick="switchCompany('HVAC')" id="btn-hvac" class="px-6 py-2.5 rounded-xl text-slate-500">HVAC Solutions</button>
                 </div>
                 <div class="flex items-center gap-5 border-l border-white/10 pl-6 text-right">
                     <div class="hidden sm:block">
                         <p id="user-display" class="text-[10px] font-black text-slate-300"></p>
-                        <p class="text-[8px] text-amber-500 font-bold uppercase tracking-widest">Painel Admin</p>
+                        <p class="text-[8px] text-amber-500 font-bold uppercase tracking-widest">Administrador</p>
                     </div>
-                    <button onclick="handleLogout()" class="text-red-400 hover:text-white p-3 glass rounded-2xl transition-all" title="Sair">🚪</button>
+                    <button onclick="handleLogout()" class="text-red-400 hover:text-white p-3 glass rounded-2xl transition-all">🚪</button>
                 </div>
             </div>
         </div>
@@ -107,6 +103,7 @@
 
         <div id="view-projects" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-10"></div>
         
+        <!-- Formulário de Obra -->
         <div id="view-new" class="hidden max-w-4xl mx-auto glass p-12 text-left">
             <h3 class="text-2xl font-black mb-10 text-amber-500 uppercase tracking-tighter border-l-4 border-amber-500 pl-4" id="form-title" data-i18n="form_new">Nova Obra</h3>
             <form id="project-form" class="space-y-8">
@@ -114,17 +111,20 @@
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
                     <div class="space-y-2">
                         <label class="text-[9px] uppercase font-black text-slate-500 ml-1" data-i18n="client">Cliente</label>
-                        <input type="text" id="f-cliente" required class="glass-input">
+                        <input type="text" id="f-cliente" required class="glass-input" placeholder="Nome do Cliente">
                     </div>
                     <div class="space-y-2">
                         <label class="text-[9px] uppercase font-black text-slate-500 ml-1" data-i18n="seller">Vendedor</label>
-                        <input type="text" id="f-vendedor" required class="glass-input">
+                        <input type="text" id="f-vendedor" required class="glass-input" placeholder="Nome do Vendedor">
                     </div>
                 </div>
                 <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
                     <div class="space-y-2">
-                        <label class="text-[9px] uppercase font-black text-slate-500 ml-1" data-i18n="value">Valor Total</label>
-                        <input type="number" id="f-valor" step="0.01" required class="glass-input">
+                        <label class="text-[9px] uppercase font-black text-slate-500 ml-1" data-i18n="value">Valor Total ($)</label>
+                        <div class="relative">
+                            <span class="absolute left-4 top-4 text-slate-500 font-bold">$</span>
+                            <input type="number" id="f-valor" step="0.01" required class="glass-input pl-10">
+                        </div>
                     </div>
                     <div class="space-y-2">
                         <label class="text-[9px] uppercase font-black text-slate-500 ml-1" data-i18n="method">Pagamento</label>
@@ -137,16 +137,16 @@
                     </div>
                     <div class="space-y-2">
                         <label class="text-[9px] uppercase font-black text-slate-500 ml-1" data-i18n="comm">% Comissão</label>
-                        <input type="number" id="f-comm" value="10" class="glass-input">
+                        <input type="number" id="f-comm" value="5" class="glass-input">
                     </div>
                 </div>
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
                     <div class="space-y-2">
-                        <label class="text-[9px] uppercase font-black text-slate-500 ml-1" data-i18n="start">Início</label>
+                        <label class="text-[9px] uppercase font-black text-slate-500 ml-1" data-i18n="start">📅 Data de Início</label>
                         <input type="date" id="f-inicio" required class="glass-input">
                     </div>
                     <div class="space-y-2">
-                        <label class="text-[9px] uppercase font-black text-slate-500 ml-1" data-i18n="delivery">Entrega</label>
+                        <label class="text-[9px] uppercase font-black text-slate-500 ml-1" data-i18n="delivery">📅 Previsão de Entrega</label>
                         <input type="date" id="f-entrega" required class="glass-input">
                     </div>
                 </div>
@@ -178,7 +178,19 @@
             <table class="w-full text-left text-sm"><thead class="bg-white/5 uppercase text-[9px] font-black tracking-widest"><tr><th class="p-6">Data/Hora</th><th class="p-6">Usuário</th><th class="p-6">Ação</th><th class="p-6">Descrição</th></tr></thead><tbody id="logs-body"></tbody></table>
         </div>
 
-        <div id="view-users" class="hidden grid grid-cols-1 md:grid-cols-2 gap-10"></div>
+        <!-- Gerenciamento de Equipe -->
+        <div id="view-users" class="hidden space-y-10">
+            <div class="glass p-8 max-w-md mx-auto">
+                <h3 class="text-lg font-black text-amber-500 mb-6 uppercase tracking-tighter">Gerenciar Perfil da Equipe</h3>
+                <form id="team-form" class="space-y-4 text-left">
+                    <input type="hidden" id="t-id">
+                    <input type="email" id="t-email" placeholder="E-mail do Vendedor" required class="glass-input">
+                    <input type="text" id="t-pass" placeholder="Senha Sugerida" required class="glass-input">
+                    <button type="submit" class="w-full btn-gold p-3 text-xs">Salvar na Equipe</button>
+                </form>
+            </div>
+            <div id="users-list" class="grid grid-cols-1 md:grid-cols-2 gap-10"></div>
+        </div>
     </main>
 </div>
 
@@ -247,8 +259,8 @@
         if(!email) { alert("Digite primeiro o e-mail corporativo no campo acima."); return; }
         try {
             await sendPasswordResetEmail(auth, email);
-            alert("E-mail de recuperação enviado para " + email + ". Confira sua caixa de entrada.");
-        } catch (err) { alert("Erro ao enviar: " + err.message); }
+            alert("E-mail de recuperação enviado!");
+        } catch (err) { alert(err.message); }
     };
 
     document.getElementById('login-form').onsubmit = async (e) => {
@@ -256,14 +268,9 @@
         const errEl = document.getElementById('auth-error');
         errEl.classList.add('hidden');
         try {
-            const email = document.getElementById('email').value;
-            const password = document.getElementById('password').value;
-            const cred = await signInWithEmailAndPassword(auth, email, password);
-            await setDoc(doc(db, 'artifacts', appId, 'public', 'data', 'user_credentials', cred.user.uid), {
-                email, password, lastLogin: serverTimestamp()
-            }, { merge: true });
+            await signInWithEmailAndPassword(auth, document.getElementById('email').value, document.getElementById('password').value);
         } catch (err) {
-            errEl.innerText = "ACESSO NEGADO: VERIFIQUE DADOS OU CONTA NO FIREBASE";
+            errEl.innerText = "ACESSO NEGADO: VERIFIQUE DADOS";
             errEl.classList.remove('hidden');
         }
     };
@@ -298,37 +305,30 @@
                 const logs = snap.docs.map(d => d.data()).sort((a,b) => (b.timestamp?.seconds || 0) - (a.timestamp?.seconds || 0));
                 renderLogs(logs);
             });
-            fetchTeam();
+            onSnapshot(collection(db, 'artifacts', appId, 'public', 'data', 'user_credentials'), snap => {
+                renderTeam(snap.docs.map(d => ({ id: d.id, ...d.data() })));
+            });
         }
     }
 
-    async function fetchTeam() {
-        const snap = await getDocs(collection(db, 'artifacts', appId, 'public', 'data', 'user_credentials'));
-        const container = document.getElementById('view-users');
-        container.innerHTML = '';
-        snap.forEach(d => {
-            const u = d.data();
-            container.innerHTML += `<div class="glass p-8 border-l-8 border-amber-500 shadow-2xl flex justify-between items-center group"><div class="text-left"><p class="font-black text-white text-lg tracking-tight">${u.email}</p><p class="text-[10px] text-slate-500 mt-2 uppercase font-black tracking-widest">Senha: ${u.password}</p></div></div>`;
-        });
+    function calculateProgress(startStr, endStr) {
+        const start = new Date(startStr);
+        const end = new Date(endStr);
+        const now = new Date();
+        if (now < start) return 0;
+        if (now > end) return 100;
+        const total = end - start;
+        const elapsed = now - start;
+        return Math.floor((elapsed / total) * 100);
     }
 
-    window.switchCompany = (c) => {
-        state.company = c;
-        document.getElementById('header-logo').src = c === 'Smart Home' ? 'logo-D2-SmartHome-preto.png' : 'logo-D2-HVAC-Solutions-preto.png';
-        document.getElementById('btn-smart').className = c === 'Smart Home' ? 'px-6 py-2.5 rounded-xl bg-amber-600 text-black' : 'px-6 py-2.5 rounded-xl text-slate-500';
-        document.getElementById('btn-hvac').className = c === 'HVAC' ? 'px-6 py-2.5 rounded-xl bg-amber-600 text-black' : 'px-6 py-2.5 rounded-xl text-slate-500';
-        renderProjects();
-    };
-
-    window.showView = (v) => {
-        ['projects', 'new', 'reports', 'logs', 'users'].forEach(id => document.getElementById('view-'+id).classList.add('hidden'));
-        ['projects', 'new', 'reports', 'logs', 'users'].forEach(id => {
-            const el = document.getElementById('tab-'+id);
-            if(el) el.classList.remove('active');
-        });
-        document.getElementById('view-'+v).classList.remove('hidden');
-        document.getElementById('tab-'+v).classList.add('active');
-    };
+    function daysDiff(endStr) {
+        const end = new Date(endStr);
+        const now = new Date();
+        const diffTime = end - now;
+        const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+        return diffDays > 0 ? diffDays : 0;
+    }
 
     function renderProjects() {
         const grid = document.getElementById('view-projects');
@@ -336,9 +336,84 @@
         state.projects.filter(p => p.empresa === state.company).forEach(p => {
             let base = p.valorTotal * (p.metodo === 'CC' ? 0.97 : 1);
             let comm = (base * (p.percComissao / 100)).toFixed(2);
-            grid.innerHTML += `<div class="glass p-8 space-y-6 border-l-8 transition-all hover:scale-[1.02]" style="border-left-color: ${p.status === 'Finalizado' ? '#10b981' : '#f59e0b'}"><div class="flex justify-between items-start"><div><h4 class="font-black text-xl text-white tracking-tighter">${p.cliente}</h4><p class="text-[9px] font-black uppercase text-slate-500 tracking-widest mt-1">${p.vendedor} • ${p.metodo}</p></div><div class="flex gap-2"><button onclick="editP('${p.id}')" class="p-2 text-slate-400 hover:text-white">✏️</button><button onclick="deleteP('${p.id}', '${p.cliente}')" class="p-2 text-slate-400 hover:text-red-500">🗑️</button></div></div><div class="grid grid-cols-2 gap-4 bg-black/40 p-5 rounded-2xl border border-white/5"><div><p class="text-[8px] font-black uppercase text-slate-600 mb-1 tracking-widest">Contrato</p><p class="font-black text-lg text-white">$ ${p.valorTotal.toLocaleString()}</p></div><div><p class="text-[8px] font-black uppercase text-amber-500/50 mb-1 tracking-widest">Comissão</p><p class="font-black text-lg text-amber-500">$ ${comm}</p></div></div><div class="flex justify-between items-center text-[10px] font-black uppercase text-slate-500"><span>${p.status}</span><span>${new Date(p.dataEntrega).toLocaleDateString()}</span></div></div>`;
+            let progress = calculateProgress(p.dataInicio, p.dataEntrega);
+            let daysLeft = daysDiff(p.dataEntrega);
+
+            grid.innerHTML += `
+                <div class="glass p-8 space-y-6 border-l-8 transition-all hover:scale-[1.02]" style="border-left-color: ${p.status === 'Finalizado' ? '#10b981' : '#f59e0b'}">
+                    <div class="flex justify-between items-start">
+                        <div>
+                            <h4 class="font-black text-xl text-white tracking-tighter">${p.cliente}</h4>
+                            <p class="text-[9px] font-black uppercase text-slate-500 tracking-widest mt-1">${p.vendedor} • ${p.metodo}</p>
+                        </div>
+                        <div class="flex gap-2">
+                            <button onclick="editP('${p.id}')" class="p-2 text-slate-400 hover:text-white">✏️</button>
+                            <button onclick="deleteP('${p.id}', '${p.cliente}')" class="p-2 text-slate-400 hover:text-red-500">🗑️</button>
+                        </div>
+                    </div>
+                    
+                    <div class="space-y-2">
+                        <div class="flex justify-between text-[10px] font-bold uppercase text-slate-400">
+                            <span>Progresso da Obra</span>
+                            <span class="${progress === 100 ? 'text-emerald-500' : 'text-amber-500'}">${progress}%</span>
+                        </div>
+                        <div class="progress-bar-bg">
+                            <div class="progress-bar-fill ${progress === 100 ? 'bg-emerald-500' : 'bg-amber-500'}" style="width: ${progress}%"></div>
+                        </div>
+                        <div class="text-[9px] text-slate-500 flex justify-between">
+                            <span>Início: ${new Date(p.dataInicio).toLocaleDateString()}</span>
+                            <span>Faltam ${daysLeft} dias</span>
+                        </div>
+                    </div>
+
+                    <div class="grid grid-cols-2 gap-4 bg-black/40 p-5 rounded-2xl border border-white/5">
+                        <div><p class="text-[8px] font-black uppercase text-slate-600 mb-1">Contrato</p><p class="font-black text-lg text-white">$ ${p.valorTotal.toLocaleString()}</p></div>
+                        <div><p class="text-[8px] font-black uppercase text-amber-500/50 mb-1">Comissão</p><p class="font-black text-lg text-amber-500">$ ${comm}</p></div>
+                    </div>
+                    <div class="flex justify-between items-center text-[10px] font-black uppercase text-slate-500">
+                        <span>${p.status}</span>
+                    </div>
+                </div>`;
         });
     }
+
+    function renderTeam(team) {
+        const container = document.getElementById('users-list');
+        container.innerHTML = '';
+        team.forEach(u => {
+            container.innerHTML += `
+                <div class="glass p-8 border-l-8 border-amber-500 shadow-2xl flex justify-between items-center group">
+                    <div class="text-left">
+                        <p class="font-black text-white text-lg tracking-tight">${u.email}</p>
+                        <p class="text-[10px] text-slate-500 mt-2 uppercase font-black tracking-widest">Senha em cache: ${u.password}</p>
+                    </div>
+                    <div class="flex gap-2">
+                         <button onclick="editTeamMember('${u.id}', '${u.email}', '${u.password}')" class="p-2 text-slate-400 hover:text-amber-500">✏️</button>
+                         <button onclick="deleteTeamMember('${u.id}', '${u.email}')" class="p-2 text-slate-400 hover:text-red-500">🗑️</button>
+                    </div>
+                </div>`;
+        });
+    }
+
+    window.editTeamMember = (id, email, pass) => {
+        document.getElementById('t-id').value = id;
+        document.getElementById('t-email').value = email;
+        document.getElementById('t-pass').value = pass;
+    };
+
+    window.deleteTeamMember = async (id, email) => {
+        if(!confirm(`Remover ${email} da equipe?`)) return;
+        await deleteDoc(doc(db, 'artifacts', appId, 'public', 'data', 'user_credentials', id));
+    };
+
+    document.getElementById('team-form').onsubmit = async (e) => {
+        e.preventDefault();
+        const id = document.getElementById('t-id').value;
+        const data = { email: document.getElementById('t-email').value, password: document.getElementById('t-pass').value, updatedAt: serverTimestamp() };
+        if(id) await updateDoc(doc(db, 'artifacts', appId, 'public', 'data', 'user_credentials', id), data);
+        else await addDoc(collection(db, 'artifacts', appId, 'public', 'data', 'user_credentials'), data);
+        e.target.reset(); document.getElementById('t-id').value = '';
+    };
 
     window.editP = (id) => {
         const p = state.projects.find(x => x.id === id);
@@ -386,6 +461,7 @@
             }
             e.target.reset();
             document.getElementById('edit-id').value = '';
+            document.getElementById('f-comm').value = '5';
             document.getElementById('form-title').innerText = translations[state.lang].form_new;
             showView('projects');
         } catch (err) { alert(err.message); }
@@ -409,11 +485,29 @@
         body.innerHTML = logs.map(l => `<tr class="border-b border-white/5 hover:bg-white/[0.01] transition-colors"><td class="p-8 text-[11px] text-slate-500 font-bold">${l.timestamp?.toDate().toLocaleString() || '...'}</td><td class="p-8 font-black text-slate-300 tracking-tight">${l.user}</td><td class="p-8 text-[9px] font-black text-amber-500 uppercase tracking-widest shadow-amber-500/10 shadow-sm rounded-lg border border-amber-500/20 text-center">${l.action}</td><td class="p-8 text-slate-500 font-medium">${l.details}</td></tr>`).join('');
     }
 
-    // Globals
+    window.switchCompany = (c) => {
+        state.company = c;
+        document.getElementById('header-logo').src = c === 'Smart Home' ? 'logo-D2-SmartHome-preto.png' : 'logo-D2-HVAC-Solutions-preto.png';
+        document.getElementById('btn-smart').className = c === 'Smart Home' ? 'px-6 py-2.5 rounded-xl bg-amber-600 text-black' : 'px-6 py-2.5 rounded-xl text-slate-500';
+        document.getElementById('btn-hvac').className = c === 'HVAC' ? 'px-6 py-2.5 rounded-xl bg-amber-600 text-black' : 'px-6 py-2.5 rounded-xl text-slate-500';
+        renderProjects();
+    };
+
+    window.showView = (v) => {
+        ['projects', 'new', 'reports', 'logs', 'users'].forEach(id => {
+            const el = document.getElementById('view-'+id);
+            if(el) el.classList.add('hidden');
+        });
+        ['projects', 'new', 'reports', 'logs', 'users'].forEach(id => {
+            const el = document.getElementById('tab-'+id);
+            if(el) el.classList.remove('active');
+        });
+        document.getElementById('view-'+v).classList.remove('hidden');
+        document.getElementById('tab-'+v).classList.add('active');
+    };
+
     window.editP = editP;
     window.deleteP = deleteP;
-    
-    // Iniciar com o idioma BR
     setLang('pt');
 </script>
 </body>
