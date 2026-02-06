@@ -32,9 +32,13 @@
         input[type="date"]::-webkit-calendar-picker-indicator { cursor: pointer; filter: invert(0.5); }
         .dark input[type="date"]::-webkit-calendar-picker-indicator { filter: invert(1); }
 
-        /* Barra de Timeline Dinâmica */
+        /* Barra de Timeline Estilizada */
         .progress-track { height: 14px; border-radius: 7px; background: rgba(148, 163, 184, 0.15); overflow: hidden; position: relative; border: 1px solid rgba(255,255,255,0.05); }
         .progress-bar-fill { height: 100%; transition: width 1.5s cubic-bezier(0.4, 0, 0.2, 1); border-radius: 7px; }
+
+        .flag-icon { width: 32px; height: 22px; object-fit: cover; border-radius: 4px; box-shadow: 0 2px 5px rgba(0,0,0,0.3); }
+        .flag-btn { opacity: 0.4; transition: 0.3s; padding: 4px; border-radius: 8px; border: none; background: none; cursor: pointer; }
+        .flag-btn:hover, .flag-btn.active { opacity: 1; transform: scale(1.1); background: rgba(255,255,255,0.1); }
 
         .btn-primary { background: linear-gradient(135deg, var(--gold) 0%, var(--gold-dark) 100%); color: #000; font-weight: 900; border-radius: 14px; transition: all 0.3s; display: flex; align-items: center; justify-content: center; gap: 8px; }
         .btn-primary:hover { transform: translateY(-1px); filter: brightness(1.1); }
@@ -50,11 +54,9 @@
 
         .pay-item { background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.05); padding: 10px 14px; border-radius: 10px; margin-bottom: 8px; display: flex; justify-content: space-between; align-items: center; }
 
-        /* Spinner para o botão */
         @keyframes spin { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }
         .animate-spin-custom { animation: spin 1s linear infinite; }
 
-        @media print { .no-print { display: none !important; } }
         .scrollbar-hide::-webkit-scrollbar { display: none; }
     </style>
 </head>
@@ -64,7 +66,7 @@
 <div id="auth-screen" class="fixed inset-0 z-50 flex items-center justify-center p-6 bg-slate-950">
     <div class="bg-white dark:bg-slate-900 p-10 rounded-[40px] w-full max-w-md shadow-2xl text-center border border-white/5">
         <div class="mb-6 flex justify-center">
-             <img src="logo-D2-Group-preto.png" alt="D2 Group" class="h-16 dark:invert" onerror="this.style.display='none'">
+             <img src="logo-D2-Group-preto.png" alt="D2 Group" class="h-16 dark:invert">
         </div>
         <h2 class="text-2xl font-black tracking-tight mb-2 uppercase">D2 Management</h2>
         <p class="text-slate-500 text-xs font-bold uppercase tracking-widest mb-10">Sistema Integrado de Gestão</p>
@@ -82,7 +84,7 @@
 
         <form id="login-form" class="space-y-4 text-left">
             <div id="login-error-msg" class="hidden p-3 bg-red-500/10 border border-red-500/20 rounded-xl text-red-500 text-[10px] font-black text-center mb-4 uppercase tracking-widest">
-                Credenciais inválidas ou usuário não cadastrado no Firebase.
+                Dados inválidos ou usuário sem acesso ao servidor.
             </div>
 
             <input type="email" id="email" required class="modern-input !pl-4 h-14" placeholder="E-mail Corporativo">
@@ -92,7 +94,7 @@
                     <i data-lucide="eye" class="w-5 h-5"></i>
                 </button>
             </div>
-            <button type="submit" id="btn-entrar" class="w-full btn-primary h-14 uppercase tracking-widest text-sm font-black shadow-lg transition-all">
+            <button type="submit" id="btn-entrar" class="w-full btn-primary h-14 uppercase tracking-widest text-sm font-black shadow-lg">
                 <span id="btn-text">Entrar no Sistema</span>
                 <i id="btn-spinner" data-lucide="loader-2" class="w-5 h-5 hidden animate-spin-custom"></i>
             </button>
@@ -124,7 +126,7 @@
                     <p id="user-display" class="text-xs font-black uppercase text-gold tracking-tight"></p>
                     <p class="text-[9px] text-slate-500 font-bold uppercase tracking-widest">Painel Administrativo</p>
                 </div>
-                <button onclick="handleLogout()" class="p-3 rounded-2xl text-red-500 hover:bg-red-500/10 transition-all border border-red-500/20 shadow-sm" title="Sair com segurança">
+                <button onclick="handleLogout()" class="p-3 rounded-2xl text-red-500 hover:bg-red-500/10 transition-all border border-red-500/20 shadow-sm" title="Sair do sistema">
                     <i data-lucide="log-out" class="w-5 h-5"></i>
                 </button>
             </div>
@@ -179,7 +181,7 @@
                         <option value="CC">Cartão de Crédito (Dedução 3% da Base)</option>
                     </select>
                 </div>
-                <div class="space-y-2"><label class="text-[10px] font-black uppercase text-slate-500 ml-1 tracking-widest">Início</label><input type="date" id="f-inicio" required class="modern-input !pl-5"></div>
+                <div class="space-y-2"><label class="text-[10px] font-black uppercase text-slate-500 ml-1 tracking-widest">Data Início</label><input type="date" id="f-inicio" required class="modern-input !pl-5"></div>
                 <div class="space-y-2"><label class="text-[10px] font-black uppercase text-slate-500 ml-1 tracking-widest">Entrega Prevista</label><input type="date" id="f-entrega" required class="modern-input !pl-5"></div>
                 <div class="col-span-2 space-y-2">
                     <label class="text-[10px] font-black uppercase text-slate-500 ml-1 tracking-widest">Status da Obra</label>
@@ -191,7 +193,7 @@
                     </select>
                 </div>
                 <div class="col-span-2 flex gap-6 mt-10">
-                    <button type="submit" class="flex-1 btn-primary p-5 font-black uppercase tracking-widest shadow-xl">Salvar Obra</button>
+                    <button type="submit" class="flex-1 btn-primary p-5 font-black uppercase tracking-widest shadow-xl">Salvar Registro</button>
                     <button type="button" onclick="showView('projects')" class="px-10 text-slate-500 uppercase font-black text-xs hover:text-white transition-all">Cancelar</button>
                 </div>
             </form>
@@ -256,8 +258,6 @@
 
     const formatUSD = (v) => new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD' }).format(v);
 
-    // --- Helpers ---
-
     function getProjectFinancials(p) {
         let calculationBase = p.metodo === 'CC' ? p.valorTotal * 0.97 : p.valorTotal;
         let totalCommToPay = calculationBase * (p.percComissao / 100);
@@ -281,6 +281,7 @@
             let prog = 0; if (now >= start) prog = now >= end ? 100 : Math.floor(((now - start) / (end - start)) * 100);
             const daysLeft = Math.ceil((end - now) / (1000 * 3600 * 24));
             
+            // Lógica Cores Timeline
             let barColor = "bg-red-500"; 
             if (p.status === 'Finalizado' || prog >= 100) barColor = "bg-emerald-500 shadow-[0_0_12px_#10b981]";
             else if (now > end) barColor = "bg-red-800 animate-pulse";
@@ -293,8 +294,8 @@
                 <div class="glass p-8 rounded-[40px] border-l-[8px] group relative shadow-2xl transition-all" style="border-left-color: ${p.status === 'Finalizado' ? '#10b981' : '#f59e0b'}">
                     <div class="absolute top-6 right-6 flex items-center gap-3">
                         <span class="status-badge ${fin.statusColor}"></span>
-                        <button onclick="window.editP('${p.id}')" title="Editar Obra" class="p-1.5 hover:text-gold transition-colors"><i data-lucide="edit-3" class="w-4 h-4"></i></button>
-                        <button onclick="window.deleteP('${p.id}')" title="Excluir Obra" class="p-1.5 hover:text-red-500 transition-colors"><i data-lucide="trash-2" class="w-4 h-4"></i></button>
+                        <button onclick="window.editP('${p.id}')" title="Editar Registro" class="p-1.5 hover:text-gold transition-colors"><i data-lucide="edit-3" class="w-4 h-4"></i></button>
+                        <button onclick="window.deleteP('${p.id}')" title="Excluir Registro" class="p-1.5 hover:text-red-500 transition-colors"><i data-lucide="trash-2" class="w-4 h-4"></i></button>
                     </div>
                     <div class="text-left mb-6">
                         <h4 class="font-black text-xl uppercase tracking-tighter truncate pr-20">${p.cliente}</h4>
@@ -303,7 +304,7 @@
                     <div class="space-y-3 mb-8 text-left">
                         <div class="flex justify-between text-[10px] font-black uppercase text-slate-400"><span>Timeline</span><span class="text-gold font-black">${prog}%</span></div>
                         <div class="progress-track"><div class="progress-bar-fill ${barColor}" style="width: ${prog}%"></div></div>
-                        <div class="flex justify-between text-[9px] font-extrabold uppercase">
+                        <div class="flex justify-between text-[9px] font-extrabold uppercase tracking-widest">
                             <span>INC: ${new Date(p.dataInicio).toLocaleDateString()}</span>
                             <span class="${now > end && p.status !== 'Finalizado' ? 'text-red-500 font-black' : 'text-gold'}">${now > end && p.status !== 'Finalizado' ? t.overdue : (prog === 100 ? t.concluded : daysLeft + ' ' + t.days_left)}</span>
                         </div>
@@ -312,7 +313,7 @@
                         <p class="text-[9px] font-black text-slate-500 uppercase mb-1 tracking-widest">Contrato Total</p>
                         <p class="text-2xl font-black tracking-tight">${formatUSD(p.valorTotal)}</p>
                     </div>
-                    <button onclick="window.toggleFinance('${p.id}')" title="Financeiro Vendedor" class="w-full mt-6 py-2 text-[10px] font-black uppercase tracking-[0.2em] text-gold/60 hover:text-gold transition-all flex items-center justify-center gap-2">
+                    <button onclick="window.toggleFinance('${p.id}')" title="Ver Financeiro" class="w-full mt-6 py-2 text-[10px] font-black uppercase tracking-[0.2em] text-gold/60 hover:text-gold transition-all flex items-center justify-center gap-2">
                         <i data-lucide="wallet" class="w-3.5 h-3.5"></i> ${t.finance}
                     </button>
                     <div id="fin-${p.id}" class="finance-panel text-left">
@@ -397,7 +398,7 @@
     window.setLang = (l) => { state.lang = l; document.querySelectorAll('.flag-btn').forEach(b => b.classList.toggle('active', b.id === 'lang-'+l)); document.querySelectorAll('[data-i18n]').forEach(el => { const k = el.getAttribute('data-i18n'); if (translations[l][k]) el.innerText = translations[l][k]; }); renderProjects(); renderReport(); };
     window.togglePassword = (id) => { const el = document.getElementById(id); if(el) el.type = el.type === 'password' ? 'text' : 'password'; };
     window.toggleFinance = (id) => { const el = document.getElementById(`fin-${id}`); if(el) el.classList.toggle('open'); };
-    window.addPayment = async (projectId) => { const v = document.getElementById(`pay-val-${projectId}`).value, d = document.getElementById(`pay-date-${projectId}`).value; if(!v || !d) return alert("Preencha valor e data!"); try { await updateDoc(doc(db, 'artifacts', appId, 'public', 'data', 'projects', projectId), { pagamentosEfetuados: arrayUnion({ valor: parseFloat(v), data: d }) }); } catch(e){alert("Erro ao salvar!");} };
+    window.addPayment = async (projectId) => { const v = document.getElementById(`pay-val-${projectId}`).value, d = document.getElementById(`pay-date-${projectId}`).value; if(!v || !d) return alert("Preencha!"); try { await updateDoc(doc(db, 'artifacts', appId, 'public', 'data', 'projects', projectId), { pagamentosEfetuados: arrayUnion({ valor: parseFloat(v), data: d }) }); } catch(e){alert("Erro!");} };
     window.editTeam = (id,e,p) => { document.getElementById('t-id').value=id; document.getElementById('t-email').value=e; document.getElementById('t-pass').value=p; };
     window.deleteTeam = async (id) => { if(confirm("REMOVER MEMBRO DA EQUIPE?")) await deleteDoc(doc(db, 'artifacts', appId, 'public', 'data', 'user_credentials', id)); };
     window.deleteP = async (id) => { if(confirm("EXCLUIR REGISTRO DA OBRA?")) await deleteDoc(doc(db, 'artifacts', appId, 'public', 'data', 'projects', id)); };
@@ -422,12 +423,12 @@
         onSnapshot(collection(db, 'artifacts', appId, 'public', 'data', 'projects'), snap => { 
             state.projects = snap.docs.map(d => ({ id: d.id, ...d.data() })); 
             renderProjects(); renderReport(); 
-        }, (err) => console.log("Erro Firestore:", err)); 
+        }); 
 
         if(state.user.email === SUPER_ADMIN) { 
             onSnapshot(collection(db, 'artifacts', appId, 'public', 'data', 'user_credentials'), snap => { 
                 renderTeam(snap.docs.map(d => ({ id: d.id, ...d.data() }))); 
-            }, (err) => console.log("Erro Firestore Equipe:", err)); 
+            }); 
         }
         lucide.createIcons(); setLang(state.lang); 
     }
@@ -436,6 +437,17 @@
         state.user = u;
         document.getElementById('auth-screen').classList.toggle('hidden', !!u);
         document.getElementById('main-app').classList.toggle('hidden', !u);
+
+        // RESET DOS BOTÕES AO DESLOGAR
+        if (!u) {
+            const btnText = document.getElementById('btn-text');
+            const btnSpinner = document.getElementById('btn-spinner');
+            const btn = document.getElementById('btn-entrar');
+            if(btnText) btnText.innerText = "Entrar no Sistema";
+            if(btnSpinner) btnSpinner.classList.add('hidden');
+            if(btn) btn.disabled = false;
+        }
+
         if(u){ 
             document.getElementById('user-display').innerText = u.email.split('@')[0].toUpperCase(); 
             if(u.email === SUPER_ADMIN) document.querySelectorAll('.admin-only').forEach(e => e.classList.remove('hidden')); 
@@ -470,7 +482,7 @@
             e.preventDefault(); 
             const id = document.getElementById('edit-id').value; 
             const d = { empresa: document.getElementById('f-empresa').value, cliente: document.getElementById('f-cliente').value, vendedor: document.getElementById('f-vendedor').value, valorTotal: parseFloat(document.getElementById('f-valor').value), metodo: document.getElementById('f-metodo').value, percComissao: parseInt(document.getElementById('f-comm').value), dataInicio: document.getElementById('f-inicio').value, dataEntrega: document.getElementById('f-entrega').value, status: document.getElementById('f-status').value, updatedAt: serverTimestamp() }; 
-            try { if(id) await updateDoc(doc(db, 'artifacts', appId, 'public', 'data', 'projects', id), d); else await addDoc(collection(db, 'artifacts', appId, 'public', 'data', 'projects'), { ...d, createdAt: serverTimestamp(), pagamentosEfetuados: [] }); e.target.reset(); document.getElementById('edit-id').value = ''; window.showView('projects'); } catch(err){ alert("Erro!"); } 
+            try { if(id) await updateDoc(doc(db, 'artifacts', appId, 'public', 'data', 'projects', id), d); else await addDoc(collection(db, 'artifacts', appId, 'public', 'data', 'projects'), { ...d, createdAt: serverTimestamp(), pagamentosEfetuados: [] }); e.target.reset(); document.getElementById('edit-id').value = ''; window.showView('projects'); } catch(err){ alert("Erro ao salvar!"); } 
         };
 
         document.getElementById('team-form').onsubmit = async (e) => {
