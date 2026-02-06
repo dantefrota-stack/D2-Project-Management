@@ -16,33 +16,45 @@
 
         .input-group { position: relative; display: flex; align-items: center; width: 100%; }
         .input-prefix { position: absolute; left: 14px; font-weight: 800; color: var(--gold); pointer-events: none; }
-        .modern-input { width: 100%; padding: 12px 14px 12px 35px; border-radius: 12px; border: 1px solid rgba(148, 163, 184, 0.2); background: rgba(0,0,0,0.2); color: inherit; outline: none; transition: all 0.2s; }
+        
+        .modern-input { 
+            width: 100%; padding: 12px 14px 12px 40px; border-radius: 12px; 
+            border: 1px solid rgba(148, 163, 184, 0.2); background: rgba(0,0,0,0.4); 
+            color: inherit; outline: none; transition: all 0.2s; 
+        }
         .light .modern-input { background: #fff; border: 1px solid #cbd5e1; }
         .modern-input:focus { border-color: var(--gold); box-shadow: 0 0 0 3px rgba(251, 191, 36, 0.1); }
 
-        input[type="date"]::-webkit-calendar-picker-indicator { cursor: pointer; opacity: 0.6; transition: 0.2s; filter: invert(0.5); }
+        /* Estilo dos Dropdowns (Select) */
+        select.modern-input { padding-left: 14px !important; appearance: none; background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 24 24' stroke='%23fbbf24' stroke-width='2'%3E%3Cpath stroke-linecap='round' stroke-linejoin='round' d='M19 9l-7 7-7-7'/%3E%3C/svg%3E"); background-repeat: no-repeat; background-position: right 12px center; background-size: 16px; }
+        select option { background: #1e293b; color: #fff; padding: 10px; }
+        .light select option { background: #fff; color: #1e293b; }
+
+        input[type="date"]::-webkit-calendar-picker-indicator { cursor: pointer; filter: invert(0.5); }
         .dark input[type="date"]::-webkit-calendar-picker-indicator { filter: invert(1); }
 
-        .progress-track { height: 10px; border-radius: 5px; background: rgba(148, 163, 184, 0.1); overflow: hidden; position: relative; }
-        .progress-bar-fill { height: 100%; transition: width 1.5s cubic-bezier(0.4, 0, 0.2, 1); border-radius: 5px; }
+        .progress-track { height: 8px; border-radius: 4px; background: rgba(148, 163, 184, 0.1); overflow: hidden; }
+        .progress-bar-fill { height: 100%; transition: width 1.5s cubic-bezier(0.4, 0, 0.2, 1); }
 
-        .flag-icon { width: 32px; height: 22px; object-fit: cover; border-radius: 4px; box-shadow: 0 2px 4px rgba(0,0,0,0.2); }
-        .flag-btn { opacity: 0.4; transition: 0.3s; padding: 4px; border-radius: 6px; border: none; background: none; cursor: pointer; }
+        .flag-icon { width: 32px; height: 22px; object-fit: cover; border-radius: 4px; }
+        .flag-btn { opacity: 0.4; transition: 0.3s; padding: 4px; border-radius: 6px; }
         .flag-btn:hover, .flag-btn.active { opacity: 1; transform: scale(1.1); background: rgba(255,255,255,0.1); }
 
         .btn-primary { background: linear-gradient(135deg, var(--gold) 0%, var(--gold-dark) 100%); color: #000; font-weight: 900; border-radius: 12px; transition: all 0.3s; }
-        .btn-primary:hover { transform: translateY(-1px); filter: brightness(1.1); box-shadow: 0 4px 15px rgba(180, 83, 9, 0.3); }
+        .btn-primary:hover { transform: translateY(-1px); filter: brightness(1.1); }
 
         .tab-active { color: var(--gold); border-bottom: 3px solid var(--gold); }
         .dark { background-color: #030508; color: #f1f5f9; }
         .light { background-color: #f8fafc; color: #0f172a; }
         
-        .scrollbar-hide::-webkit-scrollbar { display: none; }
+        .status-dot { width: 12px; height: 12px; border-radius: 50%; display: inline-block; box-shadow: 0 0 8px currentColor; }
+        .finance-detail { max-height: 0; overflow: hidden; transition: max-height 0.4s ease-out; }
+        .finance-detail.open { max-height: 200px; margin-top: 15px; border-top: 1px solid rgba(255,255,255,0.1); padding-top: 15px; }
     </style>
 </head>
 <body class="dark">
 
-<!-- Login Modernizado D2 Management -->
+<!-- Login Screen -->
 <div id="auth-screen" class="fixed inset-0 z-50 flex items-center justify-center p-6 bg-slate-950">
     <div class="bg-white dark:bg-slate-900 p-10 rounded-[40px] w-full max-w-md shadow-2xl text-center border border-white/5">
         <img src="logo-D2-Group-preto.png" alt="D2 Group" class="h-16 mx-auto mb-6 dark:invert">
@@ -69,9 +81,6 @@
                 </button>
             </div>
             <button type="submit" class="w-full btn-primary h-14 uppercase tracking-widest text-sm font-black shadow-lg">Entrar no Sistema</button>
-            <div class="text-center pt-2">
-                <button type="button" onclick="handleForgotPassword()" class="text-[10px] text-slate-500 hover:text-gold uppercase font-black tracking-widest transition-all">Esqueceu a senha?</button>
-            </div>
         </form>
     </div>
 </div>
@@ -96,10 +105,9 @@
                     <i data-lucide="sun" id="theme-icon-light" class="hidden text-gold"></i>
                     <i data-lucide="moon" id="theme-icon-dark" class="text-slate-400"></i>
                 </button>
-                <div class="h-10 w-[1px] bg-slate-200 dark:bg-white/10 mx-2"></div>
                 <div class="text-right hidden sm:block">
                     <p id="user-display" class="text-xs font-black uppercase text-gold"></p>
-                    <p class="text-[9px] text-slate-500 font-bold uppercase tracking-widest" data-i18n="admin_label">Administrador</p>
+                    <p class="text-[9px] text-slate-500 font-bold uppercase tracking-widest" data-i18n="admin_label">ADMIN</p>
                 </div>
                 <button onclick="handleLogout()" class="p-3 rounded-2xl text-red-500 hover:bg-red-500/10 transition-all border border-red-500/20">
                     <i data-lucide="log-out" class="w-5 h-5"></i>
@@ -109,7 +117,7 @@
     </header>
 
     <main class="max-w-7xl mx-auto w-full p-6 flex-1">
-        <nav class="no-print flex gap-10 mb-10 border-b border-slate-200 dark:border-white/5 overflow-x-auto scrollbar-hide">
+        <nav class="no-print flex gap-10 mb-10 border-b border-slate-200 dark:border-white/5 overflow-x-auto">
             <button onclick="showView('projects')" class="tab-btn pb-4 font-black text-xs uppercase tracking-[0.2em] tab-active" id="tab-projects" data-i18n="nav_proj">Projetos</button>
             <button onclick="showView('new')" class="tab-btn pb-4 font-black text-xs uppercase tracking-[0.2em]" id="tab-new" data-i18n="nav_new">Nova Obra</button>
             <button onclick="showView('reports')" class="tab-btn pb-4 font-black text-xs uppercase tracking-[0.2em]" id="tab-reports" data-i18n="nav_rep">Relatórios</button>
@@ -118,48 +126,47 @@
 
         <div id="view-projects" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-10"></div>
         
-        <!-- Formulário Obra Profissional -->
+        <!-- Form Nova Obra -->
         <div id="view-new" class="hidden max-w-3xl mx-auto glass p-10 rounded-[40px] text-left shadow-2xl">
-            <h3 class="text-3xl font-black mb-10 flex items-center gap-4">
-                <span class="w-2.5 h-10 bg-gold rounded-full"></span>
+            <h3 class="text-2xl font-black mb-10 flex items-center gap-4">
+                <span class="w-2 h-10 bg-gold rounded-full"></span>
                 <span id="form-title" data-i18n="form_new">Nova Obra</span>
             </h3>
             <form id="project-form" class="grid grid-cols-1 md:grid-cols-2 gap-8">
                 <input type="hidden" id="edit-id">
-                <div class="space-y-2 col-span-2 md:col-span-1">
-                    <label class="text-[10px] font-black uppercase text-slate-500 ml-1 tracking-widest" data-i18n="client">Cliente</label>
-                    <input type="text" id="f-cliente" required class="modern-input !pl-5" data-i18n-placeholder="placeholder_client">
+                <div class="col-span-2 md:col-span-1">
+                    <label class="text-[10px] font-black uppercase text-slate-500 mb-2 block" data-i18n="client">Cliente</label>
+                    <input type="text" id="f-cliente" required class="modern-input !pl-5" placeholder="Nome da Obra">
                 </div>
-                <div class="space-y-2 col-span-2 md:col-span-1">
-                    <label class="text-[10px] font-black uppercase text-slate-500 ml-1 tracking-widest" data-i18n="seller">Vendedor</label>
-                    <input type="text" id="f-vendedor" required class="modern-input !pl-5" data-i18n-placeholder="placeholder_seller">
+                <div class="col-span-2 md:col-span-1">
+                    <label class="text-[10px] font-black uppercase text-slate-500 mb-2 block" data-i18n="seller">Vendedor</label>
+                    <input type="text" id="f-vendedor" required class="modern-input !pl-5" placeholder="Nome do Vendedor">
                 </div>
                 
                 <div class="space-y-2">
-                    <label class="text-[10px] font-black uppercase text-slate-500 ml-1 tracking-widest" data-i18n="value">Valor Total</label>
+                    <label class="text-[10px] font-black uppercase text-slate-500 block" data-i18n="value">Valor Total</label>
                     <div class="input-group">
                         <span class="input-prefix">$</span>
-                        <input type="number" id="f-valor" step="0.01" required class="modern-input pl-10">
+                        <input type="number" id="f-valor" step="0.01" required class="modern-input">
                     </div>
                 </div>
                 <div class="space-y-2">
-                    <label class="text-[10px] font-black uppercase text-slate-500 ml-1 tracking-widest" data-i18n="method">Pagamento</label>
-                    <select id="f-metodo" class="modern-input !pl-5">
-                        <option value="Zelle">Zelle</option>
-                        <option value="CC">Cartão de Crédito (-3%)</option>
-                        <option value="Cash">Dinheiro vivo</option>
-                        <option value="Wire">Transferência Bancária</option>
+                    <label class="text-[10px] font-black uppercase text-slate-500 block" data-i18n="comm">% Comissão</label>
+                    <div class="input-group">
+                        <span class="input-prefix">%</span>
+                        <input type="number" id="f-comm" value="5" class="modern-input">
+                    </div>
+                </div>
+                <div class="space-y-2">
+                    <label class="text-[10px] font-black uppercase text-slate-500 block" data-i18n="pay_status">Status de Pagamento</label>
+                    <select id="f-pag-status" class="modern-input !pl-5">
+                        <option value="pendente">Pendente (Vermelho)</option>
+                        <option value="parcial">Parcial (Laranja)</option>
+                        <option value="pago">Total Pago (Verde)</option>
                     </select>
                 </div>
                 <div class="space-y-2">
-                    <label class="text-[10px] font-black uppercase text-slate-500 ml-1 tracking-widest" data-i18n="comm">% Comissão</label>
-                    <div class="input-group">
-                        <span class="input-prefix">%</span>
-                        <input type="number" id="f-comm" value="5" class="modern-input pl-10">
-                    </div>
-                </div>
-                <div class="space-y-2">
-                    <label class="text-[10px] font-black uppercase text-slate-500 ml-1 tracking-widest" data-i18n="status">Status</label>
+                    <label class="text-[10px] font-black uppercase text-slate-500 block" data-i18n="status">Status Obra</label>
                     <select id="f-status" class="modern-input !pl-5">
                         <option value="Cotação">Cotação</option>
                         <option value="Aguardando Início">Aguardando Início</option>
@@ -169,36 +176,22 @@
                 </div>
 
                 <div class="space-y-2">
-                    <label class="text-[10px] font-black uppercase text-slate-500 ml-1 tracking-widest" data-i18n="start">Data de Início</label>
+                    <label class="text-[10px] font-black uppercase text-slate-500 block" data-i18n="start">Data de Início</label>
                     <input type="date" id="f-inicio" required class="modern-input !pl-5">
                 </div>
                 <div class="space-y-2">
-                    <label class="text-[10px] font-black uppercase text-slate-500 ml-1 tracking-widest" data-i18n="delivery">Entrega Prevista</label>
+                    <label class="text-[10px] font-black uppercase text-slate-500 block" data-i18n="delivery">Entrega Prevista</label>
                     <input type="date" id="f-entrega" required class="modern-input !pl-5">
                 </div>
 
-                <div class="col-span-2 flex gap-6 mt-10">
-                    <button type="submit" class="flex-1 btn-primary p-5 font-black uppercase tracking-widest shadow-xl">Salvar Registro</button>
-                    <button type="button" onclick="showView('projects')" class="px-10 text-slate-500 uppercase font-black text-xs tracking-widest hover:text-white transition-all">Cancelar</button>
+                <div class="col-span-2 flex gap-6 mt-6">
+                    <button type="submit" class="flex-1 btn-primary p-5 font-black uppercase">Confirmar Registro</button>
+                    <button type="button" onclick="showView('projects')" class="px-8 text-slate-500 font-black text-xs">CANCELAR</button>
                 </div>
             </form>
         </div>
 
-        <!-- Gerenciar Equipe -->
-        <div id="view-users" class="hidden space-y-10">
-            <div class="glass p-10 max-w-lg mx-auto rounded-[32px] border border-white/5">
-                <h3 class="text-xl font-black text-gold mb-8 uppercase tracking-tighter" data-i18n="team_manage">Gerenciar Equipe</h3>
-                <form id="team-form" class="space-y-5 text-left">
-                    <input type="hidden" id="t-id">
-                    <input type="email" id="t-email" placeholder="E-mail do Membro" required class="modern-input !pl-5">
-                    <input type="text" id="t-pass" placeholder="Senha Sugerida" required class="modern-input !pl-5">
-                    <button type="submit" class="w-full btn-primary p-4 text-xs font-black uppercase tracking-widest">Salvar no Time</button>
-                </form>
-            </div>
-            <div id="users-list" class="grid grid-cols-1 md:grid-cols-2 gap-8"></div>
-        </div>
-
-        <!-- Portfolio Grid -->
+        <div id="view-users" class="hidden grid grid-cols-1 md:grid-cols-2 gap-8"></div>
         <div id="report-output"></div>
     </main>
 </div>
@@ -227,25 +220,18 @@
 
     const translations = {
         pt: { 
-            login_sub: "SISTEMA INTEGRADO DE GESTÃO", admin_label: "ADMINISTRADOR",
-            nav_proj: "Projetos", nav_new: "Nova Obra", nav_rep: "Relatórios", nav_users: "Equipe", 
-            client: "Cliente", seller: "Vendedor", value: "Valor Total", method: "Pagamento", comm: "% Comissão", start: "Data de Início", delivery: "Previsão de Entrega", status: "Status",
-            btn_save: "Salvar Registro", cancel: "Cancelar", print: "Gerar PDF", form_new: "Nova Obra", form_edit: "Editar Obra",
-            placeholder_client: "Nome da Entidade", placeholder_seller: "Responsável D2", team_manage: "Gerenciar Equipe", work_stage: "Acompanhamento da Obra", days_left: "dias restantes", concluded: "Concluído"
+            nav_proj: "Projetos", nav_new: "Nova Obra", nav_rep: "Relatórios", nav_users: "Equipe",
+            client: "Cliente", seller: "Vendedor", value: "Valor Obra", comm: "Comissão", status: "Status Obra",
+            start: "Início", delivery: "Entrega", pay_status: "Situação Financeira", btn_save: "Salvar Registro",
+            form_new: "Nova Obra", form_edit: "Editar Obra", admin_label: "ADMIN", work_stage: "Andamento",
+            days_left: "dias para o fim", concluded: "Concluído", finance: "Financeiro Vendedor"
         },
         en: { 
-            login_sub: "INTEGRATED MANAGEMENT SYSTEM", admin_label: "ADMINISTRATOR",
             nav_proj: "Projects", nav_new: "New Entry", nav_rep: "Reports", nav_users: "Team",
-            client: "Client", seller: "Sales Rep", value: "Total Value", method: "Payment", comm: "% Comm.", start: "Start Date", delivery: "Delivery Date", status: "Status",
-            btn_save: "Save Entry", cancel: "Cancel", print: "Print PDF", form_new: "New Project", form_edit: "Edit Project",
-            placeholder_client: "Entity Name", placeholder_seller: "D2 Manager", team_manage: "Manage Team", work_stage: "Project Progress", days_left: "days left", concluded: "Concluded"
-        },
-        es: { 
-            login_sub: "SISTEMA INTEGRADO DE GESTIÓN", admin_label: "ADMINISTRADOR",
-            nav_proj: "Proyectos", nav_new: "Nueva Obra", nav_rep: "Informes", nav_users: "Equipo",
-            client: "Cliente", seller: "Vendedor", value: "Valor Total", method: "Modalidad", comm: "% Comisión", start: "Inicio", delivery: "Entrega", status: "Estado",
-            btn_save: "Guardar Registro", cancel: "Cancelar", print: "Imprimir PDF", form_new: "Nueva Obra", form_edit: "Editar Obra",
-            placeholder_client: "Nombre Entidad", placeholder_seller: "Responsable D2", team_manage: "Gestión de Equipo", work_stage: "Seguimiento de Obra", days_left: "días restantes", concluded: "Concluido"
+            client: "Client", seller: "Sales Rep", value: "Total Value", comm: "Commission", status: "Work Status",
+            start: "Start", delivery: "Delivery", pay_status: "Financial Status", btn_save: "Save Entry",
+            form_new: "New Project", form_edit: "Edit Project", admin_label: "ADMIN", work_stage: "Progress",
+            days_left: "days left", concluded: "Finished", finance: "Sales Finance"
         }
     };
 
@@ -258,15 +244,8 @@
 
     window.selectDivision = (div) => {
         state.company = div;
-        const s = document.getElementById('div-smart');
-        const h = document.getElementById('div-hvac');
-        if(div === 'Smart Home') {
-            s.classList.add('border-gold', 'bg-gold/5', 'opacity-100'); s.classList.remove('border-transparent', 'bg-slate-100', 'dark:bg-slate-800', 'opacity-40');
-            h.classList.remove('border-gold', 'bg-gold/5', 'opacity-100'); h.classList.add('border-transparent', 'bg-slate-100', 'dark:bg-slate-800', 'opacity-40');
-        } else {
-            h.classList.add('border-gold', 'bg-gold/5', 'opacity-100'); h.classList.remove('border-transparent', 'bg-slate-100', 'dark:bg-slate-800', 'opacity-40');
-            s.classList.remove('border-gold', 'bg-gold/5', 'opacity-100'); s.classList.add('border-transparent', 'bg-slate-100', 'dark:bg-slate-800', 'opacity-40');
-        }
+        document.querySelectorAll('#auth-screen button').forEach(b => b.classList.remove('border-gold', 'opacity-100'));
+        document.getElementById(div === 'Smart Home' ? 'div-smart' : 'div-hvac').classList.add('border-gold', 'opacity-100');
         document.getElementById('header-logo').src = div === 'Smart Home' ? 'logo-D2-SmartHome-preto.png' : 'logo-D2-HVAC-Solutions-preto.png';
     };
 
@@ -274,27 +253,15 @@
         state.lang = l;
         document.querySelectorAll('.flag-btn').forEach(b => b.classList.toggle('active', b.id === 'lang-'+l));
         document.querySelectorAll('[data-i18n]').forEach(el => { const key = el.getAttribute('data-i18n'); if (translations[l][key]) el.innerText = translations[l][key]; });
-        document.querySelectorAll('[data-i18n-placeholder]').forEach(el => { const key = el.getAttribute('data-i18n-placeholder'); if (translations[l][key]) el.placeholder = translations[l][key]; });
         renderProjects();
     };
 
-    window.togglePassword = (id) => {
-        const input = document.getElementById(id);
-        input.type = input.type === 'password' ? 'text' : 'password';
-    };
-
-    window.handleForgotPassword = async () => {
-        const email = document.getElementById('email').value.trim();
-        if(!email) { alert("Informe o e-mail no campo acima."); return; }
-        try { await sendPasswordResetEmail(auth, email); alert("E-mail de recuperação enviado para " + email); } catch (err) { alert(err.message); }
-    };
+    window.togglePassword = (id) => { const input = document.getElementById(id); input.type = input.type === 'password' ? 'text' : 'password'; };
 
     document.getElementById('login-form').onsubmit = async (e) => {
         e.preventDefault();
-        const errEl = document.getElementById('auth-error');
-        try {
-            await signInWithEmailAndPassword(auth, document.getElementById('email').value, document.getElementById('password').value);
-        } catch (err) { errEl.innerText = "DADOS INVÁLIDOS"; errEl.classList.remove('hidden'); }
+        try { await signInWithEmailAndPassword(auth, document.getElementById('email').value, document.getElementById('password').value); } 
+        catch (err) { alert("DADOS INVÁLIDOS"); }
     };
 
     onAuthStateChanged(auth, (user) => {
@@ -313,19 +280,11 @@
             state.projects = snap.docs.map(d => ({ id: d.id, ...d.data() }));
             renderProjects();
         });
-        if(state.user?.email === SUPER_ADMIN) {
-            onSnapshot(collection(db, 'artifacts', appId, 'public', 'data', 'user_credentials'), snap => {
-                renderTeam(snap.docs.map(d => ({ id: d.id, ...d.data() })));
-            });
-        }
         lucide.createIcons();
+        setLang(state.lang);
     }
 
-    function calculateProgress(start, end) {
-        const s = new Date(start).getTime(); const e = new Date(end).getTime(); const n = new Date().getTime();
-        if (n < s) return 0; if (n > e) return 100;
-        return Math.floor(((n - s) / (e - s)) * 100);
-    }
+    const formatMoney = (v) => new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD' }).format(v);
 
     function renderProjects() {
         const grid = document.getElementById('view-projects');
@@ -333,37 +292,55 @@
         const t = translations[state.lang];
         
         state.projects.filter(p => p.empresa === state.company).forEach(p => {
-            const prog = calculateProgress(p.dataInicio, p.dataEntrega);
-            const daysLeft = Math.max(0, Math.ceil((new Date(p.dataEntrega).getTime() - new Date().getTime()) / (1000 * 3600 * 24)));
-            const comm = (p.valorTotal * (p.metodo === 'CC' ? 0.97 : 1) * (p.percComissao / 100)).toFixed(2);
+            const start = new Date(p.dataInicio).getTime(); const end = new Date(p.dataEntrega).getTime(); const now = new Date().getTime();
+            let prog = 0; if (now >= start) prog = now >= end ? 100 : Math.floor(((now - start) / (end - start)) * 100);
+            const daysLeft = Math.max(0, Math.ceil((end - now) / (1000 * 3600 * 24)));
+            const commValue = (p.valorTotal * (p.percComissao / 100));
             
+            const statusColor = p.payStatus === 'pago' ? 'text-emerald-500' : (p.payStatus === 'parcial' ? 'text-orange-500' : 'text-red-500');
+
             grid.innerHTML += `
-                <div class="glass p-8 rounded-[40px] border-l-[8px] transition-all hover:scale-[1.02] shadow-xl group" style="border-left-color: ${p.status === 'Finalizado' ? '#10b981' : '#f59e0b'}">
-                    <div class="flex justify-between mb-8">
-                        <div class="text-left"><h4 class="font-black text-xl uppercase tracking-tighter">${p.cliente}</h4><p class="text-[9px] font-black text-slate-500 uppercase tracking-widest mt-1">${p.vendedor} • ${p.metodo}</p></div>
-                        <div class="flex gap-2 opacity-0 group-hover:opacity-100 transition-opacity">
-                            <button onclick="editP('${p.id}')" class="p-2.5 bg-white/5 rounded-xl border border-white/5"><i data-lucide="edit-3" class="w-4 h-4 text-slate-400"></i></button>
-                            <button onclick="deleteP('${p.id}')" class="p-2.5 bg-white/5 rounded-xl border border-white/5"><i data-lucide="trash-2" class="w-4 h-4 text-red-500"></i></button>
-                        </div>
+                <div class="glass p-8 rounded-[32px] border-l-[6px] group relative" style="border-left-color: ${p.status === 'Finalizado' ? '#10b981' : '#f59e0b'}">
+                    <div class="absolute top-6 right-6 flex items-center gap-2">
+                        <span class="status-dot ${statusColor}"></span>
+                        <button onclick="editP('${p.id}')" class="p-1 hover:text-gold"><i data-lucide="edit" class="w-4 h-4"></i></button>
+                    </div>
+
+                    <div class="text-left mb-6">
+                        <h4 class="font-black text-lg uppercase tracking-tighter truncate pr-16">${p.cliente}</h4>
+                        <p class="text-[9px] font-bold text-slate-500 uppercase tracking-widest">${p.vendedor} • ${p.metodo}</p>
                     </div>
                     
-                    <div class="space-y-3 mb-8 text-left">
-                        <div class="flex justify-between text-[10px] font-black uppercase text-slate-500"><span>${t.work_stage}</span><span class="text-gold">${prog}%</span></div>
+                    <div class="space-y-2 mb-6 text-left">
+                        <div class="flex justify-between text-[10px] font-black uppercase text-slate-500"><span>${t.work_stage}</span><span>${prog}%</span></div>
                         <div class="progress-track"><div class="progress-bar-fill ${prog === 100 ? 'bg-emerald-500' : 'bg-gold'}" style="width: ${prog}%"></div></div>
-                        <div class="flex justify-between text-[9px] font-bold uppercase tracking-widest">
+                        <div class="flex justify-between text-[9px] font-bold">
                             <span class="text-slate-500">${new Date(p.dataInicio).toLocaleDateString()}</span>
-                            <span class="${daysLeft < 7 ? 'text-red-500' : 'text-gold'}">${prog === 100 ? t.concluded : daysLeft + ' ' + t.days_left}</span>
+                            <span class="text-gold">${prog === 100 ? t.concluded : daysLeft + ' ' + t.days_left}</span>
                         </div>
                     </div>
 
-                    <div class="grid grid-cols-2 gap-4 bg-slate-900/40 p-6 rounded-3xl border border-white/5 text-left mb-4 shadow-inner">
-                        <div><p class="text-[8px] font-black uppercase text-slate-500 mb-1">Faturamento</p><p class="text-lg font-black tracking-tight">$ ${p.valorTotal.toLocaleString()}</p></div>
-                        <div><p class="text-[8px] font-black uppercase text-gold mb-1">Comissão Liq.</p><p class="text-lg font-black text-gold tracking-tight">$ ${comm}</p></div>
+                    <div class="bg-slate-900/30 p-4 rounded-2xl flex flex-col gap-1 text-left">
+                        <p class="text-[9px] font-black text-slate-500 uppercase">${t.value}</p>
+                        <p class="text-xl font-black">${formatMoney(p.valorTotal)}</p>
+                    </div>
+
+                    <button onclick="toggleFinance('${p.id}')" class="w-full mt-4 text-[9px] font-black uppercase tracking-widest text-gold hover:underline flex items-center justify-center gap-2">
+                        <i data-lucide="bar-chart-2" class="w-3 h-3"></i> ${t.finance}
+                    </button>
+
+                    <div id="fin-${p.id}" class="finance-detail text-left">
+                        <div class="flex justify-between items-center bg-gold/5 p-3 rounded-xl border border-gold/10">
+                            <div><p class="text-[8px] font-bold uppercase text-gold/60">A pagar</p><p class="font-black text-gold">${formatMoney(commValue)}</p></div>
+                            <div class="text-right"><p class="text-[8px] font-bold uppercase text-gold/60">Situação</p><span class="text-[10px] font-black uppercase ${statusColor}">${p.payStatus || 'pendente'}</span></div>
+                        </div>
                     </div>
                 </div>`;
         });
         lucide.createIcons();
     }
+
+    window.toggleFinance = (id) => { document.getElementById(`fin-${id}`).classList.toggle('open'); };
 
     window.editP = (id) => {
         const p = state.projects.find(x => x.id === id);
@@ -371,16 +348,13 @@
         document.getElementById('f-cliente').value = p.cliente;
         document.getElementById('f-vendedor').value = p.vendedor;
         document.getElementById('f-valor').value = p.valorTotal;
-        document.getElementById('f-metodo').value = p.metodo;
         document.getElementById('f-comm').value = p.percComissao;
+        document.getElementById('f-pag-status').value = p.payStatus || 'pendente';
         document.getElementById('f-inicio').value = p.dataInicio;
         document.getElementById('f-entrega').value = p.dataEntrega;
         document.getElementById('f-status').value = p.status;
-        document.getElementById('form-title').innerText = "Editar Registro";
         showView('new');
     };
-
-    window.deleteP = async (id) => { if(confirm("Deseja mesmo excluir esta obra?")) await deleteDoc(doc(db, 'artifacts', appId, 'public', 'data', 'projects', id)); };
 
     document.getElementById('project-form').onsubmit = async (e) => {
         e.preventDefault();
@@ -392,35 +366,15 @@
             valorTotal: parseFloat(document.getElementById('f-valor').value),
             metodo: document.getElementById('f-metodo').value,
             percComissao: parseInt(document.getElementById('f-comm').value),
+            payStatus: document.getElementById('f-pag-status').value,
             dataInicio: document.getElementById('f-inicio').value,
             dataEntrega: document.getElementById('f-entrega').value,
             status: document.getElementById('f-status').value,
             updatedAt: serverTimestamp()
         };
-        try {
-            if(id) await updateDoc(doc(db, 'artifacts', appId, 'public', 'data', 'projects', id), data);
-            else await addDoc(collection(db, 'artifacts', appId, 'public', 'data', 'projects'), { ...data, createdAt: serverTimestamp() });
-            e.target.reset(); document.getElementById('edit-id').value = ''; showView('projects');
-        } catch (err) { alert(err.message); }
-    };
-
-    function renderTeam(team) {
-        const container = document.getElementById('users-list');
-        container.innerHTML = '';
-        team.forEach(u => {
-            container.innerHTML += `<div class="glass p-8 rounded-[28px] border-l-[10px] border-gold flex justify-between items-center shadow-xl"><div class="text-left"><p class="font-black text-lg">${u.email}</p><p class="text-[10px] text-slate-500 uppercase tracking-widest mt-1">Acesso: ${u.password}</p></div><div class="flex gap-2"><button onclick="editTeam('${u.id}','${u.email}','${u.password}')" class="p-3 bg-white/5 rounded-xl border border-white/5 text-gold hover:bg-gold hover:text-black transition-all"><i data-lucide="user-cog" class="w-5 h-5"></i></button><button onclick="deleteTeam('${u.id}')" class="p-3 bg-white/5 rounded-xl border border-white/5 text-red-500 hover:bg-red-500 hover:text-white transition-all"><i data-lucide="user-minus" class="w-5 h-5"></i></button></div></div>`;
-        });
-        lucide.createIcons();
-    }
-    window.editTeam = (id,e,p) => { document.getElementById('t-id').value=id; document.getElementById('t-email').value=e; document.getElementById('t-pass').value=p; };
-    window.deleteTeam = async (id) => { if(confirm("Remover membro?")) await deleteDoc(doc(db, 'artifacts', appId, 'public', 'data', 'user_credentials', id)); };
-    document.getElementById('team-form').onsubmit = async (e) => {
-        e.preventDefault();
-        const id = document.getElementById('t-id').value;
-        const data = { email: document.getElementById('t-email').value, password: document.getElementById('t-pass').value, updatedAt: serverTimestamp() };
-        if(id) await updateDoc(doc(db, 'artifacts', appId, 'public', 'data', 'user_credentials', id), data);
-        else await addDoc(collection(db, 'artifacts', appId, 'public', 'data', 'user_credentials'), data);
-        e.target.reset(); document.getElementById('t-id').value = '';
+        if(id) await updateDoc(doc(db, 'artifacts', appId, 'public', 'data', 'projects', id), data);
+        else await addDoc(collection(db, 'artifacts', appId, 'public', 'data', 'projects'), { ...data, createdAt: serverTimestamp() });
+        e.target.reset(); document.getElementById('edit-id').value = ''; showView('projects');
     };
 
     window.showView = (v) => {
