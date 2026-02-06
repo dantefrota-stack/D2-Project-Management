@@ -6,51 +6,59 @@
     <title>D2 Management System - Premium BR</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <script src="https://unpkg.com/lucide@latest"></script>
     <style>
-        :root { --glass: rgba(255, 255, 255, 0.02); --border: rgba(255, 255, 255, 0.08); --gold: #fbbf24; }
+        :root { --glass: rgba(255, 255, 255, 0.02); --border: rgba(255, 255, 255, 0.08); --gold: #fbbf24; color-scheme: dark; }
         body { font-family: 'Inter', sans-serif; background: #030508; color: #f1f5f9; min-height: 100vh; margin: 0; overflow-x: hidden; }
         
         .logo-frame { background: #FFFFFF; padding: 16px 32px; border-radius: 20px; display: inline-flex; align-items: center; justify-content: center; box-shadow: 0 10px 40px rgba(0,0,0,0.6); border: 1px solid rgba(255,255,255,0.1); }
         .logo-frame-sm { background: #FFFFFF; padding: 6px 12px; border-radius: 10px; display: flex; align-items: center; justify-content: center; box-shadow: 0 4px 12px rgba(0,0,0,0.4); }
         
-        .glass { background: var(--glass); backdrop-filter: blur(25px); border: 1px solid var(--border); border-radius: 28px; box-shadow: 0 25px 60px -12px rgba(0, 0, 0, 0.8); }
+        .glass { background: var(--glass); backdrop-filter: blur(25px); -webkit-backdrop-filter: blur(25px); border: 1px solid var(--border); border-radius: 28px; box-shadow: 0 25px 60px -12px rgba(0, 0, 0, 0.8); }
         .glass-input { background: rgba(0, 0, 0, 0.5) !important; border: 1px solid var(--border) !important; border-radius: 12px !important; color: white !important; padding: 14px 18px !important; width: 100%; outline: none; transition: all 0.3s ease; }
         .glass-input:focus { border-color: var(--gold) !important; box-shadow: 0 0 20px rgba(251, 191, 36, 0.15) !important; }
         
+        input[type="date"] { position: relative; }
+        input[type="date"]::-webkit-calendar-picker-indicator {
+            background: transparent; bottom: 0; color: transparent; cursor: pointer; height: auto; left: 0; position: absolute; right: 0; top: 0; width: auto; z-index: 2;
+        }
+
         .btn-gold { background: linear-gradient(135deg, var(--gold) 0%, #b45309 100%); color: black; font-weight: 800; text-transform: uppercase; letter-spacing: 1px; transition: all 0.3s ease; border-radius: 14px; }
         .btn-gold:hover { transform: translateY(-2px); filter: brightness(1.1); box-shadow: 0 8px 30px rgba(180, 83, 9, 0.4); }
         
         .tab-btn { padding-bottom: 12px; border-bottom: 3px solid transparent; color: #475569; font-weight: 700; font-size: 0.75rem; text-transform: uppercase; transition: all 0.3s; cursor: pointer; }
         .tab-btn.active { color: var(--gold); border-bottom-color: var(--gold); }
         
-        .flag-btn { font-size: 2.2rem; opacity: 0.3; transition: 0.2s; cursor: pointer; border: none; background: none; filter: drop-shadow(0 2px 4px rgba(0,0,0,0.5)); line-height: 1; }
-        .flag-btn:hover, .flag-btn.active { opacity: 1; transform: scale(1.1); }
+        .flag-icon { width: 32px; height: 22px; object-fit: cover; border-radius: 4px; border: 1px solid rgba(255,255,255,0.1); }
+        .flag-btn { opacity: 0.4; transition: 0.3s; padding: 4px; border-radius: 6px; border: none; background: none; cursor: pointer; }
+        .flag-btn:hover, .flag-btn.active { opacity: 1; transform: scale(1.1); background: rgba(255,255,255,0.05); }
         
-        .progress-bar-bg { background: rgba(255,255,255,0.05); height: 8px; border-radius: 4px; overflow: hidden; position: relative; }
-        .progress-bar-fill { height: 100%; transition: width 1s ease-in-out; }
-        
+        .progress-container { background: rgba(255,255,255,0.05); height: 10px; border-radius: 5px; overflow: hidden; position: relative; }
+        .progress-bar { height: 100%; transition: width 1s ease-in-out; border-radius: 5px; }
+
         @media print { .no-print { display: none !important; } body { background: white !important; color: black !important; } .glass { border: 1px solid #ddd !important; background: transparent !important; } }
+        .scrollbar-hide::-webkit-scrollbar { display: none; }
     </style>
 </head>
 <body>
 
-<!-- Tela de Autenticação -->
-<div id="auth-screen" class="fixed inset-0 z-50 flex flex-col items-center justify-center bg-[#030508] p-6">
-    <div class="glass p-12 w-full max-w-md text-center">
+<!-- Login Screen -->
+<div id="auth-screen" class="fixed inset-0 z-50 flex flex-col items-center justify-center bg-[#030508] p-6 text-center">
+    <div class="glass p-12 w-full max-w-md">
         <div class="logo-frame mb-10">
             <img src="logo-D2-Group-preto.png" alt="D2 Group" style="max-width:240px" onerror="this.src='https://placehold.co/400x150/ffffff/000000?text=D2+GROUP'">
         </div>
-        <p class="text-slate-500 text-[10px] mb-10 font-black tracking-[0.3em] uppercase" id="login-title-label">Sistema Integrado de Gestão</p>
+        <p class="text-slate-500 text-[10px] mb-10 font-black tracking-[0.3em] uppercase" data-i18n="login_sub">Sistema Integrado de Gestão</p>
         <form id="login-form" class="space-y-6 text-left">
             <div>
-                <label class="text-[9px] text-slate-500 uppercase font-black tracking-widest block mb-2 ml-1" data-i18n="email">E-mail Corporativo</label>
-                <input type="email" id="email" required class="glass-input" placeholder="dante.frota@allcablingtech.com">
+                <label class="text-[9px] text-slate-500 uppercase font-black tracking-widest block mb-2 ml-1" data-i18n="email_label">E-mail Corporativo</label>
+                <input type="email" id="email" required class="glass-input" placeholder="seu@email.com">
             </div>
             <div class="relative">
-                <label class="text-[9px] text-slate-500 uppercase font-black tracking-widest block mb-2 ml-1" data-i18n="pass">Senha</label>
+                <label class="text-[9px] text-slate-500 uppercase font-black tracking-widest block mb-2 ml-1" data-i18n="pass_label">Senha</label>
                 <input type="password" id="password" required class="glass-input" placeholder="••••••••">
                 <button type="button" onclick="togglePassword('password')" class="absolute right-4 top-10 text-slate-500 hover:text-white">
-                    <span id="eye-icon">👁️</span>
+                    <i data-lucide="eye" id="eye-icon"></i>
                 </button>
             </div>
             <button type="submit" class="w-full btn-gold p-5 font-black shadow-lg" data-i18n="btn_login">Entrar no Sistema</button>
@@ -62,7 +70,7 @@
     </div>
 </div>
 
-<!-- Aplicação Principal -->
+<!-- App Interface -->
 <div id="main-app" class="hidden min-h-screen flex flex-col">
     <header class="no-print bg-[#05070a]/90 backdrop-blur-3xl border-b border-white/5 p-5 sticky top-0 z-40">
         <div class="max-w-7xl mx-auto flex flex-wrap justify-between items-center gap-6">
@@ -70,10 +78,11 @@
                 <div class="logo-frame-sm">
                     <img id="header-logo" src="logo-D2-SmartHome-preto.png" class="h-10" alt="Logo">
                 </div>
+                <!-- Language Flags -->
                 <div class="flex gap-4 border-l border-white/10 pl-5">
-                    <button onclick="setLang('pt')" class="flag-btn active" id="lang-pt">🇧🇷</button>
-                    <button onclick="setLang('en')" class="flag-btn" id="lang-en">🇺🇸</button>
-                    <button onclick="setLang('es')" class="flag-btn" id="lang-es">🇪🇸</button>
+                    <button onclick="setLang('pt')" class="flag-btn active" id="lang-pt"><img src="https://flagcdn.com/w80/br.png" class="flag-icon" alt="BR"></button>
+                    <button onclick="setLang('en')" class="flag-btn" id="lang-en"><img src="https://flagcdn.com/w80/us.png" class="flag-icon" alt="US"></button>
+                    <button onclick="setLang('es')" class="flag-btn" id="lang-es"><img src="https://flagcdn.com/w80/es.png" class="flag-icon" alt="ES"></button>
                 </div>
             </div>
             <div class="flex items-center gap-6">
@@ -81,19 +90,15 @@
                     <button onclick="switchCompany('Smart Home')" id="btn-smart" class="px-6 py-2.5 rounded-xl bg-amber-600 text-black">Smart Home</button>
                     <button onclick="switchCompany('HVAC')" id="btn-hvac" class="px-6 py-2.5 rounded-xl text-slate-500">HVAC Solutions</button>
                 </div>
-                <div class="flex items-center gap-5 border-l border-white/10 pl-6 text-right">
-                    <div class="hidden sm:block">
-                        <p id="user-display" class="text-[10px] font-black text-slate-300"></p>
-                        <p class="text-[8px] text-amber-500 font-bold uppercase tracking-widest">Administrador</p>
-                    </div>
-                    <button onclick="handleLogout()" class="text-red-400 hover:text-white p-3 glass rounded-2xl transition-all">🚪</button>
-                </div>
+                <button onclick="handleLogout()" class="text-red-400 hover:text-white p-3 glass rounded-2xl transition-all">
+                    <i data-lucide="log-out"></i>
+                </button>
             </div>
         </div>
     </header>
 
     <main class="max-w-7xl mx-auto w-full p-6 md:p-10 flex-1">
-        <nav class="no-print flex gap-10 mb-12 border-b border-white/5 overflow-x-auto scrollbar-hide">
+        <nav class="no-print flex gap-10 mb-12 border-b border-white/5 overflow-x-auto scrollbar-hide justify-center">
             <button onclick="showView('projects')" class="tab-btn active" id="tab-projects" data-i18n="nav_proj">Projetos</button>
             <button onclick="showView('new')" class="tab-btn" id="tab-new" data-i18n="nav_new">Nova Obra</button>
             <button onclick="showView('reports')" class="tab-btn" id="tab-reports" data-i18n="nav_rep">Relatórios</button>
@@ -103,26 +108,26 @@
 
         <div id="view-projects" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-10"></div>
         
-        <!-- Formulário de Obra -->
+        <!-- Registration Form -->
         <div id="view-new" class="hidden max-w-4xl mx-auto glass p-12 text-left">
-            <h3 class="text-2xl font-black mb-10 text-amber-500 uppercase tracking-tighter border-l-4 border-amber-500 pl-4" id="form-title" data-i18n="form_new">Nova Obra</h3>
+            <h3 class="text-2xl font-black mb-10 text-gold uppercase tracking-tighter border-l-4 border-gold pl-4" id="form-title" data-i18n="form_new">Nova Obra</h3>
             <form id="project-form" class="space-y-8">
                 <input type="hidden" id="edit-id">
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
                     <div class="space-y-2">
                         <label class="text-[9px] uppercase font-black text-slate-500 ml-1" data-i18n="client">Cliente</label>
-                        <input type="text" id="f-cliente" required class="glass-input" placeholder="Nome do Cliente">
+                        <input type="text" id="f-cliente" required class="glass-input" data-i18n-placeholder="placeholder_client">
                     </div>
                     <div class="space-y-2">
                         <label class="text-[9px] uppercase font-black text-slate-500 ml-1" data-i18n="seller">Vendedor</label>
-                        <input type="text" id="f-vendedor" required class="glass-input" placeholder="Nome do Vendedor">
+                        <input type="text" id="f-vendedor" required class="glass-input" data-i18n-placeholder="placeholder_seller">
                     </div>
                 </div>
                 <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
                     <div class="space-y-2">
-                        <label class="text-[9px] uppercase font-black text-slate-500 ml-1" data-i18n="value">Valor Total ($)</label>
+                        <label class="text-[9px] uppercase font-black text-slate-500 ml-1" data-i18n="value">Valor Total</label>
                         <div class="relative">
-                            <span class="absolute left-4 top-4 text-slate-500 font-bold">$</span>
+                            <span class="absolute left-4 top-[14px] text-slate-500 font-bold">$</span>
                             <input type="number" id="f-valor" step="0.01" required class="glass-input pl-10">
                         </div>
                     </div>
@@ -130,9 +135,9 @@
                         <label class="text-[9px] uppercase font-black text-slate-500 ml-1" data-i18n="method">Pagamento</label>
                         <select id="f-metodo" class="glass-input">
                             <option value="Zelle">Zelle</option>
-                            <option value="CC">Cartão (-3%)</option>
+                            <option value="CC">CC (-3%)</option>
                             <option value="Cash">Cash</option>
-                            <option value="Wire">Wire Transfer</option>
+                            <option value="Wire">Wire</option>
                         </select>
                     </div>
                     <div class="space-y-2">
@@ -141,55 +146,58 @@
                     </div>
                 </div>
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
-                    <div class="space-y-2">
-                        <label class="text-[9px] uppercase font-black text-slate-500 ml-1" data-i18n="start">📅 Data de Início</label>
-                        <input type="date" id="f-inicio" required class="glass-input">
+                    <div class="space-y-2 relative">
+                        <label class="text-[9px] uppercase font-black text-slate-500 ml-1" data-i18n="start">Data de Início</label>
+                        <div class="relative">
+                            <input type="date" id="f-inicio" required class="glass-input pr-12">
+                            <i data-lucide="calendar" class="absolute right-4 top-[14px] text-slate-500 pointer-events-none"></i>
+                        </div>
                     </div>
-                    <div class="space-y-2">
-                        <label class="text-[9px] uppercase font-black text-slate-500 ml-1" data-i18n="delivery">📅 Previsão de Entrega</label>
-                        <input type="date" id="f-entrega" required class="glass-input">
+                    <div class="space-y-2 relative">
+                        <label class="text-[9px] uppercase font-black text-slate-500 ml-1" data-i18n="delivery">Entrega Prevista</label>
+                        <div class="relative">
+                            <input type="date" id="f-entrega" required class="glass-input pr-12">
+                            <i data-lucide="calendar" class="absolute right-4 top-[14px] text-slate-500 pointer-events-none"></i>
+                        </div>
                     </div>
                 </div>
                 <div class="space-y-2">
                     <label class="text-[9px] uppercase font-black text-slate-500 ml-1" data-i18n="status">Status</label>
                     <select id="f-status" class="glass-input">
                         <option value="Cotação">Cotação</option>
-                        <option value="Aguardando Início">Aguardando Início</option>
                         <option value="Em Execução">Em Execução</option>
                         <option value="Finalizado">Finalizado</option>
                     </select>
                 </div>
                 <div class="flex gap-6 pt-10">
-                    <button type="submit" class="flex-1 btn-gold p-5 font-black" data-i18n="btn_save">Confirmar e Salvar</button>
+                    <button type="submit" class="flex-1 btn-gold p-5 font-black" data-i18n="btn_save">Salvar Registro</button>
                     <button type="button" onclick="showView('projects')" class="px-10 text-slate-500 uppercase font-black text-xs tracking-widest" data-i18n="cancel">Cancelar</button>
                 </div>
             </form>
         </div>
 
-        <div id="view-reports" class="hidden space-y-10">
-            <div class="no-print glass p-8 flex gap-6 items-end">
-                <select id="rep-filter" class="glass-input flex-1"><option value="All">Todas as Divisões</option><option value="Smart Home">D2 Smart Home</option><option value="HVAC">D2 HVAC Solutions</option></select>
-                <button onclick="window.print()" class="bg-slate-800 text-white px-10 py-3 rounded-xl font-black transition-all hover:bg-slate-700" data-i18n="print">PDF / Imprimir</button>
-            </div>
-            <div id="report-output"></div>
-        </div>
-
-        <div id="view-logs" class="hidden glass overflow-hidden border border-white/5 text-left">
-            <table class="w-full text-left text-sm"><thead class="bg-white/5 uppercase text-[9px] font-black tracking-widest"><tr><th class="p-6">Data/Hora</th><th class="p-6">Usuário</th><th class="p-6">Ação</th><th class="p-6">Descrição</th></tr></thead><tbody id="logs-body"></tbody></table>
-        </div>
-
-        <!-- Gerenciamento de Equipe -->
+        <!-- Team Management -->
         <div id="view-users" class="hidden space-y-10">
-            <div class="glass p-8 max-w-md mx-auto">
-                <h3 class="text-lg font-black text-amber-500 mb-6 uppercase tracking-tighter">Gerenciar Perfil da Equipe</h3>
-                <form id="team-form" class="space-y-4 text-left">
+            <div class="glass p-10 max-w-xl mx-auto text-left shadow-2xl">
+                <h3 class="text-xl font-black text-gold mb-8 uppercase tracking-tighter" data-i18n="team_manage">Gerenciar Equipe</h3>
+                <form id="team-form" class="space-y-6">
                     <input type="hidden" id="t-id">
-                    <input type="email" id="t-email" placeholder="E-mail do Vendedor" required class="glass-input">
-                    <input type="text" id="t-pass" placeholder="Senha Sugerida" required class="glass-input">
-                    <button type="submit" class="w-full btn-gold p-3 text-xs">Salvar na Equipe</button>
+                    <div class="space-y-4">
+                        <input type="email" id="t-email" placeholder="E-mail" required class="glass-input">
+                        <input type="text" id="t-pass" placeholder="Senha" required class="glass-input">
+                    </div>
+                    <button type="submit" class="w-full btn-gold p-4 font-black" data-i18n="btn_save_team">Salvar Membro</button>
                 </form>
             </div>
-            <div id="users-list" class="grid grid-cols-1 md:grid-cols-2 gap-10"></div>
+            <div id="users-list" class="grid grid-cols-1 md:grid-cols-2 gap-8"></div>
+        </div>
+
+        <div id="view-reports" class="hidden space-y-10">
+            <div class="no-print glass p-8 flex gap-6 items-end shadow-xl">
+                <select id="rep-filter" class="glass-input flex-1"><option value="All">Geral</option><option value="Smart Home">Smart Home</option><option value="HVAC">HVAC</option></select>
+                <button onclick="window.print()" class="bg-slate-800 text-white px-10 py-3.5 rounded-xl font-black" data-i18n="print">PDF</button>
+            </div>
+            <div id="report-output"></div>
         </div>
     </main>
 </div>
@@ -217,65 +225,73 @@
     let state = { user: null, projects: [], company: 'Smart Home', lang: 'pt' };
 
     const translations = {
-        pt: {
-            login_sub: "SISTEMA INTEGRADO DE GESTÃO", email: "E-mail Corporativo", pass: "Senha", btn_login: "Entrar no Sistema", forgot: "Esqueceu a senha? Recuperar",
-            nav_proj: "Projetos", nav_new: "Nova Obra", nav_rep: "Relatórios", nav_logs: "Auditoria", nav_users: "Equipe",
+        pt: { 
+            login_sub: "SISTEMA INTEGRADO DE GESTÃO", email_label: "E-mail Corporativo", pass_label: "Senha", btn_login: "Entrar no Sistema", forgot: "Esqueceu a senha? Recuperar",
+            nav_proj: "Projetos", nav_new: "Nova Obra", nav_rep: "Relatórios", nav_logs: "Auditoria", nav_users: "Equipe", 
             client: "Cliente", seller: "Vendedor", value: "Valor Total", method: "Pagamento", comm: "% Comissão", start: "Início", delivery: "Entrega", status: "Status",
-            btn_save: "Confirmar e Salvar", cancel: "Cancelar", print: "PDF / Imprimir", form_new: "Nova Obra", form_edit: "Editar Obra"
+            btn_save: "Confirmar e Salvar", cancel: "Cancelar", print: "Imprimir PDF", form_new: "Nova Obra", form_edit: "Editar Obra",
+            placeholder_client: "Nome da Entidade", placeholder_seller: "Responsável D2", team_manage: "Gerenciar Equipe", btn_save_team: "Salvar Membro",
+            days_left: "dias restantes", concluded: "Concluído", work_stage: "Estágio da Obra"
         },
-        en: {
-            login_sub: "INTEGRATED MANAGEMENT SYSTEM", email: "Corporate Email", pass: "Password", btn_login: "Sign In", forgot: "Forgot password? Reset",
-            nav_proj: "Projects", nav_new: "New Entry", nav_rep: "Reports", nav_logs: "Audit", nav_users: "Team",
+        en: { 
+            login_sub: "INTEGRATED MANAGEMENT SYSTEM", email_label: "Corporate Email", pass_label: "Password", btn_login: "Sign In", forgot: "Forgot password? Reset",
+            nav_proj: "Projects", nav_new: "New Project", nav_rep: "Reports", nav_logs: "Audit", nav_users: "Team",
             client: "Client", seller: "Sales Rep", value: "Total Value", method: "Payment", comm: "% Comm.", start: "Start", delivery: "Delivery", status: "Status",
-            btn_save: "Confirm and Save", cancel: "Cancel", print: "PDF / Print", form_new: "New Project", form_edit: "Edit Project"
+            btn_save: "Confirm and Save", cancel: "Cancel", print: "Print PDF", form_new: "New Project", form_edit: "Edit Project",
+            placeholder_client: "Entity Name", placeholder_seller: "D2 Manager", team_manage: "Team Management", btn_save_team: "Save Member",
+            days_left: "days left", concluded: "Concluded", work_stage: "Work Progress"
         },
-        es: {
-            login_sub: "SISTEMA INTEGRADO DE GESTIÓN", email: "Correo Corporativo", pass: "Clave", btn_login: "Entrar al Sistema", forgot: "¿Olvidó su clave? Recuperar",
-            nav_proj: "Proyectos", nav_new: "Nuevo Registro", nav_rep: "Informes", nav_logs: "Auditoría", nav_users: "Equipo",
+        es: { 
+            login_sub: "SISTEMA INTEGRADO DE GESTIÓN", email_label: "Correo Corporativo", pass_label: "Clave", btn_login: "Entrar al Sistema", forgot: "¿Olvidó su clave? Recuperar",
+            nav_proj: "Proyectos", nav_new: "Nueva Obra", nav_rep: "Informes", nav_logs: "Auditoría", nav_users: "Equipo",
             client: "Cliente", seller: "Vendedor", value: "Valor Total", method: "Modalidad", comm: "% Comisión", start: "Inicio", delivery: "Entrega", status: "Estado",
-            btn_save: "Confirmar y Guardar", cancel: "Cancelar", print: "PDF / Imprimir", form_new: "Nueva Obra", form_edit: "Editar Obra"
+            btn_save: "Confirmar y Guardar", cancel: "Cancelar", print: "Imprimir PDF", form_new: "Nueva Obra", form_edit: "Editar Obra",
+            placeholder_client: "Nombre de Entidad", placeholder_seller: "Responsable D2", team_manage: "Gestión de Equipo", btn_save_team: "Guardar Miembro",
+            days_left: "días restantes", concluded: "Concluido", work_stage: "Progreso de Obra"
         }
     };
 
     window.setLang = (l) => {
         state.lang = l;
         document.querySelectorAll('.flag-btn').forEach(b => b.classList.toggle('active', b.id === 'lang-'+l));
+        
+        // Tradução de textos estáticos
         document.querySelectorAll('[data-i18n]').forEach(el => {
             const key = el.getAttribute('data-i18n');
             if (translations[l][key]) el.innerText = translations[l][key];
         });
-        document.getElementById('login-title-label').innerText = translations[l].login_sub;
+
+        // Tradução de placeholders
+        document.querySelectorAll('[data-i18n-placeholder]').forEach(el => {
+            const key = el.getAttribute('data-i18n-placeholder');
+            if (translations[l][key]) el.placeholder = translations[l][key];
+        });
+
+        // Recarregar grids dinâmicos
+        renderProjects();
+        renderReport();
+        lucide.createIcons();
     };
 
     window.togglePassword = (id) => {
         const input = document.getElementById(id);
         const icon = document.getElementById('eye-icon');
-        if (input.type === 'password') { input.type = 'text'; icon.innerText = '🙈'; }
-        else { input.type = 'password'; icon.innerText = '👁️'; }
+        if (input.type === 'password') { input.type = 'text'; icon.setAttribute('data-lucide', 'eye-off'); }
+        else { input.type = 'password'; icon.setAttribute('data-lucide', 'eye'); }
+        lucide.createIcons();
     };
 
     window.handleForgotPassword = async () => {
         const email = document.getElementById('email').value.trim();
-        if(!email) { alert("Digite primeiro o e-mail corporativo no campo acima."); return; }
-        try {
-            await sendPasswordResetEmail(auth, email);
-            alert("E-mail de recuperação enviado!");
-        } catch (err) { alert(err.message); }
+        if(!email) { alert("E-mail?"); return; }
+        try { await sendPasswordResetEmail(auth, email); alert("E-mail OK!"); } catch (err) { alert(err.message); }
     };
 
     document.getElementById('login-form').onsubmit = async (e) => {
         e.preventDefault();
-        const errEl = document.getElementById('auth-error');
-        errEl.classList.add('hidden');
-        try {
-            await signInWithEmailAndPassword(auth, document.getElementById('email').value, document.getElementById('password').value);
-        } catch (err) {
-            errEl.innerText = "ACESSO NEGADO: VERIFIQUE DADOS";
-            errEl.classList.remove('hidden');
-        }
+        try { await signInWithEmailAndPassword(auth, document.getElementById('email').value, document.getElementById('password').value); } 
+        catch (err) { alert("ERRO LOGIN"); }
     };
-
-    window.handleLogout = () => signOut(auth);
 
     onAuthStateChanged(auth, (user) => {
         state.user = user;
@@ -288,124 +304,61 @@
         }
     });
 
-    async function addLog(action, details) {
-        await addDoc(collection(db, 'artifacts', appId, 'public', 'data', 'logs'), {
-            timestamp: serverTimestamp(), user: state.user.email, action, details
-        });
-    }
-
     function initData() {
         onSnapshot(collection(db, 'artifacts', appId, 'public', 'data', 'projects'), snap => {
             state.projects = snap.docs.map(d => ({ id: d.id, ...d.data() }));
-            renderProjects();
-            renderReport();
+            renderProjects(); renderReport();
         });
-        if (state.user.email === SUPER_ADMIN) {
-            onSnapshot(collection(db, 'artifacts', appId, 'public', 'data', 'logs'), snap => {
-                const logs = snap.docs.map(d => d.data()).sort((a,b) => (b.timestamp?.seconds || 0) - (a.timestamp?.seconds || 0));
-                renderLogs(logs);
-            });
+        if (state.user?.email === SUPER_ADMIN) {
             onSnapshot(collection(db, 'artifacts', appId, 'public', 'data', 'user_credentials'), snap => {
                 renderTeam(snap.docs.map(d => ({ id: d.id, ...d.data() })));
             });
         }
-    }
-
-    function calculateProgress(startStr, endStr) {
-        const start = new Date(startStr);
-        const end = new Date(endStr);
-        const now = new Date();
-        if (now < start) return 0;
-        if (now > end) return 100;
-        const total = end - start;
-        const elapsed = now - start;
-        return Math.floor((elapsed / total) * 100);
-    }
-
-    function daysDiff(endStr) {
-        const end = new Date(endStr);
-        const now = new Date();
-        const diffTime = end - now;
-        const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
-        return diffDays > 0 ? diffDays : 0;
+        setLang(state.lang);
     }
 
     function renderProjects() {
         const grid = document.getElementById('view-projects');
         grid.innerHTML = '';
+        const t = translations[state.lang];
+        
         state.projects.filter(p => p.empresa === state.company).forEach(p => {
-            let base = p.valorTotal * (p.metodo === 'CC' ? 0.97 : 1);
-            let comm = (base * (p.percComissao / 100)).toFixed(2);
-            let progress = calculateProgress(p.dataInicio, p.dataEntrega);
-            let daysLeft = daysDiff(p.dataEntrega);
-
+            const s = new Date(p.dataInicio).getTime(); const e = new Date(p.dataEntrega).getTime(); const n = new Date().getTime();
+            let prog = 0; if (n >= s) prog = n > e ? 100 : Math.floor(((n - s) / (e - s)) * 100);
+            const days = Math.ceil((e - n) / (1000 * 3600 * 24));
+            const comm = (p.valorTotal * (p.metodo === 'CC' ? 0.97 : 1) * (p.percComissao / 100)).toFixed(2);
+            
             grid.innerHTML += `
                 <div class="glass p-8 space-y-6 border-l-8 transition-all hover:scale-[1.02]" style="border-left-color: ${p.status === 'Finalizado' ? '#10b981' : '#f59e0b'}">
                     <div class="flex justify-between items-start">
-                        <div>
-                            <h4 class="font-black text-xl text-white tracking-tighter">${p.cliente}</h4>
-                            <p class="text-[9px] font-black uppercase text-slate-500 tracking-widest mt-1">${p.vendedor} • ${p.metodo}</p>
-                        </div>
-                        <div class="flex gap-2">
-                            <button onclick="editP('${p.id}')" class="p-2 text-slate-400 hover:text-white">✏️</button>
-                            <button onclick="deleteP('${p.id}', '${p.cliente}')" class="p-2 text-slate-400 hover:text-red-500">🗑️</button>
-                        </div>
+                        <div class="text-left"><h4 class="font-black text-xl text-white uppercase leading-tight">${p.cliente}</h4><p class="text-[9px] font-black text-slate-500 mt-1 uppercase">${p.vendedor} • ${p.metodo}</p></div>
+                        <div class="flex gap-2"><button onclick="editP('${p.id}')" class="text-slate-400"><i data-lucide="edit-3" size="16"></i></button><button onclick="deleteP('${p.id}')" class="text-slate-400"><i data-lucide="trash-2" size="16"></i></button></div>
                     </div>
-                    
-                    <div class="space-y-2">
-                        <div class="flex justify-between text-[10px] font-bold uppercase text-slate-400">
-                            <span>Progresso da Obra</span>
-                            <span class="${progress === 100 ? 'text-emerald-500' : 'text-amber-500'}">${progress}%</span>
-                        </div>
-                        <div class="progress-bar-bg">
-                            <div class="progress-bar-fill ${progress === 100 ? 'bg-emerald-500' : 'bg-amber-500'}" style="width: ${progress}%"></div>
-                        </div>
-                        <div class="text-[9px] text-slate-500 flex justify-between">
-                            <span>Início: ${new Date(p.dataInicio).toLocaleDateString()}</span>
-                            <span>Faltam ${daysLeft} dias</span>
-                        </div>
+                    <div class="space-y-2 text-left">
+                        <div class="flex justify-between text-[10px] font-bold uppercase text-slate-400"><span>${t.work_stage}</span><span>${prog}%</span></div>
+                        <div class="progress-container"><div class="progress-bar ${prog === 100 ? 'bg-emerald-500' : 'bg-gold'}" style="width: ${prog}%"></div></div>
+                        <div class="flex justify-between text-[9px] text-slate-500 uppercase"><span>${new Date(p.dataInicio).toLocaleDateString()}</span><span>${days > 0 ? days + ' ' + t.days_left : t.concluded}</span></div>
                     </div>
-
-                    <div class="grid grid-cols-2 gap-4 bg-black/40 p-5 rounded-2xl border border-white/5">
-                        <div><p class="text-[8px] font-black uppercase text-slate-600 mb-1">Contrato</p><p class="font-black text-lg text-white">$ ${p.valorTotal.toLocaleString()}</p></div>
-                        <div><p class="text-[8px] font-black uppercase text-amber-500/50 mb-1">Comissão</p><p class="font-black text-lg text-amber-500">$ ${comm}</p></div>
-                    </div>
-                    <div class="flex justify-between items-center text-[10px] font-black uppercase text-slate-500">
-                        <span>${p.status}</span>
+                    <div class="grid grid-cols-2 gap-4 bg-black/40 p-5 rounded-2xl border border-white/5 text-left shadow-inner">
+                        <div><p class="text-[8px] font-black uppercase text-slate-600 mb-1">${t.value}</p><p class="font-black text-lg text-white">$ ${p.valorTotal.toLocaleString()}</p></div>
+                        <div><p class="text-[8px] font-black uppercase text-gold mb-1">${t.comm}</p><p class="font-black text-lg text-gold">$ ${comm}</p></div>
                     </div>
                 </div>`;
         });
+        lucide.createIcons();
     }
 
     function renderTeam(team) {
         const container = document.getElementById('users-list');
         container.innerHTML = '';
         team.forEach(u => {
-            container.innerHTML += `
-                <div class="glass p-8 border-l-8 border-amber-500 shadow-2xl flex justify-between items-center group">
-                    <div class="text-left">
-                        <p class="font-black text-white text-lg tracking-tight">${u.email}</p>
-                        <p class="text-[10px] text-slate-500 mt-2 uppercase font-black tracking-widest">Senha em cache: ${u.password}</p>
-                    </div>
-                    <div class="flex gap-2">
-                         <button onclick="editTeamMember('${u.id}', '${u.email}', '${u.password}')" class="p-2 text-slate-400 hover:text-amber-500">✏️</button>
-                         <button onclick="deleteTeamMember('${u.id}', '${u.email}')" class="p-2 text-slate-400 hover:text-red-500">🗑️</button>
-                    </div>
-                </div>`;
+            container.innerHTML += `<div class="glass p-8 border-l-8 border-gold flex justify-between items-center"><div class="text-left"><p class="font-black text-white">${u.email}</p><p class="text-[10px] text-slate-500 uppercase">Acesso: ${u.password}</p></div><div class="flex gap-3"><button onclick="editTeam('${u.id}', '${u.email}', '${u.password}')" class="p-2 text-slate-400"><i data-lucide="user-cog" size="18"></i></button><button onclick="deleteTeam('${u.id}')" class="p-2 text-slate-400"><i data-lucide="user-minus" size="18"></i></button></div></div>`;
         });
+        lucide.createIcons();
     }
 
-    window.editTeamMember = (id, email, pass) => {
-        document.getElementById('t-id').value = id;
-        document.getElementById('t-email').value = email;
-        document.getElementById('t-pass').value = pass;
-    };
-
-    window.deleteTeamMember = async (id, email) => {
-        if(!confirm(`Remover ${email} da equipe?`)) return;
-        await deleteDoc(doc(db, 'artifacts', appId, 'public', 'data', 'user_credentials', id));
-    };
-
+    window.editTeam = (id, email, pass) => { document.getElementById('t-id').value = id; document.getElementById('t-email').value = email; document.getElementById('t-pass').value = pass; };
+    window.deleteTeam = async (id) => { if(confirm("EXCLUIR?")) await deleteDoc(doc(db, 'artifacts', appId, 'public', 'data', 'user_credentials', id)); };
     document.getElementById('team-form').onsubmit = async (e) => {
         e.preventDefault();
         const id = document.getElementById('t-id').value;
@@ -417,97 +370,52 @@
 
     window.editP = (id) => {
         const p = state.projects.find(x => x.id === id);
-        document.getElementById('edit-id').value = id;
-        document.getElementById('f-cliente').value = p.cliente;
-        document.getElementById('f-vendedor').value = p.vendedor;
-        document.getElementById('f-valor').value = p.valorTotal;
-        document.getElementById('f-metodo').value = p.metodo;
-        document.getElementById('f-comm').value = p.percComissao;
-        document.getElementById('f-inicio').value = p.dataInicio;
-        document.getElementById('f-entrega').value = p.dataEntrega;
-        document.getElementById('f-status').value = p.status;
-        document.getElementById('form-title').innerText = translations[state.lang].form_edit;
+        document.getElementById('edit-id').value = id; document.getElementById('f-cliente').value = p.cliente; document.getElementById('f-vendedor').value = p.vendedor;
+        document.getElementById('f-valor').value = p.valorTotal; document.getElementById('f-metodo').value = p.metodo; document.getElementById('f-comm').value = p.percComissao;
+        document.getElementById('f-inicio').value = p.dataInicio; document.getElementById('f-entrega').value = p.dataEntrega; document.getElementById('f-status').value = p.status;
         showView('new');
     };
 
-    window.deleteP = async (id, name) => {
-        if(!confirm(`Excluir permanentemente ${name}?`)) return;
-        await deleteDoc(doc(db, 'artifacts', appId, 'public', 'data', 'projects', id));
-        await addLog('DELETE', name);
-    };
-
+    window.deleteP = async (id) => { if(confirm("EXCLUIR?")) await deleteDoc(doc(db, 'artifacts', appId, 'public', 'data', 'projects', id)); };
+    
     document.getElementById('project-form').onsubmit = async (e) => {
         e.preventDefault();
         const id = document.getElementById('edit-id').value;
-        const data = {
-            empresa: state.company,
-            cliente: document.getElementById('f-cliente').value,
-            vendedor: document.getElementById('f-vendedor').value,
-            valorTotal: parseFloat(document.getElementById('f-valor').value),
-            metodo: document.getElementById('f-metodo').value,
-            percComissao: parseInt(document.getElementById('f-comm').value),
-            dataInicio: document.getElementById('f-inicio').value,
-            dataEntrega: document.getElementById('f-entrega').value,
-            status: document.getElementById('f-status').value,
-            updatedAt: serverTimestamp()
-        };
-        try {
-            if(id) {
-                await updateDoc(doc(db, 'artifacts', appId, 'public', 'data', 'projects', id), data);
-                await addLog('UPDATE', data.cliente);
-            } else {
-                await addDoc(collection(db, 'artifacts', appId, 'public', 'data', 'projects'), { ...data, createdAt: serverTimestamp() });
-                await addLog('INSERT', data.cliente);
-            }
-            e.target.reset();
-            document.getElementById('edit-id').value = '';
-            document.getElementById('f-comm').value = '5';
-            document.getElementById('form-title').innerText = translations[state.lang].form_new;
-            showView('projects');
-        } catch (err) { alert(err.message); }
+        const data = { empresa: state.company, cliente: document.getElementById('f-cliente').value, vendedor: document.getElementById('f-vendedor').value, valorTotal: parseFloat(document.getElementById('f-valor').value), metodo: document.getElementById('f-metodo').value, percComissao: parseInt(document.getElementById('f-comm').value), dataInicio: document.getElementById('f-inicio').value, dataEntrega: document.getElementById('f-entrega').value, status: document.getElementById('f-status').value, updatedAt: serverTimestamp() };
+        if(id) await updateDoc(doc(db, 'artifacts', appId, 'public', 'data', 'projects', id), data);
+        else await addDoc(collection(db, 'artifacts', appId, 'public', 'data', 'projects'), { ...data, createdAt: serverTimestamp() });
+        e.target.reset(); document.getElementById('edit-id').value = ''; document.getElementById('f-comm').value = '5'; showView('projects');
     };
 
     function renderReport() {
         const out = document.getElementById('report-output');
-        let total = 0, totalComm = 0;
+        let total = 0; let totalComm = 0;
         const rows = state.projects.map(p => {
             let base = p.valorTotal * (p.metodo === 'CC' ? 0.97 : 1);
-            let c = (base * (p.percComissao/100));
-            total += p.valorTotal; totalComm += c;
-            return `<tr class="border-b border-slate-100 hover:bg-slate-50 transition-colors"><td class="p-6 font-black text-slate-900">${p.cliente}</td><td class="p-6 font-medium text-slate-600">${p.vendedor}</td><td class="p-6 text-right font-medium text-slate-800">$ ${p.valorTotal.toFixed(2)}</td><td class="p-6 text-right font-black text-amber-600">$ ${c.toFixed(2)}</td></tr>`;
+            let c = (base * (p.percComissao/100)); total += p.valorTotal; totalComm += c;
+            return `<tr class="border-b border-slate-100 text-xs"><td class="p-4 font-black">${p.cliente}</td><td class="p-4">${p.vendedor}</td><td class="p-4 text-right font-medium">$ ${p.valorTotal.toFixed(2)}</td><td class="p-4 text-right font-black text-amber-600">$ ${c.toFixed(2)}</td></tr>`;
         }).join('');
-        
-        out.innerHTML = `<div class="bg-white text-slate-950 p-16 rounded-[60px] shadow-2xl border-8 border-slate-100"><div class="flex justify-between items-center border-b-[10px] border-slate-950 pb-10 mb-10"><div class="logo-frame-sm shadow-none border border-slate-200"><img src="logo-D2-Group-preto.png" class="h-14"></div><div class="text-right"><h2 class="text-4xl font-black uppercase tracking-tighter text-slate-950">Relatório Executivo</h2><p class="text-slate-400 font-black uppercase text-[10px] tracking-[0.4em] mt-2">${new Date().toLocaleDateString()}</p></div></div><table class="w-full text-sm"><thead><tr class="bg-slate-50 font-black uppercase text-[11px] tracking-widest text-slate-500"><th class="p-6 text-left">Cliente</th><th class="p-6 text-left">Gestor</th><th class="p-6 text-right">Volume</th><th class="p-6 text-right">Comissão</th></tr></thead><tbody>${rows}</tbody></table><div class="mt-10 pt-10 border-t-[10px] border-slate-950 flex justify-end gap-16"><div class="text-right"><p class="text-[11px] font-black uppercase text-slate-400 mb-1 tracking-widest">Faturamento Global</p><p class="text-5xl font-black tracking-tighter">$ ${total.toLocaleString(undefined, {minimumFractionDigits:2})}</p></div><div class="text-right"><p class="text-[11px] font-black uppercase text-amber-600 mb-1 tracking-widest">Total Comissões</p><p class="text-5xl font-black text-amber-600 tracking-tighter">$ ${totalComm.toLocaleString(undefined, {minimumFractionDigits:2})}</p></div></div></div>`;
-    }
-
-    function renderLogs(logs) {
-        const body = document.getElementById('logs-body');
-        body.innerHTML = logs.map(l => `<tr class="border-b border-white/5 hover:bg-white/[0.01] transition-colors"><td class="p-8 text-[11px] text-slate-500 font-bold">${l.timestamp?.toDate().toLocaleString() || '...'}</td><td class="p-8 font-black text-slate-300 tracking-tight">${l.user}</td><td class="p-8 text-[9px] font-black text-amber-500 uppercase tracking-widest shadow-amber-500/10 shadow-sm rounded-lg border border-amber-500/20 text-center">${l.action}</td><td class="p-8 text-slate-500 font-medium">${l.details}</td></tr>`).join('');
+        out.innerHTML = `<div class="bg-white text-slate-950 p-12 rounded-[50px] shadow-2xl border-8 border-slate-100"><div class="flex justify-between items-center border-b-[8px] border-slate-950 pb-10 mb-10"><div class="logo-frame-sm shadow-none border"><img src="logo-D2-Group-preto.png" class="h-14"></div><div class="text-right"><h2 class="text-3xl font-black uppercase tracking-tighter">Relatório D2</h2><p class="text-slate-400 font-black uppercase text-[10px]">${new Date().toLocaleDateString()}</p></div></div><table class="w-full text-sm"><thead><tr class="bg-slate-50 font-black uppercase text-[11px] text-slate-500"><th class="p-4 text-left">Cliente</th><th class="p-4 text-left">Vendedor</th><th class="p-4 text-right">Volume</th><th class="p-4 text-right">Comissão</th></tr></thead><tbody>${rows}</tbody></table><div class="mt-10 pt-10 border-t-[8px] border-slate-950 flex justify-end gap-16"><div class="text-right"><p class="text-[11px] font-black uppercase text-slate-400 mb-1">Total Geral</p><p class="text-4xl font-black">$ ${total.toLocaleString(undefined, {minimumFractionDigits:2})}</p></div><div class="text-right"><p class="text-[11px] font-black uppercase text-amber-600 mb-1">Comissões</p><p class="text-4xl font-black text-amber-600">$ ${totalComm.toLocaleString(undefined, {minimumFractionDigits:2})}</p></div></div></div>`;
     }
 
     window.switchCompany = (c) => {
         state.company = c;
         document.getElementById('header-logo').src = c === 'Smart Home' ? 'logo-D2-SmartHome-preto.png' : 'logo-D2-HVAC-Solutions-preto.png';
-        document.getElementById('btn-smart').className = c === 'Smart Home' ? 'px-6 py-2.5 rounded-xl bg-amber-600 text-black' : 'px-6 py-2.5 rounded-xl text-slate-500';
-        document.getElementById('btn-hvac').className = c === 'HVAC' ? 'px-6 py-2.5 rounded-xl bg-amber-600 text-black' : 'px-6 py-2.5 rounded-xl text-slate-500';
+        document.getElementById('btn-smart').className = c === 'Smart Home' ? 'px-6 py-2.5 rounded-xl bg-amber-600 text-black font-black' : 'px-6 py-2.5 rounded-xl text-slate-500 font-black';
+        document.getElementById('btn-hvac').className = c === 'HVAC' ? 'px-6 py-2.5 rounded-xl bg-amber-600 text-black font-black' : 'px-6 py-2.5 rounded-xl text-slate-500 font-black';
         renderProjects();
     };
 
     window.showView = (v) => {
-        ['projects', 'new', 'reports', 'logs', 'users'].forEach(id => {
-            const el = document.getElementById('view-'+id);
-            if(el) el.classList.add('hidden');
-        });
-        ['projects', 'new', 'reports', 'logs', 'users'].forEach(id => {
-            const el = document.getElementById('tab-'+id);
-            if(el) el.classList.remove('active');
-        });
+        ['projects', 'new', 'reports', 'users'].forEach(id => document.getElementById('view-'+id).classList.add('hidden'));
+        ['projects', 'new', 'reports', 'users'].forEach(id => { const el = document.getElementById('tab-'+id); if(el) el.classList.remove('active'); });
         document.getElementById('view-'+v).classList.remove('hidden');
         document.getElementById('tab-'+v).classList.add('active');
+        lucide.createIcons();
     };
 
-    window.editP = editP;
-    window.deleteP = deleteP;
+    window.handleLogout = () => signOut(auth);
+    lucide.createIcons();
     setLang('pt');
 </script>
 </body>
