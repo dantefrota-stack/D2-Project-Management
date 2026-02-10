@@ -9,9 +9,9 @@
     <script src="https://unpkg.com/lucide@latest"></script>
     <style>
         :root { --gold: #fbbf24; --gold-dark: #b45309; --d2-blue: #0f172a; }
-        body { font-family: 'Inter', sans-serif; transition: background-color 0.3s; }
+        body { font-family: 'Inter', sans-serif; transition: background-color 0.3s; margin: 0; }
         
-        /* Login - Identidade Enterprise Portal */
+        /* Design Login - Enterprise Portal Pattern */
         .auth-body { background-color: #f1f5f9; color: #0f172a; }
         .auth-card { 
             background: white; border-radius: 40px; width: 100%; max-width: 440px;
@@ -24,7 +24,6 @@
             border: 1px solid #e2e8f0; color: #0f172a; outline: none; transition: all 0.2s; font-size: 15px;
         }
         .auth-input:focus { border-color: var(--gold); box-shadow: 0 0 0 4px rgba(251, 191, 36, 0.1); }
-        
         .btn-access {
             width: 100%; background: var(--d2-blue); color: white; padding: 18px;
             border-radius: 14px; font-weight: 800; text-transform: uppercase; 
@@ -32,18 +31,15 @@
         }
         .btn-access:hover { transform: translateY(-2px); box-shadow: 0 10px 20px rgba(15, 23, 42, 0.2); }
 
-        /* Interface Interna */
+        /* App Layout */
         .app-body-dark { background-color: #030508; color: #f1f5f9; }
-        .app-body-light { background-color: #f8fafc; color: #0f172a; }
-        
         .modern-input { 
             width: 100%; padding: 14px 45px 14px 16px; border-radius: 12px; 
             border: 1px solid rgba(148, 163, 184, 0.2); background: rgba(0,0,0,0.5); 
             color: inherit; outline: none; transition: all 0.2s; font-size: 14px;
         }
-        .light .modern-input { background: #fff; border: 1px solid #cbd5e1; color: #000; }
 
-        /* Olho da Senha - SVG Embutido */
+        /* Password Toggle SVG Fix */
         .password-toggle { 
             position: absolute; right: 12px; top: 50%; transform: translateY(-50%); 
             z-index: 100; color: var(--gold); cursor: pointer; 
@@ -52,11 +48,11 @@
         }
         .password-toggle svg { width: 18px; height: 18px; stroke-width: 2.5; }
 
-        /* Botão de Filtro de Unidade */
+        /* Unit Filters - Only for Reports */
         .unit-pill { padding: 8px 20px; border-radius: 20px; font-size: 10px; font-weight: 800; border: 1px solid rgba(255,255,255,0.1); cursor: pointer; transition: 0.2s; color: #64748b; background: transparent; }
         .unit-pill.active { background: var(--gold); color: #000; border-color: var(--gold); }
 
-        /* Botão de Ação VISÍVEL (Autorizar Acesso) */
+        /* Visible Premium Button */
         .btn-premium-gold {
             background: linear-gradient(135deg, var(--gold) 0%, var(--gold-dark) 100%);
             color: #000; font-weight: 900; padding: 16px; border-radius: 14px;
@@ -65,12 +61,12 @@
         }
         .btn-premium-gold:hover { transform: translateY(-1px); box-shadow: 0 4px 15px rgba(251, 191, 36, 0.4); }
 
-        /* Calendário e Datas */
+        /* Date Picker Fix */
         input[type="date"]::-webkit-calendar-picker-indicator {
             background: transparent; bottom: 0; color: transparent; cursor: pointer;
             height: auto; left: 0; position: absolute; right: 0; top: 0; width: auto; z-index: 20;
         }
-        .date-container { position: relative; display: flex; align-items: center; width: 100%; cursor: pointer; }
+        .date-container { position: relative; display: flex; align-items: center; width: 100%; }
         .calendar-icon-overlay { position: absolute; right: 14px; pointer-events: none; color: var(--gold); z-index: 10; }
 
         .progress-track { height: 16px; border-radius: 8px; background: rgba(255,255,255,0.05); overflow: hidden; border: 1px solid rgba(255,255,255,0.05); }
@@ -83,7 +79,7 @@
 </head>
 <body id="main-body" class="auth-body">
 
-<!-- Tela de Login -->
+<!-- Login Screen -->
 <div id="auth-screen" class="fixed inset-0 z-[2000] flex items-center justify-center p-6">
     <div class="auth-card text-center">
         <div class="logo-box">
@@ -127,11 +123,6 @@
         <div class="max-w-7xl mx-auto flex justify-between items-center">
             <div class="flex items-center gap-6">
                 <div class="bg-white p-2 rounded-xl shadow-md"><img id="header-logo" src="logo-D2-Group-preto.png" class="h-10"></div>
-                <div class="flex gap-2 ml-4">
-                    <button onclick="selectUnit('Smart Home')" id="unit-smart" class="unit-pill">SMART HOME</button>
-                    <button onclick="selectUnit('HVAC')" id="unit-hvac" class="unit-pill">HVAC</button>
-                    <button onclick="selectUnit('Ambas')" id="unit-all" class="unit-pill active">AMBAS</button>
-                </div>
             </div>
             
             <div class="flex items-center gap-5">
@@ -155,7 +146,6 @@
 
         <div id="view-projects" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-10 text-left"></div>
         
-        <!-- Formulário Nova Obra -->
         <div id="view-new" class="hidden max-w-3xl mx-auto glass p-10 rounded-[40px] text-left shadow-2xl border border-white/5">
             <h3 class="text-2xl font-black mb-10 flex items-center gap-4 uppercase tracking-tighter">
                 <span class="w-2 h-10 bg-gold rounded-full"></span>
@@ -183,18 +173,18 @@
                         <option value="Zelle">Zelle</option>
                         <option value="Wire Transfer">Wire Transfer</option>
                         <option value="Dinheiro">Dinheiro (Cash)</option>
-                        <option value="Cartão de Crédito">Cartão de Crédito (Dedução 3%)</option>
+                        <option value="CC">Cartão de Crédito (Dedução 3% Net)</option>
                     </select>
                 </div>
                 <div class="space-y-2">
-                    <label class="text-[10px] font-black uppercase text-slate-500 ml-1 tracking-widest">Data Início</label>
+                    <label class="text-[10px] font-black uppercase text-slate-500 ml-1 tracking-widest">Início</label>
                     <div class="date-container" onclick="this.querySelector('input').showPicker()">
                         <input type="date" id="f-inicio" required class="modern-input">
                         <i data-lucide="calendar" class="calendar-icon-overlay w-5 h-5"></i>
                     </div>
                 </div>
                 <div class="space-y-2">
-                    <label class="text-[10px] font-black uppercase text-slate-500 ml-1 tracking-widest">Data Entrega</label>
+                    <label class="text-[10px] font-black uppercase text-slate-500 ml-1 tracking-widest">Entrega</label>
                     <div class="date-container" onclick="this.querySelector('input').showPicker()">
                         <input type="date" id="f-entrega" required class="modern-input">
                         <i data-lucide="calendar" class="calendar-icon-overlay w-5 h-5"></i>
@@ -208,7 +198,6 @@
             </form>
         </div>
 
-        <!-- Equipe -->
         <div id="view-users" class="hidden space-y-10">
             <div class="glass p-10 max-w-lg mx-auto rounded-[32px] text-left border border-white/5 shadow-2xl">
                 <h3 class="text-xl font-black text-gold mb-8 uppercase tracking-tighter" data-i18n="team_title">Gestão de Equipe</h3>
@@ -227,14 +216,20 @@
         </div>
 
         <div id="view-reports" class="hidden space-y-8 max-w-7xl mx-auto">
+            <!-- FILTROS EXCLUSIVOS DOS RELATÓRIOS -->
+            <div class="flex justify-center gap-4 mb-8 no-print">
+                <button onclick="selectUnit('Smart Home')" id="unit-smart" class="unit-pill">SMART HOME</button>
+                <button onclick="selectUnit('HVAC')" id="unit-hvac" class="unit-pill">HVAC</button>
+                <button onclick="selectUnit('Ambas')" id="unit-all" class="unit-pill active">AMBAS</button>
+            </div>
             <div id="report-output"></div>
         </div>
     </main>
 </div>
 
 <script type="module">
-    import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
-    import { getAuth, signInWithEmailAndPassword, createUserWithEmailAndPassword, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
+    import { initializeApp, deleteApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
+    import { getAuth, signInWithEmailAndPassword, signInWithCustomToken, signInAnonymously, createUserWithEmailAndPassword, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
     import { getFirestore, collection, doc, updateDoc, addDoc, deleteDoc, onSnapshot, serverTimestamp, arrayUnion } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
 
     const firebaseConfig = {
@@ -256,24 +251,22 @@
 
     const translations = {
         pt: { 
-            portal_title: "D2 Project Management", login_sub: "Sistema Integrado de Gestão", 
-            login_err: "Dados inválidos. Procure seu administrador.", btn_login: "Acessar Sistema", 
-            admin_panel: "Gestão Corporativa", nav_proj: "Projetos", nav_new: "Nova Obra", nav_rep: "Relatórios", nav_users: "Equipe",
+            login_sub: "Sistema Integrado de Gestão", login_err: "Dados inválidos. Procure seu administrador.", 
+            btn_login: "Acessar Sistema", admin_panel: "Gestão Corporativa", nav_proj: "Projetos", nav_new: "Nova Obra", nav_rep: "Relatórios", nav_users: "Equipe",
             form_new_title: "Registrar Obra", label_div: "Unidade", label_client: "Cliente", label_seller: "Vendedor", label_value: "Contrato", 
             label_comm: "Comissão", label_method: "Pagamento", label_start: "Início", label_end: "Entrega", label_status: "Status",
             btn_save: "Salvar Registro", team_title: "Gestão de Equipe", btn_team: "Salvar e Autorizar Acesso",
             timeline: "Cronograma", status_overdue: "ATRASADA", status_finished: "CONCLUÍDA", days_left: "DIAS RESTANTES",
-            finance_btn: "FINANCEIRO VENDEDOR", net_base: "Base Líquida", balance: "Saldo Devedor", report_title: "RELATÓRIO EXECUTIVO"
+            finance_btn: "FINANCEIRO VENDEDOR", net_base: "Líquido", balance: "Saldo", report_title: "RELATÓRIO EXECUTIVO"
         },
         en: { 
-            portal_title: "D2 Project Management", login_sub: "Management System", 
-            login_err: "Invalid credentials. Contact admin.", btn_login: "Login", 
-            admin_panel: "Corporate Management", nav_proj: "Projects", nav_new: "New Entry", nav_rep: "Reports", nav_users: "Team",
+            login_sub: "Integrated Management System", login_err: "Invalid credentials. Contact admin.", 
+            btn_login: "Login", admin_panel: "Corporate Management", nav_proj: "Projects", nav_new: "New Entry", nav_rep: "Reports", nav_users: "Team",
             form_new_title: "Register Project", label_div: "Unit", label_client: "Client", label_seller: "Sales Rep", label_value: "Contract", 
             label_comm: "Commission", label_method: "Payment", label_start: "Start", label_end: "Deadline", label_status: "Status",
             btn_save: "Save Entry", team_title: "Team Management", btn_team: "Authorize Access",
             timeline: "Timeline", status_overdue: "OVERDUE", status_finished: "FINISHED", days_left: "DAYS LEFT",
-            finance_btn: "SALES FINANCE", net_base: "Net Base", balance: "Balance", report_title: "EXECUTIVE REPORT"
+            finance_btn: "SALES FINANCE", net_base: "Net", balance: "Balance", report_title: "EXECUTIVE REPORT"
         }
     };
 
@@ -325,8 +318,8 @@
         window.scrollTo({ top: 0, behavior: 'smooth' });
     };
 
-    window.deleteTeam = async (id) => { if(confirm("REMOVER ACESSO DESTE MEMBRO?")) await deleteDoc(doc(db, 'artifacts', appId, 'public', 'data', 'user_credentials', id)); };
-    window.deleteP = async (id) => { if(confirm("EXCLUIR ESTA OBRA?")) await deleteDoc(doc(db, 'artifacts', appId, 'public', 'data', 'projects', id)); };
+    window.deleteTeam = async (id) => { if(confirm("REMOVER ACESSO?")) await deleteDoc(doc(db, 'artifacts', appId, 'public', 'data', 'user_credentials', id)); };
+    window.deleteP = async (id) => { if(confirm("EXCLUIR?")) await deleteDoc(doc(db, 'artifacts', appId, 'public', 'data', 'projects', id)); };
     window.editP = (id) => { 
         const p = state.projects.find(x => x.id === id); if(!p) return; 
         document.getElementById('edit-id').value = id; document.getElementById('f-empresa').value = p.empresa; 
@@ -342,7 +335,7 @@
     window.handleLogout = () => signOut(auth).then(() => location.reload());
 
     function getFin(p) {
-        let base = (p.metodo === 'CC' || p.metodo.includes('Cartão')) ? p.valorTotal * 0.97 : p.valorTotal;
+        let base = p.metodo === 'CC' ? p.valorTotal * 0.97 : p.valorTotal;
         let comm = base * (p.percComissao / 100);
         let sum = (p.pagamentosEfetuados || []).reduce((a, c) => a + parseFloat(c.valor), 0);
         let bal = Math.max(0, comm - sum);
@@ -360,19 +353,19 @@
             let bc = prog < 35 ? "bg-red-500" : (prog < 75 ? "bg-orange-500" : "bg-emerald-500"); if (n > e && p.status !== 'Finalizado') bc = "bg-red-800 animate-pulse";
             const f = getFin(p);
             grid.innerHTML += `<div class="glass p-8 rounded-[40px] border-l-[8px] relative shadow-2xl" style="border-left-color: ${p.status === 'Finalizado' ? '#10b981' : '#f59e0b'}">
-                <div class="absolute top-6 right-6 flex items-center gap-3"><span class="status-badge ${f.sc}"></span><button onclick="window.editP('${p.id}')"><i data-lucide="edit-3" class="w-4 h-4 text-slate-400"></i></button><button onclick="window.deleteP('${p.id}')"><i data-lucide="trash-2" class="w-4 h-4 text-red-400"></i></button></div>
+                <div class="absolute top-6 right-6 flex items-center gap-3"><span class="status-badge ${f.sc}"></span><button onclick="window.editP('${p.id}')"><i data-lucide="edit-3" class="w-4 h-4"></i></button><button onclick="window.deleteP('${p.id}')"><i data-lucide="trash-2" class="w-4 h-4"></i></button></div>
                 <div class="mb-6"><h4 class="font-black text-xl uppercase truncate pr-20">${p.cliente}</h4><p class="text-[10px] font-bold text-slate-500 uppercase tracking-widest mt-1">${p.vendedor} • ${p.metodo}</p></div>
-                <div class="space-y-3 mb-8"><div class="flex justify-between text-[10px] font-black uppercase text-slate-400"><span>Timeline</span><span class="text-gold font-black">${prog}%</span></div>
+                <div class="space-y-3 mb-8"><div class="flex justify-between text-[10px] font-black uppercase text-slate-400"><span>${t.timeline}</span><span class="text-gold font-black">${prog}%</span></div>
                 <div class="progress-track"><div class="progress-bar-fill ${bc}" style="width: ${prog}%"></div></div>
                 <div class="flex justify-between text-[9px] font-extrabold uppercase"><span>${new Date(p.dataInicio).toLocaleDateString()}</span><span class="${n > e && p.status !== 'Finalizado' ? 'text-red-500' : 'text-gold'}">${n > e && p.status !== 'Finalizado' ? t.status_overdue : (prog === 100 ? t.status_finished : Math.ceil((e-n)/(1000*3600*24))+' '+t.days_left)}</span></div></div>
-                <div class="bg-black/30 p-6 rounded-3xl border border-white/5 shadow-inner"><p class="text-[9px] font-black text-slate-500 uppercase mb-1 text-center">Contract Total</p><p class="text-2xl font-black text-white text-center">${formatCurr(p.valorTotal)}</p></div>
+                <div class="bg-black/30 p-6 rounded-3xl border border-white/5 shadow-inner"><p class="text-[9px] font-black text-slate-500 uppercase mb-1 text-center">Valor do Contrato</p><p class="text-2xl font-black text-white text-center">${formatCurr(p.valorTotal)}</p></div>
                 <button onclick="window.toggleFinance('${p.id}')" class="w-full mt-6 py-2 text-[10px] font-black uppercase text-gold hover:underline flex items-center justify-center gap-2"><i data-lucide="wallet" class="w-4 h-4"></i> ${t.finance_btn}</button>
                 <div id="fin-${p.id}" class="finance-panel"><div class="bg-gold/5 p-4 rounded-2xl border border-gold/10 space-y-4">
                 <div class="flex justify-between"><div><p class="text-[8px] font-bold text-gold/60 uppercase">Comissão</p><p class="text-lg font-black text-gold">${formatCurr(f.comm)}</p></div>
                 <div class="text-right"><p class="text-[8px] font-bold text-gold/60 uppercase">Saldo</p><p class="text-lg font-black ${f.bal > 0 ? 'text-red-400' : 'text-emerald-400'}">${formatCurr(f.bal)}</p></div></div>
                 <div class="mt-4 pt-4 border-t border-white/5 admin-only ${state.user.email !== SUPER_ADMIN ? 'hidden' : ''}">
                 <div class="grid grid-cols-2 gap-2"><input type="number" id="pay-val-${p.id}" placeholder="$" class="modern-input !pl-4 h-10"><input type="date" id="pay-date-${p.id}" class="modern-input !pl-4 h-10"></div>
-                <button onclick="window.addPayment('${p.id}')" class="w-full mt-2 bg-emerald-600/20 text-emerald-400 border border-emerald-500/30 p-2 rounded-lg text-[9px] font-black uppercase tracking-widest hover:bg-emerald-500 hover:text-black transition-all">POST PAYMENT</button></div></div></div></div>`;
+                <button onclick="window.addPayment('${p.id}')" class="w-full mt-2 bg-emerald-600/20 text-emerald-400 border border-emerald-500/30 p-2 rounded-lg text-[9px] font-black uppercase tracking-widest hover:bg-emerald-500 hover:text-black transition-all">Lançar Pagamento</button></div></div></div></div>`;
         });
         lucide.createIcons();
     }
