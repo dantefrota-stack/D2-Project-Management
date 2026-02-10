@@ -32,7 +32,7 @@
         }
         .btn-access:hover { transform: translateY(-2px); box-shadow: 0 10px 20px rgba(15, 23, 42, 0.2); }
 
-        /* Estilos App Interno */
+        /* Interface Interna */
         .app-body-dark { background-color: #030508; color: #f1f5f9; }
         .app-body-light { background-color: #f8fafc; color: #0f172a; }
         
@@ -53,17 +53,25 @@
         .password-toggle svg { width: 18px; height: 18px; stroke-width: 2.5; }
 
         /* Botão de Filtro de Unidade */
-        .unit-pill { padding: 8px 20px; border-radius: 20px; font-size: 11px; font-weight: 800; border: 1px solid rgba(255,255,255,0.1); cursor: pointer; transition: 0.2s; color: #64748b; background: transparent; }
+        .unit-pill { padding: 8px 20px; border-radius: 20px; font-size: 10px; font-weight: 800; border: 1px solid rgba(255,255,255,0.1); cursor: pointer; transition: 0.2s; color: #64748b; background: transparent; }
         .unit-pill.active { background: var(--gold); color: #000; border-color: var(--gold); }
 
         /* Botão de Ação VISÍVEL (Autorizar Acesso) */
-        .btn-action-premium {
+        .btn-premium-gold {
             background: linear-gradient(135deg, var(--gold) 0%, var(--gold-dark) 100%);
             color: #000; font-weight: 900; padding: 16px; border-radius: 14px;
             text-transform: uppercase; letter-spacing: 0.1em; border: none;
             width: 100%; cursor: pointer; transition: all 0.3s;
         }
-        .btn-action-premium:hover { transform: translateY(-1px); box-shadow: 0 4px 15px rgba(251, 191, 36, 0.4); }
+        .btn-premium-gold:hover { transform: translateY(-1px); box-shadow: 0 4px 15px rgba(251, 191, 36, 0.4); }
+
+        /* Calendário e Datas */
+        input[type="date"]::-webkit-calendar-picker-indicator {
+            background: transparent; bottom: 0; color: transparent; cursor: pointer;
+            height: auto; left: 0; position: absolute; right: 0; top: 0; width: auto; z-index: 20;
+        }
+        .date-container { position: relative; display: flex; align-items: center; width: 100%; cursor: pointer; }
+        .calendar-icon-overlay { position: absolute; right: 14px; pointer-events: none; color: var(--gold); z-index: 10; }
 
         .progress-track { height: 16px; border-radius: 8px; background: rgba(255,255,255,0.05); overflow: hidden; border: 1px solid rgba(255,255,255,0.05); }
         .progress-bar-fill { height: 100%; transition: width 1.5s cubic-bezier(0.4, 0, 0.2, 1); border-radius: 8px; }
@@ -75,7 +83,7 @@
 </head>
 <body id="main-body" class="auth-body">
 
-<!-- Login Screen -->
+<!-- Tela de Login -->
 <div id="auth-screen" class="fixed inset-0 z-[2000] flex items-center justify-center p-6">
     <div class="auth-card text-center">
         <div class="logo-box">
@@ -90,7 +98,7 @@
 
             <div>
                 <label class="label-auth">E-mail Corporativo</label>
-                <input type="email" id="email" required class="auth-input" placeholder="usuario@d2group.com">
+                <input type="email" id="email" required class="auth-input" placeholder="usuario@d2smarthome.com">
             </div>
 
             <div class="relative">
@@ -147,6 +155,7 @@
 
         <div id="view-projects" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-10 text-left"></div>
         
+        <!-- Formulário Nova Obra -->
         <div id="view-new" class="hidden max-w-3xl mx-auto glass p-10 rounded-[40px] text-left shadow-2xl border border-white/5">
             <h3 class="text-2xl font-black mb-10 flex items-center gap-4 uppercase tracking-tighter">
                 <span class="w-2 h-10 bg-gold rounded-full"></span>
@@ -161,7 +170,7 @@
                 <div class="col-span-2 md:col-span-1 space-y-2"><label class="text-[10px] font-black uppercase text-slate-500 ml-1 tracking-widest">Cliente</label><input type="text" id="f-cliente" required class="modern-input"></div>
                 <div class="col-span-2 md:col-span-1 space-y-2"><label class="text-[10px] font-black uppercase text-slate-500 ml-1 tracking-widest">Vendedor</label><input type="text" id="f-vendedor" required class="modern-input"></div>
                 <div class="space-y-2">
-                    <label class="text-[10px] font-black uppercase text-slate-500 ml-1 tracking-widest">Valor Contrato</label>
+                    <label class="text-[10px] font-black uppercase text-slate-500 ml-1 tracking-widest">Valor Contrato Bruto</label>
                     <div class="relative"><span class="absolute left-4 top-1/2 -translate-y-1/2 font-bold text-gold">$</span><input type="number" id="f-valor" step="0.01" required class="modern-input !pl-8"></div>
                 </div>
                 <div class="space-y-2">
@@ -173,38 +182,45 @@
                     <select id="f-metodo" class="modern-input">
                         <option value="Zelle">Zelle</option>
                         <option value="Wire Transfer">Wire Transfer</option>
-                        <option value="Cash">Cash (Dinheiro)</option>
-                        <option value="CC">Cartão de Crédito (Dedução 3%)</option>
+                        <option value="Dinheiro">Dinheiro (Cash)</option>
+                        <option value="Cartão de Crédito">Cartão de Crédito (Dedução 3%)</option>
                     </select>
                 </div>
                 <div class="space-y-2">
-                    <label class="text-[10px] font-black uppercase text-slate-500 ml-1 tracking-widest">Início</label>
-                    <div class="relative"><input type="date" id="f-inicio" required class="modern-input"><i data-lucide="calendar" class="absolute right-4 top-1/2 -translate-y-1/2 text-gold w-5 h-5 pointer-events-none"></i></div>
+                    <label class="text-[10px] font-black uppercase text-slate-500 ml-1 tracking-widest">Data Início</label>
+                    <div class="date-container" onclick="this.querySelector('input').showPicker()">
+                        <input type="date" id="f-inicio" required class="modern-input">
+                        <i data-lucide="calendar" class="calendar-icon-overlay w-5 h-5"></i>
+                    </div>
                 </div>
                 <div class="space-y-2">
-                    <label class="text-[10px] font-black uppercase text-slate-500 ml-1 tracking-widest">Entrega</label>
-                    <div class="relative"><input type="date" id="f-entrega" required class="modern-input"><i data-lucide="calendar" class="absolute right-4 top-1/2 -translate-y-1/2 text-gold w-5 h-5 pointer-events-none"></i></div>
+                    <label class="text-[10px] font-black uppercase text-slate-500 ml-1 tracking-widest">Data Entrega</label>
+                    <div class="date-container" onclick="this.querySelector('input').showPicker()">
+                        <input type="date" id="f-entrega" required class="modern-input">
+                        <i data-lucide="calendar" class="calendar-icon-overlay w-5 h-5"></i>
+                    </div>
                 </div>
                 <div class="col-span-2 space-y-2"><label class="text-[10px] font-black uppercase text-slate-500 ml-1 tracking-widest">Status</label><select id="f-status" class="modern-input"><option value="Cotação">Cotação</option><option value="Aguardando Início">Aguardando Início</option><option value="Em Execução">Em Execução</option><option value="Finalizado">Finalizado</option></select></div>
                 <div class="col-span-2 flex gap-6 mt-10">
-                    <button type="submit" class="flex-1 btn-action-premium shadow-xl">Salvar Registro</button>
+                    <button type="submit" class="flex-1 btn-premium-gold shadow-xl">Salvar Registro</button>
                     <button type="button" onclick="showView('projects')" class="px-10 text-slate-500 uppercase font-black text-xs hover:text-white transition-all">Cancelar</button>
                 </div>
             </form>
         </div>
 
+        <!-- Equipe -->
         <div id="view-users" class="hidden space-y-10">
             <div class="glass p-10 max-w-lg mx-auto rounded-[32px] text-left border border-white/5 shadow-2xl">
                 <h3 class="text-xl font-black text-gold mb-8 uppercase tracking-tighter" data-i18n="team_title">Gestão de Equipe</h3>
                 <form id="team-form" class="space-y-6">
                     <input type="hidden" id="t-id">
-                    <div class="space-y-1"><label class="label-auth">E-mail do Membro</label><input type="email" id="t-email" required class="modern-input"></div>
+                    <div class="space-y-1"><label class="label-auth">E-mail</label><input type="email" id="t-email" required class="modern-input"></div>
                     <div class="space-y-1 relative">
-                        <label class="label-auth">Definir Senha</label>
+                        <label class="label-auth">Senha</label>
                         <input type="password" id="t-pass" required class="modern-input">
                         <button type="button" onclick="window.togglePassword('t-pass', 'eye-team-btn')" class="password-toggle" id="eye-team-btn" style="top:70%"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg></button>
                     </div>
-                    <button type="submit" id="btn-save-team" class="btn-action-premium shadow-xl" data-i18n="btn_team">Salvar e Autorizar Membro</button>
+                    <button type="submit" id="btn-save-team" class="btn-premium-gold shadow-xl" data-i18n="btn_team">Salvar e Autorizar Acesso</button>
                 </form>
             </div>
             <div id="users-list" class="grid grid-cols-1 md:grid-cols-2 gap-8 text-left max-w-7xl mx-auto"></div>
@@ -217,8 +233,8 @@
 </div>
 
 <script type="module">
-    import { initializeApp, deleteApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
-    import { getAuth, signInWithEmailAndPassword, signInWithCustomToken, signInAnonymously, createUserWithEmailAndPassword, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
+    import { getAuth, signInWithEmailAndPassword, createUserWithEmailAndPassword, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
     import { getFirestore, collection, doc, updateDoc, addDoc, deleteDoc, onSnapshot, serverTimestamp, arrayUnion } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
 
     const firebaseConfig = {
@@ -241,25 +257,23 @@
     const translations = {
         pt: { 
             portal_title: "D2 Project Management", login_sub: "Sistema Integrado de Gestão", 
-            login_err: "Dados inválidos. Procure o administrador.", btn_login: "Acessar Sistema", 
+            login_err: "Dados inválidos. Procure seu administrador.", btn_login: "Acessar Sistema", 
             admin_panel: "Gestão Corporativa", nav_proj: "Projetos", nav_new: "Nova Obra", nav_rep: "Relatórios", nav_users: "Equipe",
             form_new_title: "Registrar Obra", label_div: "Unidade", label_client: "Cliente", label_seller: "Vendedor", label_value: "Contrato", 
             label_comm: "Comissão", label_method: "Pagamento", label_start: "Início", label_end: "Entrega", label_status: "Status",
             btn_save: "Salvar Registro", team_title: "Gestão de Equipe", btn_team: "Salvar e Autorizar Acesso",
             timeline: "Cronograma", status_overdue: "ATRASADA", status_finished: "CONCLUÍDA", days_left: "DIAS RESTANTES",
-            finance_btn: "FINANCEIRO VENDEDOR", net_base: "Base Líquida", balance: "Saldo Devedor", report_title: "RELATÓRIO EXECUTIVO",
-            col_obra: "Obra", col_vendedor: "Vendedor", col_andamento: "Andamento (%)", col_contrato: "Contrato", col_base: "Líquido", col_comm: "Comissão"
+            finance_btn: "FINANCEIRO VENDEDOR", net_base: "Base Líquida", balance: "Saldo Devedor", report_title: "RELATÓRIO EXECUTIVO"
         },
         en: { 
-            portal_title: "D2 Project Management", login_sub: "Integrated Management System", 
-            login_err: "Invalid credentials. Contact admin.", btn_login: "Access System", 
+            portal_title: "D2 Project Management", login_sub: "Management System", 
+            login_err: "Invalid credentials. Contact admin.", btn_login: "Login", 
             admin_panel: "Corporate Management", nav_proj: "Projects", nav_new: "New Entry", nav_rep: "Reports", nav_users: "Team",
-            form_new_title: "Register Project", label_div: "Unit", label_client: "Client", label_seller: "Sales Rep", label_value: "Contract Value", 
+            form_new_title: "Register Project", label_div: "Unit", label_client: "Client", label_seller: "Sales Rep", label_value: "Contract", 
             label_comm: "Commission", label_method: "Payment", label_start: "Start", label_end: "Deadline", label_status: "Status",
-            btn_save: "Save Entry", team_title: "Team Management", btn_team: "Save and Authorize",
+            btn_save: "Save Entry", team_title: "Team Management", btn_team: "Authorize Access",
             timeline: "Timeline", status_overdue: "OVERDUE", status_finished: "FINISHED", days_left: "DAYS LEFT",
-            finance_btn: "SALES FINANCE", net_base: "Net Base", balance: "Balance", report_title: "EXECUTIVE REPORT",
-            col_obra: "Project", col_vendedor: "Seller", col_andamento: "Progress (%)", col_contrato: "Contract", col_base: "Net", col_comm: "Commission"
+            finance_btn: "SALES FINANCE", net_base: "Net Base", balance: "Balance", report_title: "EXECUTIVE REPORT"
         }
     };
 
@@ -348,10 +362,10 @@
             grid.innerHTML += `<div class="glass p-8 rounded-[40px] border-l-[8px] relative shadow-2xl" style="border-left-color: ${p.status === 'Finalizado' ? '#10b981' : '#f59e0b'}">
                 <div class="absolute top-6 right-6 flex items-center gap-3"><span class="status-badge ${f.sc}"></span><button onclick="window.editP('${p.id}')"><i data-lucide="edit-3" class="w-4 h-4 text-slate-400"></i></button><button onclick="window.deleteP('${p.id}')"><i data-lucide="trash-2" class="w-4 h-4 text-red-400"></i></button></div>
                 <div class="mb-6"><h4 class="font-black text-xl uppercase truncate pr-20">${p.cliente}</h4><p class="text-[10px] font-bold text-slate-500 uppercase tracking-widest mt-1">${p.vendedor} • ${p.metodo}</p></div>
-                <div class="space-y-3 mb-8"><div class="flex justify-between text-[10px] font-black uppercase text-slate-400"><span>${t.timeline}</span><span class="text-gold font-black">${prog}%</span></div>
+                <div class="space-y-3 mb-8"><div class="flex justify-between text-[10px] font-black uppercase text-slate-400"><span>Timeline</span><span class="text-gold font-black">${prog}%</span></div>
                 <div class="progress-track"><div class="progress-bar-fill ${bc}" style="width: ${prog}%"></div></div>
                 <div class="flex justify-between text-[9px] font-extrabold uppercase"><span>${new Date(p.dataInicio).toLocaleDateString()}</span><span class="${n > e && p.status !== 'Finalizado' ? 'text-red-500' : 'text-gold'}">${n > e && p.status !== 'Finalizado' ? t.status_overdue : (prog === 100 ? t.status_finished : Math.ceil((e-n)/(1000*3600*24))+' '+t.days_left)}</span></div></div>
-                <div class="bg-black/30 p-6 rounded-3xl border border-white/5 shadow-inner"><p class="text-[9px] font-black text-slate-500 uppercase mb-1 text-center">${t.label_value}</p><p class="text-2xl font-black text-white text-center">${formatCurr(p.valorTotal)}</p></div>
+                <div class="bg-black/30 p-6 rounded-3xl border border-white/5 shadow-inner"><p class="text-[9px] font-black text-slate-500 uppercase mb-1 text-center">Contract Total</p><p class="text-2xl font-black text-white text-center">${formatCurr(p.valorTotal)}</p></div>
                 <button onclick="window.toggleFinance('${p.id}')" class="w-full mt-6 py-2 text-[10px] font-black uppercase text-gold hover:underline flex items-center justify-center gap-2"><i data-lucide="wallet" class="w-4 h-4"></i> ${t.finance_btn}</button>
                 <div id="fin-${p.id}" class="finance-panel"><div class="bg-gold/5 p-4 rounded-2xl border border-gold/10 space-y-4">
                 <div class="flex justify-between"><div><p class="text-[8px] font-bold text-gold/60 uppercase">Comissão</p><p class="text-lg font-black text-gold">${formatCurr(f.comm)}</p></div>
@@ -375,7 +389,7 @@
         }).join('');
         out.innerHTML = `<div class="bg-white text-slate-950 p-12 rounded-[50px] shadow-2xl border-8 border-slate-50">
             <div class="flex justify-between items-center border-b-[8px] border-slate-950 pb-10 mb-10"><div class="logo-frame-sm border p-2 rounded-xl"><img src="logo-D2-Group-preto.png" class="h-12"></div><div class="text-right"><h2 class="text-3xl font-black uppercase tracking-tighter">${t.report_title}</h2><p class="text-slate-400 font-black uppercase text-[10px]">${new Date().toLocaleDateString()}</p></div></div>
-            <div class="overflow-x-auto"><table class="w-full"><thead><tr class="bg-slate-50 font-black uppercase text-[10px] text-slate-500 text-left"><th class="p-4">${t.col_obra}</th><th class="p-4">${t.col_vendedor}</th><th class="p-4 text-center">Prog. (%)</th><th class="p-4 text-right">Contrato</th><th class="p-4 text-right">Líquido</th><th class="p-4 text-right">Comissão</th></tr></thead><tbody>${rows}</tbody></table></div>
+            <div class="overflow-x-auto"><table class="w-full"><thead><tr class="bg-slate-50 font-black uppercase text-[10px] text-slate-500 text-left"><th class="p-4">Obra</th><th class="p-4">Vendedor</th><th class="p-4 text-center">Prog. (%)</th><th class="p-4 text-right">Contrato</th><th class="p-4 text-right">Líquido</th><th class="p-4 text-right">Comissão</th></tr></thead><tbody>${rows}</tbody></table></div>
             <div class="mt-10 pt-10 border-t-[8px] border-slate-950 flex justify-end gap-16"><div class="text-right"><p class="text-[11px] font-black uppercase text-slate-400 mb-1">TOTAL CONTRATO</p><p class="text-4xl font-black">${formatCurr(tv)}</p></div><div class="text-right"><p class="text-[11px] font-black uppercase text-amber-600 mb-1">TOTAL COMISSÕES</p><p class="text-4xl font-black text-amber-600">${formatCurr(tc)}</p></div></div></div>`;
     }
 
@@ -434,11 +448,11 @@
             const id = document.getElementById('t-id').value;
             const mail = document.getElementById('t-email').value, pass = document.getElementById('t-pass').value;
             try { 
-                if(!id) { // Novo Usuário
+                if(!id) {
                     const tempApp = initializeApp(firebaseConfig, "AuthTemp"); const tempAuth = getAuth(tempApp);
                     await createUserWithEmailAndPassword(tempAuth, mail, pass); await deleteApp(tempApp);
                     await addDoc(collection(db, 'artifacts', appId, 'public', 'data', 'user_credentials'), { email: mail, password: pass, updatedAt: serverTimestamp() }); 
-                } else { // Editar Usuário
+                } else {
                     await updateDoc(doc(db, 'artifacts', appId, 'public', 'data', 'user_credentials', id), { email: mail, password: pass, updatedAt: serverTimestamp() });
                 }
                 e.target.reset(); document.getElementById('t-id').value = '';
