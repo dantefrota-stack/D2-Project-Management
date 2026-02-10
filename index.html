@@ -11,14 +11,14 @@
         :root { --gold: #fbbf24; --gold-dark: #b45309; --d2-blue: #0f172a; }
         body { font-family: 'Inter', sans-serif; transition: background-color 0.3s; margin: 0; }
         
-        /* Tema Login - Enterprise Portal Pattern (Fundo Claro / Card Branco) */
-        .auth-body { background-color: #f1f5f9; color: #0f172a; }
+        /* Design Login - Enterprise Portal Pattern */
+        .auth-body { background-color: #f1f5f9; color: #0f172a; display: flex; align-items: center; justify-content: center; min-height: 100vh; }
         .auth-card { 
             background: white; border-radius: 40px; width: 100%; max-width: 440px;
-            padding: 48px; box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.1);
+            padding: 48px; box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.1); text-align: center;
         }
         .logo-box { background: var(--d2-blue); border-radius: 20px; padding: 20px; display: inline-block; margin-bottom: 24px; }
-        .label-auth { font-size: 11px; font-weight: 800; color: #64748b; text-transform: uppercase; letter-spacing: 0.05em; margin-bottom: 6px; display: block; }
+        .label-auth { font-size: 11px; font-weight: 800; color: #64748b; text-transform: uppercase; letter-spacing: 0.05em; margin-bottom: 6px; display: block; text-align: left; }
         .auth-input {
             width: 100%; padding: 16px 20px; border-radius: 12px; background: #f8fafc;
             border: 1px solid #e2e8f0; color: #0f172a; outline: none; transition: all 0.2s; font-size: 15px;
@@ -31,10 +31,8 @@
         }
         .btn-access:hover { transform: translateY(-2px); box-shadow: 0 10px 20px rgba(15, 23, 42, 0.2); }
 
-        /* Interface Interna - Tema Escuro */
+        /* Interface Interna */
         .app-body-dark { background-color: #030508; color: #f1f5f9; }
-        .app-body-light { background-color: #f8fafc; color: #0f172a; }
-        
         .modern-input { 
             width: 100%; padding: 14px 45px 14px 16px; border-radius: 12px; 
             border: 1px solid rgba(148, 163, 184, 0.2); background: rgba(0,0,0,0.5); 
@@ -42,26 +40,25 @@
         }
         .light .modern-input { background: #fff; border: 1px solid #cbd5e1; color: #000; }
 
-        /* FIX DO OLHO: SVG Puro para visibilidade total e permanente */
+        /* FIX DO OLHO - SVG Puro embutido */
         .password-toggle { 
             position: absolute; right: 12px; top: 50%; transform: translateY(-50%); 
             z-index: 100; color: var(--gold); cursor: pointer; 
             background: rgba(0,0,0,0.2); border-radius: 8px; padding: 6px;
             display: flex; align-items: center; justify-content: center; border: none;
         }
-        .password-toggle:hover { background: var(--gold); color: #000; }
         .password-toggle svg { width: 18px; height: 18px; stroke-width: 2.5; }
 
-        /* Filtros de Unidade (Somente na aba de relatórios) */
+        /* Unidades - Pill Filtros */
         .unit-pill { padding: 8px 20px; border-radius: 20px; font-size: 10px; font-weight: 800; border: 1px solid rgba(255,255,255,0.1); cursor: pointer; transition: 0.2s; color: #64748b; background: transparent; }
         .unit-pill.active { background: var(--gold); color: #000; border-color: var(--gold); }
 
-        /* Botão Ouro Visível (Equipe) */
+        /* Botão Premium Gold */
         .btn-premium-gold {
             background: linear-gradient(135deg, var(--gold) 0%, var(--gold-dark) 100%);
             color: #000; font-weight: 900; padding: 16px; border-radius: 14px;
             text-transform: uppercase; letter-spacing: 0.1em; border: none;
-            width: 100%; cursor: pointer; transition: all 0.3s;
+            width: 100%; cursor: pointer; transition: all 0.3s; text-align: center;
         }
         .btn-premium-gold:hover { transform: translateY(-1px); box-shadow: 0 4px 15px rgba(251, 191, 36, 0.4); }
 
@@ -75,10 +72,11 @@
 
         /* Painel Financeiro Expansível */
         .finance-panel { max-height: 0; overflow: hidden; transition: all 0.5s ease; opacity: 0; }
-        .finance-panel.open { max-height: 1200px; opacity: 1; margin-top: 1.5rem; border-top: 1px solid rgba(255,255,255,0.1); padding-top: 1.5rem; }
+        .finance-panel.open { max-height: 1500px; opacity: 1; margin-top: 1.5rem; border-top: 1px solid rgba(255,255,255,0.1); padding-top: 1.5rem; }
 
+        /* Barra de Progresso Degradê Dinâmico */
         .progress-track { height: 16px; border-radius: 8px; background: rgba(255,255,255,0.05); overflow: hidden; border: 1px solid rgba(255,255,255,0.05); }
-        .progress-bar-fill { height: 100%; transition: width 1.5s cubic-bezier(0.4, 0, 0.2, 1); border-radius: 8px; }
+        .progress-bar-fill { height: 100%; transition: width 1.2s cubic-bezier(0.4, 0, 0.2, 1); border-radius: 8px; }
 
         .glass { background: rgba(255, 255, 255, 0.03); backdrop-filter: blur(12px); border: 1px solid rgba(255, 255, 255, 0.1); }
         .scrollbar-hide::-webkit-scrollbar { display: none; }
@@ -87,9 +85,9 @@
 </head>
 <body class="auth-body">
 
-<!-- Tela de Login -->
+<!-- Login Screen -->
 <div id="auth-screen" class="fixed inset-0 z-[2000] flex items-center justify-center p-6">
-    <div class="auth-card text-center">
+    <div class="auth-card">
         <div class="logo-box">
              <img src="logo-D2-Group-preto.png" alt="D2 Group" class="h-10 brightness-0 invert">
         </div>
@@ -102,7 +100,7 @@
 
             <div>
                 <label class="label-auth">E-mail Corporativo</label>
-                <input type="email" id="email" required class="auth-input" placeholder="usuario@d2smarthome.com">
+                <input type="email" id="email" required class="auth-input" placeholder="usuario@allcablingtech.com">
             </div>
 
             <div class="relative">
@@ -125,8 +123,8 @@
     </div>
 </div>
 
-<!-- Dashboard Principal -->
-<div id="main-app" class="hidden min-h-screen flex flex-col app-body-dark">
+<!-- Interface Interna -->
+<div id="main-app" class="hidden min-h-screen flex flex-col app-body-dark text-center">
     <header class="no-print bg-white/5 backdrop-blur-md border-b border-white/5 p-4 sticky top-0 z-40">
         <div class="max-w-7xl mx-auto flex justify-between items-center">
             <div class="flex items-center gap-6">
@@ -211,9 +209,9 @@
                 <h3 class="text-xl font-black text-gold mb-8 uppercase tracking-tighter" data-i18n="team_title">Gestão de Equipe</h3>
                 <form id="team-form" class="space-y-6">
                     <input type="hidden" id="t-id">
-                    <div class="space-y-1"><label class="label-auth">E-mail do Membro</label><input type="email" id="t-email" required class="modern-input"></div>
+                    <div class="space-y-1"><label class="label-auth">E-mail</label><input type="email" id="t-email" required class="modern-input"></div>
                     <div class="space-y-1 relative">
-                        <label class="label-auth">Definir Senha</label>
+                        <label class="label-auth">Senha</label>
                         <input type="password" id="t-pass" required class="modern-input">
                         <button type="button" onclick="window.togglePassword('t-pass', 'eye-team-btn')" class="password-toggle" id="eye-team-btn" style="top:70%"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg></button>
                     </div>
@@ -223,8 +221,7 @@
             <div id="users-list" class="grid grid-cols-1 md:grid-cols-2 gap-8 text-left max-w-7xl mx-auto"></div>
         </div>
 
-        <div id="view-reports" class="hidden space-y-8 max-w-7xl mx-auto">
-            <!-- FILTROS EXCLUSIVOS DOS RELATÓRIOS -->
+        <div id="view-reports" class="hidden space-y-8 max-w-7xl mx-auto text-left">
             <div class="flex justify-center gap-4 mb-8 no-print">
                 <button onclick="selectUnit('Smart Home')" id="unit-smart" class="unit-pill">SMART HOME</button>
                 <button onclick="selectUnit('HVAC')" id="unit-hvac" class="unit-pill">HVAC</button>
@@ -237,7 +234,7 @@
 
 <script type="module">
     import { initializeApp, deleteApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
-    import { getAuth, signInWithEmailAndPassword, signInWithCustomToken, signInAnonymously, createUserWithEmailAndPassword, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
+    import { getAuth, signInWithEmailAndPassword, signInWithCustomToken, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
     import { getFirestore, collection, doc, updateDoc, addDoc, deleteDoc, onSnapshot, serverTimestamp, arrayUnion } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
 
     const firebaseConfig = {
@@ -261,20 +258,20 @@
         pt: { 
             login_sub: "Sistema Integrado de Gestão", login_err: "Dados inválidos. Procure seu administrador.", 
             btn_login: "Acessar Sistema", admin_panel: "Gestão Corporativa", nav_proj: "Projetos", nav_new: "Nova Obra", nav_rep: "Relatórios", nav_users: "Equipe",
-            form_new_title: "Registrar Obra", label_div: "Unidade", label_client: "Cliente", label_seller: "Vendedor", label_value: "Valor do Contrato", 
+            form_new_title: "Registrar Obra", label_div: "Unidade", label_client: "Cliente", label_seller: "Vendedor", label_value: "Contrato", 
             label_comm: "Comissão", label_method: "Pagamento", label_start: "Início", label_end: "Entrega", label_status: "Status",
             btn_save: "Salvar Registro", team_title: "Gestão de Equipe", btn_team: "Salvar e Autorizar Acesso",
-            timeline: "Cronograma", status_overdue: "ATRASADA", status_finished: "CONCLUÍDA", days_left: "DIAS RESTANTES",
-            finance_btn: "FINANCEIRO VENDEDOR", net_base: "Base Líquida", balance: "Saldo", report_title: "RELATÓRIO EXECUTIVO"
+            timeline: "Timeline", status_overdue: "ATRASADA", status_finished: "CONCLUÍDA", days_left: "DIAS RESTANTES",
+            finance_btn: "FINANCEIRO VENDEDOR", net_base: "Líquido", balance: "Saldo", history: "Histórico de Pagamentos", report_title: "RELATÓRIO EXECUTIVO"
         },
         en: { 
             login_sub: "Integrated Management System", login_err: "Invalid credentials. Contact administrator.", 
             btn_login: "Access System", admin_panel: "Corporate Management", nav_proj: "Projects", nav_new: "New Entry", nav_rep: "Reports", nav_users: "Team",
-            form_new_title: "Register Project", label_div: "Unit", label_client: "Client", label_seller: "Sales Rep", label_value: "Contract Value", 
+            form_new_title: "Register Project", label_div: "Unit", label_client: "Client", label_seller: "Sales Rep", label_value: "Contract", 
             label_comm: "Commission", label_method: "Payment", label_start: "Start", label_end: "Deadline", label_status: "Status",
             btn_save: "Save Entry", team_title: "Team Management", btn_team: "Authorize Access",
             timeline: "Timeline", status_overdue: "OVERDUE", status_finished: "FINISHED", days_left: "DAYS LEFT",
-            finance_btn: "SALES FINANCE", net_base: "Net Base", balance: "Balance", report_title: "EXECUTIVE REPORT"
+            finance_btn: "SALES FINANCE", net_base: "Net", balance: "Balance", history: "Payment History", report_title: "EXECUTIVE REPORT"
         }
     };
 
@@ -306,7 +303,7 @@
     window.toggleTheme = () => { 
         state.theme = state.theme === 'dark' ? 'light' : 'dark'; 
         const appDiv = document.getElementById('main-app');
-        if(appDiv) appDiv.className = state.theme === 'dark' ? 'min-h-screen flex flex-col app-body-dark' : 'min-h-screen flex flex-col app-body-light light';
+        if(appDiv) appDiv.className = state.theme === 'dark' ? 'min-h-screen flex flex-col app-body-dark text-center' : 'min-h-screen flex flex-col app-body-light light text-center';
         document.getElementById('theme-icon-light').classList.toggle('hidden'); 
         document.getElementById('theme-icon-dark').classList.toggle('hidden'); 
     };
@@ -347,12 +344,14 @@
     window.handleLogout = () => signOut(auth).then(() => location.reload());
 
     function getFin(p) {
-        let base = (p.metodo === 'CC' || p.metodo.includes('Cartão')) ? p.valorTotal * 0.97 : p.valorTotal;
-        let comm = base * (p.percComissao / 100);
-        let sum = (p.pagamentosEfetuados || []).reduce((a, c) => a + parseFloat(c.valor), 0);
-        let bal = Math.max(0, comm - sum);
-        let sc = sum >= comm ? "bg-emerald-500" : (sum > 0 ? "bg-orange-500" : "bg-red-500");
-        return { base, comm, sum, bal, sc };
+        let isCC = (p.metodo === 'CC' || p.metodo.toLowerCase().includes('cartão'));
+        let base = isCC ? p.valorTotal * 0.97 : p.valorTotal;
+        let commTotal = base * (p.percComissao / 100);
+        let pays = p.pagamentosEfetuados || [];
+        let totalPaid = pays.reduce((a, c) => a + parseFloat(c.valor), 0);
+        let balance = Math.max(0, commTotal - totalPaid);
+        let sc = totalPaid >= commTotal ? "bg-emerald-500" : (totalPaid > 0 ? "bg-orange-500" : "bg-red-500");
+        return { base, commTotal, totalPaid, balance, statusColor: sc, isCC };
     }
 
     function renderProjects() {
@@ -362,23 +361,38 @@
         filtered.forEach(p => {
             const s = new Date(p.dataInicio).getTime(), e = new Date(p.dataEntrega).getTime(), n = new Date().getTime();
             let prog = n >= s ? (n > e ? 100 : Math.floor(((n - s) / (e - s)) * 100)) : 0;
-            let bc = prog < 35 ? "bg-red-500" : (prog < 75 ? "bg-orange-500" : "bg-emerald-500"); if (n > e && p.status !== 'Finalizado') bc = "bg-red-800 animate-pulse";
+            
+            // Lógica de Degradê Dinâmico ORIGINAL: Verde -> Amarelo -> Vermelho
+            let r, g;
+            if (prog < 50) { r = (prog * 5.1); g = 255; } 
+            else { r = 255; g = (255 - (prog - 50) * 5.1); }
+            let colorHex = `rgb(${Math.floor(r)}, ${Math.floor(g)}, 0)`;
+            if (n > e && p.status !== 'Finalizado') colorHex = 'rgb(180, 0, 0)';
+
             const f = getFin(p);
             grid.innerHTML += `<div class="glass p-8 rounded-[40px] border-l-[8px] relative shadow-2xl" style="border-left-color: ${p.status === 'Finalizado' ? '#10b981' : '#f59e0b'}">
-                <div class="absolute top-6 right-6 flex items-center gap-3"><span class="status-badge ${f.sc}"></span><button onclick="window.editP('${p.id}')"><i data-lucide="edit-3" class="w-4 h-4 text-slate-400"></i></button><button onclick="window.deleteP('${p.id}')"><i data-lucide="trash-2" class="w-4 h-4 text-red-400"></i></button></div>
-                <div class="mb-6"><h4 class="font-black text-xl uppercase truncate pr-20">${p.cliente}</h4><p class="text-[10px] font-bold text-slate-500 uppercase tracking-widest mt-1">${p.vendedor} • ${p.metodo}</p></div>
-                <div class="space-y-3 mb-8"><div class="flex justify-between text-[10px] font-black uppercase text-slate-400"><span>${t.timeline}</span><span class="text-gold font-black">${prog}%</span></div>
-                <div class="progress-track"><div class="progress-bar-fill ${bc}" style="width: ${prog}%"></div></div>
-                <div class="flex justify-between text-[9px] font-extrabold uppercase"><span>${new Date(p.dataInicio).toLocaleDateString()}</span><span class="${n > e && p.status !== 'Finalizado' ? 'text-red-500' : 'text-gold'}">${n > e && p.status !== 'Finalizado' ? t.status_overdue : (prog === 100 ? t.status_finished : Math.ceil((e-n)/(1000*3600*24))+' '+t.days_left)}</span></div></div>
+                <div class="absolute top-6 right-6 flex items-center gap-3"><span class="status-badge ${f.statusColor}"></span><button onclick="window.editP('${p.id}')"><i data-lucide="edit-3" class="w-4 h-4 text-slate-400"></i></button><button onclick="window.deleteP('${p.id}')"><i data-lucide="trash-2" class="w-4 h-4 text-red-400"></i></button></div>
+                <div class="mb-6 text-left"><h4 class="font-black text-xl uppercase truncate pr-20">${p.cliente}</h4><p class="text-[10px] font-bold text-slate-500 uppercase tracking-widest mt-1">${p.vendedor} • ${p.metodo}</p></div>
+                <div class="space-y-3 mb-8 text-left">
+                    <div class="flex justify-between text-[10px] font-black uppercase text-slate-400"><span>${t.timeline}</span><span style="color: ${colorHex}">${prog}%</span></div>
+                    <div class="progress-track"><div class="progress-bar-fill" style="width: ${prog}%; background-color: ${colorHex}; ${n > e && p.status !== 'Finalizado' ? 'animation: pulse 1s infinite' : ''}"></div></div>
+                    <div class="flex justify-between text-[9px] font-extrabold uppercase"><span>${new Date(p.dataInicio).toLocaleDateString()}</span><span class="${n > e && p.status !== 'Finalizado' ? 'text-red-500' : 'text-gold'}">${n > e && p.status !== 'Finalizado' ? t.status_overdue : (prog === 100 ? t.status_finished : Math.ceil((e-n)/(1000*3600*24))+' '+t.days_left)}</span></div>
+                </div>
                 <div class="bg-black/30 p-6 rounded-3xl border border-white/5 shadow-inner"><p class="text-[9px] font-black text-slate-500 uppercase mb-1 text-center">Valor do Contrato</p><p class="text-2xl font-black text-white text-center">${formatCurr(p.valorTotal)}</p></div>
                 <button onclick="window.toggleFinance('${p.id}')" class="w-full mt-6 py-2 text-[10px] font-black uppercase text-gold hover:underline flex items-center justify-center gap-2"><i data-lucide="wallet" class="w-4 h-4"></i> ${t.finance_btn}</button>
                 <div id="fin-${p.id}" class="finance-panel">
-                    <div class="bg-gold/5 p-4 rounded-2xl border border-gold/10 space-y-4">
-                        <div class="flex justify-between"><div><p class="text-[8px] font-bold text-gold/60 uppercase">Comissão</p><p class="text-lg font-black text-gold">${formatCurr(f.comm)}</p></div>
-                        <div class="text-right"><p class="text-[8px] font-bold text-gold/60 uppercase">Saldo</p><p class="text-lg font-black ${f.bal > 0 ? 'text-red-400' : 'text-emerald-400'}">${formatCurr(f.bal)}</p></div></div>
-                        <div class="mt-4 pt-4 border-t border-white/5 admin-only ${state.user.email !== SUPER_ADMIN ? 'hidden' : ''}">
+                    <div class="bg-gold/5 p-4 rounded-2xl border border-gold/10 space-y-4 text-left">
+                        <div class="flex justify-between"><div><p class="text-[8px] font-bold text-gold/60 uppercase">Comissão Total ${f.isCC ? '(Net -3%)' : ''}</p><p class="text-lg font-black text-gold">${formatCurr(f.commTotal)}</p></div>
+                        <div class="text-right"><p class="text-[8px] font-bold text-gold/60 uppercase">Saldo a Pagar</p><p class="text-lg font-black ${f.balance > 0 ? 'text-red-400' : 'text-emerald-400'}">${formatCurr(f.balance)}</p></div></div>
+                        <div class="space-y-2">
+                            <p class="text-[9px] font-black text-slate-500 uppercase border-b border-white/5 pb-1">${t.history}</p>
+                            <div class="max-h-32 overflow-y-auto scrollbar-hide">
+                                ${(p.pagamentosEfetuados || []).map(pay => `<div class="flex justify-between text-[10px] py-1 border-b border-white/5"><span>${new Date(pay.data).toLocaleDateString()}</span><span class="font-bold text-emerald-500">+ ${formatCurr(pay.valor)}</span></div>`).join('') || '<p class="text-[9px] italic opacity-50">Sem histórico</p>'}
+                            </div>
+                        </div>
+                        <div class="mt-4 pt-4 border-t border-white/5 admin-only ${state.user?.email !== SUPER_ADMIN ? 'hidden' : ''}">
                             <div class="grid grid-cols-2 gap-2"><input type="number" id="pay-val-${p.id}" placeholder="$" class="modern-input !pl-4 h-10"><input type="date" id="pay-date-${p.id}" class="modern-input !pl-4 h-10"></div>
-                            <button onclick="window.addPayment('${p.id}')" class="w-full mt-2 bg-emerald-600/20 text-emerald-400 border border-emerald-500/30 p-2 rounded-lg text-[9px] font-black uppercase tracking-widest hover:bg-emerald-500 hover:text-black transition-all">Lançar Pagamento</button>
+                            <button onclick="window.addPayment('${p.id}')" class="w-full mt-2 btn-premium-gold !py-2 !text-[9px]">Lançar Pagamento</button>
                         </div>
                     </div>
                 </div></div>`;
@@ -391,15 +405,15 @@
         const t = translations[state.lang]; let tv = 0, tc = 0;
         const filtered = state.projects.filter(p => state.company === 'Ambas' || p.empresa === state.company);
         const rows = filtered.map(p => {
-            const f = getFin(p); tv += p.valorTotal; tc += f.comm;
+            const f = getFin(p); tv += p.valorTotal; tc += f.commTotal;
             const s = new Date(p.dataInicio).getTime(), e = new Date(p.dataEntrega).getTime(), n = new Date().getTime();
             let prog = n >= s ? (n > e ? 100 : Math.floor(((n - s) / (e - s)) * 100)) : 0;
-            return `<tr class="border-b border-slate-100 text-xs text-left text-slate-800"><td class="p-4 font-black uppercase">${p.cliente}</td><td class="p-4">${p.vendedor}</td><td class="p-4 text-center">${prog}%</td><td class="p-4 text-right">${formatCurr(p.valorTotal)}</td><td class="p-4 text-right text-slate-400 italic">${formatCurr(f.base)}</td><td class="p-4 text-right font-black text-amber-600">${formatCurr(f.comm)}</td></tr>`;
+            return `<tr class="border-b border-slate-100 text-xs text-left text-slate-800"><td class="p-4 font-black uppercase">${p.cliente}</td><td class="p-4">${p.vendedor}</td><td class="p-4 text-center">${prog}%</td><td class="p-4 text-right">${formatCurr(p.valorTotal)}</td><td class="p-4 text-right text-slate-400 italic">${formatCurr(f.base)}</td><td class="p-4 text-right font-black text-amber-600">${formatCurr(f.commTotal)}</td></tr>`;
         }).join('');
-        out.innerHTML = `<div class="bg-white text-slate-950 p-12 rounded-[50px] shadow-2xl border-8 border-slate-50">
+        out.innerHTML = `<div class="bg-white text-slate-950 p-12 rounded-[50px] shadow-2xl border-8 border-slate-50 text-left">
             <div class="flex justify-between items-center border-b-[8px] border-slate-950 pb-10 mb-10"><div class="logo-frame-sm border p-2 rounded-xl"><img src="logo-D2-Group-preto.png" class="h-12"></div><div class="text-right"><h2 class="text-3xl font-black uppercase tracking-tighter">${t.report_title}</h2><p class="text-slate-400 font-black uppercase text-[10px]">${new Date().toLocaleDateString()}</p></div></div>
             <div class="overflow-x-auto"><table class="w-full"><thead><tr class="bg-slate-50 font-black uppercase text-[10px] text-slate-500 text-left"><th class="p-4">Obra</th><th class="p-4">Vendedor</th><th class="p-4 text-center">Prog. (%)</th><th class="p-4 text-right">Contrato</th><th class="p-4 text-right">Líquido</th><th class="p-4 text-right">Comissão</th></tr></thead><tbody>${rows}</tbody></table></div>
-            <div class="mt-10 pt-10 border-t-[8px] border-slate-950 flex justify-end gap-16"><div class="text-right"><p class="text-[11px] font-black uppercase text-slate-400 mb-1">TOTAL CONTRATO</p><p class="text-4xl font-black">${formatCurr(tv)}</p></div><div class="text-right"><p class="text-[11px] font-black uppercase text-amber-600 mb-1">TOTAL COMISSÕES</p><p class="text-4xl font-black text-amber-600">${formatCurr(tc)}</p></div></div></div>`;
+            <div class="mt-10 pt-10 border-t-[8px] border-slate-950 flex justify-end gap-16"><div class="text-right"><p class="text-[11px] font-black uppercase text-slate-400 mb-1">TOTAL GERAL</p><p class="text-4xl font-black">${formatCurr(tv)}</p></div><div class="text-right"><p class="text-[11px] font-black uppercase text-amber-600 mb-1">COMISSÕES TOTAIS</p><p class="text-4xl font-black text-amber-600">${formatCurr(tc)}</p></div></div></div>`;
     }
 
     onAuthStateChanged(auth, (u) => {
@@ -430,7 +444,7 @@
                 container.innerHTML = team.map(u => `<div class="glass p-6 rounded-[24px] flex justify-between items-center border-l-8 border-gold shadow-lg transition-all hover:scale-[1.01]">
                     <div class="text-left"><p class="font-black text-slate-100 text-lg">${u.email}</p><p class="text-[11px] text-slate-500 mt-1 uppercase tracking-widest">Senha: <span class="text-gold font-bold normal-case">${u.password}</span></p></div>
                     <div class="flex gap-2">
-                        <button onclick="window.editTeamMember('${u.id}', '${u.email}', '${u.password}')" class="p-2 text-gold hover:bg-gold/10 rounded-lg"><i data-lucide="settings" size="18"></i></button>
+                        <button onclick="window.editTeamMember('${u.id}', '${u.email}', '${u.password}')" class="p-2 text-gold hover:bg-gold/10 rounded-lg"><i data-lucide="edit" size="18"></i></button>
                         <button onclick="window.deleteTeam('${u.id}')" class="p-2 text-red-500 hover:bg-red-500/10 rounded-lg"><i data-lucide="user-minus" size="18"></i></button>
                     </div></div>`).join('');
                 lucide.createIcons();
