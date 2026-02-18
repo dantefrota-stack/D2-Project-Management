@@ -13,7 +13,7 @@
 
         /* Design Login - Enterprise Portal Pattern */
         .auth-body { background-color: #f1f5f9; color: #0f172a; display: flex; align-items: center; justify-content: center; min-height: 100vh; }
-        .auth-card { 
+        .auth-card {
             background: white; border-radius: 40px; width: 100%; max-width: 440px;
             padding: 48px; box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.1); text-align: center;
         }
@@ -26,24 +26,24 @@
         .auth-input:focus { border-color: var(--gold); box-shadow: 0 0 0 4px rgba(251, 191, 36, 0.1); }
         .btn-access {
             width: 100%; background: var(--d2-blue); color: white; padding: 18px;
-            border-radius: 14px; font-weight: 800; text-transform: uppercase; 
+            border-radius: 14px; font-weight: 800; text-transform: uppercase;
             letter-spacing: 0.1em; transition: all 0.3s; margin-top: 10px; border: none; cursor: pointer;
         }
         .btn-access:hover { transform: translateY(-2px); box-shadow: 0 10px 20px rgba(15, 23, 42, 0.2); }
 
         /* Interface Interna */
         .app-body-dark { background-color: #030508; color: #f1f5f9; }
-        .modern-input { 
-            width: 100%; padding: 14px 45px 14px 16px; border-radius: 12px; 
-            border: 1px solid rgba(148, 163, 184, 0.2); background: rgba(0,0,0,0.5); 
+        .modern-input {
+            width: 100%; padding: 14px 45px 14px 16px; border-radius: 12px;
+            border: 1px solid rgba(148, 163, 184, 0.2); background: rgba(0,0,0,0.5);
             color: inherit; outline: none; transition: all 0.2s; font-size: 14px;
         }
         .light .modern-input { background: #fff; border: 1px solid #cbd5e1; color: #000; }
 
         /* FIX DO OLHO - SVG Puro embutido */
-        .password-toggle { 
-            position: absolute; right: 12px; top: 50%; transform: translateY(-50%); 
-            z-index: 100; color: var(--gold); cursor: pointer; 
+        .password-toggle {
+            position: absolute; right: 12px; top: 50%; transform: translateY(-50%);
+            z-index: 100; color: var(--gold); cursor: pointer;
             background: rgba(0,0,0,0.2); border-radius: 8px; padding: 6px;
             display: flex; align-items: center; justify-content: center; border: none;
         }
@@ -86,6 +86,15 @@
         .modal-overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.7); z-index: 1000; display: none; align-items: center; justify-content: center; }
         .modal-overlay.active { display: flex; }
         .modal-content { background: #1e293b; border-radius: 24px; padding: 32px; max-width: 600px; width: 90%; max-height: 80vh; overflow-y: auto; }
+
+        /* Pequenos estilos auxiliares (não altera estrutura) */
+        .flag-btn { border: 1px solid rgba(15,23,42,0.12); border-radius: 14px; padding: 10px; transition: .2s; background: #fff; }
+        .flag-btn.active { border-color: var(--gold); box-shadow: 0 0 0 4px rgba(251,191,36,.12); }
+        .tab-btn { color: rgba(148,163,184,0.9); }
+        .tab-active { color: var(--gold); border-bottom: 2px solid var(--gold); }
+        .status-badge { width: 10px; height: 10px; border-radius: 999px; display: inline-block; }
+        .text-gold { color: var(--gold); }
+        @keyframes pulse { 0%,100%{opacity:1} 50%{opacity:.5} }
     </style>
 </head>
 <body class="auth-body">
@@ -102,6 +111,8 @@
             <div id="login-error-msg" class="hidden p-4 bg-red-50 border border-red-100 rounded-xl text-red-600 text-[10px] font-bold text-center uppercase tracking-widest leading-relaxed">
                 Dados inválidos. Caso tenha perdido sua senha ou usuário, procure seu administrador.
             </div>
+
+            <div id="login-hint-msg" class="hidden p-4 bg-amber-50 border border-amber-100 rounded-xl text-amber-700 text-[10px] font-bold text-center uppercase tracking-widest leading-relaxed"></div>
 
             <div>
                 <label class="label-auth">E-mail Corporativo</label>
@@ -290,8 +301,9 @@
 </div>
 
 <script type="module">
+    // Firebase (Modular v11) - FIX: métodos antigos removidos (onAuthStateChanged/signOut)
     import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
-    import { getAuth, signInWithEmailAndPassword } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
+    import { getAuth, signInWithEmailAndPassword, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
     import { getFirestore, collection, doc, updateDoc, addDoc, deleteDoc, onSnapshot, serverTimestamp, arrayUnion } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
 
     const firebaseConfig = {
@@ -311,15 +323,36 @@
 
     let state = { user: null, projects: [], company: 'Ambas', lang: 'pt', theme: 'dark', editingPayments: null };
 
+    // Helpers de UI de erro (mantém layout; melhora diagnóstico)
+    function showLoginError(msg) {
+        const box = document.getElementById('login-error-msg');
+        const hint = document.getElementById('login-hint-msg');
+        if (hint) hint.classList.add('hidden');
+
+        if (box) {
+            box.textContent = msg || 'Falha no login.';
+            box.classList.remove('hidden');
+        }
+    }
+    function showLoginHint(msg) {
+        const hint = document.getElementById('login-hint-msg');
+        if (!hint) return;
+        hint.textContent = msg;
+        hint.classList.remove('hidden');
+    }
+    function hideLoginMessages() {
+        document.getElementById('login-error-msg')?.classList.add('hidden');
+        document.getElementById('login-hint-msg')?.classList.add('hidden');
+    }
+
     // Log de Acessos
     function logAccess(user, action) {
         const logs = JSON.parse(localStorage.getItem('access_logs') || '[]');
         logs.unshift({
             timestamp: new Date().toISOString(),
             user: user.email || user,
-            action: action
+            action
         });
-        // Manter apenas últimos 500 registros
         if (logs.length > 500) logs.splice(500);
         localStorage.setItem('access_logs', JSON.stringify(logs));
     }
@@ -356,8 +389,8 @@
         if (!container || !state.editingPayments) return;
         container.innerHTML = state.editingPayments.payments.map((pay, i) => `
             <div class="flex items-center gap-4 p-4 bg-white/5 rounded-xl border border-white/10">
-                <input type="date" value="${pay.data}" onchange="updatePaymentField(${i}, 'data', this.value)" class="modern-input flex-1">
-                <input type="number" step="0.01" value="${pay.valor}" onchange="updatePaymentField(${i}, 'valor', this.value)" class="modern-input flex-1">
+                <input type="date" value="${pay.data || ''}" onchange="updatePaymentField(${i}, 'data', this.value)" class="modern-input flex-1">
+                <input type="number" step="0.01" value="${(pay.valor ?? 0)}" onchange="updatePaymentField(${i}, 'valor', this.value)" class="modern-input flex-1">
                 <button onclick="removePaymentFromEdit(${i})" class="p-2 bg-red-500/20 text-red-400 rounded-lg hover:bg-red-500/30">
                     <i data-lucide="trash-2" class="w-5 h-5"></i>
                 </button>
@@ -367,13 +400,13 @@
                 + Adicionar Novo Pagamento
             </button>
         `;
-        lucide.createIcons();
+        try { lucide.createIcons(); } catch {}
     }
 
     window.updatePaymentField = (index, field, value) => {
         if (!state.editingPayments) return;
         if (field === 'data') state.editingPayments.payments[index].data = value;
-        if (field === 'valor') state.editingPayments.payments[index].valor = parseFloat(value);
+        if (field === 'valor') state.editingPayments.payments[index].valor = parseFloat(value || 0);
     };
 
     window.removePaymentFromEdit = (index) => {
@@ -401,19 +434,19 @@
     };
 
     const translations = {
-        pt: { 
-            login_sub: "Sistema Integrado de Gestão", login_err: "Dados inválidos. Procure seu administrador.", 
+        pt: {
+            login_sub: "Sistema Integrado de Gestão", login_err: "Dados inválidos. Procure seu administrador.",
             btn_login: "Acessar Sistema", admin_panel: "Gestão Corporativa", nav_proj: "Projetos", nav_new: "Nova Obra", nav_rep: "Relatórios", nav_users: "Equipe",
-            form_new_title: "Registrar Obra", label_div: "Unidade", label_client: "Cliente", label_seller: "Vendedor", label_value: "Contrato", 
+            form_new_title: "Registrar Obra", label_div: "Unidade", label_client: "Cliente", label_seller: "Vendedor", label_value: "Contrato",
             label_comm: "Comissão", label_method: "Pagamento", label_start: "Início", label_end: "Entrega", label_status: "Status",
             btn_save: "Salvar Registro", team_title: "Gestão de Equipe", btn_team: "Salvar e Autorizar Acesso",
             timeline: "Timeline", status_overdue: "ATRASADA", status_finished: "CONCLUÍDA", days_left: "DIAS RESTANTES",
             finance_btn: "FINANCEIRO VENDEDOR", net_base: "Líquido", balance: "Saldo", history: "Histórico de Pagamentos", report_title: "RELATÓRIO EXECUTIVO"
         },
-        en: { 
-            login_sub: "Integrated Management System", login_err: "Invalid credentials. Contact administrator.", 
+        en: {
+            login_sub: "Integrated Management System", login_err: "Invalid credentials. Contact administrator.",
             btn_login: "Access System", admin_panel: "Corporate Management", nav_proj: "Projects", nav_new: "New Entry", nav_rep: "Reports", nav_users: "Team",
-            form_new_title: "Register Project", label_div: "Unit", label_client: "Client", label_seller: "Sales Rep", label_value: "Contract", 
+            form_new_title: "Register Project", label_div: "Unit", label_client: "Client", label_seller: "Sales Rep", label_value: "Contract",
             label_comm: "Commission", label_method: "Payment", label_start: "Start", label_end: "Deadline", label_status: "Status",
             btn_save: "Save Entry", team_title: "Team Management", btn_team: "Authorize Access",
             timeline: "Timeline", status_overdue: "OVERDUE", status_finished: "FINISHED", days_left: "DAYS LEFT",
@@ -421,46 +454,72 @@
         }
     };
 
-    const formatCurr = (v) => new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD', minimumFractionDigits: 2 }).format(v);
+    const formatCurr = (v) => new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD', minimumFractionDigits: 2 }).format(Number(v || 0));
 
     window.togglePassword = (inputId, btnId) => {
-        const el = document.getElementById(inputId); const btn = document.getElementById(btnId);
-        if(el && btn) {
-            const isPass = el.type === 'password'; el.type = isPass ? 'text' : 'password';
-            btn.innerHTML = isPass ? '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M17.94 17.94A10.07 10.07 0 0 1 12 20c-7 0-11-8-11-8a18.45 18.45 0 0 1 5.06-5.94M9.9 4.24A9.12 9.12 0 0 1 12 4c7 0 11 8 11 8a18.5 18.5 0 0 1-2.16 3.19m-6.72-1.07a3 3 0 1 1-4.24-4.24"></path><line x1="1" y1="1" x2="23" y2="23"></line></svg>' : '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>';
+        const el = document.getElementById(inputId);
+        const btn = document.getElementById(btnId);
+        if (el && btn) {
+            const isPass = el.type === 'password';
+            el.type = isPass ? 'text' : 'password';
+            btn.innerHTML = isPass
+                ? '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M17.94 17.94A10.07 10.07 0 0 1 12 20c-7 0-11-8-11-8a18.45 18.45 0 0 1 5.06-5.94M9.9 4.24A9.12 9.12 0 0 1 12 4c7 0 11 8 11 8a18.5 18.5 0 0 1-2.16 3.19m-6.72-1.07a3 3 0 1 1-4.24-4.24"></path><line x1="1" y1="1" x2="23" y2="23"></line></svg>'
+                : '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>';
         }
     };
 
     window.setLang = (l) => {
         state.lang = l;
         document.querySelectorAll('.flag-btn').forEach(b => b.classList.toggle('active', b.id.includes(l)));
-        document.querySelectorAll('[data-i18n]').forEach(el => { const key = el.getAttribute('data-i18n'); if (translations[l][key]) el.innerText = translations[l][key]; });
-        renderProjects(); renderReport();
+        document.querySelectorAll('[data-i18n]').forEach(el => {
+            const key = el.getAttribute('data-i18n');
+            if (translations[l] && translations[l][key]) el.innerText = translations[l][key];
+        });
+        renderProjects();
+        renderReport();
     };
 
     window.selectUnit = (unit) => {
         state.company = unit;
         document.querySelectorAll('.unit-pill').forEach(b => b.classList.remove('active'));
-        const map = {'Smart Home': 'unit-smart', 'HVAC': 'unit-hvac', 'Ambas': 'unit-all'};
+        const map = { 'Smart Home': 'unit-smart', 'HVAC': 'unit-hvac', 'Ambas': 'unit-all' };
         document.getElementById(map[unit]).classList.add('active');
-        renderProjects(); renderReport();
+        renderProjects();
+        renderReport();
     };
 
-    window.toggleTheme = () => { 
-        state.theme = state.theme === 'dark' ? 'light' : 'dark'; 
+    window.toggleTheme = () => {
+        state.theme = state.theme === 'dark' ? 'light' : 'dark';
         const appDiv = document.getElementById('main-app');
-        if(appDiv) appDiv.className = state.theme === 'dark' ? 'min-h-screen flex flex-col app-body-dark text-center' : 'min-h-screen flex flex-col app-body-light light text-center';
-        document.getElementById('theme-icon-light').classList.toggle('hidden'); 
-        document.getElementById('theme-icon-dark').classList.toggle('hidden'); 
+        if (appDiv) appDiv.className = state.theme === 'dark'
+            ? 'min-h-screen flex flex-col app-body-dark text-center'
+            : 'min-h-screen flex flex-col app-body-light light text-center';
+
+        // Garantir estado correto dos ícones
+        const sun = document.getElementById('theme-icon-light');
+        const moon = document.getElementById('theme-icon-dark');
+        if (sun && moon) {
+            if (state.theme === 'dark') { sun.classList.add('hidden'); moon.classList.remove('hidden'); }
+            else { moon.classList.add('hidden'); sun.classList.remove('hidden'); }
+        }
+        try { lucide.createIcons(); } catch {}
     };
 
-    window.toggleFinance = (id) => { const el = document.getElementById(\`fin-\${id}\`); if(el) el.classList.toggle('open'); };
+    window.toggleFinance = (id) => {
+        const el = document.getElementById(`fin-${id}`);
+        if (el) el.classList.toggle('open');
+    };
 
-    window.addPayment = async (projectId) => { 
+    window.addPayment = async (projectId) => {
         if (!state.user) return;
-        const v = document.getElementById(\`pay-val-\${projectId}\`).value, d = document.getElementById(\`pay-date-\${projectId}\`).value; 
-        if(!v || !d) return; 
-        try { await updateDoc(doc(db, 'artifacts', appId, 'public', 'data', 'projects', projectId), { pagamentosEfetuados: arrayUnion({ valor: parseFloat(v), data: d }) }); } catch(e){} 
+        const v = document.getElementById(`pay-val-${projectId}`)?.value;
+        const d = document.getElementById(`pay-date-${projectId}`)?.value;
+        if (!v || !d) return;
+        try {
+            await updateDoc(doc(db, 'artifacts', appId, 'public', 'data', 'projects', projectId), {
+                pagamentosEfetuados: arrayUnion({ valor: parseFloat(v), data: d })
+            });
+        } catch (e) { console.error(e); }
     };
 
     window.editTeamMember = (id, email, pass) => {
@@ -470,123 +529,237 @@
         window.scrollTo({ top: 0, behavior: 'smooth' });
     };
 
-    window.deleteTeam = async (id) => { if(confirm("REMOVER ACESSO DESTE MEMBRO?")) await deleteDoc(doc(db, 'artifacts', appId, 'public', 'data', 'user_credentials', id)); };
-    window.deleteP = async (id) => { if(confirm("EXCLUIR ESTA OBRA?")) await deleteDoc(doc(db, 'artifacts', appId, 'public', 'data', 'projects', id)); };
+    window.deleteTeam = async (id) => {
+        if (confirm("REMOVER ACESSO DESTE MEMBRO?")) {
+            await deleteDoc(doc(db, 'artifacts', appId, 'public', 'data', 'user_credentials', id));
+        }
+    };
+    window.deleteP = async (id) => {
+        if (confirm("EXCLUIR ESTA OBRA?")) {
+            await deleteDoc(doc(db, 'artifacts', appId, 'public', 'data', 'projects', id));
+        }
+    };
 
-    window.editP = (id) => { 
-        const p = state.projects.find(x => x.id === id); if(!p) return; 
+    window.editP = (id) => {
+        const p = state.projects.find(x => x.id === id);
+        if (!p) return;
         document.getElementById('edit-id').value = id;
         document.getElementById('f-proposta').value = p.numeroProposta || '';
         document.getElementById('f-invoice').value = p.numeroInvoice || '';
-        document.getElementById('f-empresa').value = p.empresa; 
-        document.getElementById('f-cliente').value = p.cliente; document.getElementById('f-vendedor').value = p.vendedor; 
-        document.getElementById('f-valor').value = p.valorTotal; document.getElementById('f-comm').value = p.percComissao; 
-        document.getElementById('f-metodo').value = p.metodo; document.getElementById('f-inicio').value = p.dataInicio; 
-        document.getElementById('f-entrega').value = p.dataEntrega; document.getElementById('f-status').value = p.status; window.showView('new'); 
+        document.getElementById('f-empresa').value = p.empresa || 'Smart Home';
+        document.getElementById('f-cliente').value = p.cliente || '';
+        document.getElementById('f-vendedor').value = p.vendedor || '';
+        document.getElementById('f-valor').value = p.valorTotal ?? '';
+        document.getElementById('f-comm').value = p.percComissao ?? 5;
+        document.getElementById('f-metodo').value = p.metodo || 'Zelle';
+        document.getElementById('f-inicio').value = p.dataInicio || '';
+        document.getElementById('f-entrega').value = p.dataEntrega || '';
+        document.getElementById('f-status').value = p.status || 'Cotação';
+        window.showView('new');
     };
 
-    window.showView = (v) => { 
-        ['projects', 'new', 'reports', 'users', 'logs'].forEach(id => { const el = document.getElementById('view-'+id), tab = document.getElementById('tab-'+id); if(el) el.classList.add('hidden'); if(tab) tab.classList.remove('tab-active'); });
-        const tv = document.getElementById('view-'+v), tt = document.getElementById('tab-'+v); if(tv) tv.classList.remove('hidden'); if(tt) tt.classList.add('tab-active');
+    window.showView = (v) => {
+        ['projects', 'new', 'reports', 'users', 'logs'].forEach(id => {
+            const el = document.getElementById('view-' + id);
+            const tab = document.getElementById('tab-' + id);
+            if (el) el.classList.add('hidden');
+            if (tab) tab.classList.remove('tab-active');
+        });
+        const tv = document.getElementById('view-' + v);
+        const tt = document.getElementById('tab-' + v);
+        if (tv) tv.classList.remove('hidden');
+        if (tt) tt.classList.add('tab-active');
+
         if (v === 'logs') renderLogs();
-        lucide.createIcons(); 
+        try { lucide.createIcons(); } catch {}
     };
 
-    window.handleLogout = () => auth.signOut().then(() => location.reload());
+    // FIX: signOut no modular (v11)
+    window.handleLogout = () => signOut(auth).then(() => location.reload()).catch(console.error);
 
     function getFin(p) {
-        let isCC = (p.metodo === 'CC' || p.metodo.toLowerCase().includes('cartão'));
-        let base = isCC ? p.valorTotal * 0.97 : p.valorTotal;
-        let commTotal = base * (p.percComissao / 100);
-        let pays = p.pagamentosEfetuados || [];
-        let totalPaid = pays.reduce((a, c) => a + parseFloat(c.valor), 0);
-        let balance = Math.max(0, commTotal - totalPaid);
-        let sc = totalPaid >= commTotal ? "bg-emerald-500" : (totalPaid > 0 ? "bg-orange-500" : "bg-red-500");
-        return { base, commTotal, totalPaid, balance, statusColor: sc, isCC };
+        const metodo = String(p?.metodo || '');
+        const isCC = (metodo === 'CC' || metodo.toLowerCase().includes('cartão'));
+        const valorTotal = Number(p?.valorTotal || 0);
+
+        const base = isCC ? valorTotal * 0.97 : valorTotal;
+        const commTotal = base * (Number(p?.percComissao || 0) / 100);
+
+        const pays = Array.isArray(p?.pagamentosEfetuados) ? p.pagamentosEfetuados : [];
+        const totalPaid = pays.reduce((a, c) => a + Number(c?.valor || 0), 0);
+
+        const balance = Math.max(0, commTotal - totalPaid);
+        const statusColor = totalPaid >= commTotal ? "bg-emerald-500" : (totalPaid > 0 ? "bg-orange-500" : "bg-red-500");
+        return { base, commTotal, totalPaid, balance, statusColor, isCC };
     }
 
     function renderProjects() {
-        const grid = document.getElementById('view-projects'); if (!grid || !state.user) return;
-        grid.innerHTML = ''; const t = translations[state.lang];
+        const grid = document.getElementById('view-projects');
+        if (!grid || !state.user) return;
+
+        grid.innerHTML = '';
+        const t = translations[state.lang];
+
         const filtered = state.projects.filter(p => state.company === 'Ambas' || p.empresa === state.company);
+
         filtered.forEach(p => {
-            const s = new Date(p.dataInicio).getTime(), e = new Date(p.dataEntrega).getTime(), n = new Date().getTime();
-            let prog = n >= s ? (n > e ? 100 : Math.floor(((n - s) / (e - s)) * 100)) : 0;
+            const s = new Date(p.dataInicio).getTime();
+            const e = new Date(p.dataEntrega).getTime();
+            const n = Date.now();
+
+            let prog = (Number.isFinite(s) && Number.isFinite(e) && e > s)
+                ? (n >= s ? (n > e ? 100 : Math.floor(((n - s) / (e - s)) * 100)) : 0)
+                : 0;
 
             let r, g;
-            if (prog < 50) { r = (prog * 5.1); g = 255; } 
+            if (prog < 50) { r = (prog * 5.1); g = 255; }
             else { r = 255; g = (255 - (prog - 50) * 5.1); }
-            let colorHex = \`rgb(\${Math.floor(r)}, \${Math.floor(g)}, 0)\`;
+
+            let colorHex = `rgb(${Math.floor(r)}, ${Math.floor(g)}, 0)`;
             if (n > e && p.status !== 'Finalizado') colorHex = 'rgb(180, 0, 0)';
 
             const f = getFin(p);
-            const propInvoiceInfo = (p.numeroProposta || p.numeroInvoice) ? \`<div class="text-[9px] text-slate-500 mt-1">\${p.numeroProposta ? 'Prop: '+p.numeroProposta : ''}\${p.numeroProposta && p.numeroInvoice ? ' • ' : ''}\${p.numeroInvoice ? 'Inv: '+p.numeroInvoice : ''}</div>\` : '';
-            grid.innerHTML += \`<div class="glass p-8 rounded-[40px] border-l-[8px] relative shadow-2xl" style="border-left-color: \${p.status === 'Finalizado' ? '#10b981' : '#f59e0b'}">
-                <div class="absolute top-6 right-6 flex items-center gap-3"><span class="status-badge \${f.statusColor}"></span><button onclick="window.editP('\${p.id}')"><i data-lucide="edit-3" class="w-4 h-4 text-slate-400"></i></button><button onclick="window.deleteP('\${p.id}')"><i data-lucide="trash-2" class="w-4 h-4 text-red-400"></i></button></div>
-                <div class="mb-6 text-left"><h4 class="font-black text-xl uppercase truncate pr-20">\${p.cliente}</h4><p class="text-[10px] font-bold text-slate-500 uppercase tracking-widest mt-1">\${p.vendedor} • \${p.metodo}</p>\${propInvoiceInfo}</div>
-                <div class="space-y-3 mb-8 text-left">
-                    <div class="flex justify-between text-[10px] font-black uppercase text-slate-400"><span>\${t.timeline}</span><span style="color: \${colorHex}">\${prog}%</span></div>
-                    <div class="progress-track"><div class="progress-bar-fill" style="width: \${prog}%; background-color: \${colorHex}; \${n > e && p.status !== 'Finalizado' ? 'animation: pulse 1s infinite' : ''}"></div></div>
-                    <div class="flex justify-between text-[9px] font-extrabold uppercase"><span>\${new Date(p.dataInicio).toLocaleDateString()}</span><span class="\${n > e && p.status !== 'Finalizado' ? 'text-red-500' : 'text-gold'}">\${n > e && p.status !== 'Finalizado' ? t.status_overdue : (prog === 100 ? t.status_finished : Math.ceil((e-n)/(1000*3600*24))+' '+t.days_left)}</span></div>
+            const propInvoiceInfo = (p.numeroProposta || p.numeroInvoice)
+                ? `<div class="text-[9px] text-slate-500 mt-1">${p.numeroProposta ? 'Prop: ' + p.numeroProposta : ''}${p.numeroProposta && p.numeroInvoice ? ' • ' : ''}${p.numeroInvoice ? 'Inv: ' + p.numeroInvoice : ''}</div>`
+                : '';
+
+            grid.innerHTML += `<div class="glass p-8 rounded-[40px] border-l-[8px] relative shadow-2xl" style="border-left-color: ${p.status === 'Finalizado' ? '#10b981' : '#f59e0b'}">
+                <div class="absolute top-6 right-6 flex items-center gap-3">
+                    <span class="status-badge ${f.statusColor}"></span>
+                    <button onclick="window.editP('${p.id}')"><i data-lucide="edit-3" class="w-4 h-4 text-slate-400"></i></button>
+                    <button onclick="window.deleteP('${p.id}')"><i data-lucide="trash-2" class="w-4 h-4 text-red-400"></i></button>
                 </div>
-                <div class="bg-black/30 p-6 rounded-3xl border border-white/5 shadow-inner"><p class="text-[9px] font-black text-slate-500 uppercase mb-1 text-center">Valor do Contrato</p><p class="text-2xl font-black text-white text-center">\${formatCurr(p.valorTotal)}</p></div>
-                <button onclick="window.toggleFinance('\${p.id}')" class="w-full mt-6 py-2 text-[10px] font-black uppercase text-gold hover:underline flex items-center justify-center gap-2"><i data-lucide="wallet" class="w-4 h-4"></i> \${t.finance_btn}</button>
-                <div id="fin-\${p.id}" class="finance-panel">
+
+                <div class="mb-6 text-left">
+                    <h4 class="font-black text-xl uppercase truncate pr-20">${p.cliente || ''}</h4>
+                    <p class="text-[10px] font-bold text-slate-500 uppercase tracking-widest mt-1">${p.vendedor || ''} • ${p.metodo || ''}</p>
+                    ${propInvoiceInfo}
+                </div>
+
+                <div class="space-y-3 mb-8 text-left">
+                    <div class="flex justify-between text-[10px] font-black uppercase text-slate-400"><span>${t.timeline}</span><span style="color: ${colorHex}">${prog}%</span></div>
+                    <div class="progress-track"><div class="progress-bar-fill" style="width: ${prog}%; background-color: ${colorHex}; ${n > e && p.status !== 'Finalizado' ? 'animation: pulse 1s infinite' : ''}"></div></div>
+                    <div class="flex justify-between text-[9px] font-extrabold uppercase">
+                        <span>${p.dataInicio ? new Date(p.dataInicio).toLocaleDateString() : '-'}</span>
+                        <span class="${n > e && p.status !== 'Finalizado' ? 'text-red-500' : 'text-gold'}">
+                            ${n > e && p.status !== 'Finalizado'
+                                ? t.status_overdue
+                                : (prog === 100 ? t.status_finished : (Number.isFinite(e) ? Math.ceil((e - n) / (1000 * 3600 * 24)) : 0) + ' ' + t.days_left)}
+                        </span>
+                    </div>
+                </div>
+
+                <div class="bg-black/30 p-6 rounded-3xl border border-white/5 shadow-inner"><p class="text-[9px] font-black text-slate-500 uppercase mb-1 text-center">Valor do Contrato</p><p class="text-2xl font-black text-white text-center">${formatCurr(p.valorTotal)}</p></div>
+
+                <button onclick="window.toggleFinance('${p.id}')" class="w-full mt-6 py-2 text-[10px] font-black uppercase text-gold hover:underline flex items-center justify-center gap-2"><i data-lucide="wallet" class="w-4 h-4"></i> ${t.finance_btn}</button>
+
+                <div id="fin-${p.id}" class="finance-panel">
                     <div class="bg-gold/5 p-4 rounded-2xl border border-gold/10 space-y-4 text-left">
-                        <div class="flex justify-between"><div><p class="text-[8px] font-bold text-gold/60 uppercase">Comissão Total \${f.isCC ? '(Net -3%)' : ''}</p><p class="text-lg font-black text-gold">\${formatCurr(f.commTotal)}</p></div>
-                        <div class="text-right"><p class="text-[8px] font-bold text-gold/60 uppercase">Saldo a Pagar</p><p class="text-lg font-black \${f.balance > 0 ? 'text-red-400' : 'text-emerald-400'}">\${formatCurr(f.balance)}</p></div></div>
+                        <div class="flex justify-between">
+                            <div><p class="text-[8px] font-bold text-gold/60 uppercase">Comissão Total ${f.isCC ? '(Net -3%)' : ''}</p><p class="text-lg font-black text-gold">${formatCurr(f.commTotal)}</p></div>
+                            <div class="text-right"><p class="text-[8px] font-bold text-gold/60 uppercase">Saldo a Pagar</p><p class="text-lg font-black ${f.balance > 0 ? 'text-red-400' : 'text-emerald-400'}">${formatCurr(f.balance)}</p></div>
+                        </div>
+
                         <div class="space-y-2">
                             <div class="flex justify-between items-center">
-                                <p class="text-[9px] font-black text-slate-500 uppercase border-b border-white/5 pb-1">\${t.history}</p>
-                                <button onclick="openEditPaymentModal('\${p.id}')" class="text-[9px] font-bold text-gold hover:underline \${state.user?.email !== SUPER_ADMIN ? 'hidden' : ''}">✏️ Editar</button>
+                                <p class="text-[9px] font-black text-slate-500 uppercase border-b border-white/5 pb-1">${t.history}</p>
+                                <button onclick="openEditPaymentModal('${p.id}')" class="text-[9px] font-bold text-gold hover:underline ${state.user?.email !== SUPER_ADMIN ? 'hidden' : ''}">✏️ Editar</button>
                             </div>
                             <div class="max-h-32 overflow-y-auto scrollbar-hide">
-                                \${(p.pagamentosEfetuados || []).map(pay => \`<div class="flex justify-between text-[10px] py-1 border-b border-white/5"><span>\${new Date(pay.data).toLocaleDateString()}</span><span class="font-bold text-emerald-500">+ \${formatCurr(pay.valor)}</span></div>\`).join('') || '<p class="text-[9px] italic opacity-50">Sem histórico</p>'}
+                                ${(p.pagamentosEfetuados || []).map(pay => `<div class="flex justify-between text-[10px] py-1 border-b border-white/5"><span>${pay.data ? new Date(pay.data).toLocaleDateString() : '-'}</span><span class="font-bold text-emerald-500">+ ${formatCurr(pay.valor)}</span></div>`).join('') || '<p class="text-[9px] italic opacity-50">Sem histórico</p>'}
                             </div>
                         </div>
-                        <div class="mt-4 pt-4 border-t border-white/5 admin-only \${state.user?.email !== SUPER_ADMIN ? 'hidden' : ''}">
-                            <div class="grid grid-cols-2 gap-2"><input type="number" id="pay-val-\${p.id}" placeholder="$" class="modern-input !pl-4 h-10"><input type="date" id="pay-date-\${p.id}" class="modern-input !pl-4 h-10"></div>
-                            <button onclick="window.addPayment('\${p.id}')" class="w-full mt-2 btn-premium-gold !py-2 !text-[9px]">Lançar Pagamento</button>
+
+                        <div class="mt-4 pt-4 border-t border-white/5 admin-only ${state.user?.email !== SUPER_ADMIN ? 'hidden' : ''}">
+                            <div class="grid grid-cols-2 gap-2"><input type="number" id="pay-val-${p.id}" placeholder="$" class="modern-input !pl-4 h-10"><input type="date" id="pay-date-${p.id}" class="modern-input !pl-4 h-10"></div>
+                            <button onclick="window.addPayment('${p.id}')" class="w-full mt-2 btn-premium-gold !py-2 !text-[9px]">Lançar Pagamento</button>
                         </div>
                     </div>
-                </div></div>\`;
+                </div>
+            </div>`;
         });
-        lucide.createIcons();
+
+        try { lucide.createIcons(); } catch {}
     }
 
     function renderReport() {
-        const out = document.getElementById('report-output'); if (!out || !state.user) return;
-        const t = translations[state.lang]; let tv = 0, tc = 0;
+        const out = document.getElementById('report-output');
+        if (!out || !state.user) return;
+
+        const t = translations[state.lang];
+        let tv = 0, tc = 0;
+
         const filtered = state.projects.filter(p => state.company === 'Ambas' || p.empresa === state.company);
+
         const rows = filtered.map(p => {
-            const f = getFin(p); tv += p.valorTotal; tc += f.commTotal;
-            const s = new Date(p.dataInicio).getTime(), e = new Date(p.dataEntrega).getTime(), n = new Date().getTime();
-            let prog = n >= s ? (n > e ? 100 : Math.floor(((n - s) / (e - s)) * 100)) : 0;
-            return \`<tr class="border-b border-slate-100 text-xs text-left text-slate-800">
-                <td class="p-4 font-mono text-[10px]">\${p.numeroProposta || '-'}</td>
-                <td class="p-4 font-mono text-[10px]">\${p.numeroInvoice || '-'}</td>
-                <td class="p-4 font-black uppercase">\${p.cliente}</td>
-                <td class="p-4">\${p.vendedor}</td>
-                <td class="p-4 text-center">\${prog}%</td>
-                <td class="p-4 text-right">\${formatCurr(p.valorTotal)}</td>
-                <td class="p-4 text-right text-slate-400 italic">\${formatCurr(f.base)}</td>
-                <td class="p-4 text-right font-black text-amber-600">\${formatCurr(f.commTotal)}</td>
-            </tr>\`;
+            const f = getFin(p);
+            tv += Number(p.valorTotal || 0);
+            tc += Number(f.commTotal || 0);
+
+            const s = new Date(p.dataInicio).getTime();
+            const e = new Date(p.dataEntrega).getTime();
+            const n = Date.now();
+
+            let prog = (Number.isFinite(s) && Number.isFinite(e) && e > s)
+                ? (n >= s ? (n > e ? 100 : Math.floor(((n - s) / (e - s)) * 100)) : 0)
+                : 0;
+
+            return `<tr class="border-b border-slate-100 text-xs text-left text-slate-800">
+                <td class="p-4 font-mono text-[10px]">${p.numeroProposta || '-'}</td>
+                <td class="p-4 font-mono text-[10px]">${p.numeroInvoice || '-'}</td>
+                <td class="p-4 font-black uppercase">${p.cliente || ''}</td>
+                <td class="p-4">${p.vendedor || ''}</td>
+                <td class="p-4 text-center">${prog}%</td>
+                <td class="p-4 text-right">${formatCurr(p.valorTotal)}</td>
+                <td class="p-4 text-right text-slate-400 italic">${formatCurr(f.base)}</td>
+                <td class="p-4 text-right font-black text-amber-600">${formatCurr(f.commTotal)}</td>
+            </tr>`;
         }).join('');
-        out.innerHTML = \`<div class="bg-white text-slate-950 p-12 rounded-[50px] shadow-2xl border-8 border-slate-50 text-left">
-            <div class="flex justify-between items-center border-b-[8px] border-slate-950 pb-10 mb-10"><div class="logo-frame-sm border p-2 rounded-xl"><img src="logo-D2-Group-preto.png" class="h-12"></div><div class="text-right"><h2 class="text-3xl font-black uppercase tracking-tighter">\${t.report_title}</h2><p class="text-slate-400 font-black uppercase text-[10px]">\${new Date().toLocaleDateString()}</p></div></div>
-            <div class="overflow-x-auto"><table class="w-full"><thead><tr class="bg-slate-50 font-black uppercase text-[10px] text-slate-500 text-left"><th class="p-4">Nº Prop.</th><th class="p-4">Nº Inv.</th><th class="p-4">Obra</th><th class="p-4">Vendedor</th><th class="p-4 text-center">Prog. (%)</th><th class="p-4 text-right">Contrato</th><th class="p-4 text-right">Líquido</th><th class="p-4 text-right">Comissão</th></tr></thead><tbody>\${rows}</tbody></table></div>
-            <div class="mt-10 pt-10 border-t-[8px] border-slate-950 flex justify-end gap-16"><div class="text-right"><p class="text-[11px] font-black uppercase text-slate-400 mb-1">TOTAL GERAL</p><p class="text-4xl font-black">\${formatCurr(tv)}</p></div><div class="text-right"><p class="text-[11px] font-black uppercase text-amber-600 mb-1">COMISSÕES TOTAIS</p><p class="text-4xl font-black text-amber-600">\${formatCurr(tc)}</p></div></div></div>\`;
+
+        out.innerHTML = `<div class="bg-white text-slate-950 p-12 rounded-[50px] shadow-2xl border-8 border-slate-50 text-left">
+            <div class="flex justify-between items-center border-b-[8px] border-slate-950 pb-10 mb-10">
+                <div class="logo-frame-sm border p-2 rounded-xl"><img src="logo-D2-Group-preto.png" class="h-12"></div>
+                <div class="text-right">
+                    <h2 class="text-3xl font-black uppercase tracking-tighter">${t.report_title}</h2>
+                    <p class="text-slate-400 font-black uppercase text-[10px]">${new Date().toLocaleDateString()}</p>
+                </div>
+            </div>
+            <div class="overflow-x-auto">
+                <table class="w-full">
+                    <thead>
+                        <tr class="bg-slate-50 font-black uppercase text-[10px] text-slate-500 text-left">
+                            <th class="p-4">Nº Prop.</th><th class="p-4">Nº Inv.</th><th class="p-4">Obra</th><th class="p-4">Vendedor</th>
+                            <th class="p-4 text-center">Prog. (%)</th><th class="p-4 text-right">Contrato</th><th class="p-4 text-right">Líquido</th><th class="p-4 text-right">Comissão</th>
+                        </tr>
+                    </thead>
+                    <tbody>${rows}</tbody>
+                </table>
+            </div>
+            <div class="mt-10 pt-10 border-t-[8px] border-slate-950 flex justify-end gap-16">
+                <div class="text-right">
+                    <p class="text-[11px] font-black uppercase text-slate-400 mb-1">TOTAL GERAL</p>
+                    <p class="text-4xl font-black">${formatCurr(tv)}</p>
+                </div>
+                <div class="text-right">
+                    <p class="text-[11px] font-black uppercase text-amber-600 mb-1">COMISSÕES TOTAIS</p>
+                    <p class="text-4xl font-black text-amber-600">${formatCurr(tc)}</p>
+                </div>
+            </div>
+        </div>`;
     }
 
-    auth.onAuthStateChanged(u => {
+    // FIX: onAuthStateChanged no modular (v11)
+    onAuthStateChanged(auth, (u) => {
         state.user = u;
-        if(u){ 
+
+        if (u) {
             document.getElementById('auth-screen').classList.add('hidden');
             document.getElementById('main-app').classList.remove('hidden');
             document.body.className = 'app-body-dark';
-            document.getElementById('user-display').innerText = u.email ? u.email.split('@')[0].toUpperCase() : "USR"; 
-            if(u.email === SUPER_ADMIN) document.querySelectorAll('.admin-only').forEach(e => e.classList.remove('hidden')); 
+
+            document.getElementById('user-display').innerText = u.email ? u.email.split('@')[0].toUpperCase() : "USR";
+            if (u.email === SUPER_ADMIN) document.querySelectorAll('.admin-only').forEach(e => e.classList.remove('hidden'));
+
             initData();
             logAccess(u.email, 'Login');
         } else {
@@ -594,68 +767,128 @@
             document.getElementById('main-app').classList.add('hidden');
             document.body.className = 'auth-body';
         }
-        setLang(state.lang);
+
+        window.setLang(state.lang);
+        try { lucide.createIcons(); } catch {}
     });
 
-    function initData() { 
+    function initData() {
         if (!auth.currentUser) return;
+
         const projectsRef = collection(db, 'artifacts', appId, 'public', 'data', 'projects');
-        onSnapshot(projectsRef, snap => { state.projects = snap.docs.map(d => ({ id: d.id, ...d.data() })); renderProjects(); renderReport(); }, err => console.log(err)); 
-        if(auth.currentUser.email === SUPER_ADMIN) {
+        onSnapshot(
+            projectsRef,
+            snap => {
+                state.projects = snap.docs.map(d => ({ id: d.id, ...d.data() }));
+                renderProjects();
+                renderReport();
+            },
+            err => console.error(err)
+        );
+
+        if (auth.currentUser.email === SUPER_ADMIN) {
             onSnapshot(collection(db, 'artifacts', appId, 'public', 'data', 'user_credentials'), snap => {
                 const team = snap.docs.map(d => ({ id: d.id, ...d.data() }));
-                const container = document.getElementById('users-list'); if (!container) return;
-                container.innerHTML = team.map(u => \`<div class="glass p-6 rounded-[24px] flex justify-between items-center border-l-8 border-gold shadow-lg transition-all hover:scale-[1.01]">
-                    <div class="text-left"><p class="font-black text-slate-100 text-lg">\${u.email}</p><p class="text-[11px] text-slate-500 mt-1 uppercase tracking-widest">Senha: <span class="text-gold font-bold normal-case">\${u.password}</span></p></div>
+                const container = document.getElementById('users-list');
+                if (!container) return;
+
+                container.innerHTML = team.map(u => `<div class="glass p-6 rounded-[24px] flex justify-between items-center border-l-8 border-gold shadow-lg transition-all hover:scale-[1.01]">
+                    <div class="text-left"><p class="font-black text-slate-100 text-lg">${u.email}</p><p class="text-[11px] text-slate-500 mt-1 uppercase tracking-widest">Senha: <span class="text-gold font-bold normal-case">${u.password}</span></p></div>
                     <div class="flex gap-2">
-                        <button onclick="window.editTeamMember('\${u.id}', '\${u.email}', '\${u.password}')" class="p-2 text-gold hover:bg-gold/10 rounded-lg"><i data-lucide="edit" size="18"></i></button>
-                        <button onclick="window.deleteTeam('\${u.id}')" class="p-2 text-red-500 hover:bg-red-500/10 rounded-lg"><i data-lucide="user-minus" size="18"></i></button>
-                    </div></div>\`).join('');
-                lucide.createIcons();
+                        <button onclick="window.editTeamMember('${u.id}', '${u.email}', '${u.password}')" class="p-2 text-gold hover:bg-gold/10 rounded-lg"><i data-lucide="edit" size="18"></i></button>
+                        <button onclick="window.deleteTeam('${u.id}')" class="p-2 text-red-500 hover:bg-red-500/10 rounded-lg"><i data-lucide="user-minus" size="18"></i></button>
+                    </div></div>`).join('');
+
+                try { lucide.createIcons(); } catch {}
             });
         }
     }
 
     document.addEventListener('DOMContentLoaded', () => {
-        document.getElementById('login-form').onsubmit = async (e) => { 
-            e.preventDefault(); const btn = document.getElementById('btn-entrar');
+        try { lucide.createIcons(); } catch {}
+
+        document.getElementById('login-form').onsubmit = async (e) => {
+            e.preventDefault();
+            hideLoginMessages();
+
+            const btn = document.getElementById('btn-entrar');
             btn.disabled = true;
-            try { await signInWithEmailAndPassword(auth, document.getElementById('email').value, document.getElementById('password').value); } 
-            catch(err){ document.getElementById('login-error-msg').classList.remove('hidden'); btn.disabled = false; } 
+
+            const email = document.getElementById('email').value.trim();
+            const pass = document.getElementById('password').value;
+
+            try {
+                await signInWithEmailAndPassword(auth, email, pass);
+            } catch (err) {
+                console.error(err);
+
+                // Mensagens mais fiéis ao erro real (ex: GitHub Pages precisa ser domínio autorizado)
+                if (err?.code === 'auth/unauthorized-domain') {
+                    showLoginError('Domínio não autorizado no Firebase Auth.');
+                    showLoginHint(`Acesse Firebase Console → Authentication → Settings → Authorized domains e adicione: ${location.host}`);
+                } else if (err?.code === 'auth/user-not-found' || err?.code === 'auth/wrong-password' || err?.code === 'auth/invalid-credential') {
+                    showLoginError('Dados inválidos. Caso tenha perdido sua senha ou usuário, procure seu administrador.');
+                } else {
+                    showLoginError(`Falha no login: ${err?.message || 'erro desconhecido'}`);
+                }
+            } finally {
+                btn.disabled = false;
+            }
         };
 
-        document.getElementById('project-form').onsubmit = async (e) => { 
-            e.preventDefault(); if (!auth.currentUser) return;
-            const id = document.getElementById('edit-id').value; 
-            const d = { 
+        document.getElementById('project-form').onsubmit = async (e) => {
+            e.preventDefault();
+            if (!auth.currentUser) return;
+
+            const id = document.getElementById('edit-id').value;
+            const d = {
                 numeroProposta: document.getElementById('f-proposta').value || '',
                 numeroInvoice: document.getElementById('f-invoice').value || '',
-                empresa: document.getElementById('f-empresa').value, 
-                cliente: document.getElementById('f-cliente').value, 
-                vendedor: document.getElementById('f-vendedor').value, 
-                valorTotal: parseFloat(document.getElementById('f-valor').value), 
-                metodo: document.getElementById('f-metodo').value, 
-                percComissao: parseInt(document.getElementById('f-comm').value), 
-                dataInicio: document.getElementById('f-inicio').value, 
-                dataEntrega: document.getElementById('f-entrega').value, 
-                status: document.getElementById('f-status').value, 
-                updatedAt: serverTimestamp() 
-            }; 
-            try { if(id) await updateDoc(doc(db, 'artifacts', appId, 'public', 'data', 'projects', id), d); else await addDoc(collection(db, 'artifacts', appId, 'public', 'data', 'projects'), { ...d, createdAt: serverTimestamp(), pagamentosEfetuados: [] }); e.target.reset(); document.getElementById('edit-id').value = ''; window.showView('projects'); } catch(err){ console.log(err); } 
+                empresa: document.getElementById('f-empresa').value,
+                cliente: document.getElementById('f-cliente').value,
+                vendedor: document.getElementById('f-vendedor').value,
+                valorTotal: parseFloat(document.getElementById('f-valor').value),
+                metodo: document.getElementById('f-metodo').value,
+                percComissao: parseInt(document.getElementById('f-comm').value),
+                dataInicio: document.getElementById('f-inicio').value,
+                dataEntrega: document.getElementById('f-entrega').value,
+                status: document.getElementById('f-status').value,
+                updatedAt: serverTimestamp()
+            };
+
+            try {
+                if (id) {
+                    await updateDoc(doc(db, 'artifacts', appId, 'public', 'data', 'projects', id), d);
+                } else {
+                    await addDoc(collection(db, 'artifacts', appId, 'public', 'data', 'projects'), { ...d, createdAt: serverTimestamp(), pagamentosEfetuados: [] });
+                }
+                e.target.reset();
+                document.getElementById('edit-id').value = '';
+                window.showView('projects');
+            } catch (err) {
+                console.error(err);
+            }
         };
 
         document.getElementById('team-form').onsubmit = async (e) => {
-            e.preventDefault(); if (!auth.currentUser) return;
+            e.preventDefault();
+            if (!auth.currentUser) return;
+
             const id = document.getElementById('t-id').value;
-            const mail = document.getElementById('t-email').value, pass = document.getElementById('t-pass').value;
-            try { 
-                if(!id) {
-                    await addDoc(collection(db, 'artifacts', appId, 'public', 'data', 'user_credentials'), { email: mail, password: pass, updatedAt: serverTimestamp() }); 
+            const mail = document.getElementById('t-email').value.trim();
+            const pass = document.getElementById('t-pass').value;
+
+            try {
+                if (!id) {
+                    await addDoc(collection(db, 'artifacts', appId, 'public', 'data', 'user_credentials'), { email: mail, password: pass, updatedAt: serverTimestamp() });
                 } else {
                     await updateDoc(doc(db, 'artifacts', appId, 'public', 'data', 'user_credentials', id), { email: mail, password: pass, updatedAt: serverTimestamp() });
                 }
-                e.target.reset(); document.getElementById('t-id').value = '';
-            } catch(err){ alert("Erro: " + err.message); }
+                e.target.reset();
+                document.getElementById('t-id').value = '';
+            } catch (err) {
+                alert("Erro: " + err.message);
+            }
         };
     });
 </script>
