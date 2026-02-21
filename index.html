@@ -264,7 +264,6 @@
                 <form id="team-form" class="space-y-6">
                     <input type="hidden" id="t-id">
                     
-                    <!-- NOVO CAMPO DE AUTORIZAÇÃO -->
                     <div class="space-y-1">
                         <label class="label-auth">Nível de Acesso (Autorização)</label>
                         <select id="t-role" class="modern-input">
@@ -279,6 +278,12 @@
                         <label class="label-auth">Senha</label>
                         <input type="password" id="t-pass" required class="modern-input">
                         <button type="button" onclick="window.togglePassword('t-pass', 'eye-team-btn')" class="password-toggle" id="eye-team-btn" style="top:70%"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg></button>
+                    </div>
+
+                    <!-- NOVO: Checkbox de Visão Global -->
+                    <div class="flex items-center gap-3 bg-black/30 p-4 rounded-xl border border-white/5 mt-2">
+                        <input type="checkbox" id="t-viewall" class="w-5 h-5 accent-gold cursor-pointer rounded bg-transparent">
+                        <label for="t-viewall" class="text-[10px] font-black uppercase text-slate-300 cursor-pointer">Visão Global (Visualizar TODAS as obras do sistema)</label>
                     </div>
                     
                     <button type="submit" id="btn-save-team" class="btn-premium-gold shadow-xl" data-i18n="btn_team">Salvar e Autorizar Acesso</button>
@@ -336,8 +341,8 @@
     const db = getFirestore(app);
     const SUPER_ADMIN = "dante.frota@allcablingtech.com";
 
-    // Adicionado state.currentUserRole para controlar os poderes e state.team para a lista de vendedores
-    let state = { user: null, currentUserRole: 'viewer', projects: [], team: [], company: 'Ambas', lang: 'pt', theme: 'dark', editingPayments: null };
+    // Adicionado state.currentUserViewAll para registrar permissão de visualização global
+    let state = { user: null, currentUserRole: 'viewer', currentUserViewAll: false, projects: [], team: [], company: 'Ambas', lang: 'pt', theme: 'dark', editingPayments: null };
 
     // Helpers de UI de erro 
     function showLoginError(msg) {
@@ -388,10 +393,14 @@
         // Define a tag de exibição do cargo
         const roleDisplay = document.getElementById('user-role-display');
         if (roleDisplay) {
-            if (role === 'superadmin') roleDisplay.innerText = "⭐ Super Admin";
-            else if (role === 'admin') roleDisplay.innerText = "Administrador";
-            else if (role === 'editor') roleDisplay.innerText = "Editor";
-            else roleDisplay.innerText = "Modo Leitura";
+            let roleStr = "Modo Leitura";
+            if (role === 'superadmin') roleStr = "⭐ Super Admin";
+            else if (role === 'admin') roleStr = "Administrador";
+            else if (role === 'editor') roleStr = "Editor";
+            
+            // Adiciona a nota de visão global se aplicável
+            if (state.currentUserViewAll && !isAdmin) roleStr += " (Visão Global)";
+            roleDisplay.innerText = roleStr;
         }
 
         // Elementos de Admin (Equipe, Logs, Pagamentos)
@@ -416,26 +425,24 @@
     function renderVendedores() {
         const select = document.getElementById('f-vendedor');
         if (!select || !state.user) return;
-        const isAdmin = ['admin', 'superadmin'].includes(state.currentUserRole);
+        
+        // Se a pessoa for Admin OU tiver "Visão Global", ela pode escolher qualquer vendedor
+        const canViewAll = ['admin', 'superadmin'].includes(state.currentUserRole) || state.currentUserViewAll;
 
-        // Guardar o valor selecionado atualmente para não limpar acidentalmente
         const currentValue = select.value;
 
         select.innerHTML = '';
-        if (isAdmin) {
-            // Admin pode escolher qualquer membro da equipe
+        if (canViewAll) {
             const uniqueEmails = new Set(state.team.map(m => m.email));
-            uniqueEmails.add(state.user.email); // Garante que o admin logado esteja na lista (ex: SuperAdmin)
+            uniqueEmails.add(state.user.email); 
 
             uniqueEmails.forEach(email => {
                 select.innerHTML += `<option value="${email}">${email}</option>`;
             });
         } else {
-            // Usuário comum só pode escolher a si mesmo
             select.innerHTML = `<option value="${state.user.email}">${state.user.email}</option>`;
         }
 
-        // Define o usuário logado como padrão se o campo estiver vazio
         if (currentValue && Array.from(select.options).some(opt => opt.value === currentValue)) {
             select.value = currentValue;
         } else {
@@ -595,12 +602,12 @@
         } catch (e) { console.error(e); }
     };
 
-    window.editTeamMember = (id, email, pass, role) => {
+    window.editTeamMember = (id, email, pass, role, viewAll) => {
         document.getElementById('t-id').value = id;
         document.getElementById('t-email').value = email;
         document.getElementById('t-pass').value = pass;
-        // Seleciona a autorização do banco, ou default "editor"
         document.getElementById('t-role').value = role || 'editor';
+        document.getElementById('t-viewall').checked = viewAll === true || String(viewAll) === 'true';
         window.scrollTo({ top: 0, behavior: 'smooth' });
     };
 
@@ -619,10 +626,8 @@
         const p = state.projects.find(x => x.id === id);
         if (!p) return;
         
-        // Recarrega a lista original para evitar acúmulo de opções antigas ao editar vários projetos
         renderVendedores();
         
-        // Garante que o vendedor atual exista na lista do select (para compatibilidade com cadastros antigos em texto)
         const vendSelect = document.getElementById('f-vendedor');
         if (p.vendedor && !Array.from(vendSelect.options).some(opt => opt.value === p.vendedor)) {
             vendSelect.innerHTML += `<option value="${p.vendedor}">${p.vendedor} (Cadastro Antigo)</option>`;
@@ -643,7 +648,6 @@
         window.showView('new');
     };
 
-    // Nova função para garantir o formulário limpo e o Vendedor Padrão ao cancelar/novo
     window.cancelEdit = () => {
         const form = document.getElementById('project-form');
         if (form) form.reset();
@@ -698,13 +702,15 @@
         grid.innerHTML = '';
         const t = translations[state.lang];
 
-        // Verificar o perfil
         const isEditor = ['editor', 'admin', 'superadmin'].includes(state.currentUserRole);
-        const isAdmin = ['admin', 'superadmin'].includes(state.currentUserRole);
+        
+        // Acesso Global concedido se for Admin ou tiver a flag de Visão Global marcada
+        const canViewAll = ['admin', 'superadmin'].includes(state.currentUserRole) || state.currentUserViewAll;
+        const isAdmin = ['admin', 'superadmin'].includes(state.currentUserRole); // Somente admins podem editar pagamentos
 
         const filtered = state.projects.filter(p => {
             const matchCompany = state.company === 'Ambas' || p.empresa === state.company;
-            const matchUser = isAdmin || p.vendedor === state.user.email; // Filtro de Vendedor (Suas Obras vs Todas)
+            const matchUser = canViewAll || p.vendedor === state.user.email; 
             return matchCompany && matchUser;
         });
 
@@ -810,11 +816,11 @@
         const t = translations[state.lang];
         let tv = 0, tc = 0;
 
-        const isAdmin = ['admin', 'superadmin'].includes(state.currentUserRole);
+        const canViewAll = ['admin', 'superadmin'].includes(state.currentUserRole) || state.currentUserViewAll;
 
         const filtered = state.projects.filter(p => {
             const matchCompany = state.company === 'Ambas' || p.empresa === state.company;
-            const matchUser = isAdmin || p.vendedor === state.user.email; // Filtro de Vendedor (Suas Obras vs Todas)
+            const matchUser = canViewAll || p.vendedor === state.user.email; 
             return matchCompany && matchUser;
         });
 
@@ -959,7 +965,6 @@
     function initData() {
         if (!auth.currentUser) return;
 
-        // Monitorar Projetos Unificado
         const projectsRef = collection(db, 'artifacts', appId, 'public', 'data', 'projects');
         onSnapshot(projectsRef, snap => {
             state.projects = snap.docs.map(d => ({ id: d.id, ...d.data() }));
@@ -967,20 +972,18 @@
             renderReport();
         }, err => console.error(err));
 
-        // Monitorar Equipe Globalmente e Proteger a Entrada
         onSnapshot(collection(db, 'artifacts', appId, 'public', 'data', 'user_credentials'), snap => {
-            if (!auth.currentUser) return; // Segurança extra em caso de logoff
+            if (!auth.currentUser) return; 
             
             const team = snap.docs.map(d => ({ id: d.id, ...d.data() }));
             state.team = team;
             
-            // Decidir Permissão do Usuário Logado
             if (auth.currentUser.email.toLowerCase() === SUPER_ADMIN.toLowerCase()) {
                 state.currentUserRole = 'superadmin';
+                state.currentUserViewAll = true;
             } else {
                 const myProfile = team.find(u => u.email.toLowerCase() === auth.currentUser.email.toLowerCase());
                 
-                // BARREIRA DE SEGURANÇA: Se o e-mail não estiver na lista (Gestão de Equipe), bloqueia na hora!
                 if (!myProfile) {
                     alert("Acesso Negado: Seu e-mail não foi autorizado pelo administrador do sistema.");
                     signOut(auth);
@@ -988,13 +991,12 @@
                 }
                 
                 state.currentUserRole = myProfile?.role || 'viewer';
+                state.currentUserViewAll = myProfile?.viewAll || false;
             }
             
-            // Aplica visibilidade baseada na nova Role e Preenche o Dropdown de Vendedores
             window.applyPermissions();
             renderVendedores();
 
-            // Renderiza painel de gerência se for um Admin
             const container = document.getElementById('users-list');
             if (container && ['admin', 'superadmin'].includes(state.currentUserRole)) {
                 container.innerHTML = team.map(u => {
@@ -1002,13 +1004,15 @@
                     if(u.role === 'admin' || u.email.toLowerCase() === SUPER_ADMIN.toLowerCase()) { roleStr = "Admin"; roleClass = "role-admin"; }
                     if(u.role === 'viewer') { roleStr = "Modo Leitura"; roleClass = "role-viewer"; }
                     
+                    const tagViewAll = u.viewAll ? '<span class="role-tag bg-indigo-500/20 text-indigo-400 ml-1">VISÃO GLOBAL</span>' : '';
+
                     return `<div class="glass p-6 rounded-[24px] flex justify-between items-center border-l-8 border-gold shadow-lg transition-all hover:scale-[1.01]">
                     <div class="text-left">
-                        <p class="font-black text-slate-100 text-lg flex items-center gap-2">${u.email} <span class="role-tag ${roleClass}">${roleStr}</span></p>
+                        <p class="font-black text-slate-100 text-lg flex items-center gap-2 flex-wrap">${u.email} <span class="role-tag ${roleClass}">${roleStr}</span> ${tagViewAll}</p>
                         <p class="text-[11px] text-slate-500 mt-1 uppercase tracking-widest">Senha: <span class="text-gold font-bold normal-case">${u.password}</span></p>
                     </div>
                     <div class="flex gap-2">
-                        <button onclick="window.editTeamMember('${u.id}', '${u.email}', '${u.password}', '${u.role}')" class="p-2 text-gold hover:bg-gold/10 rounded-lg"><i data-lucide="edit" size="18"></i></button>
+                        <button onclick="window.editTeamMember('${u.id}', '${u.email}', '${u.password}', '${u.role}', ${!!u.viewAll})" class="p-2 text-gold hover:bg-gold/10 rounded-lg"><i data-lucide="edit" size="18"></i></button>
                         <button onclick="window.deleteTeam('${u.id}')" class="p-2 text-red-500 hover:bg-red-500/10 rounded-lg ${u.email.toLowerCase() === SUPER_ADMIN.toLowerCase() ? 'hidden' : ''}"><i data-lucide="user-minus" size="18"></i></button>
                     </div></div>`
                 }).join('');
@@ -1033,15 +1037,11 @@
             try {
                 await signInWithEmailAndPassword(auth, email, pass);
             } catch (err) {
-                // Removemos o console.error propositalmente para não causar alarmismo
                 if (err?.code === 'auth/invalid-credential' || err?.code === 'auth/user-not-found') {
-                    
-                    // Tenta criar automaticamente caso o administrador tenha adicionado a pessoa apenas no Firestore
                     try {
                         await createUserWithEmailAndPassword(auth, email, pass);
-                        return; // Sucesso na criação e login na mesma hora!
+                        return;
                     } catch (createErr) {
-                        // Se o e-mail já existe na Auth, mas a senha estava errada (isso acontece em contas já registradas)
                         if (createErr.code === 'auth/email-already-in-use') {
                             showLoginError('Senha incorreta.');
                         } else {
@@ -1087,7 +1087,7 @@
                 }
                 e.target.reset();
                 document.getElementById('edit-id').value = '';
-                document.getElementById('f-vendedor').value = auth.currentUser.email; // Restaura o vendedor padrão
+                document.getElementById('f-vendedor').value = auth.currentUser.email;
                 window.showView('projects');
             } catch (err) {
                 console.error(err);
@@ -1101,27 +1101,27 @@
             const id = document.getElementById('t-id').value;
             const mail = document.getElementById('t-email').value.trim();
             const pass = document.getElementById('t-pass').value;
-            const role = document.getElementById('t-role').value; // Pegando a role
+            const role = document.getElementById('t-role').value;
+            const viewAll = document.getElementById('t-viewall').checked; // Captura o valor do checkbox
 
             try {
-                // Tenta criar o usuário no Firebase Auth usando um app secundário (com limpeza para evitar leaks de memória)
                 try {
                     const secApp = initializeApp(firebaseConfig, "SecApp_" + Date.now());
                     const secAuth = getAuth(secApp);
                     await createUserWithEmailAndPassword(secAuth, mail, pass);
                     await signOut(secAuth);
-                    await deleteApp(secApp); // <- Limpeza implementada aqui!
-                } catch (authErr) {
-                    // Ignora silenciosamente. O auto-registro no login vai cuidar do resto se a conta falhar.
-                }
+                    await deleteApp(secApp); 
+                } catch (authErr) {}
 
                 if (!id) {
-                    await addDoc(collection(db, 'artifacts', appId, 'public', 'data', 'user_credentials'), { email: mail, password: pass, role: role, updatedAt: serverTimestamp() });
+                    await addDoc(collection(db, 'artifacts', appId, 'public', 'data', 'user_credentials'), { email: mail, password: pass, role: role, viewAll: viewAll, updatedAt: serverTimestamp() });
                 } else {
-                    await updateDoc(doc(db, 'artifacts', appId, 'public', 'data', 'user_credentials', id), { email: mail, password: pass, role: role, updatedAt: serverTimestamp() });
+                    await updateDoc(doc(db, 'artifacts', appId, 'public', 'data', 'user_credentials', id), { email: mail, password: pass, role: role, viewAll: viewAll, updatedAt: serverTimestamp() });
                 }
+                
                 e.target.reset();
                 document.getElementById('t-id').value = '';
+                document.getElementById('t-viewall').checked = false; // Limpa o checkbox
             } catch (err) {
                 alert("Erro: " + err.message);
             }
