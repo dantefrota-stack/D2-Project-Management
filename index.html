@@ -95,6 +95,12 @@
         .status-badge { width: 10px; height: 10px; border-radius: 999px; display: inline-block; }
         .text-gold { color: var(--gold); }
         @keyframes pulse { 0%,100%{opacity:1} 50%{opacity:.5} }
+        
+        /* Nova tag dinâmica visual para cargos */
+        .role-tag { font-size: 9px; padding: 2px 6px; border-radius: 4px; font-weight: 800; text-transform: uppercase; letter-spacing: 0.1em; }
+        .role-admin { background: rgba(251,191,36,0.2); color: var(--gold); }
+        .role-editor { background: rgba(56,189,248,0.2); color: #38bdf8; }
+        .role-viewer { background: rgba(148,163,184,0.2); color: #94a3b8; }
     </style>
 </head>
 <body class="auth-body">
@@ -163,7 +169,7 @@
                 <button onclick="toggleTheme()" class="p-3 rounded-2xl bg-white/5 hover:bg-gold/20 transition-all"><i data-lucide="sun" id="theme-icon-light" class="hidden text-gold"></i><i data-lucide="moon" id="theme-icon-dark" class="text-slate-400"></i></button>
                 <div class="text-right hidden sm:block">
                     <p id="user-display" class="text-xs font-black uppercase text-gold tracking-tight"></p>
-                    <p class="text-[9px] text-slate-500 font-bold uppercase tracking-widest" data-i18n="admin_panel">Gestão Corporativa</p>
+                    <p id="user-role-display" class="text-[9px] text-slate-500 font-bold uppercase tracking-widest" data-i18n="admin_panel">Gestão Corporativa</p>
                 </div>
                 <button onclick="handleLogout()" class="p-3 rounded-2xl text-red-500 hover:bg-red-500/10 transition-all border border-red-500/20 shadow-sm"><i data-lucide="log-out" class="w-5 h-5"></i></button>
             </div>
@@ -173,7 +179,7 @@
     <main class="max-w-7xl mx-auto w-full p-6 flex-1">
         <nav class="no-print flex gap-10 mb-10 border-b border-white/5 overflow-x-auto justify-center sm:justify-start scrollbar-hide">
             <button onclick="showView('projects')" class="tab-btn pb-4 font-black text-[11px] uppercase tracking-[0.2em] tab-active" id="tab-projects" data-i18n="nav_proj">Projetos</button>
-            <button onclick="showView('new')" class="tab-btn pb-4 font-black text-[11px] uppercase tracking-[0.2em]" id="tab-new" data-i18n="nav_new">Nova Obra</button>
+            <button onclick="window.cancelEdit(); showView('new')" class="tab-btn pb-4 font-black text-[11px] uppercase tracking-[0.2em] editor-only hidden" id="tab-new" data-i18n="nav_new">Nova Obra</button>
             <button onclick="showView('reports')" class="tab-btn pb-4 font-black text-[11px] uppercase tracking-[0.2em]" id="tab-reports" data-i18n="nav_rep">Relatórios</button>
             <button onclick="showView('users')" class="tab-btn pb-4 font-black text-[11px] uppercase tracking-[0.2em] admin-only hidden" id="tab-users" data-i18n="nav_users">Equipe</button>
             <button onclick="showView('logs')" class="tab-btn pb-4 font-black text-[11px] uppercase tracking-[0.2em] admin-only hidden" id="tab-logs">📋 Logs</button>
@@ -189,7 +195,6 @@
             <form id="project-form" class="grid grid-cols-1 md:grid-cols-2 gap-8 text-left">
                 <input type="hidden" id="edit-id">
 
-                <!-- NOVOS CAMPOS: Proposta e Invoice -->
                 <div class="col-span-2 md:col-span-1 space-y-2">
                     <label class="text-[10px] font-black uppercase text-slate-500 ml-1 tracking-widest">Nº Proposta</label>
                     <input type="text" id="f-proposta" class="modern-input" placeholder="Ex: PROP-2026-001">
@@ -204,7 +209,7 @@
                     <select id="f-empresa" class="modern-input"><option value="Smart Home">D2 Smart Home</option><option value="HVAC">D2 HVAC Solutions</option></select>
                 </div>
                 <div class="col-span-2 md:col-span-1 space-y-2"><label class="text-[10px] font-black uppercase text-slate-500 ml-1 tracking-widest">Cliente</label><input type="text" id="f-cliente" required class="modern-input"></div>
-                <div class="col-span-2 md:col-span-1 space-y-2"><label class="text-[10px] font-black uppercase text-slate-500 ml-1 tracking-widest">Vendedor</label><input type="text" id="f-vendedor" required class="modern-input"></div>
+                <div class="col-span-2 md:col-span-1 space-y-2"><label class="text-[10px] font-black uppercase text-slate-500 ml-1 tracking-widest">Vendedor</label><select id="f-vendedor" required class="modern-input"></select></div>
                 <div class="space-y-2">
                     <label class="text-[10px] font-black uppercase text-slate-500 ml-1 tracking-widest">Valor Contrato Bruto</label>
                     <div class="relative"><span class="absolute left-4 top-1/2 -translate-y-1/2 font-bold text-gold">$</span><input type="number" id="f-valor" step="0.01" required class="modern-input !pl-8"></div>
@@ -248,7 +253,7 @@
                 </div>
                 <div class="col-span-2 flex gap-6 mt-10">
                     <button type="submit" class="flex-1 btn-premium-gold shadow-xl">Salvar Registro</button>
-                    <button type="button" onclick="showView('projects')" class="px-10 text-slate-500 uppercase font-black text-xs hover:text-white transition-all">Cancelar</button>
+                    <button type="button" onclick="window.cancelEdit(); showView('projects')" class="px-10 text-slate-500 uppercase font-black text-xs hover:text-white transition-all">Cancelar</button>
                 </div>
             </form>
         </div>
@@ -258,19 +263,30 @@
                 <h3 class="text-xl font-black text-gold mb-8 uppercase tracking-tighter" data-i18n="team_title">Gestão de Equipe</h3>
                 <form id="team-form" class="space-y-6">
                     <input type="hidden" id="t-id">
+                    
+                    <!-- NOVO CAMPO DE AUTORIZAÇÃO -->
+                    <div class="space-y-1">
+                        <label class="label-auth">Nível de Acesso (Autorização)</label>
+                        <select id="t-role" class="modern-input">
+                            <option value="editor">Editor Padrão (Pode ver, adicionar e editar obras)</option>
+                            <option value="viewer">Somente Leitura (Somente ver relatórios e obras)</option>
+                            <option value="admin">Administrador (Total Acesso - Logs, Equipe e Edições)</option>
+                        </select>
+                    </div>
+
                     <div class="space-y-1"><label class="label-auth">E-mail</label><input type="email" id="t-email" required class="modern-input"></div>
                     <div class="space-y-1 relative">
                         <label class="label-auth">Senha</label>
                         <input type="password" id="t-pass" required class="modern-input">
                         <button type="button" onclick="window.togglePassword('t-pass', 'eye-team-btn')" class="password-toggle" id="eye-team-btn" style="top:70%"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg></button>
                     </div>
+                    
                     <button type="submit" id="btn-save-team" class="btn-premium-gold shadow-xl" data-i18n="btn_team">Salvar e Autorizar Acesso</button>
                 </form>
             </div>
             <div id="users-list" class="grid grid-cols-1 md:grid-cols-2 gap-8 text-left max-w-7xl mx-auto"></div>
         </div>
 
-        <!-- NOVA VIEW: Logs de Acesso -->
         <div id="view-logs" class="hidden space-y-6 max-w-7xl mx-auto">
             <div class="glass p-8 rounded-[32px] border border-white/5">
                 <h3 class="text-2xl font-black text-gold mb-6 uppercase tracking-tighter">📋 Logs de Acesso</h3>
@@ -301,9 +317,8 @@
 </div>
 
 <script type="module">
-    // Firebase (Modular v11) - FIX: métodos antigos removidos (onAuthStateChanged/signOut)
-    import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
-    import { getAuth, signInWithEmailAndPassword, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
+    import { initializeApp, deleteApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
+    import { getAuth, signInWithEmailAndPassword, createUserWithEmailAndPassword, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
     import { getFirestore, collection, doc, updateDoc, addDoc, deleteDoc, onSnapshot, serverTimestamp, arrayUnion } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
 
     const firebaseConfig = {
@@ -321,18 +336,15 @@
     const db = getFirestore(app);
     const SUPER_ADMIN = "dante.frota@allcablingtech.com";
 
-    let state = { user: null, projects: [], company: 'Ambas', lang: 'pt', theme: 'dark', editingPayments: null };
+    // Adicionado state.currentUserRole para controlar os poderes e state.team para a lista de vendedores
+    let state = { user: null, currentUserRole: 'viewer', projects: [], team: [], company: 'Ambas', lang: 'pt', theme: 'dark', editingPayments: null };
 
-    // Helpers de UI de erro (mantém layout; melhora diagnóstico)
+    // Helpers de UI de erro 
     function showLoginError(msg) {
         const box = document.getElementById('login-error-msg');
         const hint = document.getElementById('login-hint-msg');
         if (hint) hint.classList.add('hidden');
-
-        if (box) {
-            box.textContent = msg || 'Falha no login.';
-            box.classList.remove('hidden');
-        }
+        if (box) { box.textContent = msg || 'Falha no login.'; box.classList.remove('hidden'); }
     }
     function showLoginHint(msg) {
         const hint = document.getElementById('login-hint-msg');
@@ -348,11 +360,7 @@
     // Log de Acessos
     function logAccess(user, action) {
         const logs = JSON.parse(localStorage.getItem('access_logs') || '[]');
-        logs.unshift({
-            timestamp: new Date().toISOString(),
-            user: user.email || user,
-            action
-        });
+        logs.unshift({ timestamp: new Date().toISOString(), user: user.email || user, action });
         if (logs.length > 500) logs.splice(500);
         localStorage.setItem('access_logs', JSON.stringify(logs));
     }
@@ -370,7 +378,71 @@
         `).join('') || '<tr><td colspan="3" class="py-10 text-center text-slate-500">Nenhum log registrado</td></tr>';
     }
 
-    // Modal de Edição de Pagamentos
+    // Gerenciamento Dinâmico de Autorização / Permissões
+    window.applyPermissions = () => {
+        const role = state.currentUserRole;
+        const isViewer = role === 'viewer';
+        const isEditor = ['editor', 'admin', 'superadmin'].includes(role);
+        const isAdmin = ['admin', 'superadmin'].includes(role);
+
+        // Define a tag de exibição do cargo
+        const roleDisplay = document.getElementById('user-role-display');
+        if (roleDisplay) {
+            if (role === 'superadmin') roleDisplay.innerText = "⭐ Super Admin";
+            else if (role === 'admin') roleDisplay.innerText = "Administrador";
+            else if (role === 'editor') roleDisplay.innerText = "Editor";
+            else roleDisplay.innerText = "Modo Leitura";
+        }
+
+        // Elementos de Admin (Equipe, Logs, Pagamentos)
+        document.querySelectorAll('.admin-only').forEach(el => {
+            if (isAdmin) el.classList.remove('hidden');
+            else el.classList.add('hidden');
+        });
+
+        // Elementos de Editor (Aba Nova Obra, Salvar, Editar)
+        document.querySelectorAll('.editor-only').forEach(el => {
+            if (isEditor) el.classList.remove('hidden');
+            else el.classList.add('hidden');
+        });
+        
+        // Re-renderiza os projetos para esconder botões de dentro dos cards se for 'viewer'
+        if (state.projects.length > 0) {
+            renderProjects();
+            renderReport();
+        }
+    };
+
+    function renderVendedores() {
+        const select = document.getElementById('f-vendedor');
+        if (!select || !state.user) return;
+        const isAdmin = ['admin', 'superadmin'].includes(state.currentUserRole);
+
+        // Guardar o valor selecionado atualmente para não limpar acidentalmente
+        const currentValue = select.value;
+
+        select.innerHTML = '';
+        if (isAdmin) {
+            // Admin pode escolher qualquer membro da equipe
+            const uniqueEmails = new Set(state.team.map(m => m.email));
+            uniqueEmails.add(state.user.email); // Garante que o admin logado esteja na lista (ex: SuperAdmin)
+
+            uniqueEmails.forEach(email => {
+                select.innerHTML += `<option value="${email}">${email}</option>`;
+            });
+        } else {
+            // Usuário comum só pode escolher a si mesmo
+            select.innerHTML = `<option value="${state.user.email}">${state.user.email}</option>`;
+        }
+
+        // Define o usuário logado como padrão se o campo estiver vazio
+        if (currentValue && Array.from(select.options).some(opt => opt.value === currentValue)) {
+            select.value = currentValue;
+        } else {
+            select.value = state.user.email;
+        }
+    }
+
     window.openEditPaymentModal = (projectId) => {
         const p = state.projects.find(x => x.id === projectId);
         if (!p) return;
@@ -495,7 +567,6 @@
             ? 'min-h-screen flex flex-col app-body-dark text-center'
             : 'min-h-screen flex flex-col app-body-light light text-center';
 
-        // Garantir estado correto dos ícones
         const sun = document.getElementById('theme-icon-light');
         const moon = document.getElementById('theme-icon-dark');
         if (sun && moon) {
@@ -522,10 +593,12 @@
         } catch (e) { console.error(e); }
     };
 
-    window.editTeamMember = (id, email, pass) => {
+    window.editTeamMember = (id, email, pass, role) => {
         document.getElementById('t-id').value = id;
         document.getElementById('t-email').value = email;
         document.getElementById('t-pass').value = pass;
+        // Seleciona a autorização do banco, ou default "editor"
+        document.getElementById('t-role').value = role || 'editor';
         window.scrollTo({ top: 0, behavior: 'smooth' });
     };
 
@@ -543,6 +616,16 @@
     window.editP = (id) => {
         const p = state.projects.find(x => x.id === id);
         if (!p) return;
+        
+        // Recarrega a lista original para evitar acúmulo de opções antigas ao editar vários projetos
+        renderVendedores();
+        
+        // Garante que o vendedor atual exista na lista do select (para compatibilidade com cadastros antigos em texto)
+        const vendSelect = document.getElementById('f-vendedor');
+        if (p.vendedor && !Array.from(vendSelect.options).some(opt => opt.value === p.vendedor)) {
+            vendSelect.innerHTML += `<option value="${p.vendedor}">${p.vendedor} (Cadastro Antigo)</option>`;
+        }
+
         document.getElementById('edit-id').value = id;
         document.getElementById('f-proposta').value = p.numeroProposta || '';
         document.getElementById('f-invoice').value = p.numeroInvoice || '';
@@ -556,6 +639,15 @@
         document.getElementById('f-entrega').value = p.dataEntrega || '';
         document.getElementById('f-status').value = p.status || 'Cotação';
         window.showView('new');
+    };
+
+    // Nova função para garantir o formulário limpo e o Vendedor Padrão ao cancelar/novo
+    window.cancelEdit = () => {
+        const form = document.getElementById('project-form');
+        if (form) form.reset();
+        document.getElementById('edit-id').value = '';
+        const fVendedor = document.getElementById('f-vendedor');
+        if (fVendedor && state.user) fVendedor.value = state.user.email;
     };
 
     window.showView = (v) => {
@@ -574,7 +666,6 @@
         try { lucide.createIcons(); } catch {}
     };
 
-    // FIX: signOut no modular (v11)
     window.handleLogout = () => signOut(auth).then(() => location.reload()).catch(console.error);
 
     function getFin(p) {
@@ -600,7 +691,15 @@
         grid.innerHTML = '';
         const t = translations[state.lang];
 
-        const filtered = state.projects.filter(p => state.company === 'Ambas' || p.empresa === state.company);
+        // Verificar o perfil
+        const isEditor = ['editor', 'admin', 'superadmin'].includes(state.currentUserRole);
+        const isAdmin = ['admin', 'superadmin'].includes(state.currentUserRole);
+
+        const filtered = state.projects.filter(p => {
+            const matchCompany = state.company === 'Ambas' || p.empresa === state.company;
+            const matchUser = isAdmin || p.vendedor === state.user.email; // Filtro de Vendedor (Suas Obras vs Todas)
+            return matchCompany && matchUser;
+        });
 
         filtered.forEach(p => {
             const s = new Date(p.dataInicio).getTime();
@@ -626,8 +725,10 @@
             grid.innerHTML += `<div class="glass p-8 rounded-[40px] border-l-[8px] relative shadow-2xl" style="border-left-color: ${p.status === 'Finalizado' ? '#10b981' : '#f59e0b'}">
                 <div class="absolute top-6 right-6 flex items-center gap-3">
                     <span class="status-badge ${f.statusColor}"></span>
+                    ${isEditor ? `
                     <button onclick="window.editP('${p.id}')"><i data-lucide="edit-3" class="w-4 h-4 text-slate-400"></i></button>
                     <button onclick="window.deleteP('${p.id}')"><i data-lucide="trash-2" class="w-4 h-4 text-red-400"></i></button>
+                    ` : ''}
                 </div>
 
                 <div class="mb-6 text-left">
@@ -663,14 +764,14 @@
                         <div class="space-y-2">
                             <div class="flex justify-between items-center">
                                 <p class="text-[9px] font-black text-slate-500 uppercase border-b border-white/5 pb-1">${t.history}</p>
-                                <button onclick="openEditPaymentModal('${p.id}')" class="text-[9px] font-bold text-gold hover:underline ${state.user?.email !== SUPER_ADMIN ? 'hidden' : ''}">✏️ Editar</button>
+                                ${isAdmin ? `<button onclick="openEditPaymentModal('${p.id}')" class="text-[9px] font-bold text-gold hover:underline">✏️ Editar</button>` : ''}
                             </div>
                             <div class="max-h-32 overflow-y-auto scrollbar-hide">
                                 ${(p.pagamentosEfetuados || []).map(pay => `<div class="flex justify-between text-[10px] py-1 border-b border-white/5"><span>${pay.data ? new Date(pay.data).toLocaleDateString() : '-'}</span><span class="font-bold text-emerald-500">+ ${formatCurr(pay.valor)}</span></div>`).join('') || '<p class="text-[9px] italic opacity-50">Sem histórico</p>'}
                             </div>
                         </div>
 
-                        <div class="mt-4 pt-4 border-t border-white/5 admin-only ${state.user?.email !== SUPER_ADMIN ? 'hidden' : ''}">
+                        <div class="mt-4 pt-4 border-t border-white/5 admin-only ${!isAdmin ? 'hidden' : ''}">
                             <div class="grid grid-cols-2 gap-2"><input type="number" id="pay-val-${p.id}" placeholder="$" class="modern-input !pl-4 h-10"><input type="date" id="pay-date-${p.id}" class="modern-input !pl-4 h-10"></div>
                             <button onclick="window.addPayment('${p.id}')" class="w-full mt-2 btn-premium-gold !py-2 !text-[9px]">Lançar Pagamento</button>
                         </div>
@@ -689,7 +790,13 @@
         const t = translations[state.lang];
         let tv = 0, tc = 0;
 
-        const filtered = state.projects.filter(p => state.company === 'Ambas' || p.empresa === state.company);
+        const isAdmin = ['admin', 'superadmin'].includes(state.currentUserRole);
+
+        const filtered = state.projects.filter(p => {
+            const matchCompany = state.company === 'Ambas' || p.empresa === state.company;
+            const matchUser = isAdmin || p.vendedor === state.user.email; // Filtro de Vendedor (Suas Obras vs Todas)
+            return matchCompany && matchUser;
+        });
 
         const rows = filtered.map(p => {
             const f = getFin(p);
@@ -748,7 +855,6 @@
         </div>`;
     }
 
-    // FIX: onAuthStateChanged no modular (v11)
     onAuthStateChanged(auth, (u) => {
         state.user = u;
 
@@ -758,8 +864,7 @@
             document.body.className = 'app-body-dark';
 
             document.getElementById('user-display').innerText = u.email ? u.email.split('@')[0].toUpperCase() : "USR";
-            if (u.email === SUPER_ADMIN) document.querySelectorAll('.admin-only').forEach(e => e.classList.remove('hidden'));
-
+            
             initData();
             logAccess(u.email, 'Login');
         } else {
@@ -775,33 +880,62 @@
     function initData() {
         if (!auth.currentUser) return;
 
+        // Monitorar Projetos Unificado
         const projectsRef = collection(db, 'artifacts', appId, 'public', 'data', 'projects');
-        onSnapshot(
-            projectsRef,
-            snap => {
-                state.projects = snap.docs.map(d => ({ id: d.id, ...d.data() }));
-                renderProjects();
-                renderReport();
-            },
-            err => console.error(err)
-        );
+        onSnapshot(projectsRef, snap => {
+            state.projects = snap.docs.map(d => ({ id: d.id, ...d.data() }));
+            renderProjects();
+            renderReport();
+        }, err => console.error(err));
 
-        if (auth.currentUser.email === SUPER_ADMIN) {
-            onSnapshot(collection(db, 'artifacts', appId, 'public', 'data', 'user_credentials'), snap => {
-                const team = snap.docs.map(d => ({ id: d.id, ...d.data() }));
-                const container = document.getElementById('users-list');
-                if (!container) return;
+        // Monitorar Equipe Globalmente e Proteger a Entrada
+        onSnapshot(collection(db, 'artifacts', appId, 'public', 'data', 'user_credentials'), snap => {
+            if (!auth.currentUser) return; // Segurança extra em caso de logoff
+            
+            const team = snap.docs.map(d => ({ id: d.id, ...d.data() }));
+            state.team = team;
+            
+            // Decidir Permissão do Usuário Logado
+            if (auth.currentUser.email.toLowerCase() === SUPER_ADMIN.toLowerCase()) {
+                state.currentUserRole = 'superadmin';
+            } else {
+                const myProfile = team.find(u => u.email.toLowerCase() === auth.currentUser.email.toLowerCase());
+                
+                // BARREIRA DE SEGURANÇA: Se o e-mail não estiver na lista (Gestão de Equipe), bloqueia na hora!
+                if (!myProfile) {
+                    alert("Acesso Negado: Seu e-mail não foi autorizado pelo administrador do sistema.");
+                    signOut(auth);
+                    return;
+                }
+                
+                state.currentUserRole = myProfile?.role || 'viewer';
+            }
+            
+            // Aplica visibilidade baseada na nova Role e Preenche o Dropdown de Vendedores
+            window.applyPermissions();
+            renderVendedores();
 
-                container.innerHTML = team.map(u => `<div class="glass p-6 rounded-[24px] flex justify-between items-center border-l-8 border-gold shadow-lg transition-all hover:scale-[1.01]">
-                    <div class="text-left"><p class="font-black text-slate-100 text-lg">${u.email}</p><p class="text-[11px] text-slate-500 mt-1 uppercase tracking-widest">Senha: <span class="text-gold font-bold normal-case">${u.password}</span></p></div>
+            // Renderiza painel de gerência se for um Admin
+            const container = document.getElementById('users-list');
+            if (container && ['admin', 'superadmin'].includes(state.currentUserRole)) {
+                container.innerHTML = team.map(u => {
+                    let roleStr = "Editor Padrão", roleClass = "role-editor";
+                    if(u.role === 'admin' || u.email.toLowerCase() === SUPER_ADMIN.toLowerCase()) { roleStr = "Admin"; roleClass = "role-admin"; }
+                    if(u.role === 'viewer') { roleStr = "Modo Leitura"; roleClass = "role-viewer"; }
+                    
+                    return `<div class="glass p-6 rounded-[24px] flex justify-between items-center border-l-8 border-gold shadow-lg transition-all hover:scale-[1.01]">
+                    <div class="text-left">
+                        <p class="font-black text-slate-100 text-lg flex items-center gap-2">${u.email} <span class="role-tag ${roleClass}">${roleStr}</span></p>
+                        <p class="text-[11px] text-slate-500 mt-1 uppercase tracking-widest">Senha: <span class="text-gold font-bold normal-case">${u.password}</span></p>
+                    </div>
                     <div class="flex gap-2">
-                        <button onclick="window.editTeamMember('${u.id}', '${u.email}', '${u.password}')" class="p-2 text-gold hover:bg-gold/10 rounded-lg"><i data-lucide="edit" size="18"></i></button>
-                        <button onclick="window.deleteTeam('${u.id}')" class="p-2 text-red-500 hover:bg-red-500/10 rounded-lg"><i data-lucide="user-minus" size="18"></i></button>
-                    </div></div>`).join('');
-
+                        <button onclick="window.editTeamMember('${u.id}', '${u.email}', '${u.password}', '${u.role}')" class="p-2 text-gold hover:bg-gold/10 rounded-lg"><i data-lucide="edit" size="18"></i></button>
+                        <button onclick="window.deleteTeam('${u.id}')" class="p-2 text-red-500 hover:bg-red-500/10 rounded-lg ${u.email.toLowerCase() === SUPER_ADMIN.toLowerCase() ? 'hidden' : ''}"><i data-lucide="user-minus" size="18"></i></button>
+                    </div></div>`
+                }).join('');
                 try { lucide.createIcons(); } catch {}
-            });
-        }
+            }
+        });
     }
 
     document.addEventListener('DOMContentLoaded', () => {
@@ -820,16 +954,26 @@
             try {
                 await signInWithEmailAndPassword(auth, email, pass);
             } catch (err) {
-                console.error(err);
-
-                // Mensagens mais fiéis ao erro real (ex: GitHub Pages precisa ser domínio autorizado)
-                if (err?.code === 'auth/unauthorized-domain') {
-                    showLoginError('Domínio não autorizado no Firebase Auth.');
-                    showLoginHint(`Acesse Firebase Console → Authentication → Settings → Authorized domains e adicione: ${location.host}`);
-                } else if (err?.code === 'auth/user-not-found' || err?.code === 'auth/wrong-password' || err?.code === 'auth/invalid-credential') {
-                    showLoginError('Dados inválidos. Caso tenha perdido sua senha ou usuário, procure seu administrador.');
+                // Removemos o console.error propositalmente para não causar alarmismo
+                if (err?.code === 'auth/invalid-credential' || err?.code === 'auth/user-not-found') {
+                    
+                    // Tenta criar automaticamente caso o administrador tenha adicionado a pessoa apenas no Firestore
+                    try {
+                        await createUserWithEmailAndPassword(auth, email, pass);
+                        return; // Sucesso na criação e login na mesma hora!
+                    } catch (createErr) {
+                        // Se o e-mail já existe na Auth, mas a senha estava errada (isso acontece em contas já registradas)
+                        if (createErr.code === 'auth/email-already-in-use') {
+                            showLoginError('Senha incorreta.');
+                        } else {
+                            showLoginError('Dados inválidos ou e-mail já cadastrado de forma incompatível.');
+                        }
+                    }
+                    
+                } else if (err?.code === 'auth/unauthorized-domain') {
+                    showLoginError('Domínio não autorizado no Firebase Auth. Configure no painel do Firebase.');
                 } else {
-                    showLoginError(`Falha no login: ${err?.message || 'erro desconhecido'}`);
+                    showLoginError('Falha no login: ' + err.message);
                 }
             } finally {
                 btn.disabled = false;
@@ -864,6 +1008,7 @@
                 }
                 e.target.reset();
                 document.getElementById('edit-id').value = '';
+                document.getElementById('f-vendedor').value = auth.currentUser.email; // Restaura o vendedor padrão
                 window.showView('projects');
             } catch (err) {
                 console.error(err);
@@ -877,12 +1022,24 @@
             const id = document.getElementById('t-id').value;
             const mail = document.getElementById('t-email').value.trim();
             const pass = document.getElementById('t-pass').value;
+            const role = document.getElementById('t-role').value; // Pegando a role
 
             try {
+                // Tenta criar o usuário no Firebase Auth usando um app secundário (com limpeza para evitar leaks de memória)
+                try {
+                    const secApp = initializeApp(firebaseConfig, "SecApp_" + Date.now());
+                    const secAuth = getAuth(secApp);
+                    await createUserWithEmailAndPassword(secAuth, mail, pass);
+                    await signOut(secAuth);
+                    await deleteApp(secApp); // <- Limpeza implementada aqui!
+                } catch (authErr) {
+                    // Ignora silenciosamente. O auto-registro no login vai cuidar do resto se a conta falhar.
+                }
+
                 if (!id) {
-                    await addDoc(collection(db, 'artifacts', appId, 'public', 'data', 'user_credentials'), { email: mail, password: pass, updatedAt: serverTimestamp() });
+                    await addDoc(collection(db, 'artifacts', appId, 'public', 'data', 'user_credentials'), { email: mail, password: pass, role: role, updatedAt: serverTimestamp() });
                 } else {
-                    await updateDoc(doc(db, 'artifacts', appId, 'public', 'data', 'user_credentials', id), { email: mail, password: pass, updatedAt: serverTimestamp() });
+                    await updateDoc(doc(db, 'artifacts', appId, 'public', 'data', 'user_credentials', id), { email: mail, password: pass, role: role, updatedAt: serverTimestamp() });
                 }
                 e.target.reset();
                 document.getElementById('t-id').value = '';
