@@ -513,7 +513,8 @@
             label_comm: "Comissão", label_method: "Pagamento", label_start: "Início", label_end: "Entrega", label_status: "Status",
             btn_save: "Salvar Registro", team_title: "Gestão de Equipe", btn_team: "Salvar e Autorizar Acesso",
             timeline: "Timeline", status_overdue: "ATRASADA", status_finished: "CONCLUÍDA", days_left: "DIAS RESTANTES",
-            finance_btn: "FINANCEIRO VENDEDOR", net_base: "Líquido", balance: "Saldo", history: "Histórico de Pagamentos", report_title: "RELATÓRIO EXECUTIVO"
+            finance_btn: "FINANCEIRO VENDEDOR", net_base: "Líquido", balance: "Saldo", history: "Histórico de Pagamentos", report_title: "RELATÓRIO EXECUTIVO",
+            overpaid: "PAGO A MAIOR (CRÉDITO)", paid_full: "TOTALMENTE PAGO", balance_due: "SALDO A PAGAR", summary_title: "Comissões por Vendedor"
         },
         en: {
             login_sub: "Integrated Management System", login_err: "Invalid credentials. Contact administrator.",
@@ -522,7 +523,8 @@
             label_comm: "Commission", label_method: "Payment", label_start: "Start", label_end: "Deadline", label_status: "Status",
             btn_save: "Save Entry", team_title: "Team Management", btn_team: "Authorize Access",
             timeline: "Timeline", status_overdue: "OVERDUE", status_finished: "FINISHED", days_left: "DAYS LEFT",
-            finance_btn: "SALES FINANCE", net_base: "Net", balance: "Balance", history: "Payment History", report_title: "EXECUTIVE REPORT"
+            finance_btn: "SALES FINANCE", net_base: "Net", balance: "Balance", history: "Payment History", report_title: "EXECUTIVE REPORT",
+            overpaid: "OVERPAID (CREDIT)", paid_full: "PAID IN FULL", balance_due: "BALANCE DUE", summary_title: "Commissions by Seller"
         }
     };
 
@@ -679,8 +681,13 @@
         const pays = Array.isArray(p?.pagamentosEfetuados) ? p.pagamentosEfetuados : [];
         const totalPaid = pays.reduce((a, c) => a + Number(c?.valor || 0), 0);
 
-        const balance = Math.max(0, commTotal - totalPaid);
-        const statusColor = totalPaid >= commTotal ? "bg-emerald-500" : (totalPaid > 0 ? "bg-orange-500" : "bg-red-500");
+        const balance = commTotal - totalPaid;
+        
+        let statusColor = "bg-red-500";
+        if (balance < 0) statusColor = "bg-blue-500"; // Pago a maior (Azul)
+        else if (balance === 0) statusColor = "bg-emerald-500"; // Totalmente Pago (Verde)
+        else if (totalPaid > 0) statusColor = "bg-orange-500"; // Parcialmente Pago (Laranja)
+
         return { base, commTotal, totalPaid, balance, statusColor, isCC };
     }
 
@@ -722,6 +729,19 @@
                 ? `<div class="text-[9px] text-slate-500 mt-1">${p.numeroProposta ? 'Prop: ' + p.numeroProposta : ''}${p.numeroProposta && p.numeroInvoice ? ' • ' : ''}${p.numeroInvoice ? 'Inv: ' + p.numeroInvoice : ''}</div>`
                 : '';
 
+            let balText = t.balance_due;
+            let balColor = "text-red-400";
+            let balDisplay = formatCurr(f.balance);
+
+            if (f.balance < 0) {
+                balText = t.overpaid;
+                balColor = "text-blue-400";
+                balDisplay = "+ " + formatCurr(Math.abs(f.balance));
+            } else if (f.balance === 0) {
+                balText = t.paid_full;
+                balColor = "text-emerald-400";
+            }
+
             grid.innerHTML += `<div class="glass p-8 rounded-[40px] border-l-[8px] relative shadow-2xl" style="border-left-color: ${p.status === 'Finalizado' ? '#10b981' : '#f59e0b'}">
                 <div class="absolute top-6 right-6 flex items-center gap-3">
                     <span class="status-badge ${f.statusColor}"></span>
@@ -758,7 +778,7 @@
                     <div class="bg-gold/5 p-4 rounded-2xl border border-gold/10 space-y-4 text-left">
                         <div class="flex justify-between">
                             <div><p class="text-[8px] font-bold text-gold/60 uppercase">Comissão Total ${f.isCC ? '(Net -3%)' : ''}</p><p class="text-lg font-black text-gold">${formatCurr(f.commTotal)}</p></div>
-                            <div class="text-right"><p class="text-[8px] font-bold text-gold/60 uppercase">Saldo a Pagar</p><p class="text-lg font-black ${f.balance > 0 ? 'text-red-400' : 'text-emerald-400'}">${formatCurr(f.balance)}</p></div>
+                            <div class="text-right"><p class="text-[8px] font-bold text-gold/60 uppercase">${balText}</p><p class="text-lg font-black ${balColor}">${balDisplay}</p></div>
                         </div>
 
                         <div class="space-y-2">
@@ -798,10 +818,35 @@
             return matchCompany && matchUser;
         });
 
+        // Configuração para o Resumo por Vendedor
+        const currentYear = new Date().getFullYear();
+        const monthNames = state.lang === 'en'
+            ? ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec']
+            : ['Jan','Fev','Mar','Abr','Mai','Jun','Jul','Ago','Set','Out','Nov','Dez'];
+        
+        const sellerStats = {};
+
         const rows = filtered.map(p => {
             const f = getFin(p);
             tv += Number(p.valorTotal || 0);
             tc += Number(f.commTotal || 0);
+
+            // Popula Estatísticas do Vendedor mês a mês
+            const vend = p.vendedor || 'Sem Vendedor';
+            if (!sellerStats[vend]) {
+                sellerStats[vend] = { total: 0, months: Array(12).fill(0) };
+            }
+
+            if (p.dataInicio) {
+                const [yearStr, monthStr] = p.dataInicio.split('-');
+                const pYear = parseInt(yearStr, 10);
+                const pMonth = parseInt(monthStr, 10) - 1;
+
+                if (pYear === currentYear) {
+                    sellerStats[vend].months[pMonth] += f.commTotal;
+                    sellerStats[vend].total += f.commTotal;
+                }
+            }
 
             const s = new Date(p.dataInicio).getTime();
             const e = new Date(p.dataEntrega).getTime();
@@ -823,6 +868,37 @@
             </tr>`;
         }).join('');
 
+        // Monta a Tabela de Resumo dos Vendedores
+        let summaryRows = Object.keys(sellerStats).sort().map(vend => {
+            const stats = sellerStats[vend];
+            let monthsHtml = stats.months.map(mVal => `<td class="p-3 text-right ${mVal > 0 ? 'text-amber-600 font-bold' : 'text-slate-300'}">${formatCurr(mVal)}</td>`).join('');
+            return `<tr class="border-b border-slate-100 text-[10px] text-slate-800">
+                <td class="p-3 font-black uppercase whitespace-nowrap">${vend.split('@')[0]}</td>
+                ${monthsHtml}
+                <td class="p-3 text-right font-black text-emerald-600 bg-slate-50">${formatCurr(stats.total)}</td>
+            </tr>`;
+        }).join('');
+
+        let summaryHeaderMonths = monthNames.map(m => `<th class="p-3 text-right">${m}</th>`).join('');
+
+        const summaryTableHtml = `
+            <div class="mb-12">
+                <h3 class="text-lg font-black uppercase tracking-tighter mb-4 text-slate-800">${t.summary_title} (${currentYear})</h3>
+                <div class="overflow-x-auto border border-slate-100 rounded-2xl">
+                    <table class="w-full">
+                        <thead class="bg-slate-50 border-b border-slate-100">
+                            <tr class="font-black uppercase text-[9px] text-slate-500 text-left">
+                                <th class="p-3">Vendedor</th>
+                                ${summaryHeaderMonths}
+                                <th class="p-3 text-right bg-slate-100">Total Ano</th>
+                            </tr>
+                        </thead>
+                        <tbody>${summaryRows || `<tr><td colspan="14" class="p-4 text-center text-slate-400">Nenhum dado para o ano atual.</td></tr>`}</tbody>
+                    </table>
+                </div>
+            </div>
+        `;
+
         out.innerHTML = `<div class="bg-white text-slate-950 p-12 rounded-[50px] shadow-2xl border-8 border-slate-50 text-left">
             <div class="flex justify-between items-center border-b-[8px] border-slate-950 pb-10 mb-10">
                 <div class="logo-frame-sm border p-2 rounded-xl"><img src="logo-D2-Group-preto.png" class="h-12"></div>
@@ -831,6 +907,9 @@
                     <p class="text-slate-400 font-black uppercase text-[10px]">${new Date().toLocaleDateString()}</p>
                 </div>
             </div>
+            
+            ${summaryTableHtml}
+            
             <div class="overflow-x-auto">
                 <table class="w-full">
                     <thead>
