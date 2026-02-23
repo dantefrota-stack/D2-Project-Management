@@ -819,6 +819,21 @@
             const financeBtnIcon = isFocused ? "chevron-up" : "wallet";
             const financeBtnText = isFocused ? t.close_details : t.finance_btn;
 
+            // STATUS DE PAGAMENTOS PARA O CARD PRINCIPAL
+            let clientPaidPerc = p.valorTotal > 0 ? Math.floor((f.totalRecebido / p.valorTotal) * 100) : 0;
+            if (clientPaidPerc > 100) clientPaidPerc = 100;
+            
+            let sellerPaidPerc = f.commTotalProjetada > 0 ? Math.floor((f.totalPaid / f.commTotalProjetada) * 100) : 0;
+            if (sellerPaidPerc > 100) sellerPaidPerc = 100;
+
+            const clientPaidText = clientPaidPerc >= 100 ? '100% PAGO' : (clientPaidPerc > 0 ? `${clientPaidPerc}% PAGO` : 'PENDENTE');
+            const clientPaidColor = clientPaidPerc >= 100 ? 'text-emerald-400' : (clientPaidPerc > 0 ? 'text-orange-400' : 'text-slate-500');
+            const clientBorderColor = clientPaidPerc >= 100 ? 'border-emerald-500/30 bg-emerald-500/10' : 'border-white/5 bg-black/20';
+
+            const sellerPaidText = sellerPaidPerc >= 100 ? '100% PAGO' : (sellerPaidPerc > 0 ? `${sellerPaidPerc}% PAGO` : 'PENDENTE');
+            const sellerPaidColor = sellerPaidPerc >= 100 ? 'text-emerald-400' : (sellerPaidPerc > 0 ? 'text-orange-400' : 'text-slate-500');
+            const sellerBorderColor = sellerPaidPerc >= 100 ? 'border-emerald-500/30 bg-emerald-500/10' : 'border-white/5 bg-black/20';
+
             grid.innerHTML += `<div class="glass p-6 md:p-8 rounded-[40px] border-l-[8px] relative shadow-2xl flex flex-col h-full" style="border-left-color: ${p.status === 'Finalizado' ? '#10b981' : '#f59e0b'}">
                 <div class="flex justify-between items-start mb-5">
                     <span class="px-3 py-1.5 bg-white/5 border border-white/10 rounded-xl text-[9px] font-black uppercase tracking-widest text-slate-300 shadow-sm">${p.empresa || 'Sem Unidade'}</span>
@@ -855,6 +870,18 @@
                 <div class="bg-gradient-to-br from-black/50 to-transparent p-5 rounded-3xl border border-white/5 shadow-inner">
                     <p class="text-[9px] font-black text-slate-500 uppercase mb-1 text-center">Valor Contrato Bruto</p>
                     <p class="text-3xl font-black text-white text-center tracking-tight">${formatCurr(p.valorTotal)}</p>
+                </div>
+
+                <!-- Novos Indicadores de Pagamento no Card Principal -->
+                <div class="flex justify-between gap-3 mt-4">
+                    <div class="flex-1 rounded-xl p-2.5 text-center border ${clientBorderColor} shadow-inner transition-colors">
+                        <p class="text-[7px] font-black uppercase text-slate-400 mb-0.5 tracking-widest">Cliente</p>
+                        <p class="text-[10px] font-black ${clientPaidColor}">${clientPaidText}</p>
+                    </div>
+                    <div class="flex-1 rounded-xl p-2.5 text-center border ${sellerBorderColor} shadow-inner transition-colors">
+                        <p class="text-[7px] font-black uppercase text-slate-400 mb-0.5 tracking-widest">Comissão</p>
+                        <p class="text-[10px] font-black ${sellerPaidColor}">${sellerPaidText}</p>
+                    </div>
                 </div>
 
                 <button onclick="${financeBtnAction}" class="w-full mt-6 py-3 bg-white/5 rounded-xl border border-white/5 text-[10px] font-black uppercase text-gold hover:bg-white/10 transition-all flex items-center justify-center gap-2">
