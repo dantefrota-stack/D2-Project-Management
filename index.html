@@ -81,7 +81,7 @@
         }
         .btn-premium-gold:hover { transform: translateY(-1px); box-shadow: 0 4px 15px rgba(251, 191, 36, 0.4); }
 
-        /* Calendário Premium - CORREÇÃO DE OVERLAP */
+        /* Calendário Premium */
         input[type="date"] { position: relative; } 
         input[type="date"]::-webkit-calendar-picker-indicator {
             background: transparent; bottom: 0; color: transparent; cursor: pointer;
@@ -90,7 +90,7 @@
         .date-container { position: relative; display: flex; align-items: center; width: 100%; }
         .calendar-icon-overlay { position: absolute; right: 14px; pointer-events: none; color: var(--gold); z-index: 10; }
 
-        /* Barra de Progresso - Aumentada a altura para mobile */
+        /* Barra de Progresso */
         .progress-track { height: 20px; border-radius: 10px; background: rgba(255,255,255,0.05); overflow: hidden; border: 1px solid rgba(255,255,255,0.05); }
         .app-body-light .progress-track { background: #e2e8f0; border-color: #cbd5e1; }
         .progress-bar-fill { height: 100%; transition: width 1.2s cubic-bezier(0.4, 0, 0.2, 1); border-radius: 10px; }
@@ -110,14 +110,18 @@
         .project-card { transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1); cursor: pointer; }
         .project-card:hover { transform: translateY(-4px); box-shadow: 0 20px 40px -10px rgba(0,0,0,0.5); border-color: rgba(251, 191, 36, 0.3); }
 
-        /* Estilos de Impressão */
+        /* Estilos de Impressão (PDF & Papel) OTIMIZADOS */
         @media print { 
+            @page { size: letter; margin: 10mm; }
             .no-print { display: none !important; } 
-            body { background: #fff !important; color: #000 !important; }
-            .glass { background: #fff !important; border: 1px solid #e2e8f0 !important; box-shadow: none !important; filter: none !important; backdrop-filter: none !important; }
+            body, .app-body-dark, .app-body-light { background: #fff !important; color: #0f172a !important; -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+            .glass { background: #fff !important; border: 1px solid #cbd5e1 !important; box-shadow: none !important; filter: none !important; backdrop-filter: none !important; page-break-inside: avoid; }
             .text-white, .text-slate-200, .text-slate-300, .text-slate-400 { color: #0f172a !important; }
-            .bg-black\/20, .bg-slate-900\/80, .bg-gradient-to-br, .bg-white\/5, .bg-cyan-950\/20 { background: #f8fafc !important; border-color: #cbd5e1 !important; }
-            canvas { max-width: 100% !important; }
+            .text-gold { color: #b45309 !important; font-weight: 900 !important; } /* Escurece o dourado na impressão para leitura */
+            .bg-black\/20, .bg-slate-900\/80, .bg-gradient-to-br, .bg-white\/5, .bg-cyan-950\/20, .bg-black\/40 { background: #f8fafc !important; border-color: #cbd5e1 !important; }
+            canvas { max-width: 100% !important; max-height: 250px !important; page-break-inside: avoid; }
+            .overflow-x-auto { overflow: visible !important; } /* Impede corte de tabelas */
+            tr { page-break-inside: avoid !important; }
         }
 
         /* Pequenos estilos auxiliares */
@@ -201,7 +205,7 @@
 <!-- Interface Interna -->
 <div id="main-app" class="hidden min-h-screen flex flex-col app-body-dark text-center">
     
-    <!-- HEADER PRINCIPAL (Pode ser escondido no Celular no Modo Foco) -->
+    <!-- HEADER PRINCIPAL (Oculto no Modo Foco) -->
     <header id="main-header" class="no-print bg-white/5 backdrop-blur-md border-b border-white/5 p-4 sticky top-0 z-40 shadow-sm transition-all duration-300">
         <div class="max-w-7xl mx-auto flex justify-between items-center">
             <div class="flex items-center gap-6">
@@ -221,7 +225,7 @@
 
     <main id="main-container" class="max-w-7xl mx-auto w-full p-4 sm:p-6 flex-1 pt-6 sm:pt-8 transition-all duration-300">
         
-        <!-- NAVEGAÇÃO PRINCIPAL (Pode ser escondida no Modo Foco) -->
+        <!-- NAVEGAÇÃO PRINCIPAL (Oculta no Modo Foco) -->
         <nav id="main-nav" class="no-print flex gap-10 mb-6 border-b border-white/5 overflow-x-auto justify-center sm:justify-start scrollbar-hide">
             <button onclick="showView('projects')" class="tab-btn pb-4 font-black uppercase tracking-[0.2em] tab-active" id="tab-projects" data-i18n="nav_proj">Projetos</button>
             <button onclick="window.cancelEdit(); showView('new')" class="tab-btn pb-4 font-black uppercase tracking-[0.2em] editor-only hidden" id="tab-new" data-i18n="nav_new">Nova Obra</button>
@@ -247,7 +251,7 @@
             <div id="projects-grid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 text-left"></div>
         </div>
 
-        <!-- Demais Views (Nova Obra, Usuários, Logs, Relatórios) Ocultas no Padrão -->
+        <!-- Demais Views (Nova Obra, Usuários, Logs, Relatórios) -->
         <div id="view-new" class="hidden max-w-3xl mx-auto glass p-6 sm:p-10 rounded-[40px] text-left shadow-2xl border border-white/5 animate-fade-in">
             <h3 class="text-3xl font-black mb-10 flex items-center gap-4 uppercase tracking-tighter text-white">
                 <span class="w-3 h-10 bg-gold rounded-full"></span>
@@ -384,7 +388,7 @@
             </div>
         </div>
 
-        <div id="view-reports" class="hidden space-y-8 max-w-7xl mx-auto text-left animate-fade-in">
+        <div id="view-reports" class="hidden space-y-8 max-w-7xl mx-auto text-left animate-fade-in print:block">
             <div id="report-output"></div>
         </div>
     </main>
@@ -646,7 +650,7 @@
     function renderRecEditList() {
         const container = document.getElementById('rec-edit-list');
         if (!container || !state.editingRecs) return;
-        container.innerHTML = state.editingRecs.recs.map((r, i) => `<div class="flex flex-col sm:flex-row items-center gap-3 p-4 bg-white/5 rounded-xl border border-white/10"><input type="date" value="${r.data || ''}" onchange="updateRecField(${i}, 'data', this.value)" class="modern-input relative text-sm w-full sm:flex-1"><input type="number" step="0.01" value="${(r.valor ?? 0)}" onchange="updateRecField(${i}, 'valor', this.value)" class="modern-input text-sm w-full sm:w-32"><select onchange="updateRecField(${i}, 'metodo', this.value)" class="modern-input text-sm w-full sm:w-36 !pr-8"><option value="Zelle" ${r.metodo==='Zelle'?'selected':''}>Zelle</option><option value="Wire Transfer" ${r.metodo==='Wire Transfer'?'selected':''}>Wire</option><option value="Dinheiro" ${r.metodo==='Dinheiro'?'selected':''}>Cash</option><option value="CC" ${r.metodo==='CC'?'selected':''}>Cartão</option></select><button onclick="removeRecFromEdit(${i})" class="p-4 w-full sm:w-auto bg-red-500/20 text-red-400 rounded-xl hover:bg-red-500/30 flex justify-center"><i data-lucide="trash-2" class="w-5 h-5"></i></button></div>`).join('') + `<button onclick="addNewRecToEdit()" class="w-full p-4 mt-2 border-2 border-dashed border-emerald-500/30 rounded-xl text-emerald-400 font-bold hover:bg-emerald-500/10 transition-all">+ Adicionar Novo Recebimento</button>`;
+        container.innerHTML = state.editingRecs.recs.map((r, i) => `<div class="flex flex-col sm:flex-row items-center gap-3 p-4 bg-white/5 rounded-xl border border-white/10"><input type="date" value="${r.data || ''}" onchange="updateRecField(${i}, 'data', this.value)" class="modern-input relative text-sm w-full sm:flex-1"><input type="number" step="0.01" value="${(r.valor ?? 0)}" onchange="updateRecField(${i}, 'valor', this.value)" class="modern-input text-sm w-full sm:w-28"><select onchange="updateRecField(${i}, 'metodo', this.value)" class="modern-input text-sm w-full sm:w-36 !pr-8"><option value="Zelle" ${r.metodo==='Zelle'?'selected':''}>Zelle</option><option value="Wire Transfer" ${r.metodo==='Wire Transfer'?'selected':''}>Wire</option><option value="Dinheiro" ${r.metodo==='Dinheiro'?'selected':''}>Cash</option><option value="CC" ${r.metodo==='CC'?'selected':''}>Cartão</option></select><button onclick="removeRecFromEdit(${i})" class="p-4 w-full sm:w-auto bg-red-500/20 text-red-400 rounded-xl hover:bg-red-500/30 flex justify-center"><i data-lucide="trash-2" class="w-5 h-5"></i></button></div>`).join('') + `<button onclick="addNewRecToEdit()" class="w-full p-4 mt-2 border-2 border-dashed border-emerald-500/30 rounded-xl text-emerald-400 font-bold hover:bg-emerald-500/10 transition-all">+ Adicionar Novo Recebimento</button>`;
         try { lucide.createIcons(); } catch {}
     }
     window.updateRecField = (index, field, value) => { if (!state.editingRecs) return; if (field === 'data') state.editingRecs.recs[index].data = value; if (field === 'valor') state.editingRecs.recs[index].valor = parseFloat(value || 0); if (field === 'metodo') state.editingRecs.recs[index].metodo = value; };
@@ -668,7 +672,7 @@
     // --- NOVA LÓGICA DE NAVEGAÇÃO INTERNA (DRILL-DOWN) E HIDE HEADER ---
     window.openProjectDetails = (id) => { 
         state.focusedProject = id; 
-        state.activeModule = null; // Abre no nível dos Botões Gigantes
+        state.activeModule = null; 
         renderProjects(); 
         window.scrollTo({ top: 0, behavior: 'smooth' }); 
     };
@@ -873,11 +877,11 @@
                     moduleTitle = 'Comissões e Recebimentos';
                     moduleContent = `
                         <div class="space-y-6 text-left print:bg-transparent print:border-slate-300 print:shadow-none print:p-0">
-                            <div class="grid grid-cols-2 gap-4 sm:gap-6 pb-8 border-b border-white/5 print:border-slate-200">
-                                <div><p class="text-[11px] font-bold text-slate-500 uppercase print:text-black tracking-widest mb-1">Comissão Projetada</p><p class="text-xl font-black text-slate-400 print:text-black">${formatCurr(f.commTotalProjetada)}</p></div>
-                                <div class="text-right"><p class="text-[11px] font-bold text-emerald-500/80 uppercase print:text-emerald-700 tracking-widest mb-1">Comissão Liberada</p><p class="text-3xl font-black text-emerald-500 print:text-emerald-700">${formatCurr(f.commLiberada)}</p></div>
-                                <div><p class="text-[11px] font-bold text-slate-500 uppercase print:text-black tracking-widest mb-1">Pago ao Vendedor</p><p class="text-xl font-black text-slate-300 print:text-black">${formatCurr(f.totalPaid)}</p></div>
-                                <div class="text-right"><p class="text-[11px] font-bold ${balColor} uppercase print:text-black tracking-widest mb-1">${balText}</p><p class="text-3xl font-black ${balColor} tracking-tighter print:text-black">${balDisplay}</p></div>
+                            <div class="grid grid-cols-2 print:grid-cols-4 gap-4 sm:gap-6 pb-8 border-b border-white/5 print:border-slate-200">
+                                <div class="print:p-3"><p class="text-[11px] font-bold text-slate-500 uppercase print:text-black tracking-widest mb-1 print:text-[9px]">Comissão Projetada</p><p class="text-xl font-black text-slate-400 print:text-black print:text-base">${formatCurr(f.commTotalProjetada)}</p></div>
+                                <div class="text-right print:text-left print:p-3"><p class="text-[11px] font-bold text-emerald-500/80 uppercase print:text-emerald-700 tracking-widest mb-1 print:text-[9px]">Comissão Liberada</p><p class="text-3xl font-black text-emerald-500 print:text-emerald-700 print:text-base truncate">${formatCurr(f.commLiberada)}</p></div>
+                                <div class="print:p-3"><p class="text-[11px] font-bold text-slate-500 uppercase print:text-black tracking-widest mb-1 print:text-[9px]">Pago ao Vendedor</p><p class="text-xl font-black text-slate-300 print:text-black print:text-base">${formatCurr(f.totalPaid)}</p></div>
+                                <div class="text-right print:text-left print:p-3"><p class="text-[11px] font-bold ${balColor} uppercase print:text-black tracking-widest mb-1 print:text-[9px]">${balText}</p><p class="text-3xl font-black ${balColor} tracking-tighter print:text-black print:text-base truncate">${balDisplay}</p></div>
                             </div>
 
                             <div class="space-y-4">
@@ -889,7 +893,7 @@
                                     </div>
                                 </div>
                                 <div class="max-h-60 overflow-y-auto scrollbar-hide px-2 print:max-h-none">
-                                    ${(p.recebimentos || []).map(r => `<div class="flex justify-between items-center text-sm sm:text-base py-4 border-b border-white/5 last:border-0 print:border-slate-200 hover:bg-white/5 rounded px-2"><span class="text-slate-300 print:text-black">${r.data ? new Date(r.data + 'T12:00:00').toLocaleDateString() : '-'} <span class="text-[10px] font-black text-slate-500 ml-2 uppercase bg-black/30 px-2 py-1 rounded">${r.metodo}</span></span><span class="font-black text-emerald-400 print:text-emerald-700">+ ${formatCurr(r.valor)}</span></div>`).join('') || '<p class="text-sm italic text-slate-600 text-center py-6">Nenhum recebimento registrado.</p>'}
+                                    ${(p.recebimentos || []).map(r => `<div class="flex justify-between items-center text-sm sm:text-base py-4 border-b border-white/5 last:border-0 print:border-slate-200 hover:bg-white/5 rounded px-2"><span class="text-slate-300 print:text-black">${r.data ? new Date(r.data + 'T12:00:00').toLocaleDateString() : '-'} <span class="text-[10px] font-black text-slate-500 ml-2 uppercase bg-black/30 px-2 py-1 rounded print:bg-slate-200 print:text-slate-800">${r.metodo}</span></span><span class="font-black text-emerald-400 print:text-emerald-700">+ ${formatCurr(r.valor)}</span></div>`).join('') || '<p class="text-sm italic text-slate-600 text-center py-6">Nenhum recebimento registrado.</p>'}
                                 </div>
                                 ${isAdmin ? `
                                 <div class="grid grid-cols-1 sm:grid-cols-12 gap-4 mt-6 no-print bg-black/20 p-5 rounded-2xl border border-white/5">
@@ -928,10 +932,10 @@
                             <div class="flex-1 flex flex-col sm:flex-row sm:items-center gap-1.5 sm:gap-4">
                                 <span class="text-slate-400 print:text-slate-600 font-bold text-xs">${exp.data ? new Date(exp.data + 'T12:00:00').toLocaleDateString() : '-'}</span>
                                 <span class="font-black text-slate-200 print:text-black uppercase">${exp.descricao}</span>
-                                <span class="text-[10px] px-2.5 py-1 bg-cyan-500/20 text-cyan-300 rounded-md border border-cyan-500/30 font-bold self-start sm:self-auto">${exp.categoria}</span>
+                                <span class="text-[10px] px-2.5 py-1 bg-cyan-500/20 text-cyan-300 rounded-md border border-cyan-500/30 font-bold self-start sm:self-auto print:bg-slate-200 print:text-slate-800">${exp.categoria}</span>
                             </div>
                             <div class="flex items-center gap-4">
-                                <span class="font-black text-gold text-lg">${formatCurr(exp.valor)}</span>
+                                <span class="font-black text-gold text-lg print:text-black">${formatCurr(exp.valor)}</span>
                                 <button onclick="window.deleteExpense('${p.id}', '${exp.id}', '${exp.descricao.replace(/'/g,"\\'")}', ${exp.valor})" class="p-3 text-red-500/70 hover:text-red-400 hover:bg-red-500/10 rounded-xl transition-colors no-print"><i data-lucide="trash-2" class="w-5 h-5"></i></button>
                             </div>
                         </div>
@@ -939,34 +943,34 @@
 
                     moduleContent = `
                         <!-- KPIs -->
-                        <div class="grid grid-cols-2 sm:grid-cols-4 gap-4 sm:gap-6 mb-10">
-                            <div class="bg-black/40 p-5 rounded-[24px] border border-white/5 shadow-inner print:bg-transparent print:border-slate-300">
-                                <p class="text-[10px] font-black uppercase text-slate-500 mb-2 tracking-widest print:text-slate-600">Orçamento (Budget)</p>
-                                <p class="text-xl sm:text-2xl font-black text-white print:text-black">${formatCurr(f.orcamento)}</p>
+                        <div class="grid grid-cols-2 print:grid-cols-4 sm:grid-cols-4 gap-4 sm:gap-6 mb-10 print:mb-6">
+                            <div class="bg-black/40 p-5 rounded-[24px] border border-white/5 shadow-inner print:bg-transparent print:border-slate-300 print:p-3 print:rounded-xl">
+                                <p class="text-[10px] font-black uppercase text-slate-500 mb-2 tracking-widest print:text-slate-600 print:text-[8px]">Orçamento (Budget)</p>
+                                <p class="text-xl sm:text-2xl font-black text-white print:text-black print:text-base truncate">${formatCurr(f.orcamento)}</p>
                             </div>
-                            <div class="bg-black/40 p-5 rounded-[24px] border border-white/5 shadow-inner print:bg-transparent print:border-slate-300">
-                                <p class="text-[10px] font-black uppercase text-slate-500 mb-2 tracking-widest print:text-slate-600">Despesas Totais</p>
-                                <p class="text-xl sm:text-2xl font-black ${budgetColor} print:!text-black">${formatCurr(f.totalDespesas)}</p>
+                            <div class="bg-black/40 p-5 rounded-[24px] border border-white/5 shadow-inner print:bg-transparent print:border-slate-300 print:p-3 print:rounded-xl">
+                                <p class="text-[10px] font-black uppercase text-slate-500 mb-2 tracking-widest print:text-slate-600 print:text-[8px]">Despesas Totais</p>
+                                <p class="text-xl sm:text-2xl font-black ${budgetColor} print:!text-black print:text-base truncate">${formatCurr(f.totalDespesas)}</p>
                             </div>
-                            <div class="bg-black/40 p-5 rounded-[24px] border border-white/5 shadow-inner print:bg-transparent print:border-slate-300">
-                                <p class="text-[10px] font-black uppercase text-slate-500 mb-2 tracking-widest print:text-slate-600">Lucro Real</p>
-                                <p class="text-xl sm:text-2xl font-black ${profitColor}">${formatCurr(f.lucroBruto)}</p>
+                            <div class="bg-black/40 p-5 rounded-[24px] border border-white/5 shadow-inner print:bg-transparent print:border-slate-300 print:p-3 print:rounded-xl">
+                                <p class="text-[10px] font-black uppercase text-slate-500 mb-2 tracking-widest print:text-slate-600 print:text-[8px]">Lucro Real</p>
+                                <p class="text-xl sm:text-2xl font-black ${profitColor} print:text-black print:text-base truncate">${formatCurr(f.lucroBruto)}</p>
                             </div>
-                            <div class="bg-black/40 p-5 rounded-[24px] border border-white/5 shadow-inner print:bg-transparent print:border-slate-300">
-                                <p class="text-[10px] font-black uppercase text-slate-500 mb-2 tracking-widest print:text-slate-600">Margem</p>
-                                <p class="text-xl sm:text-2xl font-black ${marginColor}">${f.margemLucro.toFixed(1)}%</p>
+                            <div class="bg-black/40 p-5 rounded-[24px] border border-white/5 shadow-inner print:bg-transparent print:border-slate-300 print:p-3 print:rounded-xl">
+                                <p class="text-[10px] font-black uppercase text-slate-500 mb-2 tracking-widest print:text-slate-600 print:text-[8px]">Margem</p>
+                                <p class="text-xl sm:text-2xl font-black ${marginColor} print:text-black print:text-base truncate">${f.margemLucro.toFixed(1)}%</p>
                             </div>
                         </div>
 
                         <!-- Gráficos -->
-                        <div class="grid grid-cols-1 lg:grid-cols-3 gap-6 mb-10 no-print">
-                            <div class="bg-black/20 p-6 rounded-[24px] border border-cyan-500/10 flex flex-col items-center shadow-lg">
-                                <p class="text-[11px] font-black uppercase text-cyan-300/70 mb-4 w-full text-left tracking-widest">Orçamento vs Gasto</p>
-                                <div class="relative w-48 h-48"><canvas id="chart-budget-${p.id}"></canvas></div>
+                        <div class="grid grid-cols-1 lg:grid-cols-3 gap-6 mb-10 print:mb-6">
+                            <div class="bg-black/20 p-6 rounded-[24px] border border-cyan-500/10 flex flex-col items-center shadow-lg print:border-slate-300 print:bg-transparent">
+                                <p class="text-[11px] font-black uppercase text-cyan-300/70 mb-4 w-full text-left tracking-widest print:text-black">Orçamento vs Gasto</p>
+                                <div class="relative w-48 h-48 print:w-32 print:h-32"><canvas id="chart-budget-${p.id}"></canvas></div>
                             </div>
-                            <div class="lg:col-span-2 bg-black/20 p-6 rounded-[24px] border border-cyan-500/10 shadow-lg">
-                                <p class="text-[11px] font-black uppercase text-cyan-300/70 mb-4 tracking-widest">Distribuição por Categoria</p>
-                                <div class="relative w-full h-48"><canvas id="chart-cat-${p.id}"></canvas></div>
+                            <div class="lg:col-span-2 bg-black/20 p-6 rounded-[24px] border border-cyan-500/10 shadow-lg print:border-slate-300 print:bg-transparent">
+                                <p class="text-[11px] font-black uppercase text-cyan-300/70 mb-4 tracking-widest print:text-black">Distribuição por Categoria</p>
+                                <div class="relative w-full h-48 print:h-32"><canvas id="chart-cat-${p.id}"></canvas></div>
                             </div>
                         </div>
 
@@ -986,7 +990,7 @@
                                 </div>
                             </div>
 
-                            <p class="text-sm font-black text-cyan-300 uppercase mb-4 tracking-widest">Histórico Completo de Gastos</p>
+                            <p class="text-sm font-black text-cyan-300 uppercase mb-4 tracking-widest print:text-black print:mb-2">Histórico Completo de Gastos</p>
                             <div class="max-h-96 overflow-y-auto scrollbar-hide pr-2 print:max-h-none">
                                 ${expensesList}
                             </div>
@@ -996,7 +1000,7 @@
 
                 // INSERE O CARTÃO DE NÍVEL 3 (SÓ O HEADER + CONTEÚDO DO MÓDULO, SEM O RESUMO GERAL)
                 grid.innerHTML += `
-                <div class="glass p-6 md:p-10 rounded-[40px] border-l-[8px] relative shadow-2xl flex flex-col w-full print:border print:border-slate-300 print:shadow-none animate-fade-in" style="border-left-color: ${p.status === 'Finalizado' ? '#10b981' : '#f59e0b'}">
+                <div class="glass p-6 md:p-10 rounded-[40px] border-l-[8px] relative shadow-2xl flex flex-col w-full print:border print:border-none print:shadow-none animate-fade-in" style="border-left-color: ${p.status === 'Finalizado' ? '#10b981' : '#f59e0b'}">
                     <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-8 border-b border-white/10 pb-6 gap-6 no-print">
                         <div class="flex flex-col sm:flex-row items-start sm:items-center gap-4 w-full sm:w-auto">
                             <button onclick="window.closeProjectModule()" class="p-4 w-full sm:w-auto bg-white/5 hover:bg-white/10 rounded-2xl transition-all border border-white/10 shadow-sm flex items-center justify-center gap-3 text-xs font-black uppercase text-slate-300 hover:text-white">
@@ -1027,7 +1031,7 @@
                     setTimeout(() => renderCharts(p.id, f.orcamento, f.gastosPorCategoria, f.totalDespesas), 100);
                 }
 
-                return; // INTERROMPE O LOOP AQUI PARA O NÍVEL 3 (Não renderiza o resto do cartão abaixo)
+                return; // INTERROMPE O LOOP AQUI PARA O NÍVEL 3
             }
 
 
@@ -1089,9 +1093,8 @@
                     <div class="mt-8 text-center text-xs text-slate-500 font-bold uppercase tracking-widest no-print opacity-60 group-hover:opacity-100 flex items-center justify-center gap-2 transition-opacity">
                         CLIQUE NO CARD PARA ABRIR <i data-lucide="chevron-right" class="w-4 h-4"></i>
                     </div>
-                </div>`; // Fechamento Nível 1
+                </div>`; 
             } else {
-                // NÍVEL 2: BOTÕES GIGANTES DO MENU DE OBRA
                 const gridCols = canViewCosts ? 'sm:grid-cols-2' : 'grid-cols-1';
                 cardHTML += `
                     <div class="grid grid-cols-1 ${gridCols} gap-6 mt-10 pt-8 border-t border-white/10 no-print animate-fade-in">
@@ -1108,7 +1111,7 @@
                         </button>
                         ` : ''}
                     </div>
-                </div>`; // Fechamento Nível 2
+                </div>`; 
             }
             
             grid.innerHTML += cardHTML;
@@ -1133,7 +1136,7 @@
         let tv = 0, tc = 0, tProfit = 0; 
 
         const currentYear = new Date().getFullYear();
-        const monthNames = state.lang === 'en' ? ['Jan','Fev','Mar','Abr','Mai','Jun','Jul','Ago','Set','Out','Nov','Dez'] : ['Jan','Fev','Mar','Abr','Mai','Jun','Jul','Ago','Set','Out','Nov','Dez'];
+        const monthNames = state.lang === 'en' ? ['Jan','Fev','Mar','Abr','Mai','Jun','Jul','Ago','Sep','Out','Nov','Dez'] : ['Jan','Fev','Mar','Abr','Mai','Jun','Jul','Ago','Set','Out','Nov','Dez'];
         const sellerStats = {};
 
         const rows = filtered.map(p => {
@@ -1158,8 +1161,8 @@
 
             const profitCol = canViewCosts ? `<td class="p-4 text-right font-black ${f.lucroBruto >= 0 ? 'text-emerald-500' : 'text-red-500'}">${formatCurr(f.lucroBruto)}</td>` : '';
 
-            return `<tr class="border-b border-slate-100 text-xs text-left text-slate-800">
-                <td class="p-4 font-bold text-[10px] text-slate-500">${p.numeroProposta || '-'} / ${p.numeroInvoice || '-'}</td>
+            return `<tr class="border-b border-slate-100 text-[10px] sm:text-xs text-left text-slate-800">
+                <td class="p-4 font-bold text-[9px] sm:text-[10px] text-slate-500">${p.numeroProposta || '-'} / ${p.numeroInvoice || '-'}</td>
                 <td class="p-4 font-black uppercase">${p.cliente || ''}</td>
                 <td class="p-4">${p.vendedor?.split('@')[0] || ''}</td>
                 <td class="p-4 text-right">${formatCurr(p.valorTotal)}</td>
@@ -1172,59 +1175,59 @@
         let summaryRows = Object.keys(sellerStats).sort().map(vend => {
             const stats = sellerStats[vend];
             let monthsHtml = stats.months.map(mVal => `<td class="p-3 text-right ${mVal > 0 ? 'text-amber-600 font-bold' : 'text-slate-300'}">${formatCurr(mVal)}</td>`).join('');
-            return `<tr class="border-b border-slate-100 text-[10px] text-slate-800"><td class="p-3 font-black uppercase whitespace-nowrap">${vend.split('@')[0]}</td>${monthsHtml}<td class="p-3 text-right font-black text-emerald-600 bg-slate-50">${formatCurr(stats.total)}</td></tr>`;
+            return `<tr class="border-b border-slate-100 text-[9px] sm:text-[10px] text-slate-800"><td class="p-3 font-black uppercase whitespace-nowrap">${vend.split('@')[0]}</td>${monthsHtml}<td class="p-3 text-right font-black text-emerald-600 bg-slate-50">${formatCurr(stats.total)}</td></tr>`;
         }).join('');
 
         let summaryHeaderMonths = monthNames.map(m => `<th class="p-3 text-right">${m}</th>`).join('');
 
-        out.innerHTML = `<div class="bg-white text-slate-950 p-8 md:p-12 rounded-[50px] shadow-2xl border-8 border-slate-50 text-left">
-            <div class="flex justify-between items-center border-b-[8px] border-slate-950 pb-10 mb-10">
-                <div class="logo-frame-sm border p-2 rounded-xl"><img src="logo-D2-Group-preto.png" class="h-12"></div>
+        out.innerHTML = `<div class="bg-white text-slate-950 p-6 sm:p-12 rounded-[50px] shadow-2xl border-8 border-slate-50 text-left print:border-none print:shadow-none print:p-0">
+            <div class="flex justify-between items-center border-b-[8px] border-slate-950 pb-8 mb-8 print:border-b-2 print:border-slate-300">
+                <div class="logo-frame-sm border p-2 rounded-xl print:border-none print:p-0"><img src="logo-D2-Group-preto.png" class="h-10 sm:h-12"></div>
                 <div class="text-right">
-                    <h2 class="text-3xl font-black uppercase tracking-tighter">Relatório Executivo</h2>
+                    <h2 class="text-2xl sm:text-3xl font-black uppercase tracking-tighter">Relatório Executivo</h2>
                     <p class="text-slate-400 font-black uppercase text-[10px]">${new Date().toLocaleDateString()}</p>
                 </div>
             </div>
             
             <div class="mb-12">
-                <h3 class="text-lg font-black uppercase tracking-tighter mb-4 text-slate-800">Comissões Reais - Pagas por Mês (${currentYear})</h3>
-                <div class="overflow-x-auto border border-slate-100 rounded-2xl">
+                <h3 class="text-base sm:text-lg font-black uppercase tracking-tighter mb-4 text-slate-800">Comissões Reais - Pagas por Mês (${currentYear})</h3>
+                <div class="overflow-x-auto print:overflow-visible border border-slate-100 rounded-2xl print:border-none">
                     <table class="w-full">
-                        <thead class="bg-slate-50 border-b border-slate-100">
-                            <tr class="font-black uppercase text-[9px] text-slate-500 text-left"><th class="p-3">Vendedor</th>${summaryHeaderMonths}<th class="p-3 text-right bg-slate-100">Total Ano</th></tr>
+                        <thead class="bg-slate-50 border-b border-slate-100 print:bg-transparent">
+                            <tr class="font-black uppercase text-[8px] sm:text-[9px] text-slate-500 text-left"><th class="p-3">Vendedor</th>${summaryHeaderMonths}<th class="p-3 text-right bg-slate-100 print:bg-transparent">Total Ano</th></tr>
                         </thead>
-                        <tbody>${summaryRows || `<tr><td colspan="14" class="p-4 text-center text-slate-400">Nenhum dado para o ano atual.</td></tr>`}</tbody>
+                        <tbody>${summaryRows || `<tr><td colspan="14" class="p-4 text-center text-slate-400 text-xs">Nenhum dado para o ano atual.</td></tr>`}</tbody>
                     </table>
                 </div>
             </div>
             
-            <h3 class="text-lg font-black uppercase tracking-tighter mb-4 text-slate-800">Detalhamento de Obras Ativas</h3>
-            <div class="overflow-x-auto border border-slate-100 rounded-2xl">
+            <h3 class="text-base sm:text-lg font-black uppercase tracking-tighter mb-4 text-slate-800">Detalhamento de Obras Ativas</h3>
+            <div class="overflow-x-auto print:overflow-visible border border-slate-100 rounded-2xl print:border-none">
                 <table class="w-full">
-                    <thead class="bg-slate-50 border-b border-slate-100">
-                        <tr class="font-black uppercase text-[9px] text-slate-500 text-left">
+                    <thead class="bg-slate-50 border-b border-slate-100 print:bg-transparent">
+                        <tr class="font-black uppercase text-[8px] sm:text-[9px] text-slate-500 text-left">
                             <th class="p-4">Prop / Invoice</th><th class="p-4">Obra</th><th class="p-4">Vendedor</th>
-                            <th class="p-4 text-right">Contrato Bruto</th><th class="p-4 text-right bg-emerald-50 text-emerald-700">Total Recebido</th>
-                            <th class="p-4 text-right bg-amber-50 text-amber-700">Com. Liberada</th>
-                            ${canViewCosts ? '<th class="p-4 text-right bg-cyan-50 text-cyan-700">Lucro Real</th>' : ''}
+                            <th class="p-4 text-right">Contrato Bruto</th><th class="p-4 text-right bg-emerald-50 text-emerald-700 print:bg-transparent">Total Recebido</th>
+                            <th class="p-4 text-right bg-amber-50 text-amber-700 print:bg-transparent">Com. Liberada</th>
+                            ${canViewCosts ? '<th class="p-4 text-right bg-cyan-50 text-cyan-700 print:bg-transparent">Lucro Real</th>' : ''}
                         </tr>
                     </thead>
                     <tbody>${rows}</tbody>
                 </table>
             </div>
-            <div class="mt-10 pt-10 border-t-[8px] border-slate-950 flex flex-wrap justify-end gap-10 sm:gap-16">
+            <div class="mt-10 pt-10 border-t-[8px] border-slate-950 flex flex-wrap justify-end gap-10 sm:gap-16 print:border-t-2 print:border-slate-300">
                 <div class="text-right">
-                    <p class="text-[11px] font-black uppercase text-slate-400 mb-1">TOTAL CONTRATOS</p>
-                    <p class="text-4xl font-black">${formatCurr(tv)}</p>
+                    <p class="text-[10px] sm:text-[11px] font-black uppercase text-slate-400 mb-1">TOTAL CONTRATOS</p>
+                    <p class="text-3xl sm:text-4xl font-black">${formatCurr(tv)}</p>
                 </div>
                 <div class="text-right">
-                    <p class="text-[11px] font-black uppercase text-amber-600 mb-1">COMISSÕES GERADAS</p>
-                    <p class="text-4xl font-black text-amber-600">${formatCurr(tc)}</p>
+                    <p class="text-[10px] sm:text-[11px] font-black uppercase text-amber-600 mb-1">COMISSÕES GERADAS</p>
+                    <p class="text-3xl sm:text-4xl font-black text-amber-600">${formatCurr(tc)}</p>
                 </div>
                 ${canViewCosts ? `
                 <div class="text-right">
-                    <p class="text-[11px] font-black uppercase text-cyan-600 mb-1">LUCRO TOTAL</p>
-                    <p class="text-4xl font-black text-cyan-600">${formatCurr(tProfit)}</p>
+                    <p class="text-[10px] sm:text-[11px] font-black uppercase text-cyan-600 mb-1">LUCRO TOTAL</p>
+                    <p class="text-3xl sm:text-4xl font-black text-cyan-600">${formatCurr(tProfit)}</p>
                 </div>
                 ` : ''}
             </div>
