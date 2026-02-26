@@ -926,7 +926,7 @@
                     const expensesList = (p.despesas || []).sort((a,b) => new Date(b.data) - new Date(a.data)).map(exp => `
                         <div class="flex justify-between items-center text-sm py-4 border-b border-cyan-500/10 last:border-0 hover:bg-white/5 transition-colors px-3 rounded-lg print:border-slate-200">
                             <div class="flex-1 flex flex-col sm:flex-row sm:items-center gap-1.5 sm:gap-4">
-                                <span class="text-slate-400 print:text-slate-600 font-mono text-xs">${exp.data ? new Date(exp.data + 'T12:00:00').toLocaleDateString() : '-'}</span>
+                                <span class="text-slate-400 print:text-slate-600 font-bold text-xs">${exp.data ? new Date(exp.data + 'T12:00:00').toLocaleDateString() : '-'}</span>
                                 <span class="font-black text-slate-200 print:text-black uppercase">${exp.descricao}</span>
                                 <span class="text-[10px] px-2.5 py-1 bg-cyan-500/20 text-cyan-300 rounded-md border border-cyan-500/30 font-bold self-start sm:self-auto">${exp.categoria}</span>
                             </div>
@@ -1052,8 +1052,8 @@
                 <div class="grid grid-cols-2 gap-y-6 gap-x-4 p-6 bg-black/20 rounded-[24px] border border-white/5 mb-10 text-left shadow-inner print:bg-transparent print:border-slate-200">
                     <div><p class="text-xs font-black text-slate-500 uppercase tracking-widest mb-1.5">Vendedor</p><p class="text-sm font-bold text-slate-200 truncate print:text-black" title="${p.vendedor}">${p.vendedor?.split('@')[0] || '--'}</p></div>
                     <div><p class="text-xs font-black text-slate-500 uppercase tracking-widest mb-1.5">Status da Obra</p><p class="text-sm font-black text-gold uppercase print:text-amber-700">${p.status || 'Cotação'}</p></div>
-                    <div><p class="text-xs font-black text-slate-500 uppercase tracking-widest mb-1.5">Proposta / Invoice</p><p class="text-sm font-mono font-bold text-slate-400 print:text-black">${p.numeroProposta || '---'} <span class="text-slate-600 font-normal mx-1">|</span> ${p.numeroInvoice || '---'}</p></div>
-                    <div><p class="text-xs font-black text-slate-500 uppercase tracking-widest mb-1.5">Pagt Previsto • Comiss.</p><p class="text-sm font-bold text-slate-200 print:text-black">${p.metodo || '--'} <span class="text-slate-600 font-normal mx-1">•</span> ${p.percComissao || 0}%</p></div>
+                    <div><p class="text-xs font-black text-slate-500 uppercase tracking-widest mb-1.5">Proposta / Invoice</p><p class="text-sm font-bold text-slate-200 print:text-black">${p.numeroProposta || '---'} <span class="text-slate-600 font-normal mx-1">|</span> ${p.numeroInvoice || '---'}</p></div>
+                    <div><p class="text-xs font-black text-slate-500 uppercase tracking-widest mb-1.5">Pagamento • % Comissão</p><p class="text-sm font-bold text-slate-200 print:text-black">${p.metodo || '--'} <span class="text-slate-600 font-normal mx-1">•</span> ${p.percComissao || 0}%</p></div>
                 </div>
 
                 <div class="mt-auto"></div>
@@ -1159,7 +1159,7 @@
             const profitCol = canViewCosts ? `<td class="p-4 text-right font-black ${f.lucroBruto >= 0 ? 'text-emerald-500' : 'text-red-500'}">${formatCurr(f.lucroBruto)}</td>` : '';
 
             return `<tr class="border-b border-slate-100 text-xs text-left text-slate-800">
-                <td class="p-4 font-mono text-[10px]">${p.numeroProposta || '-'} / ${p.numeroInvoice || '-'}</td>
+                <td class="p-4 font-bold text-[10px] text-slate-500">${p.numeroProposta || '-'} / ${p.numeroInvoice || '-'}</td>
                 <td class="p-4 font-black uppercase">${p.cliente || ''}</td>
                 <td class="p-4">${p.vendedor?.split('@')[0] || ''}</td>
                 <td class="p-4 text-right">${formatCurr(p.valorTotal)}</td>
