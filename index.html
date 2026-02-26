@@ -7,6 +7,8 @@
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
     <script src="https://unpkg.com/lucide@latest"></script>
+    <!-- Chart.js para Gráficos Interativos -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <style>
         :root { --gold: #fbbf24; --gold-dark: #b45309; --d2-blue: #0f172a; }
         body { font-family: 'Inter', sans-serif; transition: background-color 0.3s; margin: 0; }
@@ -49,9 +51,11 @@
         }
         .password-toggle svg { width: 18px; height: 18px; stroke-width: 2.5; }
 
-        /* Unidades - Pill Filtros */
+        /* Unidades e Filtros Pílula */
         .unit-pill { padding: 8px 20px; border-radius: 20px; font-size: 10px; font-weight: 800; border: 1px solid rgba(255,255,255,0.1); cursor: pointer; transition: 0.2s; color: #64748b; background: transparent; }
         .unit-pill.active { background: var(--gold); color: #000; border-color: var(--gold); }
+        .filter-pill { padding: 6px 16px; border-radius: 12px; font-size: 10px; font-weight: 800; border: 1px solid rgba(255,255,255,0.05); cursor: pointer; transition: 0.2s; color: #64748b; background: rgba(255,255,255,0.02); }
+        .filter-pill.active { background: rgba(255,255,255,0.1); color: #fff; border-color: rgba(255,255,255,0.2); }
 
         /* Botão Premium Gold */
         .btn-premium-gold {
@@ -62,7 +66,7 @@
         }
         .btn-premium-gold:hover { transform: translateY(-1px); box-shadow: 0 4px 15px rgba(251, 191, 36, 0.4); }
 
-        /* Calendário Premium - CORREÇÃO DE OVERLAP APLICADA AQUI */
+        /* Calendário Premium - CORREÇÃO DE OVERLAP */
         input[type="date"] { position: relative; } 
         input[type="date"]::-webkit-calendar-picker-indicator {
             background: transparent; bottom: 0; color: transparent; cursor: pointer;
@@ -71,18 +75,17 @@
         .date-container { position: relative; display: flex; align-items: center; width: 100%; }
         .calendar-icon-overlay { position: absolute; right: 14px; pointer-events: none; color: var(--gold); z-index: 10; }
 
-        /* Painel Financeiro Expansível */
+        /* Painel Financeiro e Despesas Expansível */
         .finance-panel { max-height: 0; overflow: hidden; transition: all 0.5s ease; opacity: 0; }
-        .finance-panel.open { max-height: 3500px; opacity: 1; margin-top: 1.5rem; border-top: 1px solid rgba(255,255,255,0.1); padding-top: 1.5rem; }
+        .finance-panel.open { max-height: 5000px; opacity: 1; margin-top: 1.5rem; border-top: 1px solid rgba(255,255,255,0.1); padding-top: 1.5rem; }
 
-        /* Barra de Progresso Degradê Dinâmico */
+        /* Barra de Progresso */
         .progress-track { height: 16px; border-radius: 8px; background: rgba(255,255,255,0.05); overflow: hidden; border: 1px solid rgba(255,255,255,0.05); }
         .progress-bar-fill { height: 100%; transition: width 1.2s cubic-bezier(0.4, 0, 0.2, 1); border-radius: 8px; }
 
         .glass { background: rgba(255, 255, 255, 0.03); backdrop-filter: blur(12px); border: 1px solid rgba(255, 255, 255, 0.1); }
         .scrollbar-hide::-webkit-scrollbar { display: none; }
-        @media print { .no-print { display: none !important; } }
-
+        
         /* Modais */
         .modal-overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.7); backdrop-filter: blur(4px); z-index: 1000; display: none; align-items: center; justify-content: center; }
         .modal-overlay.active { display: flex; }
@@ -91,6 +94,17 @@
         /* Animação Profissional de Modo Foco */
         @keyframes fadeIn { from { opacity: 0; transform: translateY(15px); } to { opacity: 1; transform: translateY(0); } }
         .animate-fade-in { animation: fadeIn 0.4s cubic-bezier(0.16, 1, 0.3, 1) forwards; }
+
+        /* Estilos de Impressão de Relatório Limpo */
+        @media print { 
+            .no-print { display: none !important; } 
+            body.app-body-dark { background: #fff !important; color: #000 !important; }
+            .glass { background: #fff !important; border: 1px solid #e2e8f0 !important; box-shadow: none !important; filter: none !important; backdrop-filter: none !important; }
+            .text-white, .text-slate-200, .text-slate-300, .text-slate-400 { color: #0f172a !important; }
+            .bg-black\/20, .bg-slate-900\/80, .bg-gradient-to-br, .bg-white\/5 { background: #f8fafc !important; border-color: #cbd5e1 !important; }
+            canvas { max-width: 100% !important; }
+            .finance-panel.open { max-height: none !important; overflow: visible !important; }
+        }
 
         /* Pequenos estilos auxiliares */
         .flag-btn { border: 1px solid rgba(15,23,42,0.12); border-radius: 14px; padding: 10px; transition: .2s; background: #fff; }
@@ -190,7 +204,7 @@
     </header>
 
     <main class="max-w-7xl mx-auto w-full p-6 flex-1">
-        <nav class="no-print flex gap-10 mb-10 border-b border-white/5 overflow-x-auto justify-center sm:justify-start scrollbar-hide">
+        <nav class="no-print flex gap-10 mb-6 border-b border-white/5 overflow-x-auto justify-center sm:justify-start scrollbar-hide">
             <button onclick="showView('projects')" class="tab-btn pb-4 font-black text-[11px] uppercase tracking-[0.2em] tab-active" id="tab-projects" data-i18n="nav_proj">Projetos</button>
             <button onclick="window.cancelEdit(); showView('new')" class="tab-btn pb-4 font-black text-[11px] uppercase tracking-[0.2em] editor-only hidden" id="tab-new" data-i18n="nav_new">Nova Obra</button>
             <button onclick="showView('reports')" class="tab-btn pb-4 font-black text-[11px] uppercase tracking-[0.2em]" id="tab-reports" data-i18n="nav_rep">Relatórios</button>
@@ -198,10 +212,25 @@
             <button onclick="showView('logs')" class="tab-btn pb-4 font-black text-[11px] uppercase tracking-[0.2em] admin-only hidden" id="tab-logs">📋 Logs</button>
         </nav>
 
-        <div id="view-projects" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-10 text-left"></div>
+        <div id="view-projects" class="w-full">
+            <!-- Filtros Superiores (Oculto no Modo Foco) -->
+            <div id="projects-filters" class="flex flex-col sm:flex-row justify-between items-center mb-8 gap-4 no-print">
+                <div class="flex gap-3">
+                    <button onclick="selectUnit('Smart Home')" id="unit-smart" class="unit-pill">SMART HOME</button>
+                    <button onclick="selectUnit('HVAC')" id="unit-hvac" class="unit-pill">HVAC</button>
+                    <button onclick="selectUnit('Ambas')" id="unit-all" class="unit-pill active">AMBAS</button>
+                </div>
+                <div class="flex gap-2">
+                    <button onclick="setArchiveFilter(false)" id="filter-active" class="filter-pill active">ATIVAS</button>
+                    <button onclick="setArchiveFilter(true)" id="filter-archived" class="filter-pill">ARQUIVADAS <i data-lucide="archive" class="inline w-3 h-3 ml-1 mb-0.5"></i></button>
+                </div>
+            </div>
+            
+            <div id="projects-grid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-10 text-left"></div>
+        </div>
 
         <div id="view-new" class="hidden max-w-3xl mx-auto glass p-10 rounded-[40px] text-left shadow-2xl border border-white/5 animate-fade-in">
-            <h3 class="text-2xl font-black mb-10 flex items-center gap-4 uppercase tracking-tighter">
+            <h3 class="text-2xl font-black mb-10 flex items-center gap-4 uppercase tracking-tighter text-white">
                 <span class="w-2 h-10 bg-gold rounded-full"></span>
                 <span id="form-title" data-i18n="form_new_title">Registrar Obra</span>
             </h3>
@@ -223,16 +252,23 @@
                 </div>
                 <div class="col-span-2 md:col-span-1 space-y-2"><label class="text-[10px] font-black uppercase text-slate-500 ml-1 tracking-widest">Cliente</label><input type="text" id="f-cliente" required class="modern-input"></div>
                 <div class="col-span-2 md:col-span-1 space-y-2"><label class="text-[10px] font-black uppercase text-slate-500 ml-1 tracking-widest">Vendedor</label><select id="f-vendedor" required class="modern-input"></select></div>
+                
+                <!-- BLoco de Valores e Custos -->
                 <div class="space-y-2">
                     <label class="text-[10px] font-black uppercase text-slate-500 ml-1 tracking-widest">Valor Contrato Bruto</label>
                     <div class="relative"><span class="absolute left-4 top-1/2 -translate-y-1/2 font-bold text-gold">$</span><input type="number" id="f-valor" step="0.01" required class="modern-input !pl-8"></div>
                 </div>
                 <div class="space-y-2">
+                    <label class="text-[10px] font-black uppercase text-indigo-400 ml-1 tracking-widest">Orçamento Custo (Budget)</label>
+                    <div class="relative"><span class="absolute left-4 top-1/2 -translate-y-1/2 font-bold text-indigo-400">$</span><input type="number" id="f-orcamento" step="0.01" placeholder="Opcional" class="modern-input !pl-8 border-indigo-500/20 focus:border-indigo-500"></div>
+                </div>
+
+                <div class="space-y-2">
                     <label class="text-[10px] font-black uppercase text-slate-500 ml-1 tracking-widest">% Comissão</label>
                     <div class="relative"><input type="number" id="f-comm" value="5" class="modern-input !pr-10"><span class="absolute right-4 top-1/2 -translate-y-1/2 font-bold text-gold">%</span></div>
                 </div>
-                <div class="col-span-2 space-y-2">
-                    <label class="text-[10px] font-black uppercase text-slate-500 ml-1 tracking-widest">Forma de Pagamento Prevista</label>
+                <div class="space-y-2">
+                    <label class="text-[10px] font-black uppercase text-slate-500 ml-1 tracking-widest">Forma Pagt. Prevista</label>
                     <select id="f-metodo" class="modern-input">
                         <option value="Zelle">Zelle</option>
                         <option value="Wire Transfer">Wire Transfer</option>
@@ -240,6 +276,7 @@
                         <option value="CC">Cartão de Crédito (Dedução 3% Net)</option>
                     </select>
                 </div>
+
                 <div class="space-y-2">
                     <label class="text-[10px] font-black uppercase text-slate-500 ml-1 tracking-widest">Início</label>
                     <div class="date-container" onclick="this.querySelector('input').showPicker()">
@@ -293,9 +330,17 @@
                         <button type="button" onclick="window.togglePassword('t-pass', 'eye-team-btn')" class="password-toggle" id="eye-team-btn" style="top:70%"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg></button>
                     </div>
 
-                    <div class="flex items-center gap-3 bg-black/30 p-4 rounded-xl border border-white/5 mt-2">
-                        <input type="checkbox" id="t-viewall" class="w-5 h-5 accent-gold cursor-pointer rounded bg-transparent">
-                        <label for="t-viewall" class="text-[10px] font-black uppercase text-slate-300 cursor-pointer">Visão Global (Visualizar TODAS as obras do sistema)</label>
+                    <div class="space-y-2 mt-4 pt-4 border-t border-white/10">
+                        <div class="flex items-center gap-3 bg-black/30 p-4 rounded-xl border border-white/5">
+                            <input type="checkbox" id="t-viewall" class="w-5 h-5 accent-gold cursor-pointer rounded bg-transparent">
+                            <label for="t-viewall" class="text-[10px] font-black uppercase text-slate-300 cursor-pointer">Visão Global (Visualizar TODAS as obras)</label>
+                        </div>
+                        
+                        <!-- NOVO: Acesso a Custos -->
+                        <div class="flex items-center gap-3 bg-indigo-900/20 p-4 rounded-xl border border-indigo-500/20">
+                            <input type="checkbox" id="t-viewcosts" class="w-5 h-5 accent-indigo-500 cursor-pointer rounded bg-transparent">
+                            <label for="t-viewcosts" class="text-[10px] font-black uppercase text-indigo-300 cursor-pointer">Acesso ao Centro de Custos e Lucro Real</label>
+                        </div>
                     </div>
                     
                     <button type="submit" id="btn-save-team" class="btn-premium-gold shadow-xl" data-i18n="btn_team">Salvar e Autorizar Acesso</button>
@@ -306,14 +351,14 @@
 
         <div id="view-logs" class="hidden space-y-6 max-w-7xl mx-auto animate-fade-in">
             <div class="glass p-8 rounded-[32px] border border-white/5">
-                <h3 class="text-2xl font-black text-gold mb-6 uppercase tracking-tighter">📋 Logs de Acesso</h3>
+                <h3 class="text-2xl font-black text-gold mb-6 uppercase tracking-tighter">📋 Logs de Auditoria</h3>
                 <div class="overflow-x-auto">
                     <table class="w-full text-left" id="logs-table">
                         <thead class="border-b border-white/10">
                             <tr>
                                 <th class="py-3 px-4 text-[10px] font-black uppercase text-slate-500">Data/Hora</th>
                                 <th class="py-3 px-4 text-[10px] font-black uppercase text-slate-500">Usuário</th>
-                                <th class="py-3 px-4 text-[10px] font-black uppercase text-slate-500">Ação</th>
+                                <th class="py-3 px-4 text-[10px] font-black uppercase text-slate-500">Ação / Operação</th>
                             </tr>
                         </thead>
                         <tbody id="logs-body"></tbody>
@@ -323,11 +368,7 @@
         </div>
 
         <div id="view-reports" class="hidden space-y-8 max-w-7xl mx-auto text-left animate-fade-in">
-            <div class="flex justify-center gap-4 mb-8 no-print">
-                <button onclick="selectUnit('Smart Home')" id="unit-smart" class="unit-pill">SMART HOME</button>
-                <button onclick="selectUnit('HVAC')" id="unit-hvac" class="unit-pill">HVAC</button>
-                <button onclick="selectUnit('Ambas')" id="unit-all" class="unit-pill active">AMBAS</button>
-            </div>
+            <!-- Os relatórios usarão os mesmos botões de filtro no topo se necessário, mas o painel atual já os tem internamente -->
             <div id="report-output"></div>
         </div>
     </main>
@@ -353,8 +394,15 @@
     const db = getFirestore(app);
     const SUPER_ADMIN = "dante.frota@allcablingtech.com";
 
-    // Modificado: state.focusedProject armazena o ID do projeto que está em tela cheia (Modo Foco)
-    let state = { user: null, currentUserRole: 'viewer', currentUserViewAll: false, projects: [], team: [], company: 'Ambas', lang: 'pt', theme: 'dark', editingPayments: null, editingRecs: null, focusedProject: null };
+    // Modificado: state.showArchived e state.currentUserViewCosts
+    let state = { 
+        user: null, currentUserRole: 'viewer', currentUserViewAll: false, currentUserViewCosts: false, 
+        projects: [], team: [], company: 'Ambas', lang: 'pt', theme: 'dark', 
+        editingPayments: null, editingRecs: null, focusedProject: null, showArchived: false 
+    };
+
+    // Armazena instâncias de gráficos para destruí-los ao recarregar
+    window.d2Charts = {};
 
     // Helpers UI
     function showLoginError(msg) {
@@ -374,11 +422,12 @@
         document.getElementById('login-hint-msg')?.classList.add('hidden');
     }
 
-    function logAccess(user, action) {
+    function logAccess(userEmail, action) {
         const logs = JSON.parse(localStorage.getItem('access_logs') || '[]');
-        logs.unshift({ timestamp: new Date().toISOString(), user: user.email || user, action });
+        logs.unshift({ timestamp: new Date().toISOString(), user: userEmail, action });
         if (logs.length > 500) logs.splice(500);
         localStorage.setItem('access_logs', JSON.stringify(logs));
+        renderLogs(); // Force render if open
     }
 
     function renderLogs() {
@@ -387,9 +436,9 @@
         const logs = JSON.parse(localStorage.getItem('access_logs') || '[]');
         tbody.innerHTML = logs.map(log => `
             <tr class="border-b border-white/5 hover:bg-white/5">
-                <td class="py-3 px-4 text-sm">${new Date(log.timestamp).toLocaleString('pt-BR')}</td>
+                <td class="py-3 px-4 text-sm whitespace-nowrap">${new Date(log.timestamp).toLocaleString('pt-BR')}</td>
                 <td class="py-3 px-4 text-sm font-bold text-gold">${log.user}</td>
-                <td class="py-3 px-4 text-sm text-slate-400">${log.action}</td>
+                <td class="py-3 px-4 text-sm text-slate-300">${log.action}</td>
             </tr>
         `).join('') || '<tr><td colspan="3" class="py-10 text-center text-slate-500">Nenhum log registrado</td></tr>';
     }
@@ -408,17 +457,16 @@
             else if (role === 'editor') roleStr = "Editor";
             
             if (state.currentUserViewAll && !isAdmin) roleStr += " (Visão Global)";
+            if (state.currentUserViewCosts && !isAdmin) roleStr += " | Custos";
             roleDisplay.innerText = roleStr;
         }
 
         document.querySelectorAll('.admin-only').forEach(el => {
-            if (isAdmin) el.classList.remove('hidden');
-            else el.classList.add('hidden');
+            if (isAdmin) el.classList.remove('hidden'); else el.classList.add('hidden');
         });
 
         document.querySelectorAll('.editor-only').forEach(el => {
-            if (isEditor) el.classList.remove('hidden');
-            else el.classList.add('hidden');
+            if (isEditor) el.classList.remove('hidden'); else el.classList.add('hidden');
         });
         
         if (state.projects.length > 0) {
@@ -450,7 +498,122 @@
         }
     }
 
-    // --- LÓGICA DE PAGAMENTOS E RECEBIMENTOS ---
+    window.setArchiveFilter = (showArchived) => {
+        state.showArchived = showArchived;
+        document.getElementById('filter-active').classList.toggle('active', !showArchived);
+        document.getElementById('filter-archived').classList.toggle('active', showArchived);
+        state.focusedProject = null;
+        renderProjects();
+    };
+
+    window.toggleArchive = async (id, currentArchivedStatus) => {
+        if (!['editor', 'admin', 'superadmin'].includes(state.currentUserRole)) return;
+        try {
+            const action = currentArchivedStatus ? "Desarquivou" : "Arquivou";
+            await updateDoc(doc(db, 'artifacts', appId, 'public', 'data', 'projects', id), { archived: !currentArchivedStatus });
+            logAccess(state.user.email, `${action} a obra ID: ${id}`);
+            if (state.focusedProject === id) window.closeProjectDetails();
+        } catch (e) { console.error(e); }
+    };
+
+    // --- LÓGICA DE CENTRO DE CUSTOS (DESPESAS) ---
+    window.addExpense = async (projectId) => {
+        if (!state.user || !state.currentUserViewCosts) return;
+        
+        const date = document.getElementById(`exp-date-${projectId}`)?.value;
+        const desc = document.getElementById(`exp-desc-${projectId}`)?.value;
+        const cat = document.getElementById(`exp-cat-${projectId}`)?.value;
+        const val = document.getElementById(`exp-val-${projectId}`)?.value;
+
+        if (!date || !desc || !cat || !val) { alert('Preencha todos os campos da despesa.'); return; }
+        
+        const newExpense = {
+            id: crypto.randomUUID(),
+            data: date,
+            descricao: desc,
+            categoria: cat,
+            valor: parseFloat(val),
+            adicionadoPor: state.user.email,
+            criadoEm: new Date().toISOString()
+        };
+
+        try {
+            await updateDoc(doc(db, 'artifacts', appId, 'public', 'data', 'projects', projectId), { 
+                despesas: arrayUnion(newExpense) 
+            });
+            logAccess(state.user.email, `Adicionou despesa de $${val} (${cat}) na obra ID: ${projectId}`);
+        } catch (e) { console.error("Erro ao adicionar despesa:", e); }
+    };
+
+    window.deleteExpense = async (projectId, expenseId, expenseDesc, expenseVal) => {
+        if (!state.user || !state.currentUserViewCosts) return;
+        if (!confirm(`Remover a despesa: ${expenseDesc}?`)) return;
+
+        const p = state.projects.find(x => x.id === projectId);
+        if (!p) return;
+        
+        const updatedExpenses = (p.despesas || []).filter(e => e.id !== expenseId);
+
+        try {
+            await updateDoc(doc(db, 'artifacts', appId, 'public', 'data', 'projects', projectId), { 
+                despesas: updatedExpenses 
+            });
+            logAccess(state.user.email, `Removeu despesa de $${expenseVal} (${expenseDesc}) na obra ID: ${projectId}`);
+        } catch (e) { console.error("Erro ao remover despesa:", e); }
+    };
+
+    // Renderização dos Gráficos (Chart.js)
+    function renderCharts(pId, budget, expensesByCategory, totalExpenses) {
+        // Grafico de Budget (Donut)
+        const ctxBudget = document.getElementById(`chart-budget-${pId}`);
+        if (ctxBudget) {
+            if (window.d2Charts[`budget-${pId}`]) window.d2Charts[`budget-${pId}`].destroy();
+            
+            const remaining = Math.max(0, budget - totalExpenses);
+            const overspent = Math.max(0, totalExpenses - budget);
+            
+            let dataArr, bgColors, labels;
+            
+            if (budget === 0 && totalExpenses === 0) {
+                labels = ['Sem Orçamento']; dataArr = [1]; bgColors = ['#334155'];
+            } else if (overspent > 0) {
+                labels = ['Orçamento Usado', 'Estouro (Overbudget)']; dataArr = [budget, overspent]; bgColors = ['#fbbf24', '#ef4444'];
+            } else {
+                labels = ['Gasto', 'Restante']; dataArr = [totalExpenses, remaining]; bgColors = ['#fbbf24', '#10b981'];
+            }
+
+            window.d2Charts[`budget-${pId}`] = new Chart(ctxBudget, {
+                type: 'doughnut',
+                data: { labels: labels, datasets: [{ data: dataArr, backgroundColor: bgColors, borderWidth: 0 }] },
+                options: { responsive: true, maintainAspectRatio: false, cutout: '75%', plugins: { legend: { display: false } } }
+            });
+        }
+
+        // Gráfico de Categoria (Barras)
+        const ctxCat = document.getElementById(`chart-cat-${pId}`);
+        if (ctxCat) {
+            if (window.d2Charts[`cat-${pId}`]) window.d2Charts[`cat-${pId}`].destroy();
+            
+            const labels = Object.keys(expensesByCategory);
+            const dataArr = Object.values(expensesByCategory);
+            
+            window.d2Charts[`cat-${pId}`] = new Chart(ctxCat, {
+                type: 'bar',
+                data: { labels: labels, datasets: [{ label: 'Gastos', data: dataArr, backgroundColor: '#818cf8', borderRadius: 4 }] },
+                options: { 
+                    responsive: true, maintainAspectRatio: false, 
+                    plugins: { legend: { display: false } },
+                    scales: { 
+                        y: { beginAtZero: true, grid: { color: 'rgba(255,255,255,0.05)' }, ticks: { color: '#94a3b8', font: {size: 9} } },
+                        x: { grid: { display: false }, ticks: { color: '#94a3b8', font: {size: 9} } }
+                    }
+                }
+            });
+        }
+    }
+
+
+    // --- LÓGICA DE PAGAMENTOS E RECEBIMENTOS (MANTIDA INTACTA) ---
     window.openEditPaymentModal = (projectId) => {
         const p = state.projects.find(x => x.id === projectId);
         if (!p) return;
@@ -458,153 +621,44 @@
         renderPaymentEditList();
         document.getElementById('edit-payment-modal').classList.add('active');
     };
-    window.closeEditPaymentModal = () => {
-        state.editingPayments = null;
-        document.getElementById('edit-payment-modal').classList.remove('active');
-    };
+    window.closeEditPaymentModal = () => { state.editingPayments = null; document.getElementById('edit-payment-modal').classList.remove('active'); };
     function renderPaymentEditList() {
         const container = document.getElementById('payment-edit-list');
         if (!container || !state.editingPayments) return;
-        container.innerHTML = state.editingPayments.payments.map((pay, i) => `
-            <div class="flex items-center gap-4 p-4 bg-white/5 rounded-xl border border-white/10">
-                <input type="date" value="${pay.data || ''}" onchange="updatePaymentField(${i}, 'data', this.value)" class="modern-input relative flex-1">
-                <input type="number" step="0.01" value="${(pay.valor ?? 0)}" onchange="updatePaymentField(${i}, 'valor', this.value)" class="modern-input flex-1">
-                <button onclick="removePaymentFromEdit(${i})" class="p-2 bg-red-500/20 text-red-400 rounded-lg hover:bg-red-500/30"><i data-lucide="trash-2" class="w-5 h-5"></i></button>
-            </div>
-        `).join('') + `<button onclick="addNewPaymentToEdit()" class="w-full p-4 border-2 border-dashed border-gold/30 rounded-xl text-gold font-bold hover:bg-gold/10 transition-all">+ Adicionar Novo Pagamento</button>`;
+        container.innerHTML = state.editingPayments.payments.map((pay, i) => `<div class="flex items-center gap-4 p-4 bg-white/5 rounded-xl border border-white/10"><input type="date" value="${pay.data || ''}" onchange="updatePaymentField(${i}, 'data', this.value)" class="modern-input relative flex-1"><input type="number" step="0.01" value="${(pay.valor ?? 0)}" onchange="updatePaymentField(${i}, 'valor', this.value)" class="modern-input flex-1"><button onclick="removePaymentFromEdit(${i})" class="p-2 bg-red-500/20 text-red-400 rounded-lg hover:bg-red-500/30"><i data-lucide="trash-2" class="w-5 h-5"></i></button></div>`).join('') + `<button onclick="addNewPaymentToEdit()" class="w-full p-4 border-2 border-dashed border-gold/30 rounded-xl text-gold font-bold hover:bg-gold/10 transition-all">+ Adicionar Novo Pagamento</button>`;
         try { lucide.createIcons(); } catch {}
     }
-    window.updatePaymentField = (index, field, value) => {
-        if (!state.editingPayments) return;
-        if (field === 'data') state.editingPayments.payments[index].data = value;
-        if (field === 'valor') state.editingPayments.payments[index].valor = parseFloat(value || 0);
-    };
-    window.removePaymentFromEdit = (index) => {
-        if (!confirm('Remover este pagamento?')) return;
-        state.editingPayments.payments.splice(index, 1);
-        renderPaymentEditList();
-    };
-    window.addNewPaymentToEdit = () => {
-        if (!state.editingPayments) return;
-        state.editingPayments.payments.push({ data: new Date().toISOString().split('T')[0], valor: 0 });
-        renderPaymentEditList();
-    };
-    window.saveEditedPayments = async () => {
-        if (!state.editingPayments) return;
-        try {
-            await updateDoc(doc(db, 'artifacts', appId, 'public', 'data', 'projects', state.editingPayments.projectId), { pagamentosEfetuados: state.editingPayments.payments });
-            closeEditPaymentModal();
-        } catch (e) { alert('Erro ao salvar pagamentos: ' + e.message); }
-    };
-    window.addPayment = async (projectId) => {
-        if (!state.user) return;
-        const v = document.getElementById(`pay-val-${projectId}`)?.value;
-        const d = document.getElementById(`pay-date-${projectId}`)?.value;
-        if (!v || !d) { alert('Preencha data e valor para o vendedor.'); return; }
-        try {
-            await updateDoc(doc(db, 'artifacts', appId, 'public', 'data', 'projects', projectId), { pagamentosEfetuados: arrayUnion({ valor: parseFloat(v), data: d }) });
-        } catch (e) { console.error(e); }
-    };
+    window.updatePaymentField = (index, field, value) => { if (!state.editingPayments) return; if (field === 'data') state.editingPayments.payments[index].data = value; if (field === 'valor') state.editingPayments.payments[index].valor = parseFloat(value || 0); };
+    window.removePaymentFromEdit = (index) => { if (!confirm('Remover este pagamento?')) return; state.editingPayments.payments.splice(index, 1); renderPaymentEditList(); };
+    window.addNewPaymentToEdit = () => { if (!state.editingPayments) return; state.editingPayments.payments.push({ data: new Date().toISOString().split('T')[0], valor: 0 }); renderPaymentEditList(); };
+    window.saveEditedPayments = async () => { if (!state.editingPayments) return; try { await updateDoc(doc(db, 'artifacts', appId, 'public', 'data', 'projects', state.editingPayments.projectId), { pagamentosEfetuados: state.editingPayments.payments }); closeEditPaymentModal(); } catch (e) { alert('Erro ao salvar pagamentos: ' + e.message); } };
+    window.addPayment = async (projectId) => { if (!state.user) return; const v = document.getElementById(`pay-val-${projectId}`)?.value; const d = document.getElementById(`pay-date-${projectId}`)?.value; if (!v || !d) { alert('Preencha data e valor para o vendedor.'); return; } try { await updateDoc(doc(db, 'artifacts', appId, 'public', 'data', 'projects', projectId), { pagamentosEfetuados: arrayUnion({ valor: parseFloat(v), data: d }) }); logAccess(state.user.email, `Pagou vendedor $${v} na obra ID: ${projectId}`); } catch (e) { console.error(e); } };
 
-    window.openEditRecModal = (projectId) => {
-        const p = state.projects.find(x => x.id === projectId);
-        if (!p) return;
-        state.editingRecs = { projectId, recs: [...(p.recebimentos || [])] };
-        renderRecEditList();
-        document.getElementById('edit-rec-modal').classList.add('active');
-    };
-    window.closeEditRecModal = () => {
-        state.editingRecs = null;
-        document.getElementById('edit-rec-modal').classList.remove('active');
-    };
+    window.openEditRecModal = (projectId) => { const p = state.projects.find(x => x.id === projectId); if (!p) return; state.editingRecs = { projectId, recs: [...(p.recebimentos || [])] }; renderRecEditList(); document.getElementById('edit-rec-modal').classList.add('active'); };
+    window.closeEditRecModal = () => { state.editingRecs = null; document.getElementById('edit-rec-modal').classList.remove('active'); };
     function renderRecEditList() {
         const container = document.getElementById('rec-edit-list');
         if (!container || !state.editingRecs) return;
-        container.innerHTML = state.editingRecs.recs.map((r, i) => `
-            <div class="flex items-center gap-2 p-3 bg-white/5 rounded-xl border border-white/10 flex-wrap sm:flex-nowrap">
-                <input type="date" value="${r.data || ''}" onchange="updateRecField(${i}, 'data', this.value)" class="modern-input relative flex-1 !p-2 !text-xs">
-                <input type="number" step="0.01" value="${(r.valor ?? 0)}" onchange="updateRecField(${i}, 'valor', this.value)" class="modern-input w-24 !p-2 !text-xs">
-                <select onchange="updateRecField(${i}, 'metodo', this.value)" class="modern-input w-28 !p-2 !text-xs">
-                    <option value="Zelle" ${r.metodo==='Zelle'?'selected':''}>Zelle</option>
-                    <option value="Wire Transfer" ${r.metodo==='Wire Transfer'?'selected':''}>Wire</option>
-                    <option value="Dinheiro" ${r.metodo==='Dinheiro'?'selected':''}>Cash</option>
-                    <option value="CC" ${r.metodo==='CC'?'selected':''}>Cartão</option>
-                </select>
-                <button onclick="removeRecFromEdit(${i})" class="p-2 bg-red-500/20 text-red-400 rounded-lg hover:bg-red-500/30"><i data-lucide="trash-2" class="w-4 h-4"></i></button>
-            </div>
-        `).join('') + `<button onclick="addNewRecToEdit()" class="w-full p-4 border-2 border-dashed border-emerald-500/30 rounded-xl text-emerald-400 font-bold hover:bg-emerald-500/10 transition-all">+ Adicionar Novo Recebimento</button>`;
+        container.innerHTML = state.editingRecs.recs.map((r, i) => `<div class="flex items-center gap-2 p-3 bg-white/5 rounded-xl border border-white/10 flex-wrap sm:flex-nowrap"><input type="date" value="${r.data || ''}" onchange="updateRecField(${i}, 'data', this.value)" class="modern-input relative flex-1 !p-2 !text-xs"><input type="number" step="0.01" value="${(r.valor ?? 0)}" onchange="updateRecField(${i}, 'valor', this.value)" class="modern-input w-24 !p-2 !text-xs"><select onchange="updateRecField(${i}, 'metodo', this.value)" class="modern-input w-28 !p-2 !text-xs"><option value="Zelle" ${r.metodo==='Zelle'?'selected':''}>Zelle</option><option value="Wire Transfer" ${r.metodo==='Wire Transfer'?'selected':''}>Wire</option><option value="Dinheiro" ${r.metodo==='Dinheiro'?'selected':''}>Cash</option><option value="CC" ${r.metodo==='CC'?'selected':''}>Cartão</option></select><button onclick="removeRecFromEdit(${i})" class="p-2 bg-red-500/20 text-red-400 rounded-lg hover:bg-red-500/30"><i data-lucide="trash-2" class="w-4 h-4"></i></button></div>`).join('') + `<button onclick="addNewRecToEdit()" class="w-full p-4 border-2 border-dashed border-emerald-500/30 rounded-xl text-emerald-400 font-bold hover:bg-emerald-500/10 transition-all">+ Adicionar Novo Recebimento</button>`;
         try { lucide.createIcons(); } catch {}
     }
-    window.updateRecField = (index, field, value) => {
-        if (!state.editingRecs) return;
-        if (field === 'data') state.editingRecs.recs[index].data = value;
-        if (field === 'valor') state.editingRecs.recs[index].valor = parseFloat(value || 0);
-        if (field === 'metodo') state.editingRecs.recs[index].metodo = value;
-    };
-    window.removeRecFromEdit = (index) => {
-        if (!confirm('Remover este recebimento?')) return;
-        state.editingRecs.recs.splice(index, 1);
-        renderRecEditList();
-    };
-    window.addNewRecToEdit = () => {
-        if (!state.editingRecs) return;
-        state.editingRecs.recs.push({ data: new Date().toISOString().split('T')[0], valor: 0, metodo: 'Zelle' });
-        renderRecEditList();
-    };
-    window.saveEditedRecs = async () => {
-        if (!state.editingRecs) return;
-        try {
-            await updateDoc(doc(db, 'artifacts', appId, 'public', 'data', 'projects', state.editingRecs.projectId), { recebimentos: state.editingRecs.recs });
-            closeEditRecModal();
-        } catch (e) { alert('Erro ao salvar: ' + e.message); }
-    };
-    window.addRecebimento = async (projectId) => {
-        if (!state.user) return;
-        const v = document.getElementById(`rec-val-${projectId}`)?.value;
-        const d = document.getElementById(`rec-date-${projectId}`)?.value;
-        const m = document.getElementById(`rec-met-${projectId}`)?.value;
-        if (!v || !d || !m) { alert('Preencha data, valor e método para o recebimento.'); return; }
-        try {
-            await updateDoc(doc(db, 'artifacts', appId, 'public', 'data', 'projects', projectId), { recebimentos: arrayUnion({ valor: parseFloat(v), data: d, metodo: m }) });
-        } catch (e) { console.error(e); }
-    };
-
-    const translations = {
-        pt: {
-            login_sub: "Sistema Integrado de Gestão", login_err: "Dados inválidos. Procure seu administrador.", btn_login: "Acessar Sistema", admin_panel: "Gestão Corporativa", nav_proj: "Projetos", nav_new: "Nova Obra", nav_rep: "Relatórios", nav_users: "Equipe",
-            form_new_title: "Registrar Obra", label_div: "Unidade", label_client: "Cliente", label_seller: "Vendedor", label_value: "Contrato", label_comm: "Comissão", label_method: "Pagamento", label_start: "Início", label_end: "Entrega", label_status: "Status",
-            btn_save: "Salvar Registro", team_title: "Gestão de Equipe", btn_team: "Salvar e Autorizar Acesso", timeline: "Timeline", status_overdue: "ATRASADA", status_finished: "CONCLUÍDA", days_left: "DIAS RESTANTES",
-            finance_btn: "FINANCEIRO DA OBRA", close_details: "FECHAR DETALHES", back_projects: "Voltar aos Projetos", net_base: "Líquido", balance: "Saldo", history: "Pagamentos ao Vendedor", history_cli: "Recebimentos do Cliente", report_title: "RELATÓRIO EXECUTIVO", overpaid: "PAGO A MAIOR (CRÉDITO)", paid_full: "TOTALMENTE PAGO", balance_due: "SALDO A PAGAR", summary_title: "Comissões Reais (Baseado em Recebimentos)"
-        },
-        en: {
-            login_sub: "Integrated Management System", login_err: "Invalid credentials. Contact administrator.", btn_login: "Access System", admin_panel: "Corporate Management", nav_proj: "Projects", nav_new: "New Entry", nav_rep: "Reports", nav_users: "Team",
-            form_new_title: "Register Project", label_div: "Unit", label_client: "Client", label_seller: "Sales Rep", label_value: "Contract", label_comm: "Commission", label_method: "Payment", label_start: "Start", label_end: "Deadline", label_status: "Status",
-            btn_save: "Save Entry", team_title: "Team Management", btn_team: "Authorize Access", timeline: "Timeline", status_overdue: "OVERDUE", status_finished: "FINISHED", days_left: "DAYS LEFT",
-            finance_btn: "PROJECT FINANCE", close_details: "CLOSE DETAILS", back_projects: "Back to Projects", net_base: "Net", balance: "Balance", history: "Payments to Seller", history_cli: "Client Receipts", report_title: "EXECUTIVE REPORT", overpaid: "OVERPAID (CREDIT)", paid_full: "PAID IN FULL", balance_due: "BALANCE DUE", summary_title: "Real Commissions (Based on Receipts)"
-        }
-    };
+    window.updateRecField = (index, field, value) => { if (!state.editingRecs) return; if (field === 'data') state.editingRecs.recs[index].data = value; if (field === 'valor') state.editingRecs.recs[index].valor = parseFloat(value || 0); if (field === 'metodo') state.editingRecs.recs[index].metodo = value; };
+    window.removeRecFromEdit = (index) => { if (!confirm('Remover este recebimento?')) return; state.editingRecs.recs.splice(index, 1); renderRecEditList(); };
+    window.addNewRecToEdit = () => { if (!state.editingRecs) return; state.editingRecs.recs.push({ data: new Date().toISOString().split('T')[0], valor: 0, metodo: 'Zelle' }); renderRecEditList(); };
+    window.saveEditedRecs = async () => { if (!state.editingRecs) return; try { await updateDoc(doc(db, 'artifacts', appId, 'public', 'data', 'projects', state.editingRecs.projectId), { recebimentos: state.editingRecs.recs }); closeEditRecModal(); } catch (e) { alert('Erro ao salvar: ' + e.message); } };
+    window.addRecebimento = async (projectId) => { if (!state.user) return; const v = document.getElementById(`rec-val-${projectId}`)?.value; const d = document.getElementById(`rec-date-${projectId}`)?.value; const m = document.getElementById(`rec-met-${projectId}`)?.value; if (!v || !d || !m) { alert('Preencha data, valor e método para o recebimento.'); return; } try { await updateDoc(doc(db, 'artifacts', appId, 'public', 'data', 'projects', projectId), { recebimentos: arrayUnion({ valor: parseFloat(v), data: d, metodo: m }) }); logAccess(state.user.email, `Registrou recebimento $${v} na obra ID: ${projectId}`); } catch (e) { console.error(e); } };
 
     const formatCurr = (v) => new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD', minimumFractionDigits: 2 }).format(Number(v || 0));
 
     window.togglePassword = (inputId, btnId) => {
-        const el = document.getElementById(inputId);
-        const btn = document.getElementById(btnId);
-        if (el && btn) {
-            const isPass = el.type === 'password';
-            el.type = isPass ? 'text' : 'password';
-            btn.innerHTML = isPass ? '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M17.94 17.94A10.07 10.07 0 0 1 12 20c-7 0-11-8-11-8a18.45 18.45 0 0 1 5.06-5.94M9.9 4.24A9.12 9.12 0 0 1 12 4c7 0 11 8 11 8a18.5 18.5 0 0 1-2.16 3.19m-6.72-1.07a3 3 0 1 1-4.24-4.24"></path><line x1="1" y1="1" x2="23" y2="23"></line></svg>' : '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>';
-        }
+        const el = document.getElementById(inputId); const btn = document.getElementById(btnId);
+        if (el && btn) { const isPass = el.type === 'password'; el.type = isPass ? 'text' : 'password'; btn.innerHTML = isPass ? '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M17.94 17.94A10.07 10.07 0 0 1 12 20c-7 0-11-8-11-8a18.45 18.45 0 0 1 5.06-5.94M9.9 4.24A9.12 9.12 0 0 1 12 4c7 0 11 8 11 8a18.5 18.5 0 0 1-2.16 3.19m-6.72-1.07a3 3 0 1 1-4.24-4.24"></path><line x1="1" y1="1" x2="23" y2="23"></line></svg>' : '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>'; }
     };
 
     window.setLang = (l) => {
         state.lang = l;
         document.querySelectorAll('.flag-btn').forEach(b => b.classList.toggle('active', b.id.includes(l)));
-        document.querySelectorAll('[data-i18n]').forEach(el => {
-            const key = el.getAttribute('data-i18n');
-            if (translations[l] && translations[l][key]) el.innerText = translations[l][key];
-        });
-        renderProjects();
-        renderReport();
+        renderProjects(); renderReport();
     };
 
     window.selectUnit = (unit) => {
@@ -612,57 +666,31 @@
         document.querySelectorAll('.unit-pill').forEach(b => b.classList.remove('active'));
         const map = { 'Smart Home': 'unit-smart', 'HVAC': 'unit-hvac', 'Ambas': 'unit-all' };
         document.getElementById(map[unit]).classList.add('active');
-        state.focusedProject = null; // Remove foco se trocar unidade
-        renderProjects();
-        renderReport();
+        state.focusedProject = null;
+        renderProjects(); renderReport();
     };
 
     window.toggleTheme = () => {
         state.theme = state.theme === 'dark' ? 'light' : 'dark';
         const appDiv = document.getElementById('main-app');
         if (appDiv) appDiv.className = state.theme === 'dark' ? 'min-h-screen flex flex-col app-body-dark text-center' : 'min-h-screen flex flex-col app-body-light light text-center';
-
-        const sun = document.getElementById('theme-icon-light');
-        const moon = document.getElementById('theme-icon-dark');
-        if (sun && moon) {
-            if (state.theme === 'dark') { sun.classList.add('hidden'); moon.classList.remove('hidden'); }
-            else { moon.classList.add('hidden'); sun.classList.remove('hidden'); }
-        }
+        const sun = document.getElementById('theme-icon-light'); const moon = document.getElementById('theme-icon-dark');
+        if (sun && moon) { if (state.theme === 'dark') { sun.classList.add('hidden'); moon.classList.remove('hidden'); } else { moon.classList.add('hidden'); sun.classList.remove('hidden'); } }
         try { lucide.createIcons(); } catch {}
     };
 
-    // --- GERENCIAMENTO DE NAVEGAÇÃO E MODO FOCO ---
-    window.openProjectDetails = (id) => {
-        state.focusedProject = id;
-        renderProjects();
-        window.scrollTo({ top: 0, behavior: 'smooth' });
-    };
+    window.openProjectDetails = (id) => { state.focusedProject = id; renderProjects(); window.scrollTo({ top: 0, behavior: 'smooth' }); };
+    window.closeProjectDetails = () => { state.focusedProject = null; renderProjects(); window.scrollTo({ top: 0, behavior: 'smooth' }); };
+    window.printReport = () => { window.print(); };
 
-    window.closeProjectDetails = () => {
-        state.focusedProject = null;
-        renderProjects();
-        window.scrollTo({ top: 0, behavior: 'smooth' });
-    };
-
-    window.editTeamMember = (id, email, pass, role, viewAll) => {
+    window.editTeamMember = (id, email, pass, role, viewAll, viewCosts) => {
         document.getElementById('t-id').value = id;
         document.getElementById('t-email').value = email;
         document.getElementById('t-pass').value = pass;
         document.getElementById('t-role').value = role || 'editor';
         document.getElementById('t-viewall').checked = viewAll === true || String(viewAll) === 'true';
+        document.getElementById('t-viewcosts').checked = viewCosts === true || String(viewCosts) === 'true';
         window.scrollTo({ top: 0, behavior: 'smooth' });
-    };
-
-    window.deleteTeam = async (id) => {
-        if (confirm("REMOVER ACESSO DESTE MEMBRO?")) {
-            await deleteDoc(doc(db, 'artifacts', appId, 'public', 'data', 'user_credentials', id));
-        }
-    };
-    window.deleteP = async (id) => {
-        if (confirm("EXCLUIR ESTA OBRA?")) {
-            await deleteDoc(doc(db, 'artifacts', appId, 'public', 'data', 'projects', id));
-            if (state.focusedProject === id) window.closeProjectDetails();
-        }
     };
 
     window.editP = (id) => {
@@ -670,9 +698,7 @@
         if (!p) return;
         renderVendedores();
         const vendSelect = document.getElementById('f-vendedor');
-        if (p.vendedor && !Array.from(vendSelect.options).some(opt => opt.value === p.vendedor)) {
-            vendSelect.innerHTML += `<option value="${p.vendedor}">${p.vendedor} (Cadastro Antigo)</option>`;
-        }
+        if (p.vendedor && !Array.from(vendSelect.options).some(opt => opt.value === p.vendedor)) { vendSelect.innerHTML += `<option value="${p.vendedor}">${p.vendedor} (Cadastro Antigo)</option>`; }
         document.getElementById('edit-id').value = id;
         document.getElementById('f-proposta').value = p.numeroProposta || '';
         document.getElementById('f-invoice').value = p.numeroInvoice || '';
@@ -680,6 +706,7 @@
         document.getElementById('f-cliente').value = p.cliente || '';
         document.getElementById('f-vendedor').value = p.vendedor || '';
         document.getElementById('f-valor').value = p.valorTotal ?? '';
+        document.getElementById('f-orcamento').value = p.orcamento ?? ''; // NOVO: Orçamento
         document.getElementById('f-comm').value = p.percComissao ?? 5;
         document.getElementById('f-metodo').value = p.metodo || 'Zelle';
         document.getElementById('f-inicio').value = p.dataInicio || '';
@@ -689,39 +716,30 @@
     };
 
     window.cancelEdit = () => {
-        const form = document.getElementById('project-form');
-        if (form) form.reset();
+        const form = document.getElementById('project-form'); if (form) form.reset();
         document.getElementById('edit-id').value = '';
-        const fVendedor = document.getElementById('f-vendedor');
-        if (fVendedor && state.user) fVendedor.value = state.user.email;
+        const fVendedor = document.getElementById('f-vendedor'); if (fVendedor && state.user) fVendedor.value = state.user.email;
     };
 
     window.showView = (v) => {
         ['projects', 'new', 'reports', 'users', 'logs'].forEach(id => {
-            const el = document.getElementById('view-' + id);
-            const tab = document.getElementById('tab-' + id);
-            if (el) el.classList.add('hidden');
-            if (tab) tab.classList.remove('tab-active');
+            const el = document.getElementById('view-' + id); const tab = document.getElementById('tab-' + id);
+            if (el) el.classList.add('hidden'); if (tab) tab.classList.remove('tab-active');
         });
-        const tv = document.getElementById('view-' + v);
-        const tt = document.getElementById('tab-' + v);
-        if (tv) tv.classList.remove('hidden');
-        if (tt) tt.classList.add('tab-active');
+        const tv = document.getElementById('view-' + v); const tt = document.getElementById('tab-' + v);
+        if (tv) tv.classList.remove('hidden'); if (tt) tt.classList.add('tab-active');
 
         if (v === 'logs') renderLogs();
-        if (v === 'projects') {
-            state.focusedProject = null; // Reseta o Modo Foco ao clicar na aba
-            renderProjects();
-        }
+        if (v === 'projects') { state.focusedProject = null; renderProjects(); }
         try { lucide.createIcons(); } catch {}
     };
 
     window.handleLogout = () => signOut(auth).then(() => location.reload()).catch(console.error);
 
-    // NÚCLEO FINANCEIRO INTELIGENTE
     function getFin(p) {
         const percComissao = Number(p?.percComissao || 0) / 100;
         const valorTotal = Number(p?.valorTotal || 0);
+        const orcamento = Number(p?.orcamento || 0);
 
         const globalMetodo = String(p?.metodo || '');
         const globalIsCC = (globalMetodo === 'CC' || globalMetodo.toLowerCase().includes('cartão'));
@@ -729,20 +747,16 @@
         const commTotalProjetada = baseProjetada * percComissao;
 
         const recebimentos = Array.isArray(p?.recebimentos) ? p.recebimentos : [];
-        let totalRecebido = 0;
-        let commLiberada = 0;
+        let totalRecebido = 0; let commLiberada = 0;
         
         recebimentos.forEach(r => {
-            const rVal = Number(r.valor || 0);
-            totalRecebido += rVal;
-            const rIsCC = (r.metodo === 'CC');
-            const rBase = rIsCC ? rVal * 0.97 : rVal;
+            const rVal = Number(r.valor || 0); totalRecebido += rVal;
+            const rBase = (r.metodo === 'CC') ? rVal * 0.97 : rVal;
             commLiberada += rBase * percComissao;
         });
 
         const pays = Array.isArray(p?.pagamentosEfetuados) ? p.pagamentosEfetuados : [];
         const totalPaid = pays.reduce((a, c) => a + Number(c?.valor || 0), 0);
-
         const balance = commLiberada - totalPaid;
         
         let statusColor = "bg-red-500";
@@ -750,76 +764,95 @@
         else if (balance === 0 && commLiberada > 0) statusColor = "bg-emerald-500";
         else if (totalPaid > 0) statusColor = "bg-orange-500"; 
 
-        return { baseProjetada, commTotalProjetada, totalRecebido, commLiberada, totalPaid, balance, statusColor, globalIsCC };
+        // DESPESAS
+        const despesas = Array.isArray(p?.despesas) ? p.despesas : [];
+        let totalDespesas = 0;
+        let gastosPorCategoria = { 'Materiais': 0, 'Mão-de-obra': 0, 'Equipamentos': 0, 'Licenças': 0, 'Outros': 0 };
+        
+        despesas.forEach(d => {
+            const val = Number(d.valor || 0);
+            totalDespesas += val;
+            if (gastosPorCategoria[d.categoria] !== undefined) { gastosPorCategoria[d.categoria] += val; } 
+            else { gastosPorCategoria['Outros'] += val; }
+        });
+
+        const lucroBruto = valorTotal - totalDespesas;
+        const margemLucro = valorTotal > 0 ? (lucroBruto / valorTotal) * 100 : 0;
+
+        return { baseProjetada, commTotalProjetada, totalRecebido, commLiberada, totalPaid, balance, statusColor, globalIsCC, orcamento, totalDespesas, lucroBruto, margemLucro, gastosPorCategoria };
     }
 
     function renderProjects() {
-        const grid = document.getElementById('view-projects');
+        const grid = document.getElementById('projects-grid');
+        const filtersDiv = document.getElementById('projects-filters');
         if (!grid || !state.user) return;
 
         grid.innerHTML = '';
-        const t = translations[state.lang];
 
         const isEditor = ['editor', 'admin', 'superadmin'].includes(state.currentUserRole);
-        const canViewAll = ['admin', 'superadmin'].includes(state.currentUserRole) || state.currentUserViewAll;
         const isAdmin = ['admin', 'superadmin'].includes(state.currentUserRole); 
+        const canViewAll = isAdmin || state.currentUserViewAll;
+        const canViewCosts = isAdmin || state.currentUserViewCosts;
 
         let filtered = state.projects.filter(p => {
             const matchCompany = state.company === 'Ambas' || p.empresa === state.company;
             const matchUser = canViewAll || p.vendedor === state.user.email; 
-            return matchCompany && matchUser;
+            const isArchived = p.archived === true;
+            const matchArchive = isArchived === state.showArchived;
+            return matchCompany && matchUser && matchArchive;
         });
 
-        // Configuração do Grid baseada no MODO FOCO
         if (state.focusedProject) {
-            grid.className = "flex flex-col max-w-4xl mx-auto gap-6 text-left w-full animate-fade-in";
-            filtered = filtered.filter(p => p.id === state.focusedProject);
+            filtersDiv.classList.add('hidden');
+            grid.className = "flex flex-col max-w-4xl mx-auto gap-6 text-left w-full animate-fade-in pb-20";
+            filtered = state.projects.filter(p => p.id === state.focusedProject); 
             
-            // Botão de Voltar aos Projetos (Apenas visível no Modo Foco)
             grid.innerHTML += `
-                <div class="mb-4">
+                <div class="mb-4 flex justify-between items-center no-print">
                     <button onclick="window.closeProjectDetails()" class="inline-flex items-center gap-2 text-gold hover:text-white transition-all font-black text-[10px] uppercase tracking-widest px-5 py-3 bg-white/5 rounded-2xl border border-white/10 hover:bg-white/10 hover:scale-105 hover:-translate-y-1 shadow-lg">
-                        <i data-lucide="arrow-left" class="w-4 h-4"></i> ${t.back_projects}
+                        <i data-lucide="arrow-left" class="w-4 h-4"></i> Voltar aos Projetos
+                    </button>
+                    <button onclick="window.printReport()" class="inline-flex items-center gap-2 text-slate-300 hover:text-white transition-all font-black text-[10px] uppercase tracking-widest px-5 py-3 bg-white/5 rounded-2xl border border-white/10 hover:bg-white/10 shadow-lg">
+                        <i data-lucide="printer" class="w-4 h-4"></i> Imprimir Relatório
                     </button>
                 </div>
             `;
         } else {
-            grid.className = "grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-10 text-left animate-fade-in";
+            filtersDiv.classList.remove('hidden');
+            filtersDiv.classList.add('flex');
+            grid.className = "grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-10 text-left animate-fade-in pb-10";
+        }
+
+        if (filtered.length === 0 && !state.focusedProject) {
+            grid.innerHTML = `<div class="col-span-full py-20 text-center text-slate-500 font-bold uppercase tracking-widest text-xs">Nenhuma obra encontrada nesta categoria.</div>`;
+            return;
         }
 
         filtered.forEach(p => {
-            const s = new Date(p.dataInicio).getTime();
-            const e = new Date(p.dataEntrega).getTime();
-            const n = Date.now();
-
+            const s = new Date(p.dataInicio).getTime(); const e = new Date(p.dataEntrega).getTime(); const n = Date.now();
             let prog = (Number.isFinite(s) && Number.isFinite(e) && e > s) ? (n >= s ? (n > e ? 100 : Math.floor(((n - s) / (e - s)) * 100)) : 0) : 0;
-            let r, g;
-            if (prog < 50) { r = (prog * 5.1); g = 255; } else { r = 255; g = (255 - (prog - 50) * 5.1); }
+            let r, g; if (prog < 50) { r = (prog * 5.1); g = 255; } else { r = 255; g = (255 - (prog - 50) * 5.1); }
             let colorHex = `rgb(${Math.floor(r)}, ${Math.floor(g)}, 0)`;
             if (n > e && p.status !== 'Finalizado') colorHex = 'rgb(180, 0, 0)';
 
             const f = getFin(p);
+            const isFocused = state.focusedProject === p.id;
 
-            let balText = t.balance_due;
+            // Variáveis de Cores Corrigidas
+            let balText = "SALDO A PAGAR";
             let balColor = "text-red-400";
             let balDisplay = formatCurr(f.balance);
 
             if (f.balance < 0) {
-                balText = t.overpaid;
+                balText = "PAGO A MAIOR (CRÉDITO)";
                 balColor = "text-blue-400";
                 balDisplay = "+ " + formatCurr(Math.abs(f.balance));
             } else if (f.balance === 0) {
-                balText = t.paid_full;
+                balText = "TOTALMENTE PAGO";
                 balColor = "text-emerald-400";
             }
 
-            // Identifica se este cartão está em foco
-            const isFocused = state.focusedProject === p.id;
-            const financeBtnAction = isFocused ? `window.closeProjectDetails()` : `window.openProjectDetails('${p.id}')`;
-            const financeBtnIcon = isFocused ? "chevron-up" : "wallet";
-            const financeBtnText = isFocused ? t.close_details : t.finance_btn;
-
-            // STATUS DE PAGAMENTOS PARA O CARD PRINCIPAL
+            // Variáveis das Pílulas de Status 100% PAGO (Restauradas)
             let clientPaidPerc = p.valorTotal > 0 ? Math.floor((f.totalRecebido / p.valorTotal) * 100) : 0;
             if (clientPaidPerc > 100) clientPaidPerc = 100;
             
@@ -834,46 +867,141 @@
             const sellerPaidColor = sellerPaidPerc >= 100 ? 'text-emerald-400' : (sellerPaidPerc > 0 ? 'text-orange-400' : 'text-slate-500');
             const sellerBorderColor = sellerPaidPerc >= 100 ? 'border-emerald-500/30 bg-emerald-500/10' : 'border-white/5 bg-black/20';
 
-            grid.innerHTML += `<div class="glass p-6 md:p-8 rounded-[40px] border-l-[8px] relative shadow-2xl flex flex-col h-full" style="border-left-color: ${p.status === 'Finalizado' ? '#10b981' : '#f59e0b'}">
+            const financeBtnAction = isFocused ? `window.closeProjectDetails()` : `window.openProjectDetails('${p.id}')`;
+            const financeBtnIcon = isFocused ? "chevron-up" : "wallet";
+            const financeBtnText = isFocused ? "FECHAR DETALHES" : "FINANCEIRO DA OBRA";
+
+            // Constroi UI do Centro de Custos (Somente se Focused e se tem Permissão)
+            let costsUI = '';
+            if (isFocused && canViewCosts) {
+                const budgetColor = f.totalDespesas > f.orcamento && f.orcamento > 0 ? 'text-red-500' : 'text-slate-300';
+                const profitColor = f.lucroBruto >= 0 ? 'text-emerald-500' : 'text-red-500';
+                const marginColor = f.margemLucro >= 0 ? 'text-emerald-400' : 'text-red-400';
+                
+                const expensesList = (p.despesas || []).sort((a,b) => new Date(b.data) - new Date(a.data)).map(exp => `
+                    <div class="flex justify-between items-center text-[10px] py-2 border-b border-indigo-500/10 last:border-0 hover:bg-white/5 transition-colors px-2 rounded-lg">
+                        <div class="flex-1">
+                            <span class="text-slate-400 mr-2">${exp.data ? new Date(exp.data + 'T12:00:00').toLocaleDateString() : '-'}</span>
+                            <span class="font-bold text-slate-200 uppercase">${exp.descricao}</span>
+                            <span class="text-[8px] px-2 py-0.5 ml-2 bg-indigo-500/20 text-indigo-300 rounded-md border border-indigo-500/30">${exp.categoria}</span>
+                        </div>
+                        <div class="flex items-center gap-3">
+                            <span class="font-black text-gold">${formatCurr(exp.valor)}</span>
+                            <button onclick="window.deleteExpense('${p.id}', '${exp.id}', '${exp.descricao.replace(/'/g,"\\'")}', ${exp.valor})" class="p-1 text-red-500/70 hover:text-red-400 no-print"><i data-lucide="trash-2" class="w-3.5 h-3.5"></i></button>
+                        </div>
+                    </div>
+                `).join('') || '<p class="text-[10px] italic text-indigo-300/50 text-center py-4">Nenhuma despesa lançada.</p>';
+
+                costsUI = `
+                <div class="mt-8 pt-8 border-t-2 border-indigo-500/20">
+                    <h4 class="text-lg font-black uppercase text-indigo-400 flex items-center gap-2 mb-6"><i data-lucide="calculator" class="w-5 h-5"></i> Centro de Custos e Rentabilidade</h4>
+                    
+                    <!-- KPIs -->
+                    <div class="grid grid-cols-2 sm:grid-cols-4 gap-4 mb-8">
+                        <div class="bg-black/30 p-4 rounded-2xl border border-white/5 shadow-inner">
+                            <p class="text-[8px] font-black uppercase text-slate-500 mb-1">Orçamento (Budget)</p>
+                            <p class="text-lg font-black text-white">${formatCurr(f.orcamento)}</p>
+                        </div>
+                        <div class="bg-black/30 p-4 rounded-2xl border border-white/5 shadow-inner">
+                            <p class="text-[8px] font-black uppercase text-slate-500 mb-1">Despesas Totais</p>
+                            <p class="text-lg font-black ${budgetColor}">${formatCurr(f.totalDespesas)}</p>
+                        </div>
+                        <div class="bg-black/30 p-4 rounded-2xl border border-white/5 shadow-inner">
+                            <p class="text-[8px] font-black uppercase text-slate-500 mb-1">Lucro Real (Contrato - Despesas)</p>
+                            <p class="text-lg font-black ${profitColor}">${formatCurr(f.lucroBruto)}</p>
+                        </div>
+                        <div class="bg-black/30 p-4 rounded-2xl border border-white/5 shadow-inner">
+                            <p class="text-[8px] font-black uppercase text-slate-500 mb-1">Margem de Lucro</p>
+                            <p class="text-lg font-black ${marginColor}">${f.margemLucro.toFixed(1)}%</p>
+                        </div>
+                    </div>
+
+                    <!-- Gráficos -->
+                    <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8 no-print">
+                        <div class="bg-black/20 p-4 rounded-2xl border border-indigo-500/10 flex flex-col items-center">
+                            <p class="text-[9px] font-black uppercase text-indigo-300/70 mb-2 w-full text-left">Orçamento vs Gasto</p>
+                            <div class="relative w-32 h-32"><canvas id="chart-budget-${p.id}"></canvas></div>
+                        </div>
+                        <div class="md:col-span-2 bg-black/20 p-4 rounded-2xl border border-indigo-500/10">
+                            <p class="text-[9px] font-black uppercase text-indigo-300/70 mb-2">Despesas por Categoria</p>
+                            <div class="relative w-full h-32"><canvas id="chart-cat-${p.id}"></canvas></div>
+                        </div>
+                    </div>
+
+                    <!-- Formulário e Tabela de Despesas -->
+                    <div class="bg-indigo-950/20 p-5 rounded-3xl border border-indigo-500/20">
+                        <div class="no-print">
+                            <p class="text-[10px] font-black text-indigo-400 uppercase mb-3">Lançar Nova Despesa</p>
+                            <div class="flex flex-col sm:flex-row gap-3 mb-6">
+                                <input type="date" id="exp-date-${p.id}" class="modern-input relative !bg-black/40 !border-indigo-500/30 !px-3 !py-2.5 !text-xs sm:w-36">
+                                <input type="text" id="exp-desc-${p.id}" placeholder="Descrição (ex: Compra Cabo 100m)" class="modern-input !bg-black/40 !border-indigo-500/30 !px-3 !py-2.5 !text-xs flex-1">
+                                <select id="exp-cat-${p.id}" class="modern-input !bg-black/40 !border-indigo-500/30 !px-3 !py-2.5 !text-xs sm:w-36">
+                                    <option value="Materiais">Materiais</option><option value="Mão-de-obra">Mão-de-obra</option><option value="Equipamentos">Equipamentos</option>
+                                    <option value="Licenças">Licenças (Permits)</option><option value="Outros">Outros</option>
+                                </select>
+                                <input type="number" id="exp-val-${p.id}" placeholder="$ Valor" step="0.01" class="modern-input !bg-black/40 !border-indigo-500/30 !px-3 !py-2.5 !text-xs sm:w-28 text-gold font-bold">
+                                <button onclick="window.addExpense('${p.id}')" class="bg-indigo-600 hover:bg-indigo-500 text-white px-4 py-2 rounded-xl font-black text-[10px] uppercase tracking-widest transition-colors">Adicionar</button>
+                            </div>
+                        </div>
+
+                        <p class="text-[10px] font-black text-indigo-400 uppercase mb-3 border-b border-indigo-500/20 pb-2">Histórico de Despesas</p>
+                        <div class="max-h-60 overflow-y-auto scrollbar-hide pr-2 print:max-h-none">
+                            ${expensesList}
+                        </div>
+                    </div>
+                </div>
+                `;
+            }
+
+            // Ações do Cartão (Edit, Arquivar, Lixeira)
+            let actionButtons = '';
+            if (isEditor) {
+                const archiveIcon = p.archived ? 'package-open' : 'archive';
+                const archiveColor = p.archived ? 'text-indigo-400 hover:text-indigo-300' : 'text-slate-400 hover:text-white';
+                actionButtons = `
+                    <div class="w-px h-3 bg-white/10 mx-1"></div>
+                    <button onclick="window.toggleArchive('${p.id}', ${!!p.archived})" class="hover:scale-110 transition-transform no-print"><i data-lucide="${archiveIcon}" class="w-3.5 h-3.5 ${archiveColor}"></i></button>
+                    <button onclick="window.editP('${p.id}')" class="hover:scale-110 transition-transform no-print"><i data-lucide="edit-3" class="w-3.5 h-3.5 text-slate-400 hover:text-white"></i></button>
+                    <button onclick="window.deleteP('${p.id}')" class="hover:scale-110 transition-transform no-print"><i data-lucide="trash-2" class="w-3.5 h-3.5 text-red-500/70 hover:text-red-400"></i></button>
+                `;
+            }
+
+            grid.innerHTML += `<div class="glass p-6 md:p-8 rounded-[40px] border-l-[8px] relative shadow-2xl flex flex-col h-full print:border print:border-slate-300 print:shadow-none print:break-inside-avoid" style="border-left-color: ${p.status === 'Finalizado' ? '#10b981' : '#f59e0b'}">
                 <div class="flex justify-between items-start mb-5">
-                    <span class="px-3 py-1.5 bg-white/5 border border-white/10 rounded-xl text-[9px] font-black uppercase tracking-widest text-slate-300 shadow-sm">${p.empresa || 'Sem Unidade'}</span>
-                    <div class="flex items-center gap-3 bg-black/20 p-1.5 px-3 rounded-full border border-white/5">
+                    <span class="px-3 py-1.5 bg-white/5 border border-white/10 rounded-xl text-[9px] font-black uppercase tracking-widest text-slate-300 shadow-sm print:bg-slate-100 print:text-slate-800">${p.empresa || 'Sem Unidade'} ${p.archived ? '<span class="text-indigo-400 ml-1">(ARQUIVADA)</span>' : ''}</span>
+                    <div class="flex items-center gap-3 bg-black/20 p-1.5 px-3 rounded-full border border-white/5 print:hidden">
                         <span class="status-badge ${f.statusColor}" title="Status Financeiro"></span>
-                        ${isEditor ? `
-                        <div class="w-px h-3 bg-white/10 mx-1"></div>
-                        <button onclick="window.editP('${p.id}')" class="hover:scale-110 transition-transform"><i data-lucide="edit-3" class="w-3.5 h-3.5 text-slate-400 hover:text-white"></i></button>
-                        <button onclick="window.deleteP('${p.id}')" class="hover:scale-110 transition-transform"><i data-lucide="trash-2" class="w-3.5 h-3.5 text-red-500/70 hover:text-red-400"></i></button>
-                        ` : ''}
+                        ${actionButtons}
                     </div>
                 </div>
 
-                <div class="text-left mb-6"><h4 class="font-black text-2xl uppercase tracking-tight text-white leading-none">${p.cliente || 'Sem Nome'}</h4></div>
+                <div class="text-left mb-6"><h4 class="font-black text-2xl uppercase tracking-tight text-white leading-none print:text-black">${p.cliente || 'Sem Nome'}</h4></div>
 
-                <div class="grid grid-cols-2 gap-y-5 gap-x-4 p-5 bg-black/20 rounded-[24px] border border-white/5 mb-8 text-left shadow-inner">
-                    <div><p class="text-[8px] font-black text-slate-500 uppercase tracking-widest mb-1">Vendedor</p><p class="text-[11px] font-bold text-slate-200 truncate" title="${p.vendedor}">${p.vendedor?.split('@')[0] || '--'}</p></div>
-                    <div><p class="text-[8px] font-black text-slate-500 uppercase tracking-widest mb-1">Status da Obra</p><p class="text-[11px] font-black text-gold uppercase">${p.status || 'Cotação'}</p></div>
-                    <div><p class="text-[8px] font-black text-slate-500 uppercase tracking-widest mb-1">Proposta / Invoice</p><p class="text-[10px] font-mono font-bold text-slate-400">${p.numeroProposta || '---'} <span class="text-slate-600 font-normal mx-1">|</span> ${p.numeroInvoice || '---'}</p></div>
-                    <div><p class="text-[8px] font-black text-slate-500 uppercase tracking-widest mb-1">Pagt Previsto • Comiss.</p><p class="text-[11px] font-bold text-slate-200">${p.metodo || '--'} <span class="text-slate-600 font-normal mx-1">•</span> ${p.percComissao || 0}%</p></div>
+                <div class="grid grid-cols-2 gap-y-5 gap-x-4 p-5 bg-black/20 rounded-[24px] border border-white/5 mb-8 text-left shadow-inner print:bg-transparent print:border-slate-200">
+                    <div><p class="text-[8px] font-black text-slate-500 uppercase tracking-widest mb-1">Vendedor</p><p class="text-[11px] font-bold text-slate-200 truncate print:text-black" title="${p.vendedor}">${p.vendedor?.split('@')[0] || '--'}</p></div>
+                    <div><p class="text-[8px] font-black text-slate-500 uppercase tracking-widest mb-1">Status da Obra</p><p class="text-[11px] font-black text-gold uppercase print:text-amber-700">${p.status || 'Cotação'}</p></div>
+                    <div><p class="text-[8px] font-black text-slate-500 uppercase tracking-widest mb-1">Proposta / Invoice</p><p class="text-[10px] font-mono font-bold text-slate-400 print:text-black">${p.numeroProposta || '---'} <span class="text-slate-600 font-normal mx-1">|</span> ${p.numeroInvoice || '---'}</p></div>
+                    <div><p class="text-[8px] font-black text-slate-500 uppercase tracking-widest mb-1">Pagt Previsto • Comiss.</p><p class="text-[11px] font-bold text-slate-200 print:text-black">${p.metodo || '--'} <span class="text-slate-600 font-normal mx-1">•</span> ${p.percComissao || 0}%</p></div>
                 </div>
 
                 <div class="mt-auto"></div>
 
                 <div class="space-y-3 mb-8 text-left">
-                    <div class="flex justify-between text-[10px] font-black uppercase text-slate-400"><span>${t.timeline}</span><span style="color: ${colorHex}">${prog}%</span></div>
-                    <div class="progress-track"><div class="progress-bar-fill" style="width: ${prog}%; background-color: ${colorHex}; ${n > e && p.status !== 'Finalizado' ? 'animation: pulse 1s infinite' : ''}"></div></div>
+                    <div class="flex justify-between text-[10px] font-black uppercase text-slate-400 print:text-slate-800"><span>Timeline</span><span style="color: ${colorHex}">${prog}%</span></div>
+                    <div class="progress-track print:bg-slate-200"><div class="progress-bar-fill print:!bg-black" style="width: ${prog}%; background-color: ${colorHex};"></div></div>
                     <div class="flex justify-between text-[9px] font-extrabold uppercase">
-                        <span>${p.dataInicio ? new Date(p.dataInicio + 'T12:00:00').toLocaleDateString() : '-'}</span>
-                        <span class="${n > e && p.status !== 'Finalizado' ? 'text-red-500' : 'text-gold'}">${n > e && p.status !== 'Finalizado' ? t.status_overdue : (prog === 100 ? t.status_finished : (Number.isFinite(e) ? Math.ceil((e - n) / (1000 * 3600 * 24)) : 0) + ' ' + t.days_left)}</span>
+                        <span class="print:text-black">${p.dataInicio ? new Date(p.dataInicio + 'T12:00:00').toLocaleDateString() : '-'}</span>
+                        <span class="${n > e && p.status !== 'Finalizado' ? 'text-red-500' : 'text-gold'} print:!text-black">${n > e && p.status !== 'Finalizado' ? 'ATRASADA' : (prog === 100 ? 'CONCLUÍDA' : (Number.isFinite(e) ? Math.ceil((e - n) / (1000 * 3600 * 24)) : 0) + ' DIAS RESTANTES')}</span>
                     </div>
                 </div>
 
-                <div class="bg-gradient-to-br from-black/50 to-transparent p-5 rounded-3xl border border-white/5 shadow-inner">
+                <div class="bg-gradient-to-br from-black/50 to-transparent p-5 rounded-3xl border border-white/5 shadow-inner print:bg-transparent print:border-slate-300">
                     <p class="text-[9px] font-black text-slate-500 uppercase mb-1 text-center">Valor Contrato Bruto</p>
-                    <p class="text-3xl font-black text-white text-center tracking-tight">${formatCurr(p.valorTotal)}</p>
+                    <p class="text-3xl font-black text-white text-center tracking-tight print:text-black">${formatCurr(p.valorTotal)}</p>
                 </div>
 
                 <!-- Novos Indicadores de Pagamento no Card Principal -->
-                <div class="flex justify-between gap-3 mt-4">
+                <div class="flex justify-between gap-3 mt-4 no-print">
                     <div class="flex-1 rounded-xl p-2.5 text-center border ${clientBorderColor} shadow-inner transition-colors">
                         <p class="text-[7px] font-black uppercase text-slate-400 mb-0.5 tracking-widest">Cliente</p>
                         <p class="text-[10px] font-black ${clientPaidColor}">${clientPaidText}</p>
@@ -884,64 +1012,69 @@
                     </div>
                 </div>
 
-                <button onclick="${financeBtnAction}" class="w-full mt-6 py-3 bg-white/5 rounded-xl border border-white/5 text-[10px] font-black uppercase text-gold hover:bg-white/10 transition-all flex items-center justify-center gap-2">
+                <button onclick="${financeBtnAction}" class="w-full mt-6 py-3 bg-white/5 rounded-xl border border-white/5 text-[10px] font-black uppercase text-gold hover:bg-white/10 transition-all flex items-center justify-center gap-2 no-print">
                     <i data-lucide="${financeBtnIcon}" class="w-4 h-4"></i> ${financeBtnText}
                 </button>
 
-                <!-- Painel Financeiro - Automaticamente aberto se estiver em Foco -->
-                <div id="fin-${p.id}" class="finance-panel ${isFocused ? 'open' : ''}">
-                    <div class="bg-slate-900/80 p-5 rounded-3xl border border-white/10 space-y-5 mt-2 text-left shadow-2xl">
-                        
-                        <div class="grid grid-cols-2 gap-4 pb-4 border-b border-white/5">
-                            <div><p class="text-[8px] font-bold text-slate-500 uppercase">Comissão Projetada</p><p class="text-sm font-black text-slate-400">${formatCurr(f.commTotalProjetada)}</p></div>
-                            <div class="text-right"><p class="text-[8px] font-bold text-emerald-500/80 uppercase">Comissão Liberada</p><p class="text-lg font-black text-emerald-500">${formatCurr(f.commLiberada)}</p></div>
-                            <div><p class="text-[8px] font-bold text-slate-500 uppercase">Pago ao Vendedor</p><p class="text-sm font-black text-slate-300">${formatCurr(f.totalPaid)}</p></div>
-                            <div class="text-right"><p class="text-[8px] font-bold ${balColor} uppercase">${balText}</p><p class="text-xl font-black ${balColor}">${balDisplay}</p></div>
+                <!-- Painel Financeiro e Custos (Só abre no Focus Mode) -->
+                ${isFocused ? `
+                <div class="finance-panel open">
+                    <!-- Bloco Comissões/Pagamentos -->
+                    <div class="bg-slate-900/80 p-5 rounded-3xl border border-white/10 space-y-5 mt-4 text-left shadow-2xl print:bg-transparent print:border-slate-300 print:shadow-none">
+                        <h4 class="text-sm font-black uppercase text-gold flex items-center gap-2 mb-4 border-b border-white/10 pb-2 print:border-slate-200 print:text-black"><i data-lucide="wallet" class="w-4 h-4"></i> Gestão de Comissões</h4>
+                        <div class="grid grid-cols-2 gap-4 pb-4 border-b border-white/5 print:border-slate-200">
+                            <div><p class="text-[8px] font-bold text-slate-500 uppercase print:text-black">Comissão Projetada</p><p class="text-sm font-black text-slate-400 print:text-black">${formatCurr(f.commTotalProjetada)}</p></div>
+                            <div class="text-right"><p class="text-[8px] font-bold text-emerald-500/80 uppercase print:text-emerald-700">Comissão Liberada</p><p class="text-lg font-black text-emerald-500 print:text-emerald-700">${formatCurr(f.commLiberada)}</p></div>
+                            <div><p class="text-[8px] font-bold text-slate-500 uppercase print:text-black">Pago ao Vendedor</p><p class="text-sm font-black text-slate-300 print:text-black">${formatCurr(f.totalPaid)}</p></div>
+                            <div class="text-right"><p class="text-[8px] font-bold ${balColor} uppercase print:text-black">${balText}</p><p class="text-xl font-black ${balColor} print:text-black">${balDisplay}</p></div>
                         </div>
 
                         <div class="space-y-3">
-                            <div class="flex justify-between items-center bg-emerald-500/10 p-2 px-3 rounded-lg border border-emerald-500/20">
-                                <p class="text-[9px] font-black text-emerald-400 uppercase">${t.history_cli}</p>
+                            <div class="flex justify-between items-center bg-emerald-500/10 p-2 px-3 rounded-lg border border-emerald-500/20 print:bg-emerald-50 print:border-emerald-200">
+                                <p class="text-[9px] font-black text-emerald-400 uppercase print:text-emerald-800">Recebimentos do Cliente</p>
                                 <div class="flex items-center gap-3">
-                                    <span class="text-[9px] font-bold text-emerald-500" title="Total Recebido / Contrato">${formatCurr(f.totalRecebido)} / ${formatCurr(p.valorTotal)}</span>
-                                    ${isAdmin ? `<button onclick="openEditRecModal('${p.id}')" class="text-[9px] font-bold text-emerald-400 hover:text-white transition-colors">✏️</button>` : ''}
+                                    <span class="text-[9px] font-bold text-emerald-500 print:text-emerald-800">${formatCurr(f.totalRecebido)} / ${formatCurr(p.valorTotal)}</span>
+                                    ${isAdmin ? `<button onclick="openEditRecModal('${p.id}')" class="text-[9px] font-bold text-emerald-400 hover:text-white transition-colors no-print">✏️</button>` : ''}
                                 </div>
                             </div>
-                            <div class="max-h-32 overflow-y-auto scrollbar-hide px-1">
-                                ${(p.recebimentos || []).map(r => `<div class="flex justify-between text-[11px] py-1.5 border-b border-white/5 last:border-0"><span class="text-slate-300">${r.data ? new Date(r.data + 'T12:00:00').toLocaleDateString() : '-'} <span class="text-[9px] text-slate-500 ml-1">(${r.metodo})</span></span><span class="font-black text-emerald-400">+ ${formatCurr(r.valor)}</span></div>`).join('') || '<p class="text-[10px] italic text-slate-600 text-center py-2">Nenhum recebimento ainda</p>'}
+                            <div class="max-h-32 overflow-y-auto scrollbar-hide px-1 print:max-h-none">
+                                ${(p.recebimentos || []).map(r => `<div class="flex justify-between text-[11px] py-1.5 border-b border-white/5 last:border-0 print:border-slate-200"><span class="text-slate-300 print:text-black">${r.data ? new Date(r.data + 'T12:00:00').toLocaleDateString() : '-'} <span class="text-[9px] text-slate-500 ml-1">(${r.metodo})</span></span><span class="font-black text-emerald-400 print:text-emerald-700">+ ${formatCurr(r.valor)}</span></div>`).join('') || '<p class="text-[10px] italic text-slate-600 text-center py-2">Nenhum recebimento ainda</p>'}
                             </div>
                             ${isAdmin ? `
-                            <div class="grid grid-cols-3 gap-2 mt-2">
-                                <input type="date" id="rec-date-${p.id}" class="modern-input relative !px-2 !py-2 h-8 text-[10px]">
-                                <input type="number" id="rec-val-${p.id}" placeholder="$ Valor" class="modern-input !px-2 !py-2 h-8 text-[10px]">
-                                <select id="rec-met-${p.id}" class="modern-input !px-2 !py-2 h-8 text-[10px]">
-                                    <option value="Zelle">Zelle</option><option value="Wire Transfer">Wire</option><option value="Dinheiro">Cash</option><option value="CC">Cartão (CC)</option>
-                                </select>
+                            <div class="grid grid-cols-3 gap-2 mt-2 no-print">
+                                <input type="date" id="rec-date-${p.id}" class="modern-input relative !px-2 !py-2 h-8 text-[10px]"><input type="number" id="rec-val-${p.id}" placeholder="$" class="modern-input !px-2 !py-2 h-8 text-[10px]"><select id="rec-met-${p.id}" class="modern-input !px-2 !py-2 h-8 text-[10px]"><option value="Zelle">Zelle</option><option value="Wire Transfer">Wire</option><option value="Dinheiro">Cash</option><option value="CC">Cartão (CC)</option></select>
                             </div>
-                            <button onclick="window.addRecebimento('${p.id}')" class="w-full btn-premium-gold !py-2 !text-[9px] bg-emerald-500 !text-emerald-950 flex items-center justify-center gap-2 hover:brightness-110"><i data-lucide="arrow-down-to-line" class="w-3 h-3"></i> Lançar Pagamento do Cliente</button>
+                            <button onclick="window.addRecebimento('${p.id}')" class="w-full btn-premium-gold !py-2 !text-[9px] bg-emerald-500 !text-emerald-950 flex items-center justify-center gap-2 hover:brightness-110 no-print"><i data-lucide="arrow-down-to-line" class="w-3 h-3"></i> Lançar Recebimento</button>
                             ` : ''}
                         </div>
 
-                        <div class="space-y-3 pt-4 border-t border-white/5">
-                            <div class="flex justify-between items-center bg-gold/10 p-2 px-3 rounded-lg border border-gold/20">
-                                <p class="text-[9px] font-black text-gold uppercase">${t.history}</p>
-                                ${isAdmin ? `<button onclick="openEditPaymentModal('${p.id}')" class="text-[9px] font-bold text-gold hover:text-white transition-colors">✏️</button>` : ''}
+                        <div class="space-y-3 pt-4 border-t border-white/5 print:border-slate-200">
+                            <div class="flex justify-between items-center bg-gold/10 p-2 px-3 rounded-lg border border-gold/20 print:bg-amber-50 print:border-amber-200">
+                                <p class="text-[9px] font-black text-gold uppercase print:text-amber-800">Pagamentos ao Vendedor</p>
+                                ${isAdmin ? `<button onclick="openEditPaymentModal('${p.id}')" class="text-[9px] font-bold text-gold hover:text-white transition-colors no-print">✏️</button>` : ''}
                             </div>
-                            <div class="max-h-32 overflow-y-auto scrollbar-hide px-1">
-                                ${(p.pagamentosEfetuados || []).map(pay => `<div class="flex justify-between text-[11px] py-1.5 border-b border-white/5 last:border-0"><span class="text-slate-300">${pay.data ? new Date(pay.data + 'T12:00:00').toLocaleDateString() : '-'}</span><span class="font-black text-gold">- ${formatCurr(pay.valor)}</span></div>`).join('') || '<p class="text-[10px] italic text-slate-600 text-center py-2">Nenhum pagamento</p>'}
+                            <div class="max-h-32 overflow-y-auto scrollbar-hide px-1 print:max-h-none">
+                                ${(p.pagamentosEfetuados || []).map(pay => `<div class="flex justify-between text-[11px] py-1.5 border-b border-white/5 last:border-0 print:border-slate-200"><span class="text-slate-300 print:text-black">${pay.data ? new Date(pay.data + 'T12:00:00').toLocaleDateString() : '-'}</span><span class="font-black text-gold print:text-amber-700">- ${formatCurr(pay.valor)}</span></div>`).join('') || '<p class="text-[10px] italic text-slate-600 text-center py-2">Nenhum pagamento</p>'}
                             </div>
                             ${isAdmin ? `
-                            <div class="grid grid-cols-2 gap-2 mt-2">
-                                <input type="date" id="pay-date-${p.id}" class="modern-input relative !px-2 !py-2 h-8 text-[10px]">
-                                <input type="number" id="pay-val-${p.id}" placeholder="$ Valor" class="modern-input !px-2 !py-2 h-8 text-[10px]">
+                            <div class="grid grid-cols-2 gap-2 mt-2 no-print">
+                                <input type="date" id="pay-date-${p.id}" class="modern-input relative !px-2 !py-2 h-8 text-[10px]"><input type="number" id="pay-val-${p.id}" placeholder="$" class="modern-input !px-2 !py-2 h-8 text-[10px]">
                             </div>
-                            <button onclick="window.addPayment('${p.id}')" class="w-full btn-premium-gold !py-2 !text-[9px] flex items-center justify-center gap-2 hover:brightness-110"><i data-lucide="arrow-up-from-line" class="w-3 h-3"></i> Lançar Pagamento ao Vendedor</button>
+                            <button onclick="window.addPayment('${p.id}')" class="w-full btn-premium-gold !py-2 !text-[9px] flex items-center justify-center gap-2 hover:brightness-110 no-print"><i data-lucide="arrow-up-from-line" class="w-3 h-3"></i> Lançar Pagamento ao Vendedor</button>
                             ` : ''}
                         </div>
-                        
                     </div>
+                    
+                    <!-- Bloco Centro de Custos -->
+                    ${costsUI}
                 </div>
+                ` : ``}
             </div>`;
+
+            // Agenda a renderização dos gráficos se o painel estiver aberto e os gráficos existirem
+            if (isFocused && canViewCosts) {
+                setTimeout(() => renderCharts(p.id, f.orcamento, f.gastosPorCategoria, f.totalDespesas), 100);
+            }
         });
 
         try { lucide.createIcons(); } catch {}
@@ -951,28 +1084,27 @@
         const out = document.getElementById('report-output');
         if (!out || !state.user) return;
 
-        const t = translations[state.lang];
-        let tv = 0, tc = 0; 
-
         const canViewAll = ['admin', 'superadmin'].includes(state.currentUserRole) || state.currentUserViewAll;
+        const canViewCosts = ['admin', 'superadmin'].includes(state.currentUserRole) || state.currentUserViewCosts;
 
+        // Note: No relatório mantemos apenas ativas por padrão ou permitimos todas? Filtramos só as Ativas para o relatorio de comissoes e lucros.
         const filtered = state.projects.filter(p => {
             const matchCompany = state.company === 'Ambas' || p.empresa === state.company;
             const matchUser = canViewAll || p.vendedor === state.user.email; 
-            return matchCompany && matchUser;
+            return matchCompany && matchUser && !p.archived; // Relatorio ignora arquivadas
         });
 
+        let tv = 0, tc = 0, tProfit = 0; 
+
         const currentYear = new Date().getFullYear();
-        const monthNames = state.lang === 'en'
-            ? ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec']
-            : ['Jan','Fev','Mar','Abr','Mai','Jun','Jul','Ago','Set','Out','Nov','Dez'];
-        
+        const monthNames = state.lang === 'en' ? ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'] : ['Jan','Fev','Mar','Abr','Mai','Jun','Jul','Ago','Set','Out','Nov','Dez'];
         const sellerStats = {};
 
         const rows = filtered.map(p => {
             const f = getFin(p);
             tv += Number(p.valorTotal || 0);
             tc += Number(f.commLiberada || 0); 
+            if (canViewCosts) tProfit += Number(f.lucroBruto || 0);
 
             const vend = p.vendedor || 'Sem Vendedor';
             if (!sellerStats[vend]) { sellerStats[vend] = { total: 0, months: Array(12).fill(0) }; }
@@ -980,20 +1112,16 @@
             const recebimentos = p.recebimentos || [];
             recebimentos.forEach(r => {
                 if (r.data) {
-                    const [yearStr, monthStr] = r.data.split('-');
-                    const rYear = parseInt(yearStr, 10);
-                    const rMonth = parseInt(monthStr, 10) - 1;
-                    
-                    const rIsCC = r.metodo === 'CC';
-                    const rBase = rIsCC ? r.valor * 0.97 : r.valor;
+                    const rYear = parseInt(r.data.split('-')[0], 10);
+                    const rMonth = parseInt(r.data.split('-')[1], 10) - 1;
+                    const rBase = r.metodo === 'CC' ? r.valor * 0.97 : r.valor;
                     const rComm = rBase * (p.percComissao / 100);
-
-                    if (rYear === currentYear) {
-                        sellerStats[vend].months[rMonth] += rComm;
-                        sellerStats[vend].total += rComm;
-                    }
+                    if (rYear === currentYear) { sellerStats[vend].months[rMonth] += rComm; sellerStats[vend].total += rComm; }
                 }
             });
+
+            // Coluna de Lucro só aparece se tiver viewCosts
+            const profitCol = canViewCosts ? `<td class="p-4 text-right font-black ${f.lucroBruto >= 0 ? 'text-emerald-500' : 'text-red-500'}">${formatCurr(f.lucroBruto)}</td>` : '';
 
             return `<tr class="border-b border-slate-100 text-xs text-left text-slate-800">
                 <td class="p-4 font-mono text-[10px]">${p.numeroProposta || '-'} / ${p.numeroInvoice || '-'}</td>
@@ -1001,68 +1129,55 @@
                 <td class="p-4">${p.vendedor?.split('@')[0] || ''}</td>
                 <td class="p-4 text-right">${formatCurr(p.valorTotal)}</td>
                 <td class="p-4 text-right font-black text-emerald-600">${formatCurr(f.totalRecebido)}</td>
-                <td class="p-4 text-right text-slate-500">${formatCurr(f.commTotalProjetada)}</td>
                 <td class="p-4 text-right font-black text-amber-600">${formatCurr(f.commLiberada)}</td>
-                <td class="p-4 text-right ${f.balance > 0 ? 'text-red-500 font-bold' : 'text-slate-400'}">${formatCurr(f.balance)}</td>
+                ${profitCol}
             </tr>`;
         }).join('');
 
         let summaryRows = Object.keys(sellerStats).sort().map(vend => {
             const stats = sellerStats[vend];
             let monthsHtml = stats.months.map(mVal => `<td class="p-3 text-right ${mVal > 0 ? 'text-amber-600 font-bold' : 'text-slate-300'}">${formatCurr(mVal)}</td>`).join('');
-            return `<tr class="border-b border-slate-100 text-[10px] text-slate-800">
-                <td class="p-3 font-black uppercase whitespace-nowrap">${vend.split('@')[0]}</td>
-                ${monthsHtml}
-                <td class="p-3 text-right font-black text-emerald-600 bg-slate-50">${formatCurr(stats.total)}</td>
-            </tr>`;
+            return `<tr class="border-b border-slate-100 text-[10px] text-slate-800"><td class="p-3 font-black uppercase whitespace-nowrap">${vend.split('@')[0]}</td>${monthsHtml}<td class="p-3 text-right font-black text-emerald-600 bg-slate-50">${formatCurr(stats.total)}</td></tr>`;
         }).join('');
 
         let summaryHeaderMonths = monthNames.map(m => `<th class="p-3 text-right">${m}</th>`).join('');
-
-        const summaryTableHtml = `
-            <div class="mb-12">
-                <h3 class="text-lg font-black uppercase tracking-tighter mb-4 text-slate-800">${t.summary_title} (${currentYear})</h3>
-                <div class="overflow-x-auto border border-slate-100 rounded-2xl">
-                    <table class="w-full">
-                        <thead class="bg-slate-50 border-b border-slate-100">
-                            <tr class="font-black uppercase text-[9px] text-slate-500 text-left">
-                                <th class="p-3">Vendedor</th>
-                                ${summaryHeaderMonths}
-                                <th class="p-3 text-right bg-slate-100">Total Ano</th>
-                            </tr>
-                        </thead>
-                        <tbody>${summaryRows || `<tr><td colspan="14" class="p-4 text-center text-slate-400">Nenhum dado para o ano atual.</td></tr>`}</tbody>
-                    </table>
-                </div>
-            </div>
-        `;
 
         out.innerHTML = `<div class="bg-white text-slate-950 p-8 md:p-12 rounded-[50px] shadow-2xl border-8 border-slate-50 text-left">
             <div class="flex justify-between items-center border-b-[8px] border-slate-950 pb-10 mb-10">
                 <div class="logo-frame-sm border p-2 rounded-xl"><img src="logo-D2-Group-preto.png" class="h-12"></div>
                 <div class="text-right">
-                    <h2 class="text-3xl font-black uppercase tracking-tighter">${t.report_title}</h2>
+                    <h2 class="text-3xl font-black uppercase tracking-tighter">Relatório Executivo</h2>
                     <p class="text-slate-400 font-black uppercase text-[10px]">${new Date().toLocaleDateString()}</p>
                 </div>
             </div>
             
-            ${summaryTableHtml}
+            <div class="mb-12">
+                <h3 class="text-lg font-black uppercase tracking-tighter mb-4 text-slate-800">Comissões Reais - Pagas por Mês (${currentYear})</h3>
+                <div class="overflow-x-auto border border-slate-100 rounded-2xl">
+                    <table class="w-full">
+                        <thead class="bg-slate-50 border-b border-slate-100">
+                            <tr class="font-black uppercase text-[9px] text-slate-500 text-left"><th class="p-3">Vendedor</th>${summaryHeaderMonths}<th class="p-3 text-right bg-slate-100">Total Ano</th></tr>
+                        </thead>
+                        <tbody>${summaryRows || `<tr><td colspan="14" class="p-4 text-center text-slate-400">Nenhum dado para o ano atual.</td></tr>`}</tbody>
+                    </table>
+                </div>
+            </div>
             
-            <h3 class="text-lg font-black uppercase tracking-tighter mb-4 text-slate-800">Detalhamento de Obras</h3>
+            <h3 class="text-lg font-black uppercase tracking-tighter mb-4 text-slate-800">Detalhamento de Obras Ativas</h3>
             <div class="overflow-x-auto border border-slate-100 rounded-2xl">
                 <table class="w-full">
                     <thead class="bg-slate-50 border-b border-slate-100">
                         <tr class="font-black uppercase text-[9px] text-slate-500 text-left">
                             <th class="p-4">Prop / Invoice</th><th class="p-4">Obra</th><th class="p-4">Vendedor</th>
                             <th class="p-4 text-right">Contrato Bruto</th><th class="p-4 text-right bg-emerald-50 text-emerald-700">Total Recebido</th>
-                            <th class="p-4 text-right">Com. Projetada</th><th class="p-4 text-right bg-amber-50 text-amber-700">Com. Liberada</th>
-                            <th class="p-4 text-right">Saldo (Vendedor)</th>
+                            <th class="p-4 text-right bg-amber-50 text-amber-700">Com. Liberada</th>
+                            ${canViewCosts ? '<th class="p-4 text-right bg-indigo-50 text-indigo-700">Lucro Real</th>' : ''}
                         </tr>
                     </thead>
                     <tbody>${rows}</tbody>
                 </table>
             </div>
-            <div class="mt-10 pt-10 border-t-[8px] border-slate-950 flex justify-end gap-16">
+            <div class="mt-10 pt-10 border-t-[8px] border-slate-950 flex flex-wrap justify-end gap-10 sm:gap-16">
                 <div class="text-right">
                     <p class="text-[11px] font-black uppercase text-slate-400 mb-1">TOTAL CONTRATOS</p>
                     <p class="text-4xl font-black">${formatCurr(tv)}</p>
@@ -1071,66 +1186,50 @@
                     <p class="text-[11px] font-black uppercase text-amber-600 mb-1">COMISSÕES GERADAS</p>
                     <p class="text-4xl font-black text-amber-600">${formatCurr(tc)}</p>
                 </div>
+                ${canViewCosts ? `
+                <div class="text-right">
+                    <p class="text-[11px] font-black uppercase text-indigo-600 mb-1">LUCRO TOTAL</p>
+                    <p class="text-4xl font-black text-indigo-600">${formatCurr(tProfit)}</p>
+                </div>
+                ` : ''}
             </div>
         </div>`;
     }
 
     onAuthStateChanged(auth, (u) => {
         state.user = u;
-
         if (u) {
-            document.getElementById('auth-screen').classList.add('hidden');
-            document.getElementById('main-app').classList.remove('hidden');
-            document.body.className = 'app-body-dark';
-
+            document.getElementById('auth-screen').classList.add('hidden'); document.getElementById('main-app').classList.remove('hidden'); document.body.className = 'app-body-dark';
             document.getElementById('user-display').innerText = u.email ? u.email.split('@')[0].toUpperCase() : "USR";
-            
-            initData();
-            logAccess(u.email, 'Login');
+            initData(); logAccess(u.email, 'Fez login no sistema');
         } else {
-            document.getElementById('auth-screen').classList.remove('hidden');
-            document.getElementById('main-app').classList.add('hidden');
-            document.body.className = 'auth-body';
+            document.getElementById('auth-screen').classList.remove('hidden'); document.getElementById('main-app').classList.add('hidden'); document.body.className = 'auth-body';
         }
-
-        window.setLang(state.lang);
-        try { lucide.createIcons(); } catch {}
+        window.setLang(state.lang); try { lucide.createIcons(); } catch {}
     });
 
     function initData() {
         if (!auth.currentUser) return;
-
         const projectsRef = collection(db, 'artifacts', appId, 'public', 'data', 'projects');
         onSnapshot(projectsRef, snap => {
             state.projects = snap.docs.map(d => ({ id: d.id, ...d.data() }));
-            renderProjects();
-            renderReport();
+            renderProjects(); renderReport();
         }, err => console.error(err));
 
         onSnapshot(collection(db, 'artifacts', appId, 'public', 'data', 'user_credentials'), snap => {
             if (!auth.currentUser) return; 
-            
-            const team = snap.docs.map(d => ({ id: d.id, ...d.data() }));
-            state.team = team;
+            const team = snap.docs.map(d => ({ id: d.id, ...d.data() })); state.team = team;
             
             if (auth.currentUser.email.toLowerCase() === SUPER_ADMIN.toLowerCase()) {
-                state.currentUserRole = 'superadmin';
-                state.currentUserViewAll = true;
+                state.currentUserRole = 'superadmin'; state.currentUserViewAll = true; state.currentUserViewCosts = true;
             } else {
                 const myProfile = team.find(u => u.email.toLowerCase() === auth.currentUser.email.toLowerCase());
-                
-                if (!myProfile) {
-                    alert("Acesso Negado: Seu e-mail não foi autorizado pelo administrador do sistema.");
-                    signOut(auth);
-                    return;
-                }
-                
+                if (!myProfile) { alert("Acesso Negado."); signOut(auth); return; }
                 state.currentUserRole = myProfile?.role || 'viewer';
                 state.currentUserViewAll = myProfile?.viewAll || false;
+                state.currentUserViewCosts = myProfile?.viewCosts || false;
             }
-            
-            window.applyPermissions();
-            renderVendedores();
+            window.applyPermissions(); renderVendedores();
 
             const container = document.getElementById('users-list');
             if (container && ['admin', 'superadmin'].includes(state.currentUserRole)) {
@@ -1138,18 +1237,9 @@
                     let roleStr = "Editor Padrão", roleClass = "role-editor";
                     if(u.role === 'admin' || u.email.toLowerCase() === SUPER_ADMIN.toLowerCase()) { roleStr = "Admin"; roleClass = "role-admin"; }
                     if(u.role === 'viewer') { roleStr = "Modo Leitura"; roleClass = "role-viewer"; }
-                    
                     const tagViewAll = u.viewAll ? '<span class="role-tag bg-indigo-500/20 text-indigo-400 ml-1">VISÃO GLOBAL</span>' : '';
-
-                    return `<div class="glass p-6 rounded-[24px] flex justify-between items-center border-l-8 border-gold shadow-lg transition-all hover:scale-[1.01]">
-                    <div class="text-left">
-                        <p class="font-black text-slate-100 text-lg flex items-center gap-2 flex-wrap">${u.email} <span class="role-tag ${roleClass}">${roleStr}</span> ${tagViewAll}</p>
-                        <p class="text-[11px] text-slate-500 mt-1 uppercase tracking-widest">Senha: <span class="text-gold font-bold normal-case">${u.password}</span></p>
-                    </div>
-                    <div class="flex gap-2">
-                        <button onclick="window.editTeamMember('${u.id}', '${u.email}', '${u.password}', '${u.role}', ${!!u.viewAll})" class="p-2 text-gold hover:bg-gold/10 rounded-lg"><i data-lucide="edit" size="18"></i></button>
-                        <button onclick="window.deleteTeam('${u.id}')" class="p-2 text-red-500 hover:bg-red-500/10 rounded-lg ${u.email.toLowerCase() === SUPER_ADMIN.toLowerCase() ? 'hidden' : ''}"><i data-lucide="user-minus" size="18"></i></button>
-                    </div></div>`
+                    const tagCosts = u.viewCosts ? '<span class="role-tag bg-emerald-500/20 text-emerald-400 ml-1">CUSTOS</span>' : '';
+                    return `<div class="glass p-6 rounded-[24px] flex justify-between items-center border-l-8 border-gold shadow-lg transition-all hover:scale-[1.01]"><div class="text-left"><p class="font-black text-slate-100 text-lg flex items-center gap-2 flex-wrap">${u.email} <span class="role-tag ${roleClass}">${roleStr}</span> ${tagViewAll} ${tagCosts}</p><p class="text-[11px] text-slate-500 mt-1 uppercase tracking-widest">Senha: <span class="text-gold font-bold normal-case">${u.password}</span></p></div><div class="flex gap-2"><button onclick="window.editTeamMember('${u.id}', '${u.email}', '${u.password}', '${u.role}', ${!!u.viewAll}, ${!!u.viewCosts})" class="p-2 text-gold hover:bg-gold/10 rounded-lg"><i data-lucide="edit" size="18"></i></button><button onclick="window.deleteTeam('${u.id}')" class="p-2 text-red-500 hover:bg-red-500/10 rounded-lg ${u.email.toLowerCase() === SUPER_ADMIN.toLowerCase() ? 'hidden' : ''}"><i data-lucide="user-minus" size="18"></i></button></div></div>`;
                 }).join('');
                 try { lucide.createIcons(); } catch {}
             }
@@ -1160,106 +1250,52 @@
         try { lucide.createIcons(); } catch {}
 
         document.getElementById('login-form').onsubmit = async (e) => {
-            e.preventDefault();
-            hideLoginMessages();
-
-            const btn = document.getElementById('btn-entrar');
-            btn.disabled = true;
-
-            const email = document.getElementById('email').value.trim();
-            const pass = document.getElementById('password').value;
-
+            e.preventDefault(); hideLoginMessages(); const btn = document.getElementById('btn-entrar'); btn.disabled = true;
+            const email = document.getElementById('email').value.trim(); const pass = document.getElementById('password').value;
             try {
                 await signInWithEmailAndPassword(auth, email, pass);
             } catch (err) {
                 if (err?.code === 'auth/invalid-credential' || err?.code === 'auth/user-not-found') {
-                    try {
-                        await createUserWithEmailAndPassword(auth, email, pass);
-                        return;
-                    } catch (createErr) {
-                        if (createErr.code === 'auth/email-already-in-use') {
-                            showLoginError('Senha incorreta.');
-                        } else {
-                            showLoginError('Dados inválidos ou e-mail já cadastrado de forma incompatível.');
-                        }
-                    }
-                    
-                } else if (err?.code === 'auth/unauthorized-domain') {
-                    showLoginError('Domínio não autorizado no Firebase Auth. Configure no painel do Firebase.');
-                } else {
-                    showLoginError('Falha no login: ' + err.message);
-                }
-            } finally {
-                btn.disabled = false;
-            }
+                    try { await createUserWithEmailAndPassword(auth, email, pass); return; } 
+                    catch (createErr) { if (createErr.code === 'auth/email-already-in-use') showLoginError('Senha incorreta.'); else showLoginError('Dados inválidos.'); }
+                } else if (err?.code === 'auth/unauthorized-domain') { showLoginError('Domínio não autorizado.'); } 
+                else { showLoginError('Falha no login: ' + err.message); }
+            } finally { btn.disabled = false; }
         };
 
         document.getElementById('project-form').onsubmit = async (e) => {
-            e.preventDefault();
-            if (!auth.currentUser) return;
-
+            e.preventDefault(); if (!auth.currentUser) return;
             const id = document.getElementById('edit-id').value;
             const d = {
-                numeroProposta: document.getElementById('f-proposta').value || '',
-                numeroInvoice: document.getElementById('f-invoice').value || '',
-                empresa: document.getElementById('f-empresa').value,
-                cliente: document.getElementById('f-cliente').value,
-                vendedor: document.getElementById('f-vendedor').value,
+                numeroProposta: document.getElementById('f-proposta').value || '', numeroInvoice: document.getElementById('f-invoice').value || '',
+                empresa: document.getElementById('f-empresa').value, cliente: document.getElementById('f-cliente').value, vendedor: document.getElementById('f-vendedor').value,
                 valorTotal: parseFloat(document.getElementById('f-valor').value),
-                metodo: document.getElementById('f-metodo').value,
-                percComissao: parseInt(document.getElementById('f-comm').value),
-                dataInicio: document.getElementById('f-inicio').value,
-                dataEntrega: document.getElementById('f-entrega').value,
-                status: document.getElementById('f-status').value,
-                updatedAt: serverTimestamp()
+                orcamento: parseFloat(document.getElementById('f-orcamento').value || 0), // NOVO CAMPO
+                metodo: document.getElementById('f-metodo').value, percComissao: parseInt(document.getElementById('f-comm').value),
+                dataInicio: document.getElementById('f-inicio').value, dataEntrega: document.getElementById('f-entrega').value,
+                status: document.getElementById('f-status').value, updatedAt: serverTimestamp()
             };
 
             try {
-                if (id) {
-                    await updateDoc(doc(db, 'artifacts', appId, 'public', 'data', 'projects', id), d);
-                } else {
-                    await addDoc(collection(db, 'artifacts', appId, 'public', 'data', 'projects'), { ...d, createdAt: serverTimestamp(), pagamentosEfetuados: [], recebimentos: [] });
-                }
-                e.target.reset();
-                document.getElementById('edit-id').value = '';
-                document.getElementById('f-vendedor').value = auth.currentUser.email;
-                window.showView('projects');
-            } catch (err) {
-                console.error(err);
-            }
+                if (id) { await updateDoc(doc(db, 'artifacts', appId, 'public', 'data', 'projects', id), d); logAccess(state.user.email, `Editou a obra: ${d.cliente}`); } 
+                else { await addDoc(collection(db, 'artifacts', appId, 'public', 'data', 'projects'), { ...d, archived: false, createdAt: serverTimestamp(), pagamentosEfetuados: [], recebimentos: [], despesas: [] }); logAccess(state.user.email, `Registou nova obra: ${d.cliente}`); }
+                e.target.reset(); document.getElementById('edit-id').value = ''; document.getElementById('f-vendedor').value = auth.currentUser.email; window.showView('projects');
+            } catch (err) { console.error(err); }
         };
 
         document.getElementById('team-form').onsubmit = async (e) => {
-            e.preventDefault();
-            if (!auth.currentUser) return;
-
-            const id = document.getElementById('t-id').value;
-            const mail = document.getElementById('t-email').value.trim();
-            const pass = document.getElementById('t-pass').value;
-            const role = document.getElementById('t-role').value;
+            e.preventDefault(); if (!auth.currentUser) return;
+            const id = document.getElementById('t-id').value; const mail = document.getElementById('t-email').value.trim();
+            const pass = document.getElementById('t-pass').value; const role = document.getElementById('t-role').value;
             const viewAll = document.getElementById('t-viewall').checked; 
+            const viewCosts = document.getElementById('t-viewcosts').checked; // NOVO CAMPO
 
             try {
-                try {
-                    const secApp = initializeApp(firebaseConfig, "SecApp_" + Date.now());
-                    const secAuth = getAuth(secApp);
-                    await createUserWithEmailAndPassword(secAuth, mail, pass);
-                    await signOut(secAuth);
-                    await deleteApp(secApp); 
-                } catch (authErr) {}
-
-                if (!id) {
-                    await addDoc(collection(db, 'artifacts', appId, 'public', 'data', 'user_credentials'), { email: mail, password: pass, role: role, viewAll: viewAll, updatedAt: serverTimestamp() });
-                } else {
-                    await updateDoc(doc(db, 'artifacts', appId, 'public', 'data', 'user_credentials', id), { email: mail, password: pass, role: role, viewAll: viewAll, updatedAt: serverTimestamp() });
-                }
-                
-                e.target.reset();
-                document.getElementById('t-id').value = '';
-                document.getElementById('t-viewall').checked = false; 
-            } catch (err) {
-                alert("Erro: " + err.message);
-            }
+                try { const secApp = initializeApp(firebaseConfig, "SecApp_" + Date.now()); const secAuth = getAuth(secApp); await createUserWithEmailAndPassword(secAuth, mail, pass); await signOut(secAuth); await deleteApp(secApp); } catch (authErr) {}
+                if (!id) { await addDoc(collection(db, 'artifacts', appId, 'public', 'data', 'user_credentials'), { email: mail, password: pass, role: role, viewAll: viewAll, viewCosts: viewCosts, updatedAt: serverTimestamp() }); logAccess(state.user.email, `Adicionou utilizador: ${mail}`); } 
+                else { await updateDoc(doc(db, 'artifacts', appId, 'public', 'data', 'user_credentials', id), { email: mail, password: pass, role: role, viewAll: viewAll, viewCosts: viewCosts, updatedAt: serverTimestamp() }); logAccess(state.user.email, `Atualizou utilizador: ${mail}`); }
+                e.target.reset(); document.getElementById('t-id').value = ''; document.getElementById('t-viewall').checked = false; document.getElementById('t-viewcosts').checked = false;
+            } catch (err) { alert("Erro: " + err.message); }
         };
     });
 </script>
