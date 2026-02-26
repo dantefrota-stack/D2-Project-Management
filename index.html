@@ -11,7 +11,7 @@
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <style>
         :root { --gold: #fbbf24; --gold-dark: #b45309; --d2-blue: #0f172a; }
-        body { font-family: 'Inter', sans-serif; transition: background-color 0.3s; margin: 0; }
+        body { font-family: 'Inter', sans-serif; transition: background-color 0.3s, color 0.3s; margin: 0; }
 
         /* Design Login - Enterprise Portal Pattern */
         .auth-body { background-color: #f1f5f9; color: #0f172a; display: flex; align-items: center; justify-content: center; min-height: 100vh; }
@@ -33,16 +33,24 @@
         }
         .btn-access:hover { transform: translateY(-2px); box-shadow: 0 10px 20px rgba(15, 23, 42, 0.2); }
 
-        /* Interface Interna */
+        /* Interface Interna Escura (Padrão) */
         .app-body-dark { background-color: #030508; color: #f1f5f9; }
         
-        /* O padding right de 45px era para o olho da senha. Foi corrigido nos sub-inputs usando !pr-3 nas classes do JS */
+        /* Interface Interna Clara (Light Mode) */
+        .app-body-light { background-color: #f8fafc; color: #0f172a; }
+        .app-body-light .glass { background: #ffffff !important; border-color: #e2e8f0 !important; color: #0f172a; box-shadow: 0 10px 30px -10px rgba(0,0,0,0.1) !important;}
+        .app-body-light .text-white { color: #0f172a !important; }
+        .app-body-light .text-slate-200, .app-body-light .text-slate-300, .app-body-light .text-slate-400 { color: #475569 !important; }
+        .app-body-light .bg-black\/20, .app-body-light .bg-black\/30, .app-body-light .bg-black\/40, .app-body-light .bg-indigo-950\/20 { background-color: #f1f5f9 !important; border-color: #cbd5e1 !important; }
+        .app-body-light .border-white\/5, .app-body-light .border-white\/10 { border-color: #e2e8f0 !important; }
+        .app-body-light header { background-color: #ffffff !important; border-bottom-color: #e2e8f0 !important; }
+        
         .modern-input {
-            width: 100%; padding: 14px 45px 14px 16px; border-radius: 12px;
+            width: 100%; padding: 14px 16px; border-radius: 12px; /* Removido o padding right excessivo */
             border: 1px solid rgba(148, 163, 184, 0.2); background: rgba(0,0,0,0.5);
             color: inherit; outline: none; transition: all 0.2s; font-size: 14px;
         }
-        .light .modern-input { background: #fff; border: 1px solid #cbd5e1; color: #000; }
+        .app-body-light .modern-input { background: #fff !important; border: 1px solid #cbd5e1 !important; color: #000 !important; }
 
         /* FIX DO OLHO - SVG Puro embutido */
         .password-toggle {
@@ -56,8 +64,12 @@
         /* Unidades e Filtros Pílula */
         .unit-pill { padding: 8px 20px; border-radius: 20px; font-size: 10px; font-weight: 800; border: 1px solid rgba(255,255,255,0.1); cursor: pointer; transition: 0.2s; color: #64748b; background: transparent; }
         .unit-pill.active { background: var(--gold); color: #000; border-color: var(--gold); }
+        .app-body-light .unit-pill { border-color: #cbd5e1; }
+        
         .filter-pill { padding: 6px 16px; border-radius: 12px; font-size: 10px; font-weight: 800; border: 1px solid rgba(255,255,255,0.05); cursor: pointer; transition: 0.2s; color: #64748b; background: rgba(255,255,255,0.02); }
         .filter-pill.active { background: rgba(255,255,255,0.1); color: #fff; border-color: rgba(255,255,255,0.2); }
+        .app-body-light .filter-pill { border-color: #cbd5e1; background: #fff; }
+        .app-body-light .filter-pill.active { background: #0f172a; color: #fff; border-color: #0f172a; }
 
         /* Botão Premium Gold */
         .btn-premium-gold {
@@ -77,12 +89,9 @@
         .date-container { position: relative; display: flex; align-items: center; width: 100%; }
         .calendar-icon-overlay { position: absolute; right: 14px; pointer-events: none; color: var(--gold); z-index: 10; }
 
-        /* Painel Financeiro e Despesas Expansível */
-        .finance-panel { max-height: 0; overflow: hidden; transition: all 0.4s ease-in-out; opacity: 0; }
-        .finance-panel.open { max-height: 5000px; opacity: 1; margin-top: 1rem; }
-
         /* Barra de Progresso */
         .progress-track { height: 16px; border-radius: 8px; background: rgba(255,255,255,0.05); overflow: hidden; border: 1px solid rgba(255,255,255,0.05); }
+        .app-body-light .progress-track { background: #e2e8f0; border-color: #cbd5e1; }
         .progress-bar-fill { height: 100%; transition: width 1.2s cubic-bezier(0.4, 0, 0.2, 1); border-radius: 8px; }
 
         .glass { background: rgba(255, 255, 255, 0.03); backdrop-filter: blur(12px); border: 1px solid rgba(255, 255, 255, 0.1); }
@@ -92,22 +101,22 @@
         .modal-overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.7); backdrop-filter: blur(4px); z-index: 1000; display: none; align-items: center; justify-content: center; }
         .modal-overlay.active { display: flex; }
         .modal-content { background: #1e293b; border-radius: 24px; padding: 32px; max-width: 600px; width: 90%; max-height: 80vh; overflow-y: auto; border: 1px solid rgba(255,255,255,0.1); box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5); }
+        .app-body-light .modal-content { background: #ffffff; color: #0f172a; border-color: #cbd5e1; }
 
         /* Animações e Hover Dinâmico */
         @keyframes fadeIn { from { opacity: 0; transform: translateY(15px); } to { opacity: 1; transform: translateY(0); } }
         .animate-fade-in { animation: fadeIn 0.4s cubic-bezier(0.16, 1, 0.3, 1) forwards; }
-        .project-card { transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1); }
-        .project-card.clickable:hover { transform: translateY(-4px); box-shadow: 0 20px 40px -10px rgba(0,0,0,0.5); border-color: rgba(251, 191, 36, 0.3); }
+        .project-card { transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1); cursor: pointer; }
+        .project-card:hover { transform: translateY(-4px); box-shadow: 0 20px 40px -10px rgba(0,0,0,0.5); border-color: rgba(251, 191, 36, 0.3); }
 
         /* Estilos de Impressão */
         @media print { 
             .no-print { display: none !important; } 
-            body.app-body-dark { background: #fff !important; color: #000 !important; }
+            body { background: #fff !important; color: #000 !important; }
             .glass { background: #fff !important; border: 1px solid #e2e8f0 !important; box-shadow: none !important; filter: none !important; backdrop-filter: none !important; }
             .text-white, .text-slate-200, .text-slate-300, .text-slate-400 { color: #0f172a !important; }
             .bg-black\/20, .bg-slate-900\/80, .bg-gradient-to-br, .bg-white\/5, .bg-indigo-950\/20 { background: #f8fafc !important; border-color: #cbd5e1 !important; }
             canvas { max-width: 100% !important; }
-            .finance-panel.open { max-height: none !important; overflow: visible !important; }
         }
 
         /* Pequenos estilos auxiliares */
@@ -115,18 +124,14 @@
         .flag-btn.active { border-color: var(--gold); box-shadow: 0 0 0 4px rgba(251,191,36,.12); }
         .tab-btn { color: rgba(148,163,184,0.9); }
         .tab-active { color: var(--gold); border-bottom: 2px solid var(--gold); }
+        .app-body-light .tab-btn { color: #64748b; }
+        .app-body-light .tab-active { color: var(--gold-dark); border-bottom-color: var(--gold-dark); }
         .status-badge { width: 10px; height: 10px; border-radius: 999px; display: inline-block; }
         .text-gold { color: var(--gold); }
         .role-tag { font-size: 9px; padding: 2px 6px; border-radius: 4px; font-weight: 800; text-transform: uppercase; letter-spacing: 0.1em; }
         .role-admin { background: rgba(251,191,36,0.2); color: var(--gold); }
         .role-editor { background: rgba(56,189,248,0.2); color: #38bdf8; }
         .role-viewer { background: rgba(148,163,184,0.2); color: #94a3b8; }
-        
-        /* Sub Tabs no Focus Mode */
-        .sub-tab-btn { padding: 10px 20px; font-size: 10px; font-weight: 900; text-transform: uppercase; letter-spacing: 0.1em; color: #64748b; border-bottom: 2px solid transparent; transition: 0.2s; }
-        .sub-tab-btn:hover { color: #fff; }
-        .sub-tab-active-comm { color: var(--gold); border-bottom-color: var(--gold); }
-        .sub-tab-active-costs { color: #818cf8; border-bottom-color: #818cf8; }
     </style>
 </head>
 <body class="auth-body">
@@ -150,7 +155,7 @@
 
             <div class="relative">
                 <label class="label-auth">Senha de Acesso</label>
-                <input type="password" id="password" required class="auth-input" placeholder="••••••••">
+                <input type="password" id="password" required class="auth-input !pr-10" placeholder="••••••••">
                 <button type="button" onclick="window.togglePassword('password', 'eye-login-btn')" class="password-toggle !text-slate-400" id="eye-login-btn" style="top: 70%;">
                     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>
                 </button>
@@ -168,7 +173,7 @@
     </div>
 </div>
 
-<!-- Modal de Edição de Recebimentos (Cliente -> Empresa) -->
+<!-- Modal de Edição de Recebimentos -->
 <div id="edit-rec-modal" class="modal-overlay">
     <div class="modal-content animate-fade-in">
         <h3 class="text-2xl font-black text-emerald-400 mb-6">Editar Recebimentos (Cliente)</h3>
@@ -180,7 +185,7 @@
     </div>
 </div>
 
-<!-- Modal de Edição de Pagamentos (Empresa -> Vendedor) -->
+<!-- Modal de Edição de Pagamentos -->
 <div id="edit-payment-modal" class="modal-overlay">
     <div class="modal-content animate-fade-in">
         <h3 class="text-2xl font-black text-gold mb-6">Editar Pagamentos (Vendedor)</h3>
@@ -194,7 +199,7 @@
 
 <!-- Interface Interna -->
 <div id="main-app" class="hidden min-h-screen flex flex-col app-body-dark text-center">
-    <header class="no-print bg-white/5 backdrop-blur-md border-b border-white/5 p-4 sticky top-0 z-40">
+    <header class="no-print bg-white/5 backdrop-blur-md border-b border-white/5 p-4 sticky top-0 z-40 shadow-sm">
         <div class="max-w-7xl mx-auto flex justify-between items-center">
             <div class="flex items-center gap-6">
                 <div class="bg-white p-2 rounded-xl shadow-md"><img id="header-logo" src="logo-D2-Group-preto.png" class="h-10"></div>
@@ -211,7 +216,7 @@
         </div>
     </header>
 
-    <main class="max-w-7xl mx-auto w-full p-6 flex-1">
+    <main class="max-w-7xl mx-auto w-full p-4 sm:p-6 flex-1">
         <nav class="no-print flex gap-10 mb-6 border-b border-white/5 overflow-x-auto justify-center sm:justify-start scrollbar-hide">
             <button onclick="showView('projects')" class="tab-btn pb-4 font-black text-[11px] uppercase tracking-[0.2em] tab-active" id="tab-projects" data-i18n="nav_proj">Projetos</button>
             <button onclick="window.cancelEdit(); showView('new')" class="tab-btn pb-4 font-black text-[11px] uppercase tracking-[0.2em] editor-only hidden" id="tab-new" data-i18n="nav_new">Nova Obra</button>
@@ -221,7 +226,7 @@
         </nav>
 
         <div id="view-projects" class="w-full">
-            <!-- Filtros Superiores (Oculto no Modo Foco) -->
+            <!-- Filtros Superiores -->
             <div id="projects-filters" class="flex flex-col sm:flex-row justify-between items-center mb-8 gap-4 no-print">
                 <div class="flex gap-3">
                     <button onclick="selectUnit('Smart Home')" id="unit-smart" class="unit-pill">SMART HOME</button>
@@ -234,40 +239,40 @@
                 </div>
             </div>
             
-            <div id="projects-grid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-10 text-left"></div>
+            <div id="projects-grid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 text-left"></div>
         </div>
 
-        <div id="view-new" class="hidden max-w-3xl mx-auto glass p-10 rounded-[40px] text-left shadow-2xl border border-white/5 animate-fade-in">
+        <div id="view-new" class="hidden max-w-3xl mx-auto glass p-6 sm:p-10 rounded-[40px] text-left shadow-2xl border border-white/5 animate-fade-in">
             <h3 class="text-2xl font-black mb-10 flex items-center gap-4 uppercase tracking-tighter text-white">
                 <span class="w-2 h-10 bg-gold rounded-full"></span>
                 <span id="form-title" data-i18n="form_new_title">Registrar Obra</span>
             </h3>
-            <form id="project-form" class="grid grid-cols-1 md:grid-cols-2 gap-8 text-left">
+            <form id="project-form" class="grid grid-cols-1 md:grid-cols-2 gap-6 sm:gap-8 text-left">
                 <input type="hidden" id="edit-id">
 
                 <div class="col-span-2 md:col-span-1 space-y-2">
                     <label class="text-[10px] font-black uppercase text-slate-500 ml-1 tracking-widest">Nº Proposta</label>
-                    <input type="text" id="f-proposta" class="modern-input !pr-4" placeholder="Ex: PROP-2026-001">
+                    <input type="text" id="f-proposta" class="modern-input" placeholder="Ex: PROP-2026-001">
                 </div>
                 <div class="col-span-2 md:col-span-1 space-y-2">
                     <label class="text-[10px] font-black uppercase text-slate-500 ml-1 tracking-widest">Nº Invoice</label>
-                    <input type="text" id="f-invoice" class="modern-input !pr-4" placeholder="Ex: INV-2026-001">
+                    <input type="text" id="f-invoice" class="modern-input" placeholder="Ex: INV-2026-001">
                 </div>
 
                 <div class="col-span-2 space-y-2">
                     <label class="text-[10px] font-black uppercase text-slate-500 ml-1 tracking-widest">Unidade Responsável</label>
-                    <select id="f-empresa" class="modern-input !pr-8"><option value="Smart Home">D2 Smart Home</option><option value="HVAC">D2 HVAC Solutions</option></select>
+                    <select id="f-empresa" class="modern-input !pr-10"><option value="Smart Home">D2 Smart Home</option><option value="HVAC">D2 HVAC Solutions</option></select>
                 </div>
-                <div class="col-span-2 md:col-span-1 space-y-2"><label class="text-[10px] font-black uppercase text-slate-500 ml-1 tracking-widest">Cliente</label><input type="text" id="f-cliente" required class="modern-input !pr-4"></div>
-                <div class="col-span-2 md:col-span-1 space-y-2"><label class="text-[10px] font-black uppercase text-slate-500 ml-1 tracking-widest">Vendedor</label><select id="f-vendedor" required class="modern-input !pr-8"></select></div>
+                <div class="col-span-2 md:col-span-1 space-y-2"><label class="text-[10px] font-black uppercase text-slate-500 ml-1 tracking-widest">Cliente</label><input type="text" id="f-cliente" required class="modern-input"></div>
+                <div class="col-span-2 md:col-span-1 space-y-2"><label class="text-[10px] font-black uppercase text-slate-500 ml-1 tracking-widest">Vendedor</label><select id="f-vendedor" required class="modern-input !pr-10"></select></div>
                 
                 <div class="space-y-2">
                     <label class="text-[10px] font-black uppercase text-slate-500 ml-1 tracking-widest">Valor Contrato Bruto</label>
-                    <div class="relative"><span class="absolute left-4 top-1/2 -translate-y-1/2 font-bold text-gold">$</span><input type="number" id="f-valor" step="0.01" required class="modern-input !pl-8 !pr-4"></div>
+                    <div class="relative"><span class="absolute left-4 top-1/2 -translate-y-1/2 font-bold text-gold">$</span><input type="number" id="f-valor" step="0.01" required class="modern-input !pl-8"></div>
                 </div>
                 <div class="space-y-2">
                     <label class="text-[10px] font-black uppercase text-indigo-400 ml-1 tracking-widest">Orçamento Custo (Budget)</label>
-                    <div class="relative"><span class="absolute left-4 top-1/2 -translate-y-1/2 font-bold text-indigo-400">$</span><input type="number" id="f-orcamento" step="0.01" placeholder="Opcional" class="modern-input !pl-8 !pr-4 border-indigo-500/20 focus:border-indigo-500"></div>
+                    <div class="relative"><span class="absolute left-4 top-1/2 -translate-y-1/2 font-bold text-indigo-400">$</span><input type="number" id="f-orcamento" step="0.01" placeholder="Opcional" class="modern-input !pl-8 border-indigo-500/20 focus:border-indigo-500"></div>
                 </div>
 
                 <div class="space-y-2">
@@ -276,7 +281,7 @@
                 </div>
                 <div class="space-y-2">
                     <label class="text-[10px] font-black uppercase text-slate-500 ml-1 tracking-widest">Forma Pagt. Prevista</label>
-                    <select id="f-metodo" class="modern-input !pr-8">
+                    <select id="f-metodo" class="modern-input !pr-10">
                         <option value="Zelle">Zelle</option>
                         <option value="Wire Transfer">Wire Transfer</option>
                         <option value="Dinheiro">Dinheiro (Cash)</option>
@@ -287,20 +292,20 @@
                 <div class="space-y-2">
                     <label class="text-[10px] font-black uppercase text-slate-500 ml-1 tracking-widest">Início</label>
                     <div class="date-container" onclick="this.querySelector('input').showPicker()">
-                        <input type="date" id="f-inicio" required class="modern-input relative !pr-4">
+                        <input type="date" id="f-inicio" required class="modern-input relative !pr-10">
                         <i data-lucide="calendar" class="calendar-icon-overlay w-5 h-5"></i>
                     </div>
                 </div>
                 <div class="space-y-2">
                     <label class="text-[10px] font-black uppercase text-slate-500 ml-1 tracking-widest">Entrega</label>
                     <div class="date-container" onclick="this.querySelector('input').showPicker()">
-                        <input type="date" id="f-entrega" required class="modern-input relative !pr-4">
+                        <input type="date" id="f-entrega" required class="modern-input relative !pr-10">
                         <i data-lucide="calendar" class="calendar-icon-overlay w-5 h-5"></i>
                     </div>
                 </div>
                 <div class="col-span-2 space-y-2">
                     <label class="text-[10px] font-black uppercase text-slate-500 ml-1 tracking-widest">Status</label>
-                    <select id="f-status" class="modern-input !pr-8">
+                    <select id="f-status" class="modern-input !pr-10">
                         <option value="Cotação">Cotação</option>
                         <option value="✅ Aprovado">✅ Aprovado</option>
                         <option value="Aguardando Início">Aguardando Início</option>
@@ -308,32 +313,32 @@
                         <option value="Finalizado">Finalizado</option>
                     </select>
                 </div>
-                <div class="col-span-2 flex gap-6 mt-10">
+                <div class="col-span-2 flex flex-col sm:flex-row gap-6 mt-10">
                     <button type="submit" class="flex-1 btn-premium-gold shadow-xl">Salvar Registro</button>
-                    <button type="button" onclick="window.cancelEdit(); showView('projects')" class="px-10 text-slate-500 uppercase font-black text-xs hover:text-white transition-all">Cancelar</button>
+                    <button type="button" onclick="window.cancelEdit(); showView('projects')" class="px-10 py-4 text-slate-500 uppercase font-black text-xs hover:text-white transition-all">Cancelar</button>
                 </div>
             </form>
         </div>
 
         <div id="view-users" class="hidden space-y-10 animate-fade-in">
-            <div class="glass p-10 max-w-lg mx-auto rounded-[32px] text-left border border-white/5 shadow-2xl">
+            <div class="glass p-6 sm:p-10 max-w-lg mx-auto rounded-[32px] text-left border border-white/5 shadow-2xl">
                 <h3 class="text-xl font-black text-gold mb-8 uppercase tracking-tighter" data-i18n="team_title">Gestão de Equipe</h3>
                 <form id="team-form" class="space-y-6">
                     <input type="hidden" id="t-id">
                     
                     <div class="space-y-1">
                         <label class="label-auth">Nível de Acesso (Autorização)</label>
-                        <select id="t-role" class="modern-input !pr-8">
+                        <select id="t-role" class="modern-input !pr-10">
                             <option value="editor">Editor Padrão (Pode ver, adicionar e editar obras)</option>
                             <option value="viewer">Somente Leitura (Somente ver relatórios e obras)</option>
                             <option value="admin">Administrador (Total Acesso - Logs, Equipe e Edições)</option>
                         </select>
                     </div>
 
-                    <div class="space-y-1"><label class="label-auth">E-mail</label><input type="email" id="t-email" required class="modern-input !pr-4"></div>
+                    <div class="space-y-1"><label class="label-auth">E-mail</label><input type="email" id="t-email" required class="modern-input"></div>
                     <div class="space-y-1 relative">
                         <label class="label-auth">Senha</label>
-                        <input type="password" id="t-pass" required class="modern-input">
+                        <input type="password" id="t-pass" required class="modern-input !pr-10">
                         <button type="button" onclick="window.togglePassword('t-pass', 'eye-team-btn')" class="password-toggle" id="eye-team-btn" style="top:70%"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg></button>
                     </div>
 
@@ -356,7 +361,7 @@
         </div>
 
         <div id="view-logs" class="hidden space-y-6 max-w-7xl mx-auto animate-fade-in">
-            <div class="glass p-8 rounded-[32px] border border-white/5">
+            <div class="glass p-6 sm:p-8 rounded-[32px] border border-white/5">
                 <h3 class="text-2xl font-black text-gold mb-6 uppercase tracking-tighter">📋 Logs de Auditoria</h3>
                 <div class="overflow-x-auto">
                     <table class="w-full text-left" id="logs-table">
@@ -444,6 +449,31 @@
             </tr>
         `).join('') || '<tr><td colspan="3" class="py-10 text-center text-slate-500">Nenhum log registrado</td></tr>';
     }
+
+    function applyThemeConfig() {
+        state.theme = localStorage.getItem('d2_theme') || 'dark';
+        const appDiv = document.getElementById('main-app');
+        if (state.theme === 'dark') {
+            document.body.className = 'app-body-dark';
+            if(appDiv) appDiv.className = 'min-h-screen flex flex-col app-body-dark text-center';
+        } else {
+            document.body.className = 'app-body-light light';
+            if(appDiv) appDiv.className = 'min-h-screen flex flex-col app-body-light light text-center';
+        }
+        const sun = document.getElementById('theme-icon-light');
+        const moon = document.getElementById('theme-icon-dark');
+        if (sun && moon) {
+            if (state.theme === 'dark') { sun.classList.add('hidden'); moon.classList.remove('hidden'); }
+            else { moon.classList.add('hidden'); sun.classList.remove('hidden'); }
+        }
+    }
+
+    window.toggleTheme = () => {
+        state.theme = state.theme === 'dark' ? 'light' : 'dark';
+        localStorage.setItem('d2_theme', state.theme);
+        applyThemeConfig();
+        try { lucide.createIcons(); } catch {}
+    };
 
     window.applyPermissions = () => {
         const role = state.currentUserRole;
@@ -533,7 +563,7 @@
 
         try {
             await updateDoc(doc(db, 'artifacts', appId, 'public', 'data', 'projects', projectId), { despesas: arrayUnion(newExpense) });
-            logAccess(state.user.email, `Adicionou despesa de $${val} (${cat}) na obra ID: ${projectId}`);
+            logAccess(state.user.email, `Registrou despesa de $${val} (${cat}) na obra ID: ${projectId}`);
         } catch (e) { console.error("Erro ao adicionar despesa:", e); }
     };
 
@@ -547,7 +577,7 @@
 
         try {
             await updateDoc(doc(db, 'artifacts', appId, 'public', 'data', 'projects', projectId), { despesas: updatedExpenses });
-            logAccess(state.user.email, `Removeu despesa de $${expenseVal} (${expenseDesc}) na obra ID: ${projectId}`);
+            logAccess(state.user.email, `Excluiu despesa de $${expenseVal} (${expenseDesc}) na obra ID: ${projectId}`);
         } catch (e) { console.error("Erro ao remover despesa:", e); }
     };
 
@@ -596,7 +626,7 @@
     function renderPaymentEditList() {
         const container = document.getElementById('payment-edit-list');
         if (!container || !state.editingPayments) return;
-        container.innerHTML = state.editingPayments.payments.map((pay, i) => `<div class="flex items-center gap-4 p-4 bg-white/5 rounded-xl border border-white/10"><input type="date" value="${pay.data || ''}" onchange="updatePaymentField(${i}, 'data', this.value)" class="modern-input relative !pr-3 flex-1"><input type="number" step="0.01" value="${(pay.valor ?? 0)}" onchange="updatePaymentField(${i}, 'valor', this.value)" class="modern-input !pr-3 flex-1"><button onclick="removePaymentFromEdit(${i})" class="p-2 bg-red-500/20 text-red-400 rounded-lg hover:bg-red-500/30"><i data-lucide="trash-2" class="w-5 h-5"></i></button></div>`).join('') + `<button onclick="addNewPaymentToEdit()" class="w-full p-4 border-2 border-dashed border-gold/30 rounded-xl text-gold font-bold hover:bg-gold/10 transition-all">+ Adicionar Novo Pagamento</button>`;
+        container.innerHTML = state.editingPayments.payments.map((pay, i) => `<div class="flex items-center gap-4 p-4 bg-white/5 rounded-xl border border-white/10"><input type="date" value="${pay.data || ''}" onchange="updatePaymentField(${i}, 'data', this.value)" class="modern-input relative text-sm flex-1"><input type="number" step="0.01" value="${(pay.valor ?? 0)}" onchange="updatePaymentField(${i}, 'valor', this.value)" class="modern-input text-sm flex-1"><button onclick="removePaymentFromEdit(${i})" class="p-2 bg-red-500/20 text-red-400 rounded-lg hover:bg-red-500/30"><i data-lucide="trash-2" class="w-5 h-5"></i></button></div>`).join('') + `<button onclick="addNewPaymentToEdit()" class="w-full p-4 border-2 border-dashed border-gold/30 rounded-xl text-gold font-bold hover:bg-gold/10 transition-all">+ Adicionar Novo Pagamento</button>`;
         try { lucide.createIcons(); } catch {}
     }
     window.updatePaymentField = (index, field, value) => { if (!state.editingPayments) return; if (field === 'data') state.editingPayments.payments[index].data = value; if (field === 'valor') state.editingPayments.payments[index].valor = parseFloat(value || 0); };
@@ -610,7 +640,7 @@
     function renderRecEditList() {
         const container = document.getElementById('rec-edit-list');
         if (!container || !state.editingRecs) return;
-        container.innerHTML = state.editingRecs.recs.map((r, i) => `<div class="flex items-center gap-2 p-3 bg-white/5 rounded-xl border border-white/10 flex-wrap sm:flex-nowrap"><input type="date" value="${r.data || ''}" onchange="updateRecField(${i}, 'data', this.value)" class="modern-input relative flex-1 !pl-3 !pr-3 !py-2.5 !text-xs"><input type="number" step="0.01" value="${(r.valor ?? 0)}" onchange="updateRecField(${i}, 'valor', this.value)" class="modern-input w-24 !pl-3 !pr-3 !py-2.5 !text-xs"><select onchange="updateRecField(${i}, 'metodo', this.value)" class="modern-input w-28 !pl-3 !pr-8 !py-2.5 !text-xs"><option value="Zelle" ${r.metodo==='Zelle'?'selected':''}>Zelle</option><option value="Wire Transfer" ${r.metodo==='Wire Transfer'?'selected':''}>Wire</option><option value="Dinheiro" ${r.metodo==='Dinheiro'?'selected':''}>Cash</option><option value="CC" ${r.metodo==='CC'?'selected':''}>Cartão</option></select><button onclick="removeRecFromEdit(${i})" class="p-2 bg-red-500/20 text-red-400 rounded-lg hover:bg-red-500/30"><i data-lucide="trash-2" class="w-4 h-4"></i></button></div>`).join('') + `<button onclick="addNewRecToEdit()" class="w-full p-4 border-2 border-dashed border-emerald-500/30 rounded-xl text-emerald-400 font-bold hover:bg-emerald-500/10 transition-all">+ Adicionar Novo Recebimento</button>`;
+        container.innerHTML = state.editingRecs.recs.map((r, i) => `<div class="flex flex-col sm:flex-row items-center gap-3 p-4 bg-white/5 rounded-xl border border-white/10"><input type="date" value="${r.data || ''}" onchange="updateRecField(${i}, 'data', this.value)" class="modern-input relative text-sm w-full sm:flex-1"><input type="number" step="0.01" value="${(r.valor ?? 0)}" onchange="updateRecField(${i}, 'valor', this.value)" class="modern-input text-sm w-full sm:w-28"><select onchange="updateRecField(${i}, 'metodo', this.value)" class="modern-input text-sm w-full sm:w-32 !pr-8"><option value="Zelle" ${r.metodo==='Zelle'?'selected':''}>Zelle</option><option value="Wire Transfer" ${r.metodo==='Wire Transfer'?'selected':''}>Wire</option><option value="Dinheiro" ${r.metodo==='Dinheiro'?'selected':''}>Cash</option><option value="CC" ${r.metodo==='CC'?'selected':''}>Cartão</option></select><button onclick="removeRecFromEdit(${i})" class="p-3 w-full sm:w-auto bg-red-500/20 text-red-400 rounded-lg hover:bg-red-500/30 flex justify-center"><i data-lucide="trash-2" class="w-5 h-5"></i></button></div>`).join('') + `<button onclick="addNewRecToEdit()" class="w-full p-4 border-2 border-dashed border-emerald-500/30 rounded-xl text-emerald-400 font-bold hover:bg-emerald-500/10 transition-all">+ Adicionar Novo Recebimento</button>`;
         try { lucide.createIcons(); } catch {}
     }
     window.updateRecField = (index, field, value) => { if (!state.editingRecs) return; if (field === 'data') state.editingRecs.recs[index].data = value; if (field === 'valor') state.editingRecs.recs[index].valor = parseFloat(value || 0); if (field === 'metodo') state.editingRecs.recs[index].metodo = value; };
@@ -629,19 +659,10 @@
     window.setLang = (l) => { state.lang = l; document.querySelectorAll('.flag-btn').forEach(b => b.classList.toggle('active', b.id.includes(l))); renderProjects(); renderReport(); };
     window.selectUnit = (unit) => { state.company = unit; document.querySelectorAll('.unit-pill').forEach(b => b.classList.remove('active')); const map = { 'Smart Home': 'unit-smart', 'HVAC': 'unit-hvac', 'Ambas': 'unit-all' }; document.getElementById(map[unit]).classList.add('active'); state.focusedProject = null; state.activeModule = null; renderProjects(); renderReport(); };
 
-    window.toggleTheme = () => {
-        state.theme = state.theme === 'dark' ? 'light' : 'dark';
-        const appDiv = document.getElementById('main-app');
-        if (appDiv) appDiv.className = state.theme === 'dark' ? 'min-h-screen flex flex-col app-body-dark text-center' : 'min-h-screen flex flex-col app-body-light light text-center';
-        const sun = document.getElementById('theme-icon-light'); const moon = document.getElementById('theme-icon-dark');
-        if (sun && moon) { if (state.theme === 'dark') { sun.classList.add('hidden'); moon.classList.remove('hidden'); } else { moon.classList.add('hidden'); sun.classList.remove('hidden'); } }
-        try { lucide.createIcons(); } catch {}
-    };
-
     // --- NOVA LÓGICA DE NAVEGAÇÃO INTERNA (DRILL-DOWN) ---
     window.openProjectDetails = (id) => { 
         state.focusedProject = id; 
-        state.activeModule = null; 
+        state.activeModule = null; // Abre no nível dos Botões Gigantes
         renderProjects(); 
         window.scrollTo({ top: 0, behavior: 'smooth' }); 
     };
@@ -660,7 +681,7 @@
     };
 
     window.closeProjectModule = () => {
-        state.activeModule = null;
+        state.activeModule = null; // Volta para os Botões Gigantes
         renderProjects();
         window.scrollTo({ top: 0, behavior: 'smooth' });
     };
@@ -767,14 +788,12 @@
             grid.className = "flex flex-col max-w-4xl mx-auto gap-6 text-left w-full animate-fade-in pb-20";
             filtered = state.projects.filter(p => p.id === state.focusedProject); 
             
+            // Botão de Voltar padrão se NENHUM módulo estiver aberto (Nível 2)
             if (!state.activeModule) {
                 grid.innerHTML += `
                     <div class="mb-4 flex justify-between items-center no-print">
-                        <button onclick="window.closeProjectDetails()" class="inline-flex items-center gap-2 text-gold hover:text-white transition-all font-black text-[10px] uppercase tracking-widest px-5 py-3 bg-white/5 rounded-2xl border border-white/10 hover:bg-white/10 hover:scale-105 hover:-translate-y-1 shadow-lg">
+                        <button onclick="window.closeProjectDetails()" class="inline-flex items-center gap-2 text-gold hover:text-white transition-all font-black text-[10px] uppercase tracking-widest px-5 py-3 bg-white/5 rounded-2xl border border-white/10 hover:bg-white/10 hover:scale-105 shadow-lg">
                             <i data-lucide="arrow-left" class="w-4 h-4"></i> Voltar aos Projetos
-                        </button>
-                        <button onclick="window.printReport()" class="hidden sm:inline-flex items-center gap-2 text-slate-300 hover:text-white transition-all font-black text-[10px] uppercase tracking-widest px-5 py-3 bg-white/5 rounded-2xl border border-white/10 hover:bg-white/10 shadow-lg">
-                            <i data-lucide="printer" class="w-4 h-4"></i> Imprimir Resumo
                         </button>
                     </div>
                 `;
@@ -821,91 +840,15 @@
                 const archiveColor = p.archived ? 'text-indigo-400 hover:text-indigo-300' : 'text-slate-400 hover:text-white';
                 actionButtons = `
                     <div class="w-px h-3 bg-white/10 mx-1"></div>
-                    <button onclick="event.stopPropagation(); window.toggleArchive('${p.id}', ${!!p.archived})" class="hover:scale-110 transition-transform no-print"><i data-lucide="${archiveIcon}" class="w-3.5 h-3.5 ${archiveColor}"></i></button>
-                    <button onclick="event.stopPropagation(); window.editP('${p.id}')" class="hover:scale-110 transition-transform no-print"><i data-lucide="edit-3" class="w-3.5 h-3.5 text-slate-400 hover:text-white"></i></button>
-                    <button onclick="event.stopPropagation(); window.deleteP('${p.id}')" class="hover:scale-110 transition-transform no-print"><i data-lucide="trash-2" class="w-3.5 h-3.5 text-red-500/70 hover:text-red-400"></i></button>
+                    <button onclick="event.stopPropagation(); window.toggleArchive('${p.id}', ${!!p.archived})" class="hover:scale-110 transition-transform no-print"><i data-lucide="${archiveIcon}" class="w-4 h-4 ${archiveColor}"></i></button>
+                    <button onclick="event.stopPropagation(); window.editP('${p.id}')" class="hover:scale-110 transition-transform no-print"><i data-lucide="edit-3" class="w-4 h-4 text-slate-400 hover:text-white"></i></button>
+                    <button onclick="event.stopPropagation(); window.deleteP('${p.id}')" class="hover:scale-110 transition-transform no-print"><i data-lucide="trash-2" class="w-4 h-4 text-red-500/70 hover:text-red-400"></i></button>
                 `;
             }
 
-            if (!isFocused || !state.activeModule) {
-                const cardClickEvent = isFocused ? '' : `onclick="window.openProjectDetails('${p.id}')"`;
-                const cardHoverClasses = isFocused ? '' : 'project-card clickable cursor-pointer';
-
-                let cardHTML = `<div class="glass p-6 md:p-8 rounded-[40px] border-l-[8px] relative shadow-2xl flex flex-col h-full print:border print:border-slate-300 print:shadow-none print:break-inside-avoid ${cardHoverClasses}" style="border-left-color: ${p.status === 'Finalizado' ? '#10b981' : '#f59e0b'}" ${cardClickEvent}>
-                    
-                    <div class="flex justify-between items-start mb-5">
-                        <span class="px-3 py-1.5 bg-white/5 border border-white/10 rounded-xl text-[9px] font-black uppercase tracking-widest text-slate-300 shadow-sm print:bg-slate-100 print:text-slate-800">${p.empresa || 'Sem Unidade'} ${p.archived ? '<span class="text-indigo-400 ml-1">(ARQUIVADA)</span>' : ''}</span>
-                        <div class="flex items-center gap-3 bg-black/20 p-1.5 px-3 rounded-full border border-white/5 print:hidden">
-                            <span class="status-badge ${f.statusColor}" title="Status Financeiro"></span>
-                            ${actionButtons}
-                        </div>
-                    </div>
-
-                    <div class="text-left mb-6"><h4 class="font-black text-2xl uppercase tracking-tight text-white leading-none print:text-black">${p.cliente || 'Sem Nome'}</h4></div>
-
-                    <div class="grid grid-cols-2 gap-y-5 gap-x-4 p-5 bg-black/20 rounded-[24px] border border-white/5 mb-8 text-left shadow-inner print:bg-transparent print:border-slate-200">
-                        <div><p class="text-[8px] font-black text-slate-500 uppercase tracking-widest mb-1">Vendedor</p><p class="text-[11px] font-bold text-slate-200 truncate print:text-black" title="${p.vendedor}">${p.vendedor?.split('@')[0] || '--'}</p></div>
-                        <div><p class="text-[8px] font-black text-slate-500 uppercase tracking-widest mb-1">Status da Obra</p><p class="text-[11px] font-black text-gold uppercase print:text-amber-700">${p.status || 'Cotação'}</p></div>
-                        <div><p class="text-[8px] font-black text-slate-500 uppercase tracking-widest mb-1">Proposta / Invoice</p><p class="text-[10px] font-mono font-bold text-slate-400 print:text-black">${p.numeroProposta || '---'} <span class="text-slate-600 font-normal mx-1">|</span> ${p.numeroInvoice || '---'}</p></div>
-                        <div><p class="text-[8px] font-black text-slate-500 uppercase tracking-widest mb-1">Pagt Previsto • Comiss.</p><p class="text-[11px] font-bold text-slate-200 print:text-black">${p.metodo || '--'} <span class="text-slate-600 font-normal mx-1">•</span> ${p.percComissao || 0}%</p></div>
-                    </div>
-
-                    <div class="mt-auto"></div>
-
-                    <div class="space-y-3 mb-8 text-left">
-                        <div class="flex justify-between text-[10px] font-black uppercase text-slate-400 print:text-slate-800"><span>Timeline</span><span style="color: ${colorHex}">${prog}%</span></div>
-                        <div class="progress-track print:bg-slate-200"><div class="progress-bar-fill print:!bg-black" style="width: ${prog}%; background-color: ${colorHex};"></div></div>
-                        <div class="flex justify-between text-[9px] font-extrabold uppercase">
-                            <span class="print:text-black">${p.dataInicio ? new Date(p.dataInicio + 'T12:00:00').toLocaleDateString() : '-'}</span>
-                            <span class="${n > e && p.status !== 'Finalizado' ? 'text-red-500' : 'text-gold'} print:!text-black">${n > e && p.status !== 'Finalizado' ? 'ATRASADA' : (prog === 100 ? 'CONCLUÍDA' : (Number.isFinite(e) ? Math.ceil((e - n) / (1000 * 3600 * 24)) : 0) + ' DIAS RESTANTES')}</span>
-                        </div>
-                    </div>
-
-                    <div class="bg-gradient-to-br from-black/50 to-transparent p-5 rounded-3xl border border-white/5 shadow-inner print:bg-transparent print:border-slate-300">
-                        <p class="text-[9px] font-black text-slate-500 uppercase mb-1 text-center">Valor Contrato Bruto</p>
-                        <p class="text-3xl font-black text-white text-center tracking-tight print:text-black">${formatCurr(p.valorTotal)}</p>
-                    </div>
-
-                    <div class="flex justify-between gap-3 mt-4 no-print">
-                        <div class="flex-1 rounded-xl p-2.5 text-center border ${clientBorderColor} shadow-inner transition-colors">
-                            <p class="text-[7px] font-black uppercase text-slate-400 mb-0.5 tracking-widest">Cliente</p>
-                            <p class="text-[10px] font-black ${clientPaidColor}">${clientPaidText}</p>
-                        </div>
-                        <div class="flex-1 rounded-xl p-2.5 text-center border ${sellerBorderColor} shadow-inner transition-colors">
-                            <p class="text-[7px] font-black uppercase text-slate-400 mb-0.5 tracking-widest">Comissão</p>
-                            <p class="text-[10px] font-black ${sellerPaidColor}">${sellerPaidText}</p>
-                        </div>
-                    </div>
-                `;
-
-                if (!isFocused) {
-                    cardHTML += `
-                        <div class="mt-6 text-center text-[9px] text-slate-500 font-bold uppercase tracking-widest no-print opacity-50 group-hover:opacity-100 flex items-center justify-center gap-1 transition-opacity">
-                            CLIQUE NO CARD PARA ABRIR <i data-lucide="chevron-right" class="w-3 h-3"></i>
-                        </div>
-                    </div>`; 
-                } else {
-                    cardHTML += `
-                        <div class="grid grid-cols-1 ${canViewCosts ? 'sm:grid-cols-2' : ''} gap-4 mt-8 pt-6 border-t border-white/10 no-print animate-fade-in">
-                            <button onclick="event.stopPropagation(); window.openProjectModule('commissions')" class="py-6 px-4 bg-gradient-to-br from-slate-900 to-black rounded-[24px] border border-gold/20 hover:border-gold/60 hover:shadow-[0_0_30px_-5px_rgba(251,191,36,0.3)] transition-all flex flex-col items-center justify-center gap-3 group relative overflow-hidden">
-                                <div class="absolute inset-0 bg-gold/5 transform scale-0 group-hover:scale-100 transition-transform rounded-[24px] duration-500 origin-center"></div>
-                                <i data-lucide="wallet" class="w-8 h-8 text-gold group-hover:scale-110 group-hover:-translate-y-1 transition-all relative z-10"></i>
-                                <span class="text-xs font-black uppercase text-gold tracking-[0.2em] relative z-10 text-center">Comissões e Finanças</span>
-                            </button>
-                            ${canViewCosts ? `
-                            <button onclick="event.stopPropagation(); window.openProjectModule('costs')" class="py-6 px-4 bg-gradient-to-br from-slate-900 to-black rounded-[24px] border border-indigo-500/20 hover:border-indigo-500/60 hover:shadow-[0_0_30px_-5px_rgba(99,102,241,0.3)] transition-all flex flex-col items-center justify-center gap-3 group relative overflow-hidden">
-                                <div class="absolute inset-0 bg-indigo-500/5 transform scale-0 group-hover:scale-100 transition-transform rounded-[24px] duration-500 origin-center"></div>
-                                <i data-lucide="calculator" class="w-8 h-8 text-indigo-400 group-hover:scale-110 group-hover:-translate-y-1 transition-all relative z-10"></i>
-                                <span class="text-xs font-black uppercase text-indigo-400 tracking-[0.2em] relative z-10 text-center">Gestão de Custos</span>
-                            </button>
-                            ` : ''}
-                        </div>
-                    </div>`; 
-                }
-                
-                grid.innerHTML += cardHTML;
-            }
-
+            // ==========================================
+            // NÍVEL 3: TELA DE MÓDULO (Limpa as infos do topo)
+            // ==========================================
             if (isFocused && state.activeModule) {
                 let moduleContent = '';
                 let moduleTitle = '';
@@ -913,12 +856,12 @@
                 if (state.activeModule === 'commissions') {
                     moduleTitle = 'Comissões e Recebimentos';
                     moduleContent = `
-                        <div class="bg-slate-900/80 p-6 md:p-8 rounded-[32px] border border-white/10 space-y-6 text-left shadow-2xl print:bg-transparent print:border-slate-300 print:shadow-none print:p-0">
+                        <div class="space-y-6 text-left print:bg-transparent print:border-slate-300 print:shadow-none print:p-0">
                             <div class="grid grid-cols-2 gap-4 sm:gap-6 pb-6 border-b border-white/5 print:border-slate-200">
                                 <div><p class="text-[9px] font-bold text-slate-500 uppercase print:text-black">Comissão Projetada</p><p class="text-lg font-black text-slate-400 print:text-black">${formatCurr(f.commTotalProjetada)}</p></div>
                                 <div class="text-right"><p class="text-[9px] font-bold text-emerald-500/80 uppercase print:text-emerald-700">Comissão Liberada</p><p class="text-2xl font-black text-emerald-500 print:text-emerald-700">${formatCurr(f.commLiberada)}</p></div>
                                 <div><p class="text-[9px] font-bold text-slate-500 uppercase print:text-black">Pago ao Vendedor</p><p class="text-lg font-black text-slate-300 print:text-black">${formatCurr(f.totalPaid)}</p></div>
-                                <div class="text-right"><p class="text-[9px] font-bold ${balColor} uppercase print:text-black">${balText}</p><p class="text-3xl font-black ${balColor} tracking-tighter print:text-black">${balDisplay}</p></div>
+                                <div class="text-right"><p class="text-[9px] font-bold ${balColor} uppercase print:text-black">${balText}</p><p class="text-2xl font-black ${balColor} tracking-tighter print:text-black">${balDisplay}</p></div>
                             </div>
 
                             <div class="space-y-4">
@@ -929,31 +872,31 @@
                                         ${isAdmin ? `<button onclick="openEditRecModal('${p.id}')" class="text-[10px] font-bold text-emerald-400 hover:text-white transition-colors no-print"><i data-lucide="edit-3" class="w-4 h-4"></i></button>` : ''}
                                     </div>
                                 </div>
-                                <div class="max-h-48 overflow-y-auto scrollbar-hide px-2 print:max-h-none">
-                                    ${(p.recebimentos || []).map(r => `<div class="flex justify-between items-center text-xs py-2 border-b border-white/5 last:border-0 print:border-slate-200 hover:bg-white/5 rounded px-2"><span class="text-slate-300 print:text-black">${r.data ? new Date(r.data + 'T12:00:00').toLocaleDateString() : '-'} <span class="text-[9px] font-black text-slate-500 ml-2 uppercase bg-black/30 px-2 py-0.5 rounded">${r.metodo}</span></span><span class="font-black text-emerald-400 print:text-emerald-700 text-sm">+ ${formatCurr(r.valor)}</span></div>`).join('') || '<p class="text-xs italic text-slate-600 text-center py-4">Nenhum recebimento registrado.</p>'}
+                                <div class="max-h-60 overflow-y-auto scrollbar-hide px-2 print:max-h-none">
+                                    ${(p.recebimentos || []).map(r => `<div class="flex justify-between items-center text-sm py-3 border-b border-white/5 last:border-0 print:border-slate-200 hover:bg-white/5 rounded px-2"><span class="text-slate-300 print:text-black">${r.data ? new Date(r.data + 'T12:00:00').toLocaleDateString() : '-'} <span class="text-[10px] font-black text-slate-500 ml-2 uppercase bg-black/30 px-2 py-0.5 rounded">${r.metodo}</span></span><span class="font-black text-emerald-400 print:text-emerald-700">+ ${formatCurr(r.valor)}</span></div>`).join('') || '<p class="text-sm italic text-slate-600 text-center py-4">Nenhum recebimento registrado.</p>'}
                                 </div>
                                 ${isAdmin ? `
-                                <div class="grid grid-cols-2 md:grid-cols-3 gap-3 mt-4 no-print bg-black/20 p-4 rounded-2xl border border-white/5">
-                                    <input type="date" id="rec-date-${p.id}" class="modern-input relative !pr-3 !text-sm col-span-2 md:col-span-1" onclick="event.stopPropagation();">
-                                    <input type="number" id="rec-val-${p.id}" placeholder="$ Valor" class="modern-input !pr-3 !text-sm" onclick="event.stopPropagation();">
-                                    <select id="rec-met-${p.id}" class="modern-input !pr-8 !text-sm" onclick="event.stopPropagation();"><option value="Zelle">Zelle</option><option value="Wire Transfer">Wire Transfer</option><option value="Dinheiro">Dinheiro (Cash)</option><option value="CC">Cartão de Crédito (CC)</option></select>
-                                    <button onclick="window.addRecebimento('${p.id}')" class="col-span-2 md:col-span-3 w-full btn-premium-gold !py-3 !text-[11px] bg-emerald-500 !text-emerald-950 flex items-center justify-center gap-2 hover:brightness-110"><i data-lucide="arrow-down-to-line" class="w-4 h-4"></i> Guardar Pagamento do Cliente</button>
+                                <div class="grid grid-cols-1 sm:grid-cols-12 gap-3 mt-4 no-print bg-black/20 p-4 sm:p-5 rounded-2xl border border-white/5">
+                                    <input type="date" id="rec-date-${p.id}" class="modern-input relative !text-sm sm:col-span-4" onclick="event.stopPropagation();">
+                                    <input type="number" id="rec-val-${p.id}" placeholder="$ Valor do Recebimento" class="modern-input !text-sm sm:col-span-4" onclick="event.stopPropagation();">
+                                    <select id="rec-met-${p.id}" class="modern-input !text-sm sm:col-span-4 !pr-8" onclick="event.stopPropagation();"><option value="Zelle">Zelle</option><option value="Wire Transfer">Wire Transfer</option><option value="Dinheiro">Dinheiro (Cash)</option><option value="CC">Cartão de Crédito (CC)</option></select>
+                                    <button onclick="window.addRecebimento('${p.id}')" class="sm:col-span-12 w-full btn-premium-gold !py-3.5 !text-[11px] bg-emerald-500 !text-emerald-950 flex items-center justify-center gap-2 hover:brightness-110"><i data-lucide="arrow-down-to-line" class="w-4 h-4"></i> Guardar Pagamento do Cliente</button>
                                 </div>` : ''}
                             </div>
 
-                            <div class="space-y-4 pt-6 border-t border-white/10 print:border-slate-200">
+                            <div class="space-y-4 pt-8 border-t border-white/10 print:border-slate-200">
                                 <div class="flex justify-between items-center bg-gold/10 p-3 px-4 rounded-xl border border-gold/20 print:bg-amber-50 print:border-amber-200">
                                     <p class="text-[10px] font-black text-gold uppercase tracking-widest print:text-amber-800">Pagamentos ao Vendedor</p>
                                     ${isAdmin ? `<button onclick="openEditPaymentModal('${p.id}')" class="text-[10px] font-bold text-gold hover:text-white transition-colors no-print"><i data-lucide="edit-3" class="w-4 h-4"></i></button>` : ''}
                                 </div>
-                                <div class="max-h-48 overflow-y-auto scrollbar-hide px-2 print:max-h-none">
-                                    ${(p.pagamentosEfetuados || []).map(pay => `<div class="flex justify-between items-center text-xs py-2 border-b border-white/5 last:border-0 print:border-slate-200 hover:bg-white/5 rounded px-2"><span class="text-slate-300 print:text-black">${pay.data ? new Date(pay.data + 'T12:00:00').toLocaleDateString() : '-'}</span><span class="font-black text-gold print:text-amber-700 text-sm">- ${formatCurr(pay.valor)}</span></div>`).join('') || '<p class="text-xs italic text-slate-600 text-center py-4">Nenhum pagamento efetuado.</p>'}
+                                <div class="max-h-60 overflow-y-auto scrollbar-hide px-2 print:max-h-none">
+                                    ${(p.pagamentosEfetuados || []).map(pay => `<div class="flex justify-between items-center text-sm py-3 border-b border-white/5 last:border-0 print:border-slate-200 hover:bg-white/5 rounded px-2"><span class="text-slate-300 print:text-black">${pay.data ? new Date(pay.data + 'T12:00:00').toLocaleDateString() : '-'}</span><span class="font-black text-gold print:text-amber-700">- ${formatCurr(pay.valor)}</span></div>`).join('') || '<p class="text-sm italic text-slate-600 text-center py-4">Nenhum pagamento efetuado.</p>'}
                                 </div>
                                 ${isAdmin ? `
-                                <div class="grid grid-cols-1 sm:grid-cols-2 gap-3 mt-4 no-print bg-black/20 p-4 rounded-2xl border border-white/5">
-                                    <input type="date" id="pay-date-${p.id}" class="modern-input relative !pr-3 !text-sm" onclick="event.stopPropagation();">
-                                    <input type="number" id="pay-val-${p.id}" placeholder="$ Valor a Pagar" class="modern-input !pr-3 !text-sm" onclick="event.stopPropagation();">
-                                    <button onclick="window.addPayment('${p.id}')" class="sm:col-span-2 w-full btn-premium-gold !py-3 !text-[11px] flex items-center justify-center gap-2 hover:brightness-110"><i data-lucide="arrow-up-from-line" class="w-4 h-4"></i> Efetuar Pagamento ao Vendedor</button>
+                                <div class="grid grid-cols-1 sm:grid-cols-2 gap-3 mt-4 no-print bg-black/20 p-4 sm:p-5 rounded-2xl border border-white/5">
+                                    <input type="date" id="pay-date-${p.id}" class="modern-input relative !text-sm" onclick="event.stopPropagation();">
+                                    <input type="number" id="pay-val-${p.id}" placeholder="$ Valor a Pagar" class="modern-input !text-sm" onclick="event.stopPropagation();">
+                                    <button onclick="window.addPayment('${p.id}')" class="sm:col-span-2 w-full btn-premium-gold !py-3.5 !text-[11px] flex items-center justify-center gap-2 hover:brightness-110"><i data-lucide="arrow-up-from-line" class="w-4 h-4"></i> Efetuar Pagamento ao Vendedor</button>
                                 </div>` : ''}
                             </div>
                         </div>
@@ -965,20 +908,21 @@
                     const marginColor = f.margemLucro >= 0 ? 'text-emerald-400' : 'text-red-400';
                     
                     const expensesList = (p.despesas || []).sort((a,b) => new Date(b.data) - new Date(a.data)).map(exp => `
-                        <div class="flex justify-between items-center text-xs py-2.5 border-b border-indigo-500/10 last:border-0 hover:bg-white/5 transition-colors px-3 rounded-lg print:border-slate-200">
+                        <div class="flex justify-between items-center text-sm py-3 border-b border-indigo-500/10 last:border-0 hover:bg-white/5 transition-colors px-3 rounded-lg print:border-slate-200">
                             <div class="flex-1 flex flex-col sm:flex-row sm:items-center gap-1 sm:gap-3">
-                                <span class="text-slate-400 print:text-slate-600 font-mono text-[10px]">${exp.data ? new Date(exp.data + 'T12:00:00').toLocaleDateString() : '-'}</span>
+                                <span class="text-slate-400 print:text-slate-600 font-mono text-xs">${exp.data ? new Date(exp.data + 'T12:00:00').toLocaleDateString() : '-'}</span>
                                 <span class="font-black text-slate-200 print:text-black uppercase">${exp.descricao}</span>
-                                <span class="text-[9px] px-2 py-0.5 bg-indigo-500/20 text-indigo-300 rounded-md border border-indigo-500/30 font-bold self-start sm:self-auto">${exp.categoria}</span>
+                                <span class="text-[10px] px-2 py-0.5 bg-indigo-500/20 text-indigo-300 rounded-md border border-indigo-500/30 font-bold self-start sm:self-auto">${exp.categoria}</span>
                             </div>
                             <div class="flex items-center gap-4">
-                                <span class="font-black text-gold text-sm">${formatCurr(exp.valor)}</span>
-                                <button onclick="window.deleteExpense('${p.id}', '${exp.id}', '${exp.descricao.replace(/'/g,"\\'")}', ${exp.valor})" class="p-1.5 text-red-500/70 hover:text-red-400 hover:bg-red-500/10 rounded transition-colors no-print"><i data-lucide="trash-2" class="w-4 h-4"></i></button>
+                                <span class="font-black text-gold text-base">${formatCurr(exp.valor)}</span>
+                                <button onclick="window.deleteExpense('${p.id}', '${exp.id}', '${exp.descricao.replace(/'/g,"\\'")}', ${exp.valor})" class="p-2 text-red-500/70 hover:text-red-400 hover:bg-red-500/10 rounded transition-colors no-print"><i data-lucide="trash-2" class="w-5 h-5"></i></button>
                             </div>
                         </div>
-                    `).join('') || '<p class="text-xs italic text-indigo-300/50 text-center py-6">Nenhuma despesa lançada nesta obra.</p>';
+                    `).join('') || '<p class="text-sm italic text-indigo-300/50 text-center py-6">Nenhuma despesa lançada nesta obra.</p>';
 
                     moduleContent = `
+                        <!-- KPIs -->
                         <div class="grid grid-cols-2 sm:grid-cols-4 gap-4 sm:gap-6 mb-8">
                             <div class="bg-black/40 p-5 rounded-[24px] border border-white/5 shadow-inner print:bg-transparent print:border-slate-300">
                                 <p class="text-[9px] font-black uppercase text-slate-500 mb-1.5 tracking-widest print:text-slate-600">Orçamento (Budget)</p>
@@ -998,6 +942,7 @@
                             </div>
                         </div>
 
+                        <!-- Gráficos -->
                         <div class="grid grid-cols-1 lg:grid-cols-3 gap-6 mb-8 no-print">
                             <div class="bg-black/20 p-6 rounded-[24px] border border-indigo-500/10 flex flex-col items-center shadow-lg">
                                 <p class="text-[10px] font-black uppercase text-indigo-300/70 mb-4 w-full text-left tracking-widest">Orçamento vs Gasto</p>
@@ -1009,45 +954,44 @@
                             </div>
                         </div>
 
+                        <!-- Formulário e Tabela de Despesas -->
                         <div class="bg-indigo-950/20 p-6 sm:p-8 rounded-[32px] border border-indigo-500/20 shadow-2xl print:bg-transparent print:border-slate-300 print:p-0 print:shadow-none">
-                            <div class="no-print mb-8 pb-6 border-b border-indigo-500/20">
-                                <p class="text-xs font-black text-indigo-400 uppercase mb-4 tracking-widest flex items-center gap-2"><i data-lucide="plus-circle" class="w-4 h-4"></i> Registrar Nova Despesa</p>
-                                <div class="grid grid-cols-2 md:grid-cols-4 gap-3">
-                                    <input type="date" id="exp-date-${p.id}" class="modern-input relative !bg-black/40 !border-indigo-500/30 !pr-3" onclick="event.stopPropagation();">
-                                    <input type="text" id="exp-desc-${p.id}" placeholder="Descrição do gasto" class="modern-input !bg-black/40 !border-indigo-500/30 !pr-3 md:col-span-1" onclick="event.stopPropagation();">
-                                    <select id="exp-cat-${p.id}" class="modern-input !bg-black/40 !border-indigo-500/30 !pr-8" onclick="event.stopPropagation();">
+                            <div class="no-print mb-8 pb-8 border-b border-indigo-500/20">
+                                <p class="text-sm font-black text-indigo-400 uppercase mb-4 tracking-widest flex items-center gap-2"><i data-lucide="plus-circle" class="w-5 h-5"></i> Registrar Nova Despesa</p>
+                                <div class="grid grid-cols-1 sm:grid-cols-12 gap-3">
+                                    <input type="date" id="exp-date-${p.id}" class="modern-input relative !bg-black/40 !border-indigo-500/30 !text-sm sm:col-span-3" onclick="event.stopPropagation();">
+                                    <input type="text" id="exp-desc-${p.id}" placeholder="Descrição do gasto" class="modern-input !bg-black/40 !border-indigo-500/30 !text-sm sm:col-span-4" onclick="event.stopPropagation();">
+                                    <select id="exp-cat-${p.id}" class="modern-input !bg-black/40 !border-indigo-500/30 !text-sm sm:col-span-3 !pr-8" onclick="event.stopPropagation();">
                                         <option value="Materiais">Materiais</option><option value="Mão-de-obra">Mão-de-obra</option><option value="Equipamentos">Equipamentos</option>
                                         <option value="Licenças">Licenças (Permits)</option><option value="Outros">Outros</option>
                                     </select>
-                                    <input type="number" id="exp-val-${p.id}" placeholder="$ Valor" step="0.01" class="modern-input !bg-black/40 !border-indigo-500/30 !pr-3 text-gold font-bold" onclick="event.stopPropagation();">
-                                    <button onclick="event.stopPropagation(); window.addExpense('${p.id}')" class="bg-indigo-600 hover:bg-indigo-500 text-white p-3 rounded-xl font-black text-[11px] uppercase tracking-widest transition-colors col-span-2 md:col-span-4 mt-1 shadow-lg">Adicionar à Tabela</button>
+                                    <input type="number" id="exp-val-${p.id}" placeholder="$ Valor" step="0.01" class="modern-input !bg-black/40 !border-indigo-500/30 !text-sm sm:col-span-2 text-gold font-bold" onclick="event.stopPropagation();">
+                                    <button onclick="event.stopPropagation(); window.addExpense('${p.id}')" class="bg-indigo-600 hover:bg-indigo-500 text-white p-3.5 rounded-xl font-black text-[11px] uppercase tracking-widest transition-colors sm:col-span-12 mt-2 shadow-lg">Adicionar à Tabela</button>
                                 </div>
                             </div>
 
-                            <p class="text-[11px] font-black text-indigo-300 uppercase mb-4 tracking-widest">Histórico Completo de Gastos</p>
-                            <div class="max-h-80 overflow-y-auto scrollbar-hide pr-2 print:max-h-none">
+                            <p class="text-xs font-black text-indigo-300 uppercase mb-4 tracking-widest">Histórico Completo de Gastos</p>
+                            <div class="max-h-96 overflow-y-auto scrollbar-hide pr-2 print:max-h-none">
                                 ${expensesList}
                             </div>
                         </div>
                     `;
                 }
 
+                // INSERE O CARTÃO DE NÍVEL 3 (SÓ O HEADER + CONTEÚDO DO MÓDULO, SEM O RESUMO GERAL)
                 grid.innerHTML += `
                 <div class="glass p-6 md:p-10 rounded-[40px] border-l-[8px] relative shadow-2xl flex flex-col w-full print:border print:border-slate-300 print:shadow-none animate-fade-in" style="border-left-color: ${p.status === 'Finalizado' ? '#10b981' : '#f59e0b'}">
                     <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-8 border-b border-white/10 pb-6 gap-6 no-print">
-                        <div class="flex items-center gap-5">
-                            <button onclick="window.closeProjectModule()" class="p-4 bg-white/5 hover:bg-white/10 rounded-2xl transition-all border border-white/10 group shadow-lg">
-                                <i data-lucide="arrow-left" class="w-6 h-6 text-slate-300 group-hover:text-white group-hover:-translate-x-1 transition-all"></i>
+                        <div class="flex items-center gap-4">
+                            <button onclick="window.closeProjectModule()" class="p-3 bg-white/5 hover:bg-white/10 rounded-xl transition-all border border-white/10 shadow-sm flex items-center gap-2 text-[10px] font-black uppercase text-slate-300 hover:text-white">
+                                <i data-lucide="arrow-left" class="w-4 h-4"></i> Voltar
                             </button>
                             <div>
-                                <h4 class="font-black text-2xl md:text-3xl uppercase tracking-tight text-white leading-none">${p.cliente || 'Sem Nome'}</h4>
-                                <div class="flex items-center gap-3 mt-3">
-                                    <span class="px-2.5 py-1 bg-white/5 rounded-md text-[9px] font-black uppercase tracking-widest text-slate-400 border border-white/10">${p.empresa}</span>
-                                    <span class="text-[11px] font-black text-gold uppercase tracking-widest px-3 py-1 bg-gold/10 rounded-lg border border-gold/20">${moduleTitle}</span>
-                                </div>
+                                <h4 class="font-black text-xl sm:text-2xl uppercase tracking-tight text-white leading-none truncate max-w-[200px] sm:max-w-md">${p.cliente || 'Sem Nome'}</h4>
+                                <p class="text-[10px] font-black text-gold uppercase tracking-widest mt-1">${moduleTitle}</p>
                             </div>
                         </div>
-                        <button onclick="window.printReport()" class="hidden md:flex items-center gap-2 text-slate-300 hover:text-white transition-all font-black text-[10px] uppercase tracking-widest px-5 py-4 bg-white/5 rounded-2xl border border-white/10 hover:bg-white/10 shadow-lg">
+                        <button onclick="window.printReport()" class="hidden md:flex items-center gap-2 text-slate-300 hover:text-white transition-all font-black text-[10px] uppercase tracking-widest px-5 py-3 bg-white/5 rounded-2xl border border-white/10 hover:bg-white/10 shadow-lg">
                             <i data-lucide="printer" class="w-4 h-4"></i> Imprimir Ficha
                         </button>
                     </div>
@@ -1066,7 +1010,92 @@
                 if (state.activeModule === 'costs' && canViewCosts) {
                     setTimeout(() => renderCharts(p.id, f.orcamento, f.gastosPorCategoria, f.totalDespesas), 100);
                 }
+
+                return; // INTERROMPE O LOOP AQUI PARA O NÍVEL 3 (Não renderiza o resto do cartão abaixo)
             }
+
+
+            // ==========================================
+            // NÍVEL 1 E 2: CARTÃO NORMAL COM RESUMO DA OBRA
+            // ==========================================
+            const cardClickEvent = isFocused ? '' : `onclick="window.openProjectDetails('${p.id}')"`;
+            const cardHoverClasses = isFocused ? '' : 'project-card clickable cursor-pointer';
+
+            let cardHTML = `<div class="glass p-6 md:p-8 rounded-[40px] border-l-[8px] relative shadow-2xl flex flex-col h-full print:border print:border-slate-300 print:shadow-none print:break-inside-avoid ${cardHoverClasses}" style="border-left-color: ${p.status === 'Finalizado' ? '#10b981' : '#f59e0b'}" ${cardClickEvent}>
+                
+                <div class="flex justify-between items-start mb-5">
+                    <span class="px-3 py-1.5 bg-white/5 border border-white/10 rounded-xl text-[9px] font-black uppercase tracking-widest text-slate-300 shadow-sm print:bg-slate-100 print:text-slate-800">${p.empresa || 'Sem Unidade'} ${p.archived ? '<span class="text-indigo-400 ml-1">(ARQUIVADA)</span>' : ''}</span>
+                    <div class="flex items-center gap-3 bg-black/20 p-1.5 px-3 rounded-full border border-white/5 print:hidden">
+                        <span class="status-badge ${f.statusColor}" title="Status Financeiro"></span>
+                        ${actionButtons}
+                    </div>
+                </div>
+
+                <div class="text-left mb-6"><h4 class="font-black text-2xl uppercase tracking-tight text-white leading-none print:text-black">${p.cliente || 'Sem Nome'}</h4></div>
+
+                <div class="grid grid-cols-2 gap-y-5 gap-x-4 p-5 bg-black/20 rounded-[24px] border border-white/5 mb-8 text-left shadow-inner print:bg-transparent print:border-slate-200">
+                    <div><p class="text-[8px] font-black text-slate-500 uppercase tracking-widest mb-1">Vendedor</p><p class="text-[11px] font-bold text-slate-200 truncate print:text-black" title="${p.vendedor}">${p.vendedor?.split('@')[0] || '--'}</p></div>
+                    <div><p class="text-[8px] font-black text-slate-500 uppercase tracking-widest mb-1">Status da Obra</p><p class="text-[11px] font-black text-gold uppercase print:text-amber-700">${p.status || 'Cotação'}</p></div>
+                    <div><p class="text-[8px] font-black text-slate-500 uppercase tracking-widest mb-1">Proposta / Invoice</p><p class="text-[10px] font-mono font-bold text-slate-400 print:text-black">${p.numeroProposta || '---'} <span class="text-slate-600 font-normal mx-1">|</span> ${p.numeroInvoice || '---'}</p></div>
+                    <div><p class="text-[8px] font-black text-slate-500 uppercase tracking-widest mb-1">Pagt Previsto • Comiss.</p><p class="text-[11px] font-bold text-slate-200 print:text-black">${p.metodo || '--'} <span class="text-slate-600 font-normal mx-1">•</span> ${p.percComissao || 0}%</p></div>
+                </div>
+
+                <div class="mt-auto"></div>
+
+                <div class="space-y-3 mb-8 text-left">
+                    <div class="flex justify-between text-[10px] font-black uppercase text-slate-400 print:text-slate-800"><span>Timeline</span><span style="color: ${colorHex}">${prog}%</span></div>
+                    <div class="progress-track print:bg-slate-200"><div class="progress-bar-fill print:!bg-black" style="width: ${prog}%; background-color: ${colorHex};"></div></div>
+                    <div class="flex justify-between text-[9px] font-extrabold uppercase">
+                        <span class="print:text-black">${p.dataInicio ? new Date(p.dataInicio + 'T12:00:00').toLocaleDateString() : '-'}</span>
+                        <span class="${n > e && p.status !== 'Finalizado' ? 'text-red-500' : 'text-gold'} print:!text-black">${n > e && p.status !== 'Finalizado' ? 'ATRASADA' : (prog === 100 ? 'CONCLUÍDA' : (Number.isFinite(e) ? Math.ceil((e - n) / (1000 * 3600 * 24)) : 0) + ' DIAS RESTANTES')}</span>
+                    </div>
+                </div>
+
+                <div class="bg-gradient-to-br from-black/50 to-transparent p-5 rounded-3xl border border-white/5 shadow-inner print:bg-transparent print:border-slate-300">
+                    <p class="text-[9px] font-black text-slate-500 uppercase mb-1 text-center">Valor Contrato Bruto</p>
+                    <p class="text-3xl font-black text-white text-center tracking-tight print:text-black">${formatCurr(p.valorTotal)}</p>
+                </div>
+
+                <div class="flex justify-between gap-3 mt-4 no-print">
+                    <div class="flex-1 rounded-xl p-2.5 text-center border ${clientBorderColor} shadow-inner transition-colors">
+                        <p class="text-[7px] font-black uppercase text-slate-400 mb-0.5 tracking-widest">Cliente</p>
+                        <p class="text-[10px] font-black ${clientPaidColor}">${clientPaidText}</p>
+                    </div>
+                    <div class="flex-1 rounded-xl p-2.5 text-center border ${sellerBorderColor} shadow-inner transition-colors">
+                        <p class="text-[7px] font-black uppercase text-slate-400 mb-0.5 tracking-widest">Comissão</p>
+                        <p class="text-[10px] font-black ${sellerPaidColor}">${sellerPaidText}</p>
+                    </div>
+                </div>
+            `;
+
+            if (!isFocused) {
+                cardHTML += `
+                    <div class="mt-6 text-center text-[9px] text-slate-500 font-bold uppercase tracking-widest no-print opacity-50 group-hover:opacity-100 flex items-center justify-center gap-1 transition-opacity">
+                        CLIQUE NO CARD PARA ABRIR <i data-lucide="chevron-right" class="w-3 h-3"></i>
+                    </div>
+                </div>`; // Fechamento Nível 1
+            } else {
+                // NÍVEL 2: BOTÕES GIGANTES DO MENU DE OBRA
+                const gridCols = canViewCosts ? 'sm:grid-cols-2' : 'grid-cols-1';
+                cardHTML += `
+                    <div class="grid grid-cols-1 ${gridCols} gap-4 mt-8 pt-6 border-t border-white/10 no-print animate-fade-in">
+                        <button onclick="event.stopPropagation(); window.openProjectModule('commissions')" class="py-8 px-4 bg-gradient-to-br from-slate-900 to-black rounded-[24px] border border-gold/20 hover:border-gold/60 hover:shadow-[0_0_30px_-5px_rgba(251,191,36,0.3)] transition-all flex flex-col items-center justify-center gap-3 group relative overflow-hidden">
+                            <div class="absolute inset-0 bg-gold/5 transform scale-0 group-hover:scale-100 transition-transform rounded-[24px] duration-500 origin-center"></div>
+                            <i data-lucide="wallet" class="w-10 h-10 text-gold group-hover:scale-110 group-hover:-translate-y-1 transition-all relative z-10"></i>
+                            <span class="text-[11px] font-black uppercase text-gold tracking-[0.2em] relative z-10 text-center">Comissões e Finanças</span>
+                        </button>
+                        ${canViewCosts ? `
+                        <button onclick="event.stopPropagation(); window.openProjectModule('costs')" class="py-8 px-4 bg-gradient-to-br from-slate-900 to-black rounded-[24px] border border-indigo-500/20 hover:border-indigo-500/60 hover:shadow-[0_0_30px_-5px_rgba(99,102,241,0.3)] transition-all flex flex-col items-center justify-center gap-3 group relative overflow-hidden">
+                            <div class="absolute inset-0 bg-indigo-500/5 transform scale-0 group-hover:scale-100 transition-transform rounded-[24px] duration-500 origin-center"></div>
+                            <i data-lucide="calculator" class="w-10 h-10 text-indigo-400 group-hover:scale-110 group-hover:-translate-y-1 transition-all relative z-10"></i>
+                            <span class="text-[11px] font-black uppercase text-indigo-400 tracking-[0.2em] relative z-10 text-center">Gestão de Custos</span>
+                        </button>
+                        ` : ''}
+                    </div>
+                </div>`; // Fechamento Nível 2
+            }
+            
+            grid.innerHTML += cardHTML;
         });
 
         try { lucide.createIcons(); } catch {}
@@ -1088,7 +1117,7 @@
         let tv = 0, tc = 0, tProfit = 0; 
 
         const currentYear = new Date().getFullYear();
-        const monthNames = state.lang === 'en' ? ['Jan','Feb','Mar','Apr','May','Jun','Jul','Ago','Sep','Out','Nov','Dez'] : ['Jan','Fev','Mar','Abr','Mai','Jun','Jul','Ago','Set','Out','Nov','Dez'];
+        const monthNames = state.lang === 'en' ? ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Out','Nov','Dez'] : ['Jan','Fev','Mar','Abr','Mai','Jun','Jul','Ago','Set','Out','Nov','Dez'];
         const sellerStats = {};
 
         const rows = filtered.map(p => {
@@ -1188,8 +1217,9 @@
 
     onAuthStateChanged(auth, (u) => {
         state.user = u;
+        applyThemeConfig(); // Aplica o tema guardado na inicialização
         if (u) {
-            document.getElementById('auth-screen').classList.add('hidden'); document.getElementById('main-app').classList.remove('hidden'); document.body.className = 'app-body-dark';
+            document.getElementById('auth-screen').classList.add('hidden'); document.getElementById('main-app').classList.remove('hidden');
             document.getElementById('user-display').innerText = u.email ? u.email.split('@')[0].toUpperCase() : "USR";
             initData(); logAccess(u.email, 'Fez login no sistema');
         } else {
