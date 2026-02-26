@@ -7,7 +7,6 @@
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
     <script src="https://unpkg.com/lucide@latest"></script>
-    <!-- Chart.js para Gráficos Interativos -->
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <style>
         :root { --gold: #fbbf24; --gold-dark: #b45309; --d2-blue: #0f172a; }
@@ -30,10 +29,11 @@
         .app-body-light { background-color: #f8fafc; color: #0f172a; }
         .app-body-light .glass { background: #ffffff !important; border-color: #e2e8f0 !important; color: #0f172a; box-shadow: 0 10px 30px -10px rgba(0,0,0,0.1) !important;}
         
-        /* Proteção de contraste para botões no Light Mode: Ignora a inversão se for botão ou ícone de botão */
-        .app-body-light .text-white:not(button *):not(button):not(.status-badge):not(.kpi-value) { color: #0f172a !important; }
+        /* Proteção de contraste para textos que DEVEM ficar brancos mesmo no modo claro */
+        .app-body-light .text-white:not(button *):not(button):not(.status-badge):not(.force-white-text) { color: #0f172a !important; }
+        .force-white-text { color: #ffffff !important; }
         
-        /* Conversão de cores Neon para tons escuros no Light Mode para leitura perfeita */
+        /* Conversão de cores para o Light Mode */
         .app-body-light .text-slate-200, .app-body-light .text-slate-300 { color: #334155 !important; }
         .app-body-light .text-slate-400 { color: #475569 !important; }
         .app-body-light .text-gold { color: #b45309 !important; } 
@@ -86,6 +86,7 @@
         @keyframes fadeIn { from { opacity: 0; transform: translateY(15px); } to { opacity: 1; transform: translateY(0); } }
         .animate-fade-in { animation: fadeIn 0.4s cubic-bezier(0.16, 1, 0.3, 1) forwards; }
         
+        /* Interação Global do Card */
         .project-card { transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1); cursor: pointer; }
         .project-card:hover { transform: translateY(-4px); box-shadow: 0 20px 40px -10px rgba(0,0,0,0.5); border-color: rgba(251, 191, 36, 0.3); }
 
@@ -95,15 +96,17 @@
             .no-print { display: none !important; } 
             body, .app-body-dark, .app-body-light { background: #fff !important; color: #0f172a !important; -webkit-print-color-adjust: exact; print-color-adjust: exact; }
             .glass { background: #fff !important; border: 1px solid #cbd5e1 !important; box-shadow: none !important; filter: none !important; backdrop-filter: none !important; page-break-inside: avoid; }
-            .text-white, .text-slate-200, .text-slate-300, .text-slate-400 { color: #0f172a !important; }
+            .text-white, .text-slate-200, .text-slate-300, .text-slate-400, .force-white-text { color: #0f172a !important; }
             .text-gold { color: #b45309 !important; font-weight: 900 !important; } 
-            .kpi-value { color: #0f172a !important; } 
-            .bg-black\/20, .bg-slate-900\/80, .bg-gradient-to-br, .bg-white\/5, .bg-cyan-950\/20, .bg-black\/40, .bg-slate-900, .bg-slate-800 { background: #f8fafc !important; border-color: #cbd5e1 !important; }
+            .bg-slate-900, .bg-slate-800, .bg-black\/40 { background: #f8fafc !important; border-color: #cbd5e1 !important; color: #0f172a !important; }
             canvas { max-width: 100% !important; max-height: 250px !important; page-break-inside: avoid; }
             .overflow-x-auto { overflow: visible !important; } 
             tr { page-break-inside: avoid !important; }
+            #report-output .grid { display: grid !important; }
+            body.printing-kpi .full-report-only { display: none !important; }
         }
 
+        /* Pequenos estilos auxiliares */
         .flag-btn { border: 1px solid rgba(15,23,42,0.12); border-radius: 14px; padding: 10px; transition: .2s; background: #fff; }
         .flag-btn.active { border-color: var(--gold); box-shadow: 0 0 0 4px rgba(251,191,36,.12); }
         .tab-btn { color: rgba(148,163,184,0.9); font-size: 12px; }
@@ -161,7 +164,7 @@
 <div id="custom-modal" class="modal-overlay" style="z-index: 9999;">
     <div class="modal-content animate-fade-in max-w-sm w-full p-8 text-center !rounded-[32px]">
         <div id="custom-modal-icon" class="flex justify-center mb-5"></div>
-        <h3 id="custom-modal-title" class="text-xl font-black text-white mb-2">Atenção</h3>
+        <h3 id="custom-modal-title" class="text-xl font-black text-white force-white-text mb-2">Atenção</h3>
         <p id="custom-modal-msg" class="text-sm text-slate-400 mb-8"></p>
         <div class="flex justify-center gap-3" id="custom-modal-buttons"></div>
     </div>
@@ -173,8 +176,8 @@
         <h3 class="text-2xl font-black text-emerald-500 mb-6">Editar Recebimentos (Cliente)</h3>
         <div id="rec-edit-list" class="space-y-4 mb-6"></div>
         <div class="flex justify-end gap-4">
-            <button onclick="closeEditRecModal()" class="px-6 py-3 bg-slate-700 text-white rounded-xl font-bold hover:bg-slate-600 transition-colors">Cancelar</button>
-            <button onclick="saveEditedRecs()" class="px-8 py-3 bg-emerald-600 text-white font-black rounded-xl hover:bg-emerald-500 transition-colors shadow-lg">Salvar Alterações</button>
+            <button onclick="window.closeEditRecModal()" class="px-6 py-3 bg-slate-700 text-white rounded-xl font-bold hover:bg-slate-600 transition-colors">Cancelar</button>
+            <button onclick="window.saveEditedRecs()" class="px-8 py-3 bg-emerald-600 text-white font-black rounded-xl hover:bg-emerald-500 transition-colors shadow-lg">Salvar Alterações</button>
         </div>
     </div>
 </div>
@@ -185,8 +188,8 @@
         <h3 class="text-2xl font-black text-gold mb-6">Editar Pagamentos (Vendedor)</h3>
         <div id="payment-edit-list" class="space-y-4 mb-6"></div>
         <div class="flex justify-end gap-4">
-            <button onclick="closeEditPaymentModal()" class="px-6 py-3 bg-slate-700 text-white rounded-xl font-bold hover:bg-slate-600 transition-colors">Cancelar</button>
-            <button onclick="saveEditedPayments()" class="px-8 py-3 bg-slate-800 text-white border border-gold/30 font-black rounded-xl hover:bg-slate-700 transition-colors shadow-lg">Salvar Alterações</button>
+            <button onclick="window.closeEditPaymentModal()" class="px-6 py-3 bg-slate-700 text-white rounded-xl font-bold hover:bg-slate-600 transition-colors">Cancelar</button>
+            <button onclick="window.saveEditedPayments()" class="px-8 py-3 bg-slate-800 text-white border border-gold/30 font-black rounded-xl hover:bg-slate-700 transition-colors shadow-lg">Salvar Alterações</button>
         </div>
     </div>
 </div>
@@ -202,12 +205,12 @@
             </div>
 
             <div class="flex items-center gap-5">
-                <button onclick="toggleTheme()" class="p-3 rounded-2xl bg-white/5 hover:bg-gold/20 transition-all"><i data-lucide="sun" id="theme-icon-light" class="hidden text-gold"></i><i data-lucide="moon" id="theme-icon-dark" class="text-slate-400"></i></button>
+                <button onclick="window.toggleTheme()" class="p-3 rounded-2xl bg-white/5 hover:bg-gold/20 transition-all"><i data-lucide="sun" id="theme-icon-light" class="hidden text-gold"></i><i data-lucide="moon" id="theme-icon-dark" class="text-slate-400"></i></button>
                 <div class="text-right hidden sm:block">
                     <p id="user-display" class="text-sm font-black uppercase text-gold tracking-tight"></p>
                     <p id="user-role-display" class="text-[10px] text-slate-500 font-bold uppercase tracking-widest" data-i18n="admin_panel">Gestão Corporativa</p>
                 </div>
-                <button onclick="handleLogout()" class="p-3 rounded-2xl text-red-500 hover:bg-red-500/10 transition-all border border-red-500/20 shadow-sm"><i data-lucide="log-out" class="w-5 h-5"></i></button>
+                <button onclick="window.handleLogout()" class="p-3 rounded-2xl text-red-500 hover:bg-red-500/10 transition-all border border-red-500/20 shadow-sm"><i data-lucide="log-out" class="w-5 h-5"></i></button>
             </div>
         </div>
     </header>
@@ -216,24 +219,24 @@
         
         <!-- NAVEGAÇÃO PRINCIPAL -->
         <nav id="main-nav" class="no-print flex gap-10 mb-6 border-b border-white/5 overflow-x-auto justify-center sm:justify-start scrollbar-hide">
-            <button onclick="showView('projects')" class="tab-btn pb-4 font-black uppercase tracking-[0.2em] tab-active" id="tab-projects" data-i18n="nav_proj">Projetos</button>
-            <button onclick="window.cancelEdit(); showView('new')" class="tab-btn pb-4 font-black uppercase tracking-[0.2em] editor-only hidden" id="tab-new" data-i18n="nav_new">Nova Obra</button>
-            <button onclick="showView('reports')" class="tab-btn pb-4 font-black uppercase tracking-[0.2em]" id="tab-reports" data-i18n="nav_rep">Relatórios</button>
-            <button onclick="showView('users')" class="tab-btn pb-4 font-black uppercase tracking-[0.2em] admin-only hidden" id="tab-users" data-i18n="nav_users">Equipe</button>
-            <button onclick="showView('logs')" class="tab-btn pb-4 font-black uppercase tracking-[0.2em] admin-only hidden" id="tab-logs">📋 Logs</button>
+            <button onclick="window.showView('projects')" class="tab-btn pb-4 font-black uppercase tracking-[0.2em] tab-active" id="tab-projects" data-i18n="nav_proj">Projetos</button>
+            <button onclick="window.cancelEdit(); window.showView('new')" class="tab-btn pb-4 font-black uppercase tracking-[0.2em] editor-only hidden" id="tab-new" data-i18n="nav_new">Nova Obra</button>
+            <button onclick="window.showView('reports')" class="tab-btn pb-4 font-black uppercase tracking-[0.2em]" id="tab-reports" data-i18n="nav_rep">Relatórios</button>
+            <button onclick="window.showView('users')" class="tab-btn pb-4 font-black uppercase tracking-[0.2em] admin-only hidden" id="tab-users" data-i18n="nav_users">Equipe</button>
+            <button onclick="window.showView('logs')" class="tab-btn pb-4 font-black uppercase tracking-[0.2em] admin-only hidden" id="tab-logs">📋 Logs</button>
         </nav>
 
         <div id="view-projects" class="w-full">
             <!-- Filtros Superiores do Painel de Projetos -->
             <div id="projects-filters" class="flex flex-col sm:flex-row justify-between items-center mb-8 gap-4 no-print">
                 <div class="flex gap-3">
-                    <button onclick="selectUnit('Smart Home')" id="unit-smart" class="unit-pill">SMART HOME</button>
-                    <button onclick="selectUnit('HVAC')" id="unit-hvac" class="unit-pill">HVAC</button>
-                    <button onclick="selectUnit('Ambas')" id="unit-all" class="unit-pill active">AMBAS</button>
+                    <button onclick="window.selectUnit('Smart Home')" id="unit-smart" class="unit-pill">SMART HOME</button>
+                    <button onclick="window.selectUnit('HVAC')" id="unit-hvac" class="unit-pill">HVAC</button>
+                    <button onclick="window.selectUnit('Ambas')" id="unit-all" class="unit-pill active">AMBAS</button>
                 </div>
                 <div class="flex gap-2">
-                    <button onclick="setArchiveFilter(false)" id="filter-active" class="filter-pill active">ATIVAS</button>
-                    <button onclick="setArchiveFilter(true)" id="filter-archived" class="filter-pill">ARQUIVADAS <i data-lucide="archive" class="inline w-3 h-3 ml-1 mb-0.5"></i></button>
+                    <button onclick="window.setArchiveFilter(false)" id="filter-active" class="filter-pill active">ATIVAS</button>
+                    <button onclick="window.setArchiveFilter(true)" id="filter-archived" class="filter-pill">ARQUIVADAS <i data-lucide="archive" class="inline w-3 h-3 ml-1 mb-0.5"></i></button>
                 </div>
             </div>
             
@@ -313,7 +316,7 @@
                 </div>
                 <div class="col-span-2 flex flex-col sm:flex-row gap-6 mt-10">
                     <button type="submit" class="flex-1 btn-premium-gold shadow-xl">Salvar Registro</button>
-                    <button type="button" onclick="window.cancelEdit(); showView('projects')" class="px-10 py-4 text-slate-500 uppercase font-black text-sm hover:text-white transition-all">Cancelar</button>
+                    <button type="button" onclick="window.cancelEdit(); window.showView('projects')" class="px-10 py-4 text-slate-500 uppercase font-black text-sm hover:text-white transition-all">Cancelar</button>
                 </div>
             </form>
         </div>
@@ -406,7 +409,7 @@
         user: null, currentUserRole: 'viewer', currentUserViewAll: false, currentUserViewCosts: false, 
         projects: [], team: [], company: 'Ambas', lang: 'pt', theme: 'dark', 
         editingPayments: null, editingRecs: null, focusedProject: null, activeModule: null, showArchived: false,
-        reportActiveKpi: 'receita' // Começa sempre aberto na Receita Bruta como você pediu
+        reportActiveKpi: 'receita' 
     };
 
     window.d2Charts = {};
@@ -430,8 +433,8 @@
             const key = el.getAttribute('data-i18n');
             if (translations[l] && translations[l][key]) el.innerText = translations[l][key];
         });
-        renderProjects(); 
-        renderReport(); 
+        window.renderProjects(); 
+        window.renderReport(); 
     };
 
     // --- SISTEMA DE MODAL CUSTOMIZADO ---
@@ -501,10 +504,10 @@
         logs.unshift({ timestamp: new Date().toISOString(), user: userEmail, action });
         if (logs.length > 500) logs.splice(500);
         localStorage.setItem('access_logs', JSON.stringify(logs));
-        renderLogs();
+        window.renderLogs();
     }
 
-    function renderLogs() {
+    window.renderLogs = () => {
         const tbody = document.getElementById('logs-body');
         if (!tbody) return;
         const logs = JSON.parse(localStorage.getItem('access_logs') || '[]');
@@ -515,7 +518,7 @@
                 <td class="py-4 px-4 text-sm text-slate-300">${log.action}</td>
             </tr>
         `).join('') || '<tr><td colspan="3" class="py-10 text-center text-slate-500">Nenhum log registrado</td></tr>';
-    }
+    };
 
     function applyThemeConfig() {
         state.theme = localStorage.getItem('d2_theme') || 'dark';
@@ -573,8 +576,8 @@
         });
         
         if (state.projects.length > 0) {
-            renderProjects();
-            renderReport();
+            window.renderProjects();
+            window.renderReport();
         }
     };
 
@@ -603,13 +606,15 @@
 
     window.selectUnit = (unit) => {
         state.company = unit;
+        
         document.querySelectorAll('#projects-filters .unit-pill').forEach(b => b.classList.remove('active'));
         const mapProj = { 'Smart Home': 'unit-smart', 'HVAC': 'unit-hvac', 'Ambas': 'unit-all' };
         if (document.getElementById(mapProj[unit])) document.getElementById(mapProj[unit]).classList.add('active');
         
         state.reportActiveKpi = 'receita'; 
-        renderProjects();
-        renderReport();
+        
+        window.renderProjects();
+        window.renderReport();
     };
 
     window.setArchiveFilter = (showArchived) => {
@@ -618,7 +623,7 @@
         document.getElementById('filter-archived').classList.toggle('active', showArchived);
         state.focusedProject = null;
         state.activeModule = null;
-        renderProjects();
+        window.renderProjects();
     };
 
     window.toggleArchive = async (id, currentArchivedStatus) => {
@@ -674,9 +679,9 @@
             if (budget === 0 && totalExpenses === 0) {
                 labels = ['Sem Orçamento']; dataArr = [1]; bgColors = ['#334155'];
             } else if (overspent > 0) {
-                labels = ['Orçamento Usado', 'Estouro (Overbudget)']; dataArr = [budget, overspent]; bgColors = ['#0891b2', '#dc2626']; /* Cyan escuro e Vermelho */
+                labels = ['Orçamento Usado', 'Estouro (Overbudget)']; dataArr = [budget, overspent]; bgColors = ['#0891b2', '#dc2626'];
             } else {
-                labels = ['Gasto', 'Restante']; dataArr = [totalExpenses, remaining]; bgColors = ['#0891b2', '#059669']; /* Cyan escuro e Emerald escuro */
+                labels = ['Gasto', 'Restante']; dataArr = [totalExpenses, remaining]; bgColors = ['#0891b2', '#059669'];
             }
 
             window.d2Charts[`budget-${pId}`] = new Chart(ctxBudget, {
@@ -703,81 +708,83 @@
         const p = state.projects.find(x => x.id === projectId);
         if (!p) return;
         state.editingPayments = { projectId, payments: [...(p.pagamentosEfetuados || [])] };
-        renderPaymentEditList(); document.getElementById('edit-payment-modal').classList.add('active');
+        window.renderPaymentEditList(); document.getElementById('edit-payment-modal').classList.add('active');
     };
     window.closeEditPaymentModal = () => { state.editingPayments = null; document.getElementById('edit-payment-modal').classList.remove('active'); };
-    function renderPaymentEditList() {
+    window.renderPaymentEditList = () => {
         const container = document.getElementById('payment-edit-list');
         if (!container || !state.editingPayments) return;
-        container.innerHTML = state.editingPayments.payments.map((pay, i) => `<div class="flex items-center gap-4 p-4 bg-white/5 rounded-xl border border-white/10"><input type="date" value="${pay.data || ''}" onchange="updatePaymentField(${i}, 'data', this.value)" class="modern-input relative text-sm flex-1"><input type="number" step="0.01" value="${(pay.valor ?? 0)}" onchange="updatePaymentField(${i}, 'valor', this.value)" class="modern-input text-sm flex-1"><button onclick="removePaymentFromEdit(${i})" class="p-4 bg-red-500/20 text-red-400 rounded-lg hover:bg-red-500/30"><i data-lucide="trash-2" class="w-5 h-5"></i></button></div>`).join('') + `<button onclick="addNewPaymentToEdit()" class="w-full p-4 mt-2 border-2 border-dashed border-gold/30 rounded-xl text-gold font-bold hover:bg-gold/10 transition-all">+ Adicionar Novo Pagamento</button>`;
+        container.innerHTML = state.editingPayments.payments.map((pay, i) => `<div class="flex items-center gap-4 p-4 bg-white/5 rounded-xl border border-white/10"><input type="date" value="${pay.data || ''}" onchange="window.updatePaymentField(${i}, 'data', this.value)" class="modern-input relative text-sm flex-1"><input type="number" step="0.01" value="${(pay.valor ?? 0)}" onchange="window.updatePaymentField(${i}, 'valor', this.value)" class="modern-input text-sm flex-1"><button onclick="window.removePaymentFromEdit(${i})" class="p-4 bg-red-500/20 text-red-400 rounded-lg hover:bg-red-500/30"><i data-lucide="trash-2" class="w-5 h-5"></i></button></div>`).join('') + `<button onclick="window.addNewPaymentToEdit()" class="w-full p-4 mt-2 border-2 border-dashed border-gold/30 rounded-xl text-gold font-bold hover:bg-gold/10 transition-all">+ Adicionar Novo Pagamento</button>`;
         try { lucide.createIcons(); } catch {}
-    }
+    };
     window.updatePaymentField = (index, field, value) => { if (!state.editingPayments) return; if (field === 'data') state.editingPayments.payments[index].data = value; if (field === 'valor') state.editingPayments.payments[index].valor = parseFloat(value || 0); };
     window.removePaymentFromEdit = (index) => { 
         window.showModal('Confirmar Exclusão', 'Deseja remover este pagamento?', 'confirm', () => {
-            state.editingPayments.payments.splice(index, 1); renderPaymentEditList(); 
+            state.editingPayments.payments.splice(index, 1); window.renderPaymentEditList(); 
         });
     };
-    window.addNewPaymentToEdit = () => { if (!state.editingPayments) return; state.editingPayments.payments.push({ data: new Date().toISOString().split('T')[0], valor: 0 }); renderPaymentEditList(); };
-    window.saveEditedPayments = async () => { if (!state.editingPayments) return; try { await updateDoc(doc(db, 'artifacts', appId, 'public', 'data', 'projects', state.editingPayments.projectId), { pagamentosEfetuados: state.editingPayments.payments }); closeEditPaymentModal(); } catch (e) { window.showModal('Erro', 'Erro ao salvar pagamentos: ' + e.message, 'error'); } };
+    window.addNewPaymentToEdit = () => { if (!state.editingPayments) return; state.editingPayments.payments.push({ data: new Date().toISOString().split('T')[0], valor: 0 }); window.renderPaymentEditList(); };
+    window.saveEditedPayments = async () => { if (!state.editingPayments) return; try { await updateDoc(doc(db, 'artifacts', appId, 'public', 'data', 'projects', state.editingPayments.projectId), { pagamentosEfetuados: state.editingPayments.payments }); window.closeEditPaymentModal(); } catch (e) { window.showModal('Erro', 'Erro ao salvar pagamentos: ' + e.message, 'error'); } };
     window.addPayment = async (projectId) => { if (!state.user) return; const v = document.getElementById(`pay-val-${projectId}`)?.value; const d = document.getElementById(`pay-date-${projectId}`)?.value; if (!v || !d) { window.showModal('Atenção', 'Preencha data e valor para o vendedor.'); return; } try { await updateDoc(doc(db, 'artifacts', appId, 'public', 'data', 'projects', projectId), { pagamentosEfetuados: arrayUnion({ valor: parseFloat(v), data: d }) }); logAccess(state.user.email, `Pagou vendedor $${v} na obra ID: ${projectId}`); } catch (e) { console.error(e); } };
 
-    window.openEditRecModal = (projectId) => { const p = state.projects.find(x => x.id === projectId); if (!p) return; state.editingRecs = { projectId, recs: [...(p.recebimentos || [])] }; renderRecEditList(); document.getElementById('edit-rec-modal').classList.add('active'); };
+    window.openEditRecModal = (projectId) => { const p = state.projects.find(x => x.id === projectId); if (!p) return; state.editingRecs = { projectId, recs: [...(p.recebimentos || [])] }; window.renderRecEditList(); document.getElementById('edit-rec-modal').classList.add('active'); };
     window.closeEditRecModal = () => { state.editingRecs = null; document.getElementById('edit-rec-modal').classList.remove('active'); };
-    function renderRecEditList() {
+    window.renderRecEditList = () => {
         const container = document.getElementById('rec-edit-list');
         if (!container || !state.editingRecs) return;
-        container.innerHTML = state.editingRecs.recs.map((r, i) => `<div class="flex flex-col sm:flex-row items-center gap-3 p-4 bg-white/5 rounded-xl border border-white/10"><input type="date" value="${r.data || ''}" onchange="updateRecField(${i}, 'data', this.value)" class="modern-input relative text-sm w-full sm:flex-1"><input type="number" step="0.01" value="${(r.valor ?? 0)}" onchange="updateRecField(${i}, 'valor', this.value)" class="modern-input text-sm w-full sm:w-28"><select onchange="updateRecField(${i}, 'metodo', this.value)" class="modern-input text-sm w-full sm:w-36 !pr-8"><option value="Zelle" ${r.metodo==='Zelle'?'selected':''}>Zelle</option><option value="Wire Transfer" ${r.metodo==='Wire Transfer'?'selected':''}>Wire</option><option value="Dinheiro" ${r.metodo==='Dinheiro'?'selected':''}>Cash</option><option value="CC" ${r.metodo==='CC'?'selected':''}>Cartão</option></select><button onclick="removeRecFromEdit(${i})" class="p-4 w-full sm:w-auto bg-red-500/20 text-red-400 rounded-xl hover:bg-red-500/30 flex justify-center"><i data-lucide="trash-2" class="w-5 h-5"></i></button></div>`).join('') + `<button onclick="addNewRecToEdit()" class="w-full p-4 mt-2 border-2 border-dashed border-emerald-500/30 rounded-xl text-emerald-400 font-bold hover:bg-emerald-500/10 transition-all">+ Adicionar Novo Recebimento</button>`;
+        container.innerHTML = state.editingRecs.recs.map((r, i) => `<div class="flex flex-col sm:flex-row items-center gap-3 p-4 bg-white/5 rounded-xl border border-white/10"><input type="date" value="${r.data || ''}" onchange="window.updateRecField(${i}, 'data', this.value)" class="modern-input relative text-sm w-full sm:flex-1"><input type="number" step="0.01" value="${(r.valor ?? 0)}" onchange="window.updateRecField(${i}, 'valor', this.value)" class="modern-input text-sm w-full sm:w-28"><select onchange="window.updateRecField(${i}, 'metodo', this.value)" class="modern-input text-sm w-full sm:w-36 !pr-8"><option value="Zelle" ${r.metodo==='Zelle'?'selected':''}>Zelle</option><option value="Wire Transfer" ${r.metodo==='Wire Transfer'?'selected':''}>Wire</option><option value="Dinheiro" ${r.metodo==='Dinheiro'?'selected':''}>Cash</option><option value="CC" ${r.metodo==='CC'?'selected':''}>Cartão</option></select><button onclick="window.removeRecFromEdit(${i})" class="p-4 w-full sm:w-auto bg-red-500/20 text-red-400 rounded-xl hover:bg-red-500/30 flex justify-center"><i data-lucide="trash-2" class="w-5 h-5"></i></button></div>`).join('') + `<button onclick="window.addNewRecToEdit()" class="w-full p-4 mt-2 border-2 border-dashed border-emerald-500/30 rounded-xl text-emerald-400 font-bold hover:bg-emerald-500/10 transition-all">+ Adicionar Novo Recebimento</button>`;
         try { lucide.createIcons(); } catch {}
-    }
+    };
     window.updateRecField = (index, field, value) => { if (!state.editingRecs) return; if (field === 'data') state.editingRecs.recs[index].data = value; if (field === 'valor') state.editingRecs.recs[index].valor = parseFloat(value || 0); if (field === 'metodo') state.editingRecs.recs[index].metodo = value; };
     window.removeRecFromEdit = (index) => { 
         window.showModal('Confirmar Exclusão', 'Deseja remover este recebimento?', 'confirm', () => {
-            state.editingRecs.recs.splice(index, 1); renderRecEditList(); 
+            state.editingRecs.recs.splice(index, 1); window.renderRecEditList(); 
         });
     };
-    window.addNewRecToEdit = () => { if (!state.editingRecs) return; state.editingRecs.recs.push({ data: new Date().toISOString().split('T')[0], valor: 0, metodo: 'Zelle' }); renderRecEditList(); };
-    window.saveEditedRecs = async () => { if (!state.editingRecs) return; try { await updateDoc(doc(db, 'artifacts', appId, 'public', 'data', 'projects', state.editingRecs.projectId), { recebimentos: state.editingRecs.recs }); closeEditRecModal(); } catch (e) { window.showModal('Erro', 'Erro ao salvar: ' + e.message, 'error'); } };
+    window.addNewRecToEdit = () => { if (!state.editingRecs) return; state.editingRecs.recs.push({ data: new Date().toISOString().split('T')[0], valor: 0, metodo: 'Zelle' }); window.renderRecEditList(); };
+    window.saveEditedRecs = async () => { if (!state.editingRecs) return; try { await updateDoc(doc(db, 'artifacts', appId, 'public', 'data', 'projects', state.editingRecs.projectId), { recebimentos: state.editingRecs.recs }); window.closeEditRecModal(); } catch (e) { window.showModal('Erro', 'Erro ao salvar: ' + e.message, 'error'); } };
     window.addRecebimento = async (projectId) => { if (!state.user) return; const v = document.getElementById(`rec-val-${projectId}`)?.value; const d = document.getElementById(`rec-date-${projectId}`)?.value; const m = document.getElementById(`rec-met-${projectId}`)?.value; if (!v || !d || !m) { window.showModal('Atenção', 'Preencha data, valor e método para o recebimento.'); return; } try { await updateDoc(doc(db, 'artifacts', appId, 'public', 'data', 'projects', projectId), { recebimentos: arrayUnion({ valor: parseFloat(v), data: d, metodo: m }) }); logAccess(state.user.email, `Registrou recebimento $${v} na obra ID: ${projectId}`); } catch (e) { console.error(e); } };
 
     // --- NAVEGAÇÃO INTERNA DO MODO FOCO ---
     window.openProjectDetails = (id) => { 
         state.focusedProject = id; 
         state.activeModule = null; 
-        renderProjects(); 
+        window.renderProjects(); 
         window.scrollTo({ top: 0, behavior: 'smooth' }); 
     };
     
     window.closeProjectDetails = () => { 
         state.focusedProject = null; 
         state.activeModule = null;
-        renderProjects(); 
+        window.renderProjects(); 
         window.scrollTo({ top: 0, behavior: 'smooth' }); 
     };
 
     window.openProjectModule = (moduleName) => {
         state.activeModule = moduleName;
-        renderProjects();
+        window.renderProjects();
         window.scrollTo({ top: 0, behavior: 'smooth' });
     };
 
     window.closeProjectModule = () => {
-        state.activeModule = null; 
-        renderProjects();
+        state.activeModule = null; // Volta para os Botões Gigantes
+        window.renderProjects();
         window.scrollTo({ top: 0, behavior: 'smooth' });
     };
 
     window.printReport = () => { window.print(); };
 
+    // --- IMPRESSÃO DIRECIONADA DE KPI ---
     window.printKpiReport = () => {
         document.body.classList.add('printing-kpi');
         window.print();
         setTimeout(() => document.body.classList.remove('printing-kpi'), 500);
     };
 
+    // --- CONTROLE DE KPIs NO RELATÓRIO (DRILL DOWN) ---
     window.setReportKpi = (kpiName) => {
         state.reportActiveKpi = kpiName;
-        renderReport();
+        window.renderReport();
     };
 
     window.editTeamMember = (id, email, pass, role, viewAll, viewCosts) => {
@@ -841,9 +848,9 @@
         const tv = document.getElementById('view-' + v); const tt = document.getElementById('tab-' + v);
         if (tv) tv.classList.remove('hidden'); if (tt) tt.classList.add('tab-active');
 
-        if (v === 'logs') renderLogs();
-        if (v === 'projects') { state.focusedProject = null; state.activeModule = null; renderProjects(); }
-        if (v === 'reports') { state.reportActiveKpi = 'receita'; renderReport(); }
+        if (v === 'logs') window.renderLogs();
+        if (v === 'projects') { state.focusedProject = null; state.activeModule = null; window.renderProjects(); }
+        if (v === 'reports') { state.reportActiveKpi = 'receita'; window.renderReport(); }
         try { lucide.createIcons(); } catch {}
     };
 
@@ -891,7 +898,7 @@
         return { baseProjetada, commTotalProjetada, totalRecebido, commLiberada, totalPaid, balance, statusColor, globalIsCC, orcamento, totalDespesas, lucroBruto, margemLucro, gastosPorCategoria };
     }
 
-    function renderProjects() {
+    window.renderProjects = () => {
         const grid = document.getElementById('projects-grid');
         const filtersDiv = document.getElementById('projects-filters');
         const mainHeader = document.getElementById('main-header');
@@ -989,6 +996,91 @@
                 `;
             }
 
+            const cardClickEvent = isFocused ? '' : `onclick="window.openProjectDetails('${p.id}')"`;
+            const cardHoverClasses = isFocused ? '' : 'project-card clickable cursor-pointer';
+
+            let cardHTML = `<div class="glass p-6 md:p-8 rounded-[40px] border-l-[8px] relative shadow-2xl flex flex-col h-full print:border print:border-slate-300 print:shadow-none print:break-inside-avoid ${cardHoverClasses}" style="border-left-color: ${p.status === 'Finalizado' ? '#10b981' : '#f59e0b'}" ${cardClickEvent}>
+                
+                <div class="flex justify-between items-start mb-6">
+                    <span class="px-4 py-2 bg-white/5 border border-white/10 rounded-xl text-[10px] font-black uppercase tracking-widest text-slate-300 shadow-sm print:bg-slate-100 print:text-slate-800">${p.empresa || 'Sem Unidade'} ${p.archived ? '<span class="text-indigo-400 ml-1">(ARQUIVADA)</span>' : ''}</span>
+                    <div class="flex items-center gap-3 bg-black/20 p-2 px-4 rounded-full border border-white/5 print:hidden">
+                        <span class="status-badge ${f.statusColor}" title="Status Financeiro"></span>
+                        ${actionButtons}
+                    </div>
+                </div>
+
+                <div class="text-left mb-8"><h4 class="font-black text-3xl uppercase tracking-tight text-white force-white-text leading-none print:text-black">${p.cliente || 'Sem Nome'}</h4></div>
+
+                <div class="grid grid-cols-2 gap-y-6 gap-x-4 p-6 bg-black/20 rounded-[24px] border border-white/5 mb-10 text-left shadow-inner print:bg-transparent print:border-slate-200">
+                    <div><p class="text-xs font-black text-slate-500 uppercase tracking-widest mb-1.5">Vendedor</p><p class="text-sm font-bold text-slate-200 truncate print:text-black" title="${p.vendedor}">${p.vendedor?.split('@')[0] || '--'}</p></div>
+                    <div><p class="text-xs font-black text-slate-500 uppercase tracking-widest mb-1.5">Status da Obra</p><p class="text-sm font-black text-gold uppercase print:text-amber-700">${p.status || '✅ Aprovado'}</p></div>
+                    <div><p class="text-xs font-black text-slate-500 uppercase tracking-widest mb-1.5">Proposta / Invoice</p><p class="text-sm font-bold text-slate-200 print:text-black">${p.numeroProposta || '---'} <span class="text-slate-600 font-normal mx-1">|</span> ${p.numeroInvoice || '---'}</p></div>
+                    <div><p class="text-xs font-black text-slate-500 uppercase tracking-widest mb-1.5">Pagamento • % Comissão</p><p class="text-sm font-bold text-slate-200 print:text-black">${p.metodo || '--'} <span class="text-slate-600 font-normal mx-1">•</span> ${p.percComissao || 0}%</p></div>
+                </div>
+
+                <div class="mt-auto"></div>
+
+                <div class="space-y-4 mb-10 text-left">
+                    <div class="flex justify-between text-xs font-black uppercase text-slate-400 print:text-slate-800"><span>Timeline</span><span style="color: ${colorHex}">${prog}%</span></div>
+                    <div class="progress-track print:bg-slate-200"><div class="progress-bar-fill print:!bg-black" style="width: ${prog}%; background-color: ${colorHex};"></div></div>
+                    <div class="flex justify-between text-xs font-extrabold uppercase mt-2">
+                        <span class="print:text-black">${p.dataInicio ? new Date(p.dataInicio + 'T12:00:00').toLocaleDateString() : '-'}</span>
+                        <span class="${n > e && p.status !== 'Finalizado' ? 'text-red-500' : 'text-gold'} print:!text-black">${n > e && p.status !== 'Finalizado' ? 'ATRASADA' : (prog === 100 ? 'CONCLUÍDA' : (Number.isFinite(e) ? Math.ceil((e - n) / (1000 * 3600 * 24)) : 0) + ' DIAS RESTANTES')}</span>
+                    </div>
+                </div>
+
+                <div class="bg-gradient-to-br from-black/50 to-transparent p-6 rounded-[24px] border border-white/5 shadow-inner print:bg-transparent print:border-slate-300">
+                    <p class="text-xs font-black text-slate-500 uppercase mb-2 text-center tracking-widest">Valor Contrato Bruto</p>
+                    <p class="text-4xl font-black text-white force-white-text text-center tracking-tight print:text-black">${formatCurr(p.valorTotal)}</p>
+                </div>
+
+                <div class="flex justify-between gap-4 mt-6 no-print">
+                    <div class="flex-1 rounded-2xl p-4 text-center border ${clientBorderColor} shadow-inner transition-colors">
+                        <p class="text-[10px] font-black uppercase text-slate-400 mb-1.5 tracking-widest">Cliente</p>
+                        <p class="text-sm font-black ${clientPaidColor}">${clientPaidText}</p>
+                    </div>
+                    <div class="flex-1 rounded-2xl p-4 text-center border ${sellerBorderColor} shadow-inner transition-colors">
+                        <p class="text-[10px] font-black uppercase text-slate-400 mb-1.5 tracking-widest">Comissão</p>
+                        <p class="text-sm font-black ${sellerPaidColor}">${sellerPaidText}</p>
+                    </div>
+                </div>
+            `;
+
+            if (!isFocused) {
+                cardHTML += `
+                    <div class="mt-8 text-center text-xs text-slate-500 font-bold uppercase tracking-widest no-print opacity-60 group-hover:opacity-100 flex items-center justify-center gap-2 transition-opacity">
+                        CLIQUE NO CARD PARA ABRIR <i data-lucide="chevron-right" class="w-4 h-4"></i>
+                    </div>
+                </div>`; 
+            } else {
+                if (!state.activeModule) {
+                    const gridCols = canViewCosts ? 'sm:grid-cols-2' : 'grid-cols-1';
+                    cardHTML += `
+                        <div class="grid grid-cols-1 ${gridCols} gap-6 mt-10 pt-8 border-t border-white/10 no-print animate-fade-in">
+                            <button onclick="event.stopPropagation(); window.openProjectModule('commissions')" class="py-10 px-4 bg-slate-900 rounded-[32px] border border-gold/20 hover:border-gold/60 hover:shadow-[0_0_40px_-5px_rgba(251,191,36,0.3)] transition-all flex flex-col items-center justify-center gap-4 group relative overflow-hidden force-dark-bg">
+                                <div class="absolute inset-0 bg-gold/5 transform scale-0 group-hover:scale-100 transition-transform rounded-[32px] duration-500 origin-center"></div>
+                                <i data-lucide="wallet" class="w-12 h-12 text-gold group-hover:scale-110 group-hover:-translate-y-2 transition-all relative z-10"></i>
+                                <span class="text-sm sm:text-base font-black uppercase text-gold tracking-[0.15em] relative z-10 text-center">Comissões e Finanças</span>
+                            </button>
+                            ${canViewCosts ? `
+                            <button onclick="event.stopPropagation(); window.openProjectModule('costs')" class="py-10 px-4 bg-slate-900 rounded-[32px] border border-cyan-500/20 hover:border-cyan-500/60 hover:shadow-[0_0_40px_-5px_rgba(34,211,238,0.3)] transition-all flex flex-col items-center justify-center gap-4 group relative overflow-hidden force-dark-bg">
+                                <div class="absolute inset-0 bg-cyan-500/5 transform scale-0 group-hover:scale-100 transition-transform rounded-[32px] duration-500 origin-center"></div>
+                                <i data-lucide="calculator" class="w-12 h-12 text-cyan-400 group-hover:scale-110 group-hover:-translate-y-2 transition-all relative z-10"></i>
+                                <span class="text-sm sm:text-base font-black uppercase text-cyan-400 tracking-[0.15em] relative z-10 text-center">Gestão de Custos</span>
+                            </button>
+                            ` : ''}
+                        </div>
+                    </div>`; 
+                } else {
+                    cardHTML += `</div>`; 
+                }
+            }
+            
+            grid.innerHTML += cardHTML;
+
+            // ==========================================
+            // NÍVEL 3: TELA DE MÓDULO ABERTA
+            // ==========================================
             if (isFocused && state.activeModule) {
                 let moduleContent = '';
                 let moduleTitle = '';
@@ -1009,7 +1101,7 @@
                                     <p class="text-xs sm:text-sm font-black text-emerald-400 uppercase tracking-widest print:text-emerald-800">Recebimentos do Cliente</p>
                                     <div class="flex items-center gap-4">
                                         <span class="text-xs sm:text-sm font-bold text-emerald-500 print:text-emerald-800">${formatCurr(f.totalRecebido)} / ${formatCurr(p.valorTotal)}</span>
-                                        ${isAdmin ? `<button onclick="openEditRecModal('${p.id}')" class="text-sm font-bold text-white hover:text-emerald-200 transition-colors no-print p-2 bg-emerald-600 rounded-lg shadow-md"><i data-lucide="edit-3" class="w-5 h-5"></i></button>` : ''}
+                                        ${isAdmin ? `<button onclick="openEditRecModal('${p.id}')" class="text-sm font-bold text-white force-white-text hover:text-emerald-200 transition-colors no-print p-2 bg-emerald-600 rounded-lg shadow-md"><i data-lucide="edit-3" class="w-5 h-5"></i></button>` : ''}
                                     </div>
                                 </div>
                                 <div class="max-h-60 overflow-y-auto scrollbar-hide px-2 print:max-h-none">
@@ -1020,14 +1112,14 @@
                                     <input type="date" id="rec-date-${p.id}" class="modern-input relative !text-sm sm:col-span-4" onclick="event.stopPropagation();">
                                     <input type="number" id="rec-val-${p.id}" placeholder="$ Valor do Recebimento" class="modern-input !text-sm sm:col-span-4" onclick="event.stopPropagation();">
                                     <select id="rec-met-${p.id}" class="modern-input !text-sm sm:col-span-4 !pr-8" onclick="event.stopPropagation();"><option value="Zelle">Zelle</option><option value="Wire Transfer">Wire Transfer</option><option value="Dinheiro">Dinheiro (Cash)</option><option value="CC">Cartão de Crédito (CC)</option></select>
-                                    <button onclick="window.addRecebimento('${p.id}')" class="sm:col-span-12 w-full bg-emerald-600 hover:bg-emerald-500 text-white py-4 rounded-xl font-black text-xs uppercase tracking-widest transition-colors shadow-lg flex items-center justify-center gap-2"><i data-lucide="arrow-down-to-line" class="w-5 h-5"></i> Guardar Pagamento do Cliente</button>
+                                    <button onclick="window.addRecebimento('${p.id}')" class="sm:col-span-12 w-full bg-emerald-600 hover:bg-emerald-500 text-white force-white-text py-4 rounded-xl font-black text-xs uppercase tracking-widest transition-colors shadow-lg flex items-center justify-center gap-2"><i data-lucide="arrow-down-to-line" class="w-5 h-5"></i> Guardar Pagamento do Cliente</button>
                                 </div>` : ''}
                             </div>
 
                             <div class="space-y-4 pt-8 border-t border-white/10 print:border-slate-200">
                                 <div class="flex justify-between items-center bg-gold/10 p-4 px-5 rounded-2xl border border-gold/20 print:bg-amber-50 print:border-amber-200">
                                     <p class="text-xs sm:text-sm font-black text-gold uppercase tracking-widest print:text-amber-800">Pagamentos ao Vendedor</p>
-                                    ${isAdmin ? `<button onclick="openEditPaymentModal('${p.id}')" class="text-sm font-bold text-white hover:text-gold transition-colors no-print p-2 bg-slate-800 rounded-lg shadow-md border border-gold/30"><i data-lucide="edit-3" class="w-5 h-5"></i></button>` : ''}
+                                    ${isAdmin ? `<button onclick="openEditPaymentModal('${p.id}')" class="text-sm font-bold text-white force-white-text hover:text-gold transition-colors no-print p-2 bg-slate-800 rounded-lg shadow-md border border-gold/30"><i data-lucide="edit-3" class="w-5 h-5"></i></button>` : ''}
                                 </div>
                                 <div class="max-h-60 overflow-y-auto scrollbar-hide px-2 print:max-h-none">
                                     ${(p.pagamentosEfetuados || []).map(pay => `<div class="flex justify-between items-center text-sm sm:text-base py-4 border-b border-white/5 last:border-0 print:border-slate-200 hover:bg-white/5 rounded px-2"><span class="text-slate-300 print:text-black">${pay.data ? new Date(pay.data + 'T12:00:00').toLocaleDateString() : '-'}</span><span class="font-black text-gold print:text-amber-700">- ${formatCurr(pay.valor)}</span></div>`).join('') || '<p class="text-sm italic text-slate-600 text-center py-6">Nenhum pagamento efetuado.</p>'}
@@ -1036,7 +1128,7 @@
                                 <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 mt-6 no-print bg-black/20 p-5 rounded-2xl border border-white/5">
                                     <input type="date" id="pay-date-${p.id}" class="modern-input relative !text-sm" onclick="event.stopPropagation();">
                                     <input type="number" id="pay-val-${p.id}" placeholder="$ Valor a Pagar" class="modern-input !text-sm" onclick="event.stopPropagation();">
-                                    <button onclick="window.addPayment('${p.id}')" class="sm:col-span-2 w-full bg-slate-800 hover:bg-slate-700 border border-gold/30 text-white py-4 rounded-xl font-black text-xs uppercase tracking-widest transition-colors shadow-lg flex items-center justify-center gap-2"><i data-lucide="arrow-up-from-line" class="w-5 h-5"></i> Efetuar Pagamento ao Vendedor</button>
+                                    <button onclick="window.addPayment('${p.id}')" class="sm:col-span-2 w-full bg-slate-800 hover:bg-slate-700 border border-gold/30 text-white force-white-text py-4 rounded-xl font-black text-xs uppercase tracking-widest transition-colors shadow-lg flex items-center justify-center gap-2"><i data-lucide="arrow-up-from-line" class="w-5 h-5"></i> Efetuar Pagamento ao Vendedor</button>
                                 </div>` : ''}
                             </div>
                         </div>
@@ -1066,7 +1158,7 @@
                         <div class="grid grid-cols-2 print:grid-cols-4 sm:grid-cols-4 gap-4 sm:gap-6 mb-10 print:mb-6">
                             <div class="bg-black/40 p-5 rounded-[24px] border border-white/5 shadow-inner print:bg-transparent print:border-slate-300 print:p-3 print:rounded-xl">
                                 <p class="text-[10px] font-black uppercase text-slate-500 mb-2 tracking-widest print:text-slate-600 print:text-[8px]">Orçamento (Budget)</p>
-                                <p class="text-xl sm:text-2xl font-black text-white print:text-black print:text-base truncate">${formatCurr(f.orcamento)}</p>
+                                <p class="text-xl sm:text-2xl font-black text-white force-white-text print:text-black print:text-base truncate">${formatCurr(f.orcamento)}</p>
                             </div>
                             <div class="bg-black/40 p-5 rounded-[24px] border border-white/5 shadow-inner print:bg-transparent print:border-slate-300 print:p-3 print:rounded-xl">
                                 <p class="text-[10px] font-black uppercase text-slate-500 mb-2 tracking-widest print:text-slate-600 print:text-[8px]">Despesas Totais</p>
@@ -1106,7 +1198,7 @@
                                         <option value="Licenças">Licenças (Permits)</option><option value="Outros">Outros</option>
                                     </select>
                                     <input type="number" id="exp-val-${p.id}" placeholder="$ Valor" step="0.01" class="modern-input !bg-black/40 !border-cyan-500/30 !text-sm sm:col-span-2 text-gold font-bold" onclick="event.stopPropagation();">
-                                    <button onclick="event.stopPropagation(); window.addExpense('${p.id}')" class="bg-cyan-600 hover:bg-cyan-500 text-white p-4 rounded-xl font-black text-xs uppercase tracking-widest transition-colors sm:col-span-12 mt-2 shadow-lg">Adicionar à Tabela</button>
+                                    <button onclick="event.stopPropagation(); window.addExpense('${p.id}')" class="bg-cyan-600 hover:bg-cyan-500 text-white force-white-text p-4 rounded-xl font-black text-xs uppercase tracking-widest transition-colors sm:col-span-12 mt-2 shadow-lg">Adicionar à Tabela</button>
                                 </div>
                             </div>
 
@@ -1119,18 +1211,18 @@
                 }
 
                 grid.innerHTML += `
-                <div class="glass p-6 md:p-10 rounded-[40px] border-l-[8px] relative shadow-2xl flex flex-col w-full print:border print:border-none print:shadow-none animate-fade-in" style="border-left-color: ${p.status === 'Finalizado' ? '#10b981' : '#f59e0b'}">
+                <div class="glass p-6 md:p-10 rounded-[40px] border-l-[8px] relative shadow-2xl flex flex-col w-full print:border print:border-none print:shadow-none animate-fade-in mt-6" style="border-left-color: ${p.status === 'Finalizado' ? '#10b981' : '#f59e0b'}">
                     <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-8 border-b border-white/10 pb-6 gap-6 no-print">
                         <div class="flex flex-col sm:flex-row items-start sm:items-center gap-4 w-full sm:w-auto">
-                            <button onclick="window.closeProjectModule()" class="p-4 w-full sm:w-auto bg-slate-800 hover:bg-slate-700 rounded-2xl transition-all border border-white/10 shadow-lg flex items-center justify-center gap-3 text-xs font-black uppercase text-white">
+                            <button onclick="window.closeProjectModule()" class="p-4 w-full sm:w-auto bg-slate-800 hover:bg-slate-700 rounded-2xl transition-all border border-white/10 shadow-lg flex items-center justify-center gap-3 text-xs font-black uppercase text-white force-white-text">
                                 <i data-lucide="arrow-left" class="w-5 h-5"></i> Voltar
                             </button>
                             <div class="mt-2 sm:mt-0">
-                                <h4 class="font-black text-2xl sm:text-3xl uppercase tracking-tight text-white leading-none truncate max-w-full sm:max-w-md">${p.cliente || 'Sem Nome'}</h4>
+                                <h4 class="font-black text-2xl sm:text-3xl uppercase tracking-tight text-white force-white-text leading-none truncate max-w-full sm:max-w-md">${p.cliente || 'Sem Nome'}</h4>
                                 <p class="text-xs sm:text-sm font-black text-gold uppercase tracking-widest mt-2">${moduleTitle}</p>
                             </div>
                         </div>
-                        <button onclick="window.printReport()" class="w-full sm:w-auto mt-4 sm:mt-0 flex items-center justify-center gap-2 text-white bg-slate-800 hover:bg-slate-700 transition-all font-black text-xs uppercase tracking-widest px-6 py-4 rounded-2xl border border-white/10 shadow-lg">
+                        <button onclick="window.printReport()" class="w-full sm:w-auto mt-4 sm:mt-0 flex items-center justify-center gap-2 text-white force-white-text bg-slate-800 hover:bg-slate-700 transition-all font-black text-xs uppercase tracking-widest px-6 py-4 rounded-2xl border border-white/10 shadow-lg">
                             <i data-lucide="printer" class="w-5 h-5"></i> Imprimir Ficha
                         </button>
                     </div>
@@ -1153,90 +1245,13 @@
 
                 return; 
             }
-
-            const cardClickEvent = isFocused ? '' : `onclick="window.openProjectDetails('${p.id}')"`;
-            const cardHoverClasses = isFocused ? '' : 'project-card clickable cursor-pointer';
-
-            let cardHTML = `<div class="glass p-6 md:p-8 rounded-[40px] border-l-[8px] relative shadow-2xl flex flex-col h-full print:border print:border-slate-300 print:shadow-none print:break-inside-avoid ${cardHoverClasses}" style="border-left-color: ${p.status === 'Finalizado' ? '#10b981' : '#f59e0b'}" ${cardClickEvent}>
-                
-                <div class="flex justify-between items-start mb-6">
-                    <span class="px-4 py-2 bg-white/5 border border-white/10 rounded-xl text-[10px] font-black uppercase tracking-widest text-slate-300 shadow-sm print:bg-slate-100 print:text-slate-800">${p.empresa || 'Sem Unidade'} ${p.archived ? '<span class="text-indigo-400 ml-1">(ARQUIVADA)</span>' : ''}</span>
-                    <div class="flex items-center gap-3 bg-black/20 p-2 px-4 rounded-full border border-white/5 print:hidden">
-                        <span class="status-badge ${f.statusColor}" title="Status Financeiro"></span>
-                        ${actionButtons}
-                    </div>
-                </div>
-
-                <div class="text-left mb-8"><h4 class="font-black text-3xl uppercase tracking-tight text-white leading-none print:text-black">${p.cliente || 'Sem Nome'}</h4></div>
-
-                <div class="grid grid-cols-2 gap-y-6 gap-x-4 p-6 bg-black/20 rounded-[24px] border border-white/5 mb-10 text-left shadow-inner print:bg-transparent print:border-slate-200">
-                    <div><p class="text-xs font-black text-slate-500 uppercase tracking-widest mb-1.5">Vendedor</p><p class="text-sm font-bold text-slate-200 truncate print:text-black" title="${p.vendedor}">${p.vendedor?.split('@')[0] || '--'}</p></div>
-                    <div><p class="text-xs font-black text-slate-500 uppercase tracking-widest mb-1.5">Status da Obra</p><p class="text-sm font-black text-gold uppercase print:text-amber-700">${p.status || '✅ Aprovado'}</p></div>
-                    <div><p class="text-xs font-black text-slate-500 uppercase tracking-widest mb-1.5">Proposta / Invoice</p><p class="text-sm font-bold text-slate-200 print:text-black">${p.numeroProposta || '---'} <span class="text-slate-600 font-normal mx-1">|</span> ${p.numeroInvoice || '---'}</p></div>
-                    <div><p class="text-xs font-black text-slate-500 uppercase tracking-widest mb-1.5">Pagamento • % Comissão</p><p class="text-sm font-bold text-slate-200 print:text-black">${p.metodo || '--'} <span class="text-slate-600 font-normal mx-1">•</span> ${p.percComissao || 0}%</p></div>
-                </div>
-
-                <div class="mt-auto"></div>
-
-                <div class="space-y-4 mb-10 text-left">
-                    <div class="flex justify-between text-xs font-black uppercase text-slate-400 print:text-slate-800"><span>Timeline</span><span style="color: ${colorHex}">${prog}%</span></div>
-                    <div class="progress-track print:bg-slate-200"><div class="progress-bar-fill print:!bg-black" style="width: ${prog}%; background-color: ${colorHex};"></div></div>
-                    <div class="flex justify-between text-xs font-extrabold uppercase mt-2">
-                        <span class="print:text-black">${p.dataInicio ? new Date(p.dataInicio + 'T12:00:00').toLocaleDateString() : '-'}</span>
-                        <span class="${n > e && p.status !== 'Finalizado' ? 'text-red-500' : 'text-gold'} print:!text-black">${n > e && p.status !== 'Finalizado' ? 'ATRASADA' : (prog === 100 ? 'CONCLUÍDA' : (Number.isFinite(e) ? Math.ceil((e - n) / (1000 * 3600 * 24)) : 0) + ' DIAS RESTANTES')}</span>
-                    </div>
-                </div>
-
-                <div class="bg-gradient-to-br from-black/50 to-transparent p-6 rounded-[24px] border border-white/5 shadow-inner print:bg-transparent print:border-slate-300">
-                    <p class="text-xs font-black text-slate-500 uppercase mb-2 text-center tracking-widest">Valor Contrato Bruto</p>
-                    <p class="text-4xl font-black text-white text-center tracking-tight print:text-black">${formatCurr(p.valorTotal)}</p>
-                </div>
-
-                <div class="flex justify-between gap-4 mt-6 no-print">
-                    <div class="flex-1 rounded-2xl p-4 text-center border ${clientBorderColor} shadow-inner transition-colors">
-                        <p class="text-[10px] font-black uppercase text-slate-400 mb-1.5 tracking-widest">Cliente</p>
-                        <p class="text-sm font-black ${clientPaidColor}">${clientPaidText}</p>
-                    </div>
-                    <div class="flex-1 rounded-2xl p-4 text-center border ${sellerBorderColor} shadow-inner transition-colors">
-                        <p class="text-[10px] font-black uppercase text-slate-400 mb-1.5 tracking-widest">Comissão</p>
-                        <p class="text-sm font-black ${sellerPaidColor}">${sellerPaidText}</p>
-                    </div>
-                </div>
-            `;
-
-            if (!isFocused) {
-                cardHTML += `
-                    <div class="mt-8 text-center text-xs text-slate-500 font-bold uppercase tracking-widest no-print opacity-60 group-hover:opacity-100 flex items-center justify-center gap-2 transition-opacity">
-                        CLIQUE NO CARD PARA ABRIR <i data-lucide="chevron-right" class="w-4 h-4"></i>
-                    </div>
-                </div>`; 
-            } else {
-                const gridCols = canViewCosts ? 'sm:grid-cols-2' : 'grid-cols-1';
-                cardHTML += `
-                    <div class="grid grid-cols-1 ${gridCols} gap-6 mt-10 pt-8 border-t border-white/10 no-print animate-fade-in">
-                        <button onclick="event.stopPropagation(); window.openProjectModule('commissions')" class="py-10 px-4 bg-gradient-to-br from-slate-900 to-black rounded-[32px] border border-gold/20 hover:border-gold/60 hover:shadow-[0_0_40px_-5px_rgba(251,191,36,0.3)] transition-all flex flex-col items-center justify-center gap-4 group relative overflow-hidden">
-                            <div class="absolute inset-0 bg-gold/5 transform scale-0 group-hover:scale-100 transition-transform rounded-[32px] duration-500 origin-center"></div>
-                            <i data-lucide="wallet" class="w-12 h-12 text-gold group-hover:scale-110 group-hover:-translate-y-2 transition-all relative z-10"></i>
-                            <span class="text-sm sm:text-base font-black uppercase text-gold tracking-[0.15em] relative z-10 text-center">Comissões e Finanças</span>
-                        </button>
-                        ${canViewCosts ? `
-                        <button onclick="event.stopPropagation(); window.openProjectModule('costs')" class="py-10 px-4 bg-gradient-to-br from-slate-900 to-black rounded-[32px] border border-cyan-500/20 hover:border-cyan-500/60 hover:shadow-[0_0_40px_-5px_rgba(34,211,238,0.3)] transition-all flex flex-col items-center justify-center gap-4 group relative overflow-hidden">
-                            <div class="absolute inset-0 bg-cyan-500/5 transform scale-0 group-hover:scale-100 transition-transform rounded-[32px] duration-500 origin-center"></div>
-                            <i data-lucide="calculator" class="w-12 h-12 text-cyan-400 group-hover:scale-110 group-hover:-translate-y-2 transition-all relative z-10"></i>
-                            <span class="text-sm sm:text-base font-black uppercase text-cyan-400 tracking-[0.15em] relative z-10 text-center">Gestão de Custos</span>
-                        </button>
-                        ` : ''}
-                    </div>
-                </div>`; 
-            }
-            
-            grid.innerHTML += cardHTML;
         });
 
         try { lucide.createIcons(); } catch {}
     }
 
-    function renderReport() {
+    // --- RENDERIZAÇÃO DO RELATÓRIO EXECUTIVO (CEO DASHBOARD & DRILL-DOWN) ---
+    window.renderReport = () => {
         const out = document.getElementById('report-output');
         if (!out || !state.user) return;
 
@@ -1251,14 +1266,14 @@
 
         let tv = 0, tc = 0, tProfit = 0, totalCollected = 0; 
         let statusFunnel = {
-            '✅ Aprovado': { count: 0, val: 0, label: 'Aprovados', color: 'text-emerald-500', border: 'border-emerald-500/20', bg: 'bg-emerald-500/10' },
-            'Aguardando Início': { count: 0, val: 0, label: 'Aguardando Início', color: 'text-amber-500', border: 'border-amber-500/20', bg: 'bg-amber-500/10' },
-            'Em Execução': { count: 0, val: 0, label: 'Em Execução', color: 'text-blue-500', border: 'border-blue-500/20', bg: 'bg-blue-500/10' },
-            'Finalizado': { count: 0, val: 0, label: 'Concluídas', color: 'text-gold', border: 'border-gold/20', bg: 'bg-gold/10' }
+            '✅ Aprovado': { id: 'status_aprovado', count: 0, val: 0, label: 'Aprovados', color: 'text-emerald-500', border: 'border-emerald-500/20', bg: 'bg-emerald-500/10', hoverRing: 'hover:ring-emerald-400' },
+            'Aguardando Início': { id: 'status_aguardando', count: 0, val: 0, label: 'Aguardando Início', color: 'text-amber-500', border: 'border-amber-500/20', bg: 'bg-amber-500/10', hoverRing: 'hover:ring-amber-400' },
+            'Em Execução': { id: 'status_execucao', count: 0, val: 0, label: 'Em Execução', color: 'text-blue-500', border: 'border-blue-500/20', bg: 'bg-blue-500/10', hoverRing: 'hover:ring-blue-400' },
+            'Finalizado': { id: 'status_finalizado', count: 0, val: 0, label: 'Concluídas', color: 'text-gold', border: 'border-gold/20', bg: 'bg-gold/10', hoverRing: 'hover:ring-gold' }
         };
 
         const currentYear = new Date().getFullYear();
-        const monthNames = state.lang === 'en' ? ['Jan','Fev','Mar','Abr','Mai','Jun','Jul','Ago','Sep','Out','Nov','Dez'] : ['Jan','Fev','Mar','Abr','Mai','Jun','Jul','Ago','Set','Out','Nov','Dez'];
+        const monthNames = state.lang === 'en' ? ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'] : ['Jan','Fev','Mar','Abr','Mai','Jun','Jul','Ago','Sep','Out','Nov','Dez'];
         const sellerStats = {};
 
         const enrichedProjects = baseFiltered.map(p => {
@@ -1299,13 +1314,14 @@
 
             let funnelHTML = Object.keys(statusFunnel).map(k => {
                 const s = statusFunnel[k];
+                const isActive = state.reportActiveKpi === s.id;
                 return `
-                <div class="p-4 sm:p-5 rounded-2xl border ${s.border} ${s.bg} flex flex-col justify-between print:bg-transparent print:border-slate-300 shadow-sm">
+                <div onclick="window.setReportKpi('${s.id}')" class="cursor-pointer hover:-translate-y-1 hover:shadow-md transition-all p-4 sm:p-5 rounded-2xl border ${s.border} ${s.bg} flex flex-col justify-between print:bg-transparent print:border-slate-300 shadow-sm force-dark-bg group ${isActive ? `ring-2 ring-offset-2 ring-offset-slate-900 ${s.hoverRing.replace('hover:', '')}` : ''}">
                     <div class="flex justify-between items-start mb-3">
                         <p class="text-[9px] sm:text-[10px] font-black uppercase ${s.color} tracking-widest print:text-slate-600 pr-2 leading-tight">${s.label}</p>
-                        <span class="text-[10px] sm:text-xs font-black text-white bg-black/40 px-2 py-0.5 rounded-lg print:text-white print:bg-slate-800">${s.count}</span>
+                        <span class="text-[10px] sm:text-xs font-black text-white force-white-text bg-black/40 px-2 py-0.5 rounded-lg print:text-white print:bg-slate-800">${s.count}</span>
                     </div>
-                    <p class="text-sm sm:text-base lg:text-lg font-black text-slate-800 tracking-tight print:text-black truncate" title="${formatCurr(s.val)}">${formatCurr(s.val)}</p>
+                    <p class="text-base sm:text-lg font-black text-slate-200 tracking-tight print:text-black break-words">${formatCurr(s.val)}</p>
                 </div>
                 `;
             }).join('');
@@ -1315,29 +1331,29 @@
                     <h3 class="text-lg sm:text-xl font-black uppercase tracking-tighter mb-5 text-slate-800 border-b-2 border-slate-100 pb-3 flex items-center gap-2"><i data-lucide="bar-chart-2" class="w-5 h-5 text-indigo-500"></i> Visão Executiva Institucional</h3>
                     
                     <div class="grid grid-cols-2 md:grid-cols-5 gap-3 sm:gap-4 mb-8">
-                        <div onclick="window.setReportKpi('receita')" class="cursor-pointer hover:-translate-y-1 hover:shadow-xl transition-all ${state.reportActiveKpi === 'receita' ? 'bg-slate-800 ring-2 ring-slate-400' : 'bg-slate-900'} p-3 sm:p-4 rounded-2xl border border-slate-700 border-l-4 border-l-slate-400 shadow-lg print:bg-transparent print:border-slate-300 print:shadow-none print:ring-0 relative group flex flex-col justify-between h-full min-h-[110px]">
+                        <div onclick="window.setReportKpi('receita')" class="cursor-pointer hover:-translate-y-1 hover:shadow-xl transition-all ${state.reportActiveKpi === 'receita' ? 'bg-slate-800 ring-2 ring-slate-400' : 'bg-slate-900'} p-3 sm:p-4 rounded-2xl border border-slate-700 border-l-4 border-l-slate-400 shadow-lg print:bg-transparent print:border-slate-300 print:shadow-none print:ring-0 relative group flex flex-col justify-between h-full min-h-[110px] force-dark-bg">
                             <p class="text-[9px] sm:text-[10px] font-black uppercase text-slate-400 mb-1 tracking-widest">Receita Bruta</p>
-                            <p class="text-sm sm:text-base xl:text-lg font-black text-white print:text-black tracking-tighter break-words my-2">${formatCurr(tv)}</p>
+                            <p class="text-sm sm:text-base xl:text-lg font-black text-white force-white-text print:text-black tracking-tighter break-words my-2">${formatCurr(tv)}</p>
                             <p class="text-[8px] text-slate-500 uppercase font-bold tracking-widest mt-auto opacity-50 group-hover:opacity-100 no-print">Ver Obras ➔</p>
                         </div>
-                        <div onclick="window.setReportKpi('entradas')" class="cursor-pointer hover:-translate-y-1 hover:shadow-xl transition-all ${state.reportActiveKpi === 'entradas' ? 'bg-slate-800 ring-2 ring-emerald-500' : 'bg-slate-900'} p-3 sm:p-4 rounded-2xl border border-slate-700 border-l-4 border-l-emerald-500 shadow-lg print:bg-transparent print:border-slate-300 print:shadow-none print:ring-0 relative group flex flex-col justify-between h-full min-h-[110px]">
+                        <div onclick="window.setReportKpi('entradas')" class="cursor-pointer hover:-translate-y-1 hover:shadow-xl transition-all ${state.reportActiveKpi === 'entradas' ? 'bg-slate-800 ring-2 ring-emerald-500' : 'bg-slate-900'} p-3 sm:p-4 rounded-2xl border border-slate-700 border-l-4 border-l-emerald-500 shadow-lg print:bg-transparent print:border-slate-300 print:shadow-none print:ring-0 relative group flex flex-col justify-between h-full min-h-[110px] force-dark-bg">
                             <p class="text-[9px] sm:text-[10px] font-black uppercase text-emerald-500 mb-1 tracking-widest">Entradas</p>
-                            <p class="text-sm sm:text-base xl:text-lg font-black text-white print:text-emerald-700 tracking-tighter break-words my-2">${formatCurr(totalCollected)}</p>
-                            <p class="text-[8px] text-emerald-500/50 uppercase font-bold tracking-widest mt-auto group-hover:text-emerald-400 no-print">Ver Recebidos ➔</p>
+                            <p class="text-sm sm:text-base xl:text-lg font-black text-white force-white-text print:text-emerald-700 tracking-tighter break-words my-2">${formatCurr(totalCollected)}</p>
+                            <p class="text-[8px] text-emerald-600/50 uppercase font-bold tracking-widest mt-auto group-hover:text-emerald-400 no-print">Ver Recebidos ➔</p>
                         </div>
-                        <div onclick="window.setReportKpi('fluxo')" class="cursor-pointer hover:-translate-y-1 hover:shadow-xl transition-all ${state.reportActiveKpi === 'fluxo' ? 'bg-slate-800 ring-2 ring-amber-500' : 'bg-slate-900'} p-3 sm:p-4 rounded-2xl border border-slate-700 border-l-4 border-l-amber-500 shadow-lg print:bg-transparent print:border-slate-300 print:shadow-none print:ring-0 relative group flex flex-col justify-between h-full min-h-[110px]">
+                        <div onclick="window.setReportKpi('fluxo')" class="cursor-pointer hover:-translate-y-1 hover:shadow-xl transition-all ${state.reportActiveKpi === 'fluxo' ? 'bg-slate-800 ring-2 ring-amber-500' : 'bg-slate-900'} p-3 sm:p-4 rounded-2xl border border-slate-700 border-l-4 border-l-amber-500 shadow-lg print:bg-transparent print:border-slate-300 print:shadow-none print:ring-0 relative group flex flex-col justify-between h-full min-h-[110px] force-dark-bg">
                             <p class="text-[9px] sm:text-[10px] font-black uppercase text-amber-500 mb-1 tracking-widest">A Receber</p>
-                            <p class="text-sm sm:text-base xl:text-lg font-black text-white print:text-amber-700 tracking-tighter break-words my-2">${formatCurr(totalOutstanding)}</p>
-                            <p class="text-[8px] text-amber-500/50 uppercase font-bold tracking-widest mt-auto group-hover:text-amber-400 no-print">Ver Pendentes ➔</p>
+                            <p class="text-sm sm:text-base xl:text-lg font-black text-white force-white-text print:text-amber-700 tracking-tighter break-words my-2">${formatCurr(totalOutstanding)}</p>
+                            <p class="text-[8px] text-amber-600/50 uppercase font-bold tracking-widest mt-auto group-hover:text-amber-400 no-print">Ver Pendentes ➔</p>
                         </div>
-                        <div onclick="window.setReportKpi('lucro')" class="cursor-pointer hover:-translate-y-1 hover:shadow-xl transition-all ${state.reportActiveKpi === 'lucro' ? 'bg-slate-800 ring-2 ring-cyan-500' : 'bg-slate-900'} p-3 sm:p-4 rounded-2xl border border-slate-700 border-l-4 border-l-cyan-500 shadow-lg print:bg-transparent print:border-slate-300 print:shadow-none print:ring-0 relative group flex flex-col justify-between h-full min-h-[110px]">
+                        <div onclick="window.setReportKpi('lucro')" class="cursor-pointer hover:-translate-y-1 hover:shadow-xl transition-all ${state.reportActiveKpi === 'lucro' ? 'bg-slate-800 ring-2 ring-cyan-500' : 'bg-slate-900'} p-3 sm:p-4 rounded-2xl border border-slate-700 border-l-4 border-l-cyan-500 shadow-lg print:bg-transparent print:border-slate-300 print:shadow-none print:ring-0 relative group flex flex-col justify-between h-full min-h-[110px] force-dark-bg">
                             <p class="text-[9px] sm:text-[10px] font-black uppercase text-cyan-500 mb-1 tracking-widest">Lucro Estimado</p>
-                            <p class="text-sm sm:text-base xl:text-lg font-black text-white print:text-cyan-700 tracking-tighter break-words my-2">${formatCurr(tProfit)}</p>
-                            <p class="text-[8px] text-cyan-500/50 uppercase font-bold tracking-widest mt-auto group-hover:text-cyan-400 no-print">Ver Detalhes ➔</p>
+                            <p class="text-sm sm:text-base xl:text-lg font-black text-white force-white-text print:text-cyan-700 tracking-tighter break-words my-2">${formatCurr(tProfit)}</p>
+                            <p class="text-[8px] text-cyan-600/50 uppercase font-bold tracking-widest mt-auto group-hover:text-cyan-500 no-print">Ver Detalhes ➔</p>
                         </div>
-                        <div onclick="window.setReportKpi('overview')" class="cursor-pointer hover:-translate-y-1 hover:shadow-xl transition-all ${state.reportActiveKpi === 'overview' ? 'bg-slate-800 ring-2 ring-indigo-500' : 'bg-slate-900'} p-3 sm:p-4 rounded-2xl border border-slate-700 border-l-4 border-l-indigo-500 shadow-lg print:bg-transparent print:border-slate-300 print:shadow-none flex flex-col justify-between h-full min-h-[110px] group">
+                        <div onclick="window.setReportKpi('overview')" class="cursor-pointer hover:-translate-y-1 hover:shadow-xl transition-all ${state.reportActiveKpi === 'overview' ? 'bg-slate-800 ring-2 ring-indigo-500' : 'bg-slate-900'} p-3 sm:p-4 rounded-2xl border border-slate-700 border-l-4 border-l-indigo-500 shadow-lg print:bg-transparent print:border-slate-300 print:shadow-none flex flex-col justify-between h-full min-h-[110px] group force-dark-bg">
                             <p class="text-[9px] sm:text-[10px] font-black uppercase text-indigo-400 mb-1 tracking-widest">Margem Global</p>
-                            <p class="text-sm sm:text-base xl:text-lg font-black ${avgMargin >= 0 ? 'text-white' : 'text-red-400'} print:text-indigo-700 tracking-tighter break-words my-2">${avgMargin.toFixed(1)}%</p>
+                            <p class="text-sm sm:text-base xl:text-lg font-black ${avgMargin >= 0 ? 'text-white force-white-text' : 'text-red-400'} print:text-indigo-700 tracking-tighter break-words my-2">${avgMargin.toFixed(1)}%</p>
                             <p class="text-[8px] text-indigo-400/50 uppercase font-bold tracking-widest mt-auto group-hover:text-indigo-400 no-print">Ver Resumo ➔</p>
                         </div>
                     </div>
@@ -1381,11 +1397,11 @@
             if(!detailedTablesHTML) detailedTablesHTML = `<p class="p-6 text-center text-slate-400 text-xs italic">Nenhuma obra ativa encontrada.</p>`;
 
             bottomHTML = `
-                <div class="full-report-only animate-fade-in mt-14">
+                <div class="full-report-only animate-fade-in">
                     <div class="mb-14 print:mb-8">
                         <div class="flex justify-between items-center mb-5 border-b-2 border-slate-100 pb-3">
                             <h3 class="text-base sm:text-lg font-black uppercase tracking-tighter text-slate-800 flex items-center gap-2"><i data-lucide="users" class="w-5 h-5 text-amber-500"></i> Comissões Pagas por Mês (${currentYear})</h3>
-                            <button onclick="window.printKpiReport()" class="hidden sm:inline-flex items-center gap-2 text-white bg-slate-800 hover:bg-slate-700 transition-all font-black text-[10px] uppercase tracking-widest px-4 py-2 rounded-xl shadow-md no-print"><i data-lucide="printer" class="w-3.5 h-3.5"></i> Imprimir Visão</button>
+                            <button onclick="window.printKpiReport()" class="hidden sm:inline-flex items-center gap-2 text-white force-white-text bg-slate-800 hover:bg-slate-700 transition-all font-black text-[10px] uppercase tracking-widest px-4 py-2 rounded-xl shadow-md no-print"><i data-lucide="printer" class="w-3.5 h-3.5"></i> Imprimir Visão</button>
                         </div>
                         <div class="overflow-x-auto print:overflow-visible border border-slate-200 rounded-2xl print:border-none shadow-sm">
                             <table class="w-full">
@@ -1402,32 +1418,44 @@
             `;
         } else {
             let specificTableHTML = '';
+            let sRows = '';
             
             if (state.reportActiveKpi === 'receita') {
                 kpiTitle = 'Detalhamento: Receita Bruta (Pipeline)';
-                const sRows = enrichedProjects.map(({p}) => `<tr class="border-b border-slate-100 text-[10px] sm:text-xs text-left text-slate-800 hover:bg-slate-50 transition-colors"><td class="p-3 sm:p-4 font-bold text-slate-500">${p.numeroProposta || '-'} / ${p.numeroInvoice || '-'}</td><td class="p-3 sm:p-4 font-black uppercase"><div class="flex flex-col"><span>${p.cliente || ''}</span><span class="text-[8px] sm:text-[9px] font-bold text-slate-400 mt-0.5">${p.status}</span></div></td><td class="p-3 sm:p-4 font-bold text-slate-600">${p.vendedor?.split('@')[0] || ''}</td><td class="p-3 sm:p-4 text-right font-black text-slate-800 text-sm">${formatCurr(p.valorTotal)}</td></tr>`).join('') || `<tr><td colspan="4" class="p-6 text-center text-slate-400 text-xs italic">Nenhuma obra encontrada.</td></tr>`;
-                specificTableHTML = `<table class="w-full"><thead class="bg-slate-100 border-b border-slate-200 print:bg-transparent"><tr class="font-black uppercase text-[8px] sm:text-[9px] text-slate-500 text-left tracking-widest"><th class="p-3 sm:p-4">Prop / Invoice</th><th class="p-3 sm:p-4">Obra</th><th class="p-3 sm:p-4">Vendedor</th><th class="p-3 sm:p-4 text-right">Contrato Bruto</th></tr></thead><tbody>${sRows}</tbody></table>`;
+                sRows = enrichedProjects.map(({p}) => `<tr class="border-b border-slate-100 text-[10px] sm:text-xs text-left text-slate-800 hover:bg-slate-50 transition-colors"><td class="p-3 sm:p-4 font-bold text-slate-500">${p.numeroProposta || '-'} / ${p.numeroInvoice || '-'}</td><td class="p-3 sm:p-4 font-black uppercase"><div class="flex flex-col"><span>${p.cliente || ''}</span><span class="text-[8px] sm:text-[9px] font-bold text-slate-400 mt-0.5">${p.status}</span></div></td><td class="p-3 sm:p-4 font-bold text-slate-600">${p.vendedor?.split('@')[0] || ''}</td><td class="p-3 sm:p-4 text-right font-black text-slate-800 text-sm">${formatCurr(p.valorTotal)}</td></tr>`).join('');
+                specificTableHTML = `<table class="w-full"><thead class="bg-slate-100 border-b border-slate-200 print:bg-transparent"><tr class="font-black uppercase text-[8px] sm:text-[9px] text-slate-500 text-left tracking-widest"><th class="p-3 sm:p-4">Prop / Invoice</th><th class="p-3 sm:p-4">Obra</th><th class="p-3 sm:p-4">Vendedor</th><th class="p-3 sm:p-4 text-right">Contrato Bruto</th></tr></thead><tbody>${sRows || `<tr><td colspan="4" class="p-6 text-center text-slate-400 text-xs italic">Nenhuma obra encontrada.</td></tr>`}</tbody></table>`;
             } else if (state.reportActiveKpi === 'entradas') {
                 kpiTitle = 'Detalhamento: Entradas (Valores já recebidos)';
-                const sRows = enrichedProjects.filter(({f}) => f.totalRecebido > 0).map(({p, f}) => `<tr class="border-b border-slate-100 text-[10px] sm:text-xs text-left text-slate-800 hover:bg-slate-50 transition-colors"><td class="p-3 sm:p-4 font-bold text-slate-500">${p.numeroProposta || '-'} / ${p.numeroInvoice || '-'}</td><td class="p-3 sm:p-4 font-black uppercase"><div class="flex flex-col"><span>${p.cliente || ''}</span><span class="text-[8px] sm:text-[9px] font-bold text-slate-400 mt-0.5">${p.status}</span></div></td><td class="p-3 sm:p-4 font-bold text-slate-600">${p.vendedor?.split('@')[0] || ''}</td><td class="p-3 sm:p-4 text-right text-slate-500">${formatCurr(p.valorTotal)}</td><td class="p-3 sm:p-4 text-right font-black text-emerald-600 text-sm">${formatCurr(f.totalRecebido)}</td></tr>`).join('') || `<tr><td colspan="5" class="p-6 text-center text-slate-400 text-xs italic">Nenhum recebimento encontrado.</td></tr>`;
-                specificTableHTML = `<table class="w-full"><thead class="bg-slate-100 border-b border-slate-200 print:bg-transparent"><tr class="font-black uppercase text-[8px] sm:text-[9px] text-slate-500 text-left tracking-widest"><th class="p-3 sm:p-4">Prop / Invoice</th><th class="p-3 sm:p-4">Obra</th><th class="p-3 sm:p-4">Vendedor</th><th class="p-3 sm:p-4 text-right">Contrato Bruto</th><th class="p-3 sm:p-4 text-right">Total Recebido</th></tr></thead><tbody>${sRows}</tbody></table>`;
+                sRows = enrichedProjects.filter(({f}) => f.totalRecebido > 0).map(({p, f}) => `<tr class="border-b border-slate-100 text-[10px] sm:text-xs text-left text-slate-800 hover:bg-slate-50 transition-colors"><td class="p-3 sm:p-4 font-bold text-slate-500">${p.numeroProposta || '-'} / ${p.numeroInvoice || '-'}</td><td class="p-3 sm:p-4 font-black uppercase"><div class="flex flex-col"><span>${p.cliente || ''}</span><span class="text-[8px] sm:text-[9px] font-bold text-slate-400 mt-0.5">${p.status}</span></div></td><td class="p-3 sm:p-4 font-bold text-slate-600">${p.vendedor?.split('@')[0] || ''}</td><td class="p-3 sm:p-4 text-right text-slate-500">${formatCurr(p.valorTotal)}</td><td class="p-3 sm:p-4 text-right font-black text-emerald-600 text-sm">${formatCurr(f.totalRecebido)}</td></tr>`).join('');
+                specificTableHTML = `<table class="w-full"><thead class="bg-slate-100 border-b border-slate-200 print:bg-transparent"><tr class="font-black uppercase text-[8px] sm:text-[9px] text-slate-500 text-left tracking-widest"><th class="p-3 sm:p-4">Prop / Invoice</th><th class="p-3 sm:p-4">Obra</th><th class="p-3 sm:p-4">Vendedor</th><th class="p-3 sm:p-4 text-right">Contrato Bruto</th><th class="p-3 sm:p-4 text-right">Total Recebido</th></tr></thead><tbody>${sRows || `<tr><td colspan="5" class="p-6 text-center text-slate-400 text-xs italic">Nenhum recebimento encontrado.</td></tr>`}</tbody></table>`;
             } else if (state.reportActiveKpi === 'fluxo') {
                 kpiTitle = 'Detalhamento: Fluxo a Receber (Saldos Pendentes)';
-                const sRows = enrichedProjects.filter(({p, f}) => (p.valorTotal - f.totalRecebido) > 0).map(({p, f}) => `<tr class="border-b border-slate-100 text-[10px] sm:text-xs text-left text-slate-800 hover:bg-slate-50 transition-colors"><td class="p-3 sm:p-4 font-bold text-slate-500">${p.numeroProposta || '-'} / ${p.numeroInvoice || '-'}</td><td class="p-3 sm:p-4 font-black uppercase"><div class="flex flex-col"><span>${p.cliente || ''}</span><span class="text-[8px] sm:text-[9px] font-bold text-slate-400 mt-0.5">${p.status}</span></div></td><td class="p-3 sm:p-4 font-bold text-slate-600">${p.vendedor?.split('@')[0] || ''}</td><td class="p-3 sm:p-4 text-right text-slate-500">${formatCurr(p.valorTotal)}</td><td class="p-3 sm:p-4 text-right text-emerald-600">${formatCurr(f.totalRecebido)}</td><td class="p-3 sm:p-4 text-right font-black text-amber-500 text-sm">${formatCurr(p.valorTotal - f.totalRecebido)}</td></tr>`).join('') || `<tr><td colspan="6" class="p-6 text-center text-slate-400 text-xs italic">Nenhum saldo pendente.</td></tr>`;
-                specificTableHTML = `<table class="w-full"><thead class="bg-slate-100 border-b border-slate-200 print:bg-transparent"><tr class="font-black uppercase text-[8px] sm:text-[9px] text-slate-500 text-left tracking-widest"><th class="p-3 sm:p-4">Prop / Invoice</th><th class="p-3 sm:p-4">Obra</th><th class="p-3 sm:p-4">Vendedor</th><th class="p-3 sm:p-4 text-right">Contrato Bruto</th><th class="p-3 sm:p-4 text-right">Recebido</th><th class="p-3 sm:p-4 text-right">Falta Receber</th></tr></thead><tbody>${sRows}</tbody></table>`;
+                sRows = enrichedProjects.filter(({p, f}) => (p.valorTotal - f.totalRecebido) > 0).map(({p, f}) => `<tr class="border-b border-slate-100 text-[10px] sm:text-xs text-left text-slate-800 hover:bg-slate-50 transition-colors"><td class="p-3 sm:p-4 font-bold text-slate-500">${p.numeroProposta || '-'} / ${p.numeroInvoice || '-'}</td><td class="p-3 sm:p-4 font-black uppercase"><div class="flex flex-col"><span>${p.cliente || ''}</span><span class="text-[8px] sm:text-[9px] font-bold text-slate-400 mt-0.5">${p.status}</span></div></td><td class="p-3 sm:p-4 font-bold text-slate-600">${p.vendedor?.split('@')[0] || ''}</td><td class="p-3 sm:p-4 text-right text-slate-500">${formatCurr(p.valorTotal)}</td><td class="p-3 sm:p-4 text-right text-emerald-600">${formatCurr(f.totalRecebido)}</td><td class="p-3 sm:p-4 text-right font-black text-amber-500 text-sm">${formatCurr(p.valorTotal - f.totalRecebido)}</td></tr>`).join('');
+                specificTableHTML = `<table class="w-full"><thead class="bg-slate-100 border-b border-slate-200 print:bg-transparent"><tr class="font-black uppercase text-[8px] sm:text-[9px] text-slate-500 text-left tracking-widest"><th class="p-3 sm:p-4">Prop / Invoice</th><th class="p-3 sm:p-4">Obra</th><th class="p-3 sm:p-4">Vendedor</th><th class="p-3 sm:p-4 text-right">Contrato Bruto</th><th class="p-3 sm:p-4 text-right">Recebido</th><th class="p-3 sm:p-4 text-right">Falta Receber</th></tr></thead><tbody>${sRows || `<tr><td colspan="6" class="p-6 text-center text-slate-400 text-xs italic">Nenhum saldo pendente.</td></tr>`}</tbody></table>`;
             } else if (state.reportActiveKpi === 'lucro') {
                 kpiTitle = 'Detalhamento: Lucro Estimado e Margem';
-                const sRows = enrichedProjects.map(({p, f}) => `<tr class="border-b border-slate-100 text-[10px] sm:text-xs text-left text-slate-800 hover:bg-slate-50 transition-colors"><td class="p-3 sm:p-4 font-bold text-slate-500">${p.numeroProposta || '-'} / ${p.numeroInvoice || '-'}</td><td class="p-3 sm:p-4 font-black uppercase"><div class="flex flex-col"><span>${p.cliente || ''}</span><span class="text-[8px] sm:text-[9px] font-bold text-slate-400 mt-0.5">${p.status}</span></div></td><td class="p-3 sm:p-4 text-right text-slate-500">${formatCurr(p.valorTotal)}</td><td class="p-3 sm:p-4 text-right text-red-500">${formatCurr(f.totalDespesas)}</td><td class="p-3 sm:p-4 text-right font-black ${f.lucroBruto >= 0 ? 'text-cyan-600' : 'text-red-600'} text-sm">${formatCurr(f.lucroBruto)}</td><td class="p-3 sm:p-4 text-right font-black ${f.margemLucro >= 0 ? 'text-indigo-500' : 'text-red-500'} text-sm">${f.margemLucro.toFixed(1)}%</td></tr>`).join('') || `<tr><td colspan="6" class="p-6 text-center text-slate-400 text-xs italic">Nenhuma obra encontrada.</td></tr>`;
-                specificTableHTML = `<table class="w-full"><thead class="bg-slate-100 border-b border-slate-200 print:bg-transparent"><tr class="font-black uppercase text-[8px] sm:text-[9px] text-slate-500 text-left tracking-widest"><th class="p-3 sm:p-4">Prop / Invoice</th><th class="p-3 sm:p-4">Obra</th><th class="p-3 sm:p-4 text-right">Contrato Bruto</th><th class="p-3 sm:p-4 text-right">Despesas Totais</th><th class="p-3 sm:p-4 text-right">Lucro Real</th><th class="p-3 sm:p-4 text-right">Margem %</th></tr></thead><tbody>${sRows}</tbody></table>`;
+                sRows = enrichedProjects.map(({p, f}) => `<tr class="border-b border-slate-100 text-[10px] sm:text-xs text-left text-slate-800 hover:bg-slate-50 transition-colors"><td class="p-3 sm:p-4 font-bold text-slate-500">${p.numeroProposta || '-'} / ${p.numeroInvoice || '-'}</td><td class="p-3 sm:p-4 font-black uppercase"><div class="flex flex-col"><span>${p.cliente || ''}</span><span class="text-[8px] sm:text-[9px] font-bold text-slate-400 mt-0.5">${p.status}</span></div></td><td class="p-3 sm:p-4 text-right text-slate-500">${formatCurr(p.valorTotal)}</td><td class="p-3 sm:p-4 text-right text-red-500">${formatCurr(f.totalDespesas)}</td><td class="p-3 sm:p-4 text-right font-black ${f.lucroBruto >= 0 ? 'text-cyan-600' : 'text-red-600'} text-sm">${formatCurr(f.lucroBruto)}</td><td class="p-3 sm:p-4 text-right font-black ${f.margemLucro >= 0 ? 'text-indigo-500' : 'text-red-500'} text-sm">${f.margemLucro.toFixed(1)}%</td></tr>`).join('');
+                specificTableHTML = `<table class="w-full"><thead class="bg-slate-100 border-b border-slate-200 print:bg-transparent"><tr class="font-black uppercase text-[8px] sm:text-[9px] text-slate-500 text-left tracking-widest"><th class="p-3 sm:p-4">Prop / Invoice</th><th class="p-3 sm:p-4">Obra</th><th class="p-3 sm:p-4 text-right">Contrato Bruto</th><th class="p-3 sm:p-4 text-right">Despesas Totais</th><th class="p-3 sm:p-4 text-right">Lucro Real</th><th class="p-3 sm:p-4 text-right">Margem %</th></tr></thead><tbody>${sRows || `<tr><td colspan="6" class="p-6 text-center text-slate-400 text-xs italic">Nenhuma obra encontrada.</td></tr>`}</tbody></table>`;
+            } else if (state.reportActiveKpi.startsWith('status_')) {
+                const targetStatusMap = {
+                    'status_aprovado': '✅ Aprovado',
+                    'status_aguardando': 'Aguardando Início',
+                    'status_execucao': 'Em Execução',
+                    'status_finalizado': 'Finalizado'
+                };
+                const targetStatus = targetStatusMap[state.reportActiveKpi];
+                kpiTitle = `Obras no Funil: ${targetStatus.replace('✅ ', '')}`;
+                sRows = enrichedProjects.filter(({p}) => p.status === targetStatus).map(({p, f}) => `<tr class="border-b border-slate-100 text-[10px] sm:text-xs text-left text-slate-800 hover:bg-slate-50 transition-colors"><td class="p-3 sm:p-4 font-bold text-slate-500">${p.numeroProposta || '-'} / ${p.numeroInvoice || '-'}</td><td class="p-3 sm:p-4 font-black uppercase"><div class="flex flex-col"><span>${p.cliente || ''}</span><span class="text-[8px] sm:text-[9px] font-bold text-slate-400 mt-0.5">${p.status}</span></div></td><td class="p-3 sm:p-4 font-bold text-slate-600">${p.vendedor?.split('@')[0] || ''}</td><td class="p-3 sm:p-4 text-right font-black text-slate-800 text-sm">${formatCurr(p.valorTotal)}</td></tr>`).join('');
+                specificTableHTML = `<table class="w-full"><thead class="bg-slate-100 border-b border-slate-200 print:bg-transparent"><tr class="font-black uppercase text-[8px] sm:text-[9px] text-slate-500 text-left tracking-widest"><th class="p-3 sm:p-4">Prop / Invoice</th><th class="p-3 sm:p-4">Obra</th><th class="p-3 sm:p-4">Vendedor</th><th class="p-3 sm:p-4 text-right">Contrato Bruto</th></tr></thead><tbody>${sRows || `<tr><td colspan="4" class="p-6 text-center text-slate-400 text-xs italic">Nenhuma obra nesta etapa.</td></tr>`}</tbody></table>`;
             }
 
             bottomHTML = `
-                <div class="mt-14 mb-10 animate-fade-in">
+                <div class="mt-8 mb-10 animate-fade-in">
                     <div class="flex justify-between items-center mb-5 border-b-2 border-slate-100 pb-3">
                         <h3 class="text-base sm:text-lg font-black uppercase tracking-tighter text-indigo-600 flex items-center gap-2">
                             <i data-lucide="layout-list" class="w-5 h-5"></i> ${kpiTitle}
                         </h3>
-                        <button onclick="window.printKpiReport()" class="hidden sm:inline-flex items-center gap-2 text-white bg-slate-800 hover:bg-slate-700 transition-all font-black text-[10px] uppercase tracking-widest px-4 py-2 rounded-xl shadow-md no-print">
+                        <button onclick="window.printKpiReport()" class="hidden sm:inline-flex items-center gap-2 text-white force-white-text bg-slate-800 hover:bg-slate-700 transition-all font-black text-[10px] uppercase tracking-widest px-4 py-2 rounded-xl shadow-md no-print">
                             <i data-lucide="printer" class="w-3.5 h-3.5"></i> Imprimir Visão
                         </button>
                     </div>
@@ -1443,7 +1471,7 @@
                 
                 <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center border-b-[8px] border-slate-950 pb-8 mb-8 print:border-b-2 print:border-slate-300 gap-4">
                     <div class="logo-frame-sm border p-3 rounded-2xl print:border-none print:p-0 bg-slate-50"><img src="logo-D2-Group-preto.png" class="h-10 sm:h-14"></div>
-                    <div class="text-left sm:text-right">
+                    <div>
                         <h2 class="text-2xl sm:text-3xl font-black uppercase tracking-tighter text-slate-900">${reportTitle}</h2>
                         <p class="text-slate-500 font-black uppercase text-xs tracking-widest mt-1">Data: ${new Date().toLocaleDateString()}</p>
                     </div>
@@ -1455,11 +1483,12 @@
                     ${bottomHTML}
                 </div>
                 
+                ${state.reportActiveKpi === 'overview' ? `
                 <div class="mt-12 pt-8 border-t-4 border-slate-100 flex justify-center no-print">
-                     <button onclick="window.printReport()" class="flex items-center gap-3 text-white bg-slate-900 hover:bg-slate-800 transition-all font-black text-sm uppercase tracking-widest px-8 py-4 rounded-2xl shadow-xl hover:-translate-y-1">
+                     <button onclick="window.printReport()" class="flex items-center gap-3 text-white force-white-text bg-slate-900 hover:bg-slate-800 transition-all font-black text-sm uppercase tracking-widest px-8 py-4 rounded-2xl shadow-xl hover:-translate-y-1">
                          <i data-lucide="printer" class="w-5 h-5"></i> Imprimir Relatório Completo
                      </button>
-                </div>
+                </div>` : ''}
             </div>`;
         try { lucide.createIcons(); } catch {}
     }
@@ -1482,7 +1511,7 @@
         const projectsRef = collection(db, 'artifacts', appId, 'public', 'data', 'projects');
         onSnapshot(projectsRef, snap => {
             state.projects = snap.docs.map(d => ({ id: d.id, ...d.data() }));
-            renderProjects(); renderReport();
+            window.renderProjects(); window.renderReport();
         }, err => console.error(err));
 
         onSnapshot(collection(db, 'artifacts', appId, 'public', 'data', 'user_credentials'), snap => {
