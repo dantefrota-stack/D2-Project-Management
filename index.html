@@ -15,22 +15,12 @@
 
         /* Design Login - Enterprise Portal Pattern */
         .auth-body { background-color: #f1f5f9; color: #0f172a; display: flex; align-items: center; justify-content: center; min-height: 100vh; }
-        .auth-card {
-            background: white; border-radius: 40px; width: 100%; max-width: 440px;
-            padding: 48px; box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.1); text-align: center;
-        }
+        .auth-card { background: white; border-radius: 40px; width: 100%; max-width: 440px; padding: 48px; box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.1); text-align: center; }
         .logo-box { background: var(--d2-blue); border-radius: 20px; padding: 20px; display: inline-block; margin-bottom: 24px; }
         .label-auth { font-size: 12px; font-weight: 800; color: #64748b; text-transform: uppercase; letter-spacing: 0.05em; margin-bottom: 6px; display: block; text-align: left; }
-        .auth-input {
-            width: 100%; padding: 16px 20px; border-radius: 12px; background: #f8fafc;
-            border: 1px solid #e2e8f0; color: #0f172a; outline: none; transition: all 0.2s; font-size: 16px;
-        }
+        .auth-input { width: 100%; padding: 16px 20px; border-radius: 12px; background: #f8fafc; border: 1px solid #e2e8f0; color: #0f172a; outline: none; transition: all 0.2s; font-size: 16px; }
         .auth-input:focus { border-color: var(--gold); box-shadow: 0 0 0 4px rgba(251, 191, 36, 0.1); }
-        .btn-access {
-            width: 100%; background: var(--d2-blue); color: white; padding: 18px;
-            border-radius: 14px; font-weight: 800; text-transform: uppercase;
-            letter-spacing: 0.1em; transition: all 0.3s; margin-top: 10px; border: none; cursor: pointer; font-size: 14px;
-        }
+        .btn-access { width: 100%; background: var(--d2-blue); color: white; padding: 18px; border-radius: 14px; font-weight: 800; text-transform: uppercase; letter-spacing: 0.1em; transition: all 0.3s; margin-top: 10px; border: none; cursor: pointer; font-size: 14px; }
         .btn-access:hover { transform: translateY(-2px); box-shadow: 0 10px 20px rgba(15, 23, 42, 0.2); }
 
         /* Interface Interna Escura (Padrão) */
@@ -41,7 +31,7 @@
         .app-body-light .glass { background: #ffffff !important; border-color: #e2e8f0 !important; color: #0f172a; box-shadow: 0 10px 30px -10px rgba(0,0,0,0.1) !important;}
         
         /* Proteção de contraste para botões no Light Mode: Ignora a inversão se for botão ou ícone de botão */
-        .app-body-light .text-white:not(button *):not(button):not(.status-badge) { color: #0f172a !important; }
+        .app-body-light .text-white:not(button *):not(button):not(.status-badge):not(.kpi-value) { color: #0f172a !important; }
         
         /* Conversão de cores Neon para tons escuros no Light Mode para leitura perfeita */
         .app-body-light .text-slate-200, .app-body-light .text-slate-300 { color: #334155 !important; }
@@ -58,23 +48,12 @@
         .app-body-light .border-white\/5, .app-body-light .border-white\/10 { border-color: #e2e8f0 !important; }
         .app-body-light header { background-color: #ffffff !important; border-bottom-color: #e2e8f0 !important; }
         
-        .modern-input {
-            width: 100%; padding: 14px 16px; border-radius: 12px;
-            border: 1px solid rgba(148, 163, 184, 0.2); background: rgba(0,0,0,0.5);
-            color: inherit; outline: none; transition: all 0.2s; font-size: 16px; 
-        }
+        .modern-input { width: 100%; padding: 14px 16px; border-radius: 12px; border: 1px solid rgba(148, 163, 184, 0.2); background: rgba(0,0,0,0.5); color: inherit; outline: none; transition: all 0.2s; font-size: 16px; }
         .app-body-light .modern-input { background: #fff !important; border: 1px solid #cbd5e1 !important; color: #0f172a !important; }
 
-        /* FIX DO OLHO - SVG Puro embutido */
-        .password-toggle {
-            position: absolute; right: 12px; top: 50%; transform: translateY(-50%);
-            z-index: 100; color: var(--gold); cursor: pointer;
-            background: rgba(0,0,0,0.2); border-radius: 8px; padding: 6px;
-            display: flex; align-items: center; justify-content: center; border: none;
-        }
+        .password-toggle { position: absolute; right: 12px; top: 50%; transform: translateY(-50%); z-index: 100; color: var(--gold); cursor: pointer; background: rgba(0,0,0,0.2); border-radius: 8px; padding: 6px; display: flex; align-items: center; justify-content: center; border: none; }
         .password-toggle svg { width: 18px; height: 18px; stroke-width: 2.5; }
 
-        /* Unidades e Filtros Pílula */
         .unit-pill { padding: 10px 20px; border-radius: 20px; font-size: 12px; font-weight: 800; border: 1px solid rgba(255,255,255,0.1); cursor: pointer; transition: 0.2s; color: #64748b; background: transparent; }
         .unit-pill.active { background: var(--gold); color: #000; border-color: var(--gold); }
         .app-body-light .unit-pill { border-color: #cbd5e1; }
@@ -84,25 +63,14 @@
         .app-body-light .filter-pill { border-color: #cbd5e1; background: #fff; }
         .app-body-light .filter-pill.active { background: #0f172a; color: #fff; border-color: #0f172a; }
 
-        /* Botão Premium Gold */
-        .btn-premium-gold {
-            background: linear-gradient(135deg, var(--gold) 0%, var(--gold-dark) 100%);
-            color: #000; font-weight: 900; padding: 16px; border-radius: 14px;
-            text-transform: uppercase; letter-spacing: 0.1em; border: none;
-            width: 100%; cursor: pointer; transition: all 0.3s; text-align: center; font-size: 14px;
-        }
+        .btn-premium-gold { background: linear-gradient(135deg, var(--gold) 0%, var(--gold-dark) 100%); color: #000; font-weight: 900; padding: 16px; border-radius: 14px; text-transform: uppercase; letter-spacing: 0.1em; border: none; width: 100%; cursor: pointer; transition: all 0.3s; text-align: center; font-size: 14px; }
         .btn-premium-gold:hover { transform: translateY(-1px); box-shadow: 0 4px 15px rgba(251, 191, 36, 0.4); }
 
-        /* Calendário Premium */
         input[type="date"] { position: relative; } 
-        input[type="date"]::-webkit-calendar-picker-indicator {
-            background: transparent; bottom: 0; color: transparent; cursor: pointer;
-            height: auto; left: 0; position: absolute; right: 0; top: 0; width: auto; z-index: 20;
-        }
+        input[type="date"]::-webkit-calendar-picker-indicator { background: transparent; bottom: 0; color: transparent; cursor: pointer; height: auto; left: 0; position: absolute; right: 0; top: 0; width: auto; z-index: 20; }
         .date-container { position: relative; display: flex; align-items: center; width: 100%; }
         .calendar-icon-overlay { position: absolute; right: 14px; pointer-events: none; color: var(--gold); z-index: 10; }
 
-        /* Barra de Progresso */
         .progress-track { height: 20px; border-radius: 10px; background: rgba(255,255,255,0.05); overflow: hidden; border: 1px solid rgba(255,255,255,0.05); }
         .app-body-light .progress-track { background: #e2e8f0; border-color: #cbd5e1; }
         .progress-bar-fill { height: 100%; transition: width 1.2s cubic-bezier(0.4, 0, 0.2, 1); border-radius: 10px; }
@@ -110,19 +78,18 @@
         .glass { background: rgba(255, 255, 255, 0.03); backdrop-filter: blur(12px); border: 1px solid rgba(255, 255, 255, 0.1); }
         .scrollbar-hide::-webkit-scrollbar { display: none; }
         
-        /* Modais */
-        .modal-overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.8); backdrop-filter: blur(6px); z-index: 1000; display: none; align-items: center; justify-content: center; }
+        .modal-overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.8); backdrop-filter: blur(6px); z-index: 1000; display: none; align-items: center; justify-content: center; padding: 1rem; }
         .modal-overlay.active { display: flex; }
-        .modal-content { background: #0f172a; border-radius: 24px; padding: 32px; max-width: 600px; width: 90%; max-height: 80vh; overflow-y: auto; border: 1px solid rgba(255,255,255,0.1); box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5); }
+        .modal-content { background: #0f172a; border-radius: 24px; padding: 32px; max-width: 600px; width: 100%; max-height: 80vh; overflow-y: auto; border: 1px solid rgba(255,255,255,0.1); box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5); }
         .app-body-light .modal-content { background: #ffffff; color: #0f172a; border-color: #cbd5e1; }
 
-        /* Animações e Hover Dinâmico */
         @keyframes fadeIn { from { opacity: 0; transform: translateY(15px); } to { opacity: 1; transform: translateY(0); } }
         .animate-fade-in { animation: fadeIn 0.4s cubic-bezier(0.16, 1, 0.3, 1) forwards; }
+        
         .project-card { transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1); cursor: pointer; }
         .project-card:hover { transform: translateY(-4px); box-shadow: 0 20px 40px -10px rgba(0,0,0,0.5); border-color: rgba(251, 191, 36, 0.3); }
 
-        /* Estilos de Impressão */
+        /* Estilos de Impressão (PDF & Papel) OTIMIZADOS */
         @media print { 
             @page { size: letter; margin: 10mm; }
             .no-print { display: none !important; } 
@@ -130,13 +97,13 @@
             .glass { background: #fff !important; border: 1px solid #cbd5e1 !important; box-shadow: none !important; filter: none !important; backdrop-filter: none !important; page-break-inside: avoid; }
             .text-white, .text-slate-200, .text-slate-300, .text-slate-400 { color: #0f172a !important; }
             .text-gold { color: #b45309 !important; font-weight: 900 !important; } 
-            .bg-black\/20, .bg-slate-900\/80, .bg-gradient-to-br, .bg-white\/5, .bg-cyan-950\/20, .bg-black\/40 { background: #f8fafc !important; border-color: #cbd5e1 !important; }
+            .kpi-value { color: #0f172a !important; } 
+            .bg-black\/20, .bg-slate-900\/80, .bg-gradient-to-br, .bg-white\/5, .bg-cyan-950\/20, .bg-black\/40, .bg-slate-900, .bg-slate-800 { background: #f8fafc !important; border-color: #cbd5e1 !important; }
             canvas { max-width: 100% !important; max-height: 250px !important; page-break-inside: avoid; }
             .overflow-x-auto { overflow: visible !important; } 
             tr { page-break-inside: avoid !important; }
         }
 
-        /* Pequenos estilos auxiliares */
         .flag-btn { border: 1px solid rgba(15,23,42,0.12); border-radius: 14px; padding: 10px; transition: .2s; background: #fff; }
         .flag-btn.active { border-color: var(--gold); box-shadow: 0 0 0 4px rgba(251,191,36,.12); }
         .tab-btn { color: rgba(148,163,184,0.9); font-size: 12px; }
@@ -184,8 +151,8 @@
         </form>
 
         <div class="mt-8 flex justify-center gap-4">
-            <button onclick="setLang('pt')" class="flag-btn active" id="l-pt"><img src="https://flagcdn.com/w80/br.png" class="w-6"></button>
-            <button onclick="setLang('en')" class="flag-btn" id="l-en"><img src="https://flagcdn.com/w80/us.png" class="w-6"></button>
+            <button onclick="window.setLang('pt')" class="flag-btn active" id="l-pt"><img src="https://flagcdn.com/w80/br.png" class="w-6"></button>
+            <button onclick="window.setLang('en')" class="flag-btn" id="l-en"><img src="https://flagcdn.com/w80/us.png" class="w-6"></button>
         </div>
     </div>
 </div>
@@ -196,9 +163,7 @@
         <div id="custom-modal-icon" class="flex justify-center mb-5"></div>
         <h3 id="custom-modal-title" class="text-xl font-black text-white mb-2">Atenção</h3>
         <p id="custom-modal-msg" class="text-sm text-slate-400 mb-8"></p>
-        <div class="flex justify-center gap-3" id="custom-modal-buttons">
-            <!-- Botões injetados dinamicamente via JS com alto contraste -->
-        </div>
+        <div class="flex justify-center gap-3" id="custom-modal-buttons"></div>
     </div>
 </div>
 
@@ -259,7 +224,7 @@
         </nav>
 
         <div id="view-projects" class="w-full">
-            <!-- Filtros Superiores -->
+            <!-- Filtros Superiores do Painel de Projetos -->
             <div id="projects-filters" class="flex flex-col sm:flex-row justify-between items-center mb-8 gap-4 no-print">
                 <div class="flex gap-3">
                     <button onclick="selectUnit('Smart Home')" id="unit-smart" class="unit-pill">SMART HOME</button>
@@ -275,7 +240,7 @@
             <div id="projects-grid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 text-left"></div>
         </div>
 
-        <!-- Demais Views (Nova Obra, Usuários, Logs, Relatórios) -->
+        <!-- Formulário Nova Obra -->
         <div id="view-new" class="hidden max-w-3xl mx-auto glass p-6 sm:p-10 rounded-[40px] text-left shadow-2xl border border-white/5 animate-fade-in">
             <h3 class="text-3xl font-black mb-10 flex items-center gap-4 uppercase tracking-tighter text-white">
                 <span class="w-3 h-10 bg-gold rounded-full"></span>
@@ -440,12 +405,36 @@
     let state = { 
         user: null, currentUserRole: 'viewer', currentUserViewAll: false, currentUserViewCosts: false, 
         projects: [], team: [], company: 'Ambas', lang: 'pt', theme: 'dark', 
-        editingPayments: null, editingRecs: null, focusedProject: null, activeModule: null, showArchived: false 
+        editingPayments: null, editingRecs: null, focusedProject: null, activeModule: null, showArchived: false,
+        reportActiveKpi: 'receita' // Começa sempre aberto na Receita Bruta como você pediu
     };
 
     window.d2Charts = {};
 
-    // --- SISTEMA DE MODAL CUSTOMIZADO COM ALTO CONTRASTE (CORREÇÃO DE EXECUÇÃO) ---
+    const formatCurr = (v) => new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD', minimumFractionDigits: 2 }).format(Number(v || 0));
+
+    window.togglePassword = (inputId, btnId) => {
+        const el = document.getElementById(inputId); const btn = document.getElementById(btnId);
+        if (el && btn) { const isPass = el.type === 'password'; el.type = isPass ? 'text' : 'password'; btn.innerHTML = isPass ? '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M17.94 17.94A10.07 10.07 0 0 1 12 20c-7 0-11-8-11-8a18.45 18.45 0 0 1 5.06-5.94M9.9 4.24A9.12 9.12 0 0 1 12 4c7 0 11 8 11 8a18.5 18.5 0 0 1-2.16 3.19m-6.72-1.07a3 3 0 1 1-4.24-4.24"></path><line x1="1" y1="1" x2="23" y2="23"></line></svg>' : '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>'; }
+    };
+
+    const translations = {
+        pt: { admin_panel: "Gestão Corporativa", nav_proj: "Projetos", nav_new: "Nova Obra", nav_rep: "Relatórios", nav_users: "Equipe", form_new_title: "Registrar Obra", team_title: "Gestão de Equipe", btn_team: "Salvar e Autorizar Acesso" },
+        en: { admin_panel: "Corporate Management", nav_proj: "Projects", nav_new: "New Entry", nav_rep: "Reports", nav_users: "Team", form_new_title: "Register Project", team_title: "Team Management", btn_team: "Authorize Access" }
+    };
+
+    window.setLang = (l) => { 
+        state.lang = l; 
+        document.querySelectorAll('.flag-btn').forEach(b => b.classList.toggle('active', b.id === 'l-' + l)); 
+        document.querySelectorAll('[data-i18n]').forEach(el => {
+            const key = el.getAttribute('data-i18n');
+            if (translations[l] && translations[l][key]) el.innerText = translations[l][key];
+        });
+        renderProjects(); 
+        renderReport(); 
+    };
+
+    // --- SISTEMA DE MODAL CUSTOMIZADO ---
     window._tempOnConfirm = null;
     
     window.currentConfirmCallback = async () => {
@@ -462,7 +451,7 @@
         const btnContainer = document.getElementById('custom-modal-buttons');
         const iconContainer = document.getElementById('custom-modal-icon');
         
-        window._tempOnConfirm = onConfirm; // Salva o callback globalmente
+        window._tempOnConfirm = onConfirm; 
         
         if (type === 'confirm') {
             iconContainer.innerHTML = '<i data-lucide="help-circle" class="w-12 h-12 text-gold"></i>';
@@ -546,7 +535,6 @@
         }
     }
 
-    // Inicializa o tema imediatamente para não dar "pisca" na tela
     document.addEventListener('DOMContentLoaded', () => {
         applyThemeConfig();
     });
@@ -612,6 +600,17 @@
             select.value = state.user.email;
         }
     }
+
+    window.selectUnit = (unit) => {
+        state.company = unit;
+        document.querySelectorAll('#projects-filters .unit-pill').forEach(b => b.classList.remove('active'));
+        const mapProj = { 'Smart Home': 'unit-smart', 'HVAC': 'unit-hvac', 'Ambas': 'unit-all' };
+        if (document.getElementById(mapProj[unit])) document.getElementById(mapProj[unit]).classList.add('active');
+        
+        state.reportActiveKpi = 'receita'; 
+        renderProjects();
+        renderReport();
+    };
 
     window.setArchiveFilter = (showArchived) => {
         state.showArchived = showArchived;
@@ -741,17 +740,7 @@
     window.saveEditedRecs = async () => { if (!state.editingRecs) return; try { await updateDoc(doc(db, 'artifacts', appId, 'public', 'data', 'projects', state.editingRecs.projectId), { recebimentos: state.editingRecs.recs }); closeEditRecModal(); } catch (e) { window.showModal('Erro', 'Erro ao salvar: ' + e.message, 'error'); } };
     window.addRecebimento = async (projectId) => { if (!state.user) return; const v = document.getElementById(`rec-val-${projectId}`)?.value; const d = document.getElementById(`rec-date-${projectId}`)?.value; const m = document.getElementById(`rec-met-${projectId}`)?.value; if (!v || !d || !m) { window.showModal('Atenção', 'Preencha data, valor e método para o recebimento.'); return; } try { await updateDoc(doc(db, 'artifacts', appId, 'public', 'data', 'projects', projectId), { recebimentos: arrayUnion({ valor: parseFloat(v), data: d, metodo: m }) }); logAccess(state.user.email, `Registrou recebimento $${v} na obra ID: ${projectId}`); } catch (e) { console.error(e); } };
 
-    const formatCurr = (v) => new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD', minimumFractionDigits: 2 }).format(Number(v || 0));
-
-    window.togglePassword = (inputId, btnId) => {
-        const el = document.getElementById(inputId); const btn = document.getElementById(btnId);
-        if (el && btn) { const isPass = el.type === 'password'; el.type = isPass ? 'text' : 'password'; btn.innerHTML = isPass ? '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M17.94 17.94A10.07 10.07 0 0 1 12 20c-7 0-11-8-11-8a18.45 18.45 0 0 1 5.06-5.94M9.9 4.24A9.12 9.12 0 0 1 12 4c7 0 11 8 11 8a18.5 18.5 0 0 1-2.16 3.19m-6.72-1.07a3 3 0 1 1-4.24-4.24"></path><line x1="1" y1="1" x2="23" y2="23"></line></svg>' : '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>'; }
-    };
-
-    window.setLang = (l) => { state.lang = l; document.querySelectorAll('.flag-btn').forEach(b => b.classList.toggle('active', b.id.includes(l))); renderProjects(); renderReport(); };
-    window.selectUnit = (unit) => { state.company = unit; document.querySelectorAll('.unit-pill').forEach(b => b.classList.remove('active')); const map = { 'Smart Home': 'unit-smart', 'HVAC': 'unit-hvac', 'Ambas': 'unit-all' }; document.getElementById(map[unit]).classList.add('active'); state.focusedProject = null; state.activeModule = null; renderProjects(); renderReport(); };
-
-    // --- NOVA LÓGICA DE NAVEGAÇÃO INTERNA (DRILL-DOWN) E HIDE HEADER ---
+    // --- NAVEGAÇÃO INTERNA DO MODO FOCO ---
     window.openProjectDetails = (id) => { 
         state.focusedProject = id; 
         state.activeModule = null; 
@@ -773,12 +762,23 @@
     };
 
     window.closeProjectModule = () => {
-        state.activeModule = null; // Volta para os Botões Gigantes
+        state.activeModule = null; 
         renderProjects();
         window.scrollTo({ top: 0, behavior: 'smooth' });
     };
 
     window.printReport = () => { window.print(); };
+
+    window.printKpiReport = () => {
+        document.body.classList.add('printing-kpi');
+        window.print();
+        setTimeout(() => document.body.classList.remove('printing-kpi'), 500);
+    };
+
+    window.setReportKpi = (kpiName) => {
+        state.reportActiveKpi = kpiName;
+        renderReport();
+    };
 
     window.editTeamMember = (id, email, pass, role, viewAll, viewCosts) => {
         document.getElementById('t-id').value = id; document.getElementById('t-email').value = email; document.getElementById('t-pass').value = pass; document.getElementById('t-role').value = role || 'editor';
@@ -786,19 +786,8 @@
         window.scrollTo({ top: 0, behavior: 'smooth' });
     };
 
-    window.deleteTeam = (id) => {
-        window.showModal('Remover Acesso', 'Deseja realmente remover o acesso deste membro?', 'confirm', async () => {
-            try {
-                await deleteDoc(doc(db, 'artifacts', appId, 'public', 'data', 'user_credentials', id));
-                logAccess(state.user.email, `Removeu utilizador.`);
-            } catch(e) { console.error(e); }
-        });
-    };
-
     window.deleteP = (id) => {
         const p = state.projects.find(x => x.id === id);
-        
-        // Bloqueio de segurança para não-administradores
         if (!['admin', 'superadmin'].includes(state.currentUserRole)) {
             logAccess(state.user.email, `Tentativa bloqueada de exclusão da obra: ${p?.cliente || id}`);
             window.showModal('Acesso Negado', 'Para apagar um projeto, por favor solicite ao administrador.', 'error');
@@ -854,6 +843,7 @@
 
         if (v === 'logs') renderLogs();
         if (v === 'projects') { state.focusedProject = null; state.activeModule = null; renderProjects(); }
+        if (v === 'reports') { state.reportActiveKpi = 'receita'; renderReport(); }
         try { lucide.createIcons(); } catch {}
     };
 
@@ -925,9 +915,6 @@
             return matchCompany && matchUser && matchArchive;
         });
 
-        // ==========================================
-        // CONTROLE DO MODO FOCO (ESCONDER TOPO)
-        // ==========================================
         if (state.focusedProject) {
             filtersDiv.classList.add('hidden');
             if (mainHeader) mainHeader.style.display = 'none';
@@ -939,7 +926,6 @@
             grid.className = "flex flex-col max-w-4xl mx-auto gap-6 text-left w-full animate-fade-in pb-20 mt-4";
             filtered = state.projects.filter(p => p.id === state.focusedProject); 
             
-            // Botão de Voltar padrão se NENHUM módulo estiver aberto (Nível 2)
             if (!state.activeModule) {
                 grid.innerHTML += `
                     <div class="mb-2 flex justify-between items-center no-print w-full">
@@ -1003,9 +989,6 @@
                 `;
             }
 
-            // ==========================================
-            // NÍVEL 3: TELA DE MÓDULO (Limpa as infos do topo)
-            // ==========================================
             if (isFocused && state.activeModule) {
                 let moduleContent = '';
                 let moduleTitle = '';
@@ -1100,7 +1083,7 @@
                         </div>
 
                         <!-- Gráficos -->
-                        <div class="grid grid-cols-1 lg:grid-cols-3 gap-6 mb-10 print:mb-6">
+                        <div class="grid grid-cols-1 lg:grid-cols-3 gap-6 mb-10 print:mb-6 no-print">
                             <div class="bg-black/20 p-6 rounded-[24px] border border-cyan-500/10 flex flex-col items-center shadow-lg print:border-slate-300 print:bg-transparent">
                                 <p class="text-[11px] font-black uppercase text-cyan-300/70 mb-4 w-full text-left tracking-widest print:text-black">Orçamento vs Gasto</p>
                                 <div class="relative w-48 h-48 print:w-32 print:h-32"><canvas id="chart-budget-${p.id}"></canvas></div>
@@ -1135,7 +1118,6 @@
                     `;
                 }
 
-                // INSERE O CARTÃO DE NÍVEL 3 (SÓ O HEADER + CONTEÚDO DO MÓDULO, SEM O RESUMO GERAL)
                 grid.innerHTML += `
                 <div class="glass p-6 md:p-10 rounded-[40px] border-l-[8px] relative shadow-2xl flex flex-col w-full print:border print:border-none print:shadow-none animate-fade-in" style="border-left-color: ${p.status === 'Finalizado' ? '#10b981' : '#f59e0b'}">
                     <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-8 border-b border-white/10 pb-6 gap-6 no-print">
@@ -1169,13 +1151,9 @@
                     setTimeout(() => renderCharts(p.id, f.orcamento, f.gastosPorCategoria, f.totalDespesas), 100);
                 }
 
-                return; // INTERROMPE O LOOP AQUI PARA O NÍVEL 3
+                return; 
             }
 
-
-            // ==========================================
-            // NÍVEL 1 E 2: CARTÃO NORMAL COM RESUMO DA OBRA
-            // ==========================================
             const cardClickEvent = isFocused ? '' : `onclick="window.openProjectDetails('${p.id}')"`;
             const cardHoverClasses = isFocused ? '' : 'project-card clickable cursor-pointer';
 
@@ -1265,23 +1243,35 @@
         const canViewAll = ['admin', 'superadmin'].includes(state.currentUserRole) || state.currentUserViewAll;
         const canViewCosts = ['admin', 'superadmin'].includes(state.currentUserRole) || state.currentUserViewCosts;
 
-        const filtered = state.projects.filter(p => {
+        const baseFiltered = state.projects.filter(p => {
             const matchCompany = state.company === 'Ambas' || p.empresa === state.company;
             const matchUser = canViewAll || p.vendedor === state.user.email; 
             return matchCompany && matchUser && !p.archived;
         });
 
-        let tv = 0, tc = 0, tProfit = 0; 
+        let tv = 0, tc = 0, tProfit = 0, totalCollected = 0; 
+        let statusFunnel = {
+            '✅ Aprovado': { count: 0, val: 0, label: 'Aprovados', color: 'text-emerald-500', border: 'border-emerald-500/20', bg: 'bg-emerald-500/10' },
+            'Aguardando Início': { count: 0, val: 0, label: 'Aguardando Início', color: 'text-amber-500', border: 'border-amber-500/20', bg: 'bg-amber-500/10' },
+            'Em Execução': { count: 0, val: 0, label: 'Em Execução', color: 'text-blue-500', border: 'border-blue-500/20', bg: 'bg-blue-500/10' },
+            'Finalizado': { count: 0, val: 0, label: 'Concluídas', color: 'text-gold', border: 'border-gold/20', bg: 'bg-gold/10' }
+        };
 
         const currentYear = new Date().getFullYear();
         const monthNames = state.lang === 'en' ? ['Jan','Fev','Mar','Abr','Mai','Jun','Jul','Ago','Sep','Out','Nov','Dez'] : ['Jan','Fev','Mar','Abr','Mai','Jun','Jul','Ago','Set','Out','Nov','Dez'];
         const sellerStats = {};
 
-        const rows = filtered.map(p => {
+        const enrichedProjects = baseFiltered.map(p => {
             const f = getFin(p);
             tv += Number(p.valorTotal || 0);
             tc += Number(f.commLiberada || 0); 
+            totalCollected += f.totalRecebido;
             if (canViewCosts) tProfit += Number(f.lucroBruto || 0);
+
+            if (p.status && statusFunnel[p.status] !== undefined) {
+                statusFunnel[p.status].count++;
+                statusFunnel[p.status].val += Number(p.valorTotal || 0);
+            }
 
             const vend = p.vendedor || 'Sem Vendedor';
             if (!sellerStats[vend]) { sellerStats[vend] = { total: 0, months: Array(12).fill(0) }; }
@@ -1296,84 +1286,187 @@
                     if (rYear === currentYear) { sellerStats[vend].months[rMonth] += rComm; sellerStats[vend].total += rComm; }
                 }
             });
-
-            const profitCol = canViewCosts ? `<td class="p-4 text-right font-black ${f.lucroBruto >= 0 ? 'text-emerald-500' : 'text-red-500'}">${formatCurr(f.lucroBruto)}</td>` : '';
-
-            return `<tr class="border-b border-slate-100 text-[10px] sm:text-xs text-left text-slate-800">
-                <td class="p-4 font-bold text-[9px] sm:text-[10px] text-slate-500">${p.numeroProposta || '-'} / ${p.numeroInvoice || '-'}</td>
-                <td class="p-4 font-black uppercase">${p.cliente || ''}</td>
-                <td class="p-4">${p.vendedor?.split('@')[0] || ''}</td>
-                <td class="p-4 text-right">${formatCurr(p.valorTotal)}</td>
-                <td class="p-4 text-right font-black text-emerald-600">${formatCurr(f.totalRecebido)}</td>
-                <td class="p-4 text-right font-black text-amber-600">${formatCurr(f.commLiberada)}</td>
-                ${profitCol}
-            </tr>`;
-        }).join('');
-
-        let summaryRows = Object.keys(sellerStats).sort().map(vend => {
-            const stats = sellerStats[vend];
-            let monthsHtml = stats.months.map(mVal => `<td class="p-3 text-right ${mVal > 0 ? 'text-amber-600 font-bold' : 'text-slate-300'}">${formatCurr(mVal)}</td>`).join('');
-            return `<tr class="border-b border-slate-100 text-[9px] sm:text-[10px] text-slate-800"><td class="p-3 font-black uppercase whitespace-nowrap">${vend.split('@')[0]}</td>${monthsHtml}<td class="p-3 text-right font-black text-emerald-600 bg-slate-50">${formatCurr(stats.total)}</td></tr>`;
-        }).join('');
-
-        let summaryHeaderMonths = monthNames.map(m => `<th class="p-3 text-right">${m}</th>`).join('');
-
-        out.innerHTML = `<div class="bg-white text-slate-950 p-6 sm:p-12 rounded-[50px] shadow-2xl border-8 border-slate-50 text-left print:border-none print:shadow-none print:p-0">
-            <div class="flex justify-between items-center border-b-[8px] border-slate-950 pb-8 mb-8 print:border-b-2 print:border-slate-300">
-                <div class="logo-frame-sm border p-2 rounded-xl print:border-none print:p-0"><img src="logo-D2-Group-preto.png" class="h-10 sm:h-12"></div>
-                <div class="text-right">
-                    <h2 class="text-2xl sm:text-3xl font-black uppercase tracking-tighter">Relatório Executivo</h2>
-                    <p class="text-slate-400 font-black uppercase text-[10px]">${new Date().toLocaleDateString()}</p>
-                </div>
-            </div>
             
-            <div class="mb-12">
-                <h3 class="text-base sm:text-lg font-black uppercase tracking-tighter mb-4 text-slate-800">Comissões Reais - Pagas por Mês (${currentYear})</h3>
-                <div class="overflow-x-auto print:overflow-visible border border-slate-100 rounded-2xl print:border-none">
-                    <table class="w-full">
-                        <thead class="bg-slate-50 border-b border-slate-100 print:bg-transparent">
-                            <tr class="font-black uppercase text-[8px] sm:text-[9px] text-slate-500 text-left"><th class="p-3">Vendedor</th>${summaryHeaderMonths}<th class="p-3 text-right bg-slate-100 print:bg-transparent">Total Ano</th></tr>
-                        </thead>
-                        <tbody>${summaryRows || `<tr><td colspan="14" class="p-4 text-center text-slate-400 text-xs">Nenhum dado para o ano atual.</td></tr>`}</tbody>
-                    </table>
+            return { p, f }; 
+        });
+
+        const reportTitle = state.company === 'Ambas' ? 'Relatório Executivo Geral' : `Relatório Executivo - ${state.company}`;
+        
+        let ceoDashHTML = '';
+        if (canViewCosts) {
+            const totalOutstanding = tv - totalCollected;
+            const avgMargin = tv > 0 ? (tProfit / tv) * 100 : 0;
+
+            let funnelHTML = Object.keys(statusFunnel).map(k => {
+                const s = statusFunnel[k];
+                return `
+                <div class="p-4 sm:p-5 rounded-2xl border ${s.border} ${s.bg} flex flex-col justify-between print:bg-transparent print:border-slate-300 shadow-sm">
+                    <div class="flex justify-between items-start mb-3">
+                        <p class="text-[9px] sm:text-[10px] font-black uppercase ${s.color} tracking-widest print:text-slate-600 pr-2 leading-tight">${s.label}</p>
+                        <span class="text-[10px] sm:text-xs font-black text-white bg-black/40 px-2 py-0.5 rounded-lg print:text-white print:bg-slate-800">${s.count}</span>
+                    </div>
+                    <p class="text-sm sm:text-base lg:text-lg font-black text-slate-800 tracking-tight print:text-black truncate" title="${formatCurr(s.val)}">${formatCurr(s.val)}</p>
                 </div>
-            </div>
+                `;
+            }).join('');
+
+            ceoDashHTML = `
+                <div class="mb-10 print:mb-8 animate-fade-in">
+                    <h3 class="text-lg sm:text-xl font-black uppercase tracking-tighter mb-5 text-slate-800 border-b-2 border-slate-100 pb-3 flex items-center gap-2"><i data-lucide="bar-chart-2" class="w-5 h-5 text-indigo-500"></i> Visão Executiva Institucional</h3>
+                    
+                    <div class="grid grid-cols-2 md:grid-cols-5 gap-3 sm:gap-4 mb-8">
+                        <div onclick="window.setReportKpi('receita')" class="cursor-pointer hover:-translate-y-1 hover:shadow-xl transition-all ${state.reportActiveKpi === 'receita' ? 'bg-slate-800 ring-2 ring-slate-400' : 'bg-slate-900'} p-3 sm:p-4 rounded-2xl border border-slate-700 border-l-4 border-l-slate-400 shadow-lg print:bg-transparent print:border-slate-300 print:shadow-none print:ring-0 relative group flex flex-col justify-between h-full min-h-[110px]">
+                            <p class="text-[9px] sm:text-[10px] font-black uppercase text-slate-400 mb-1 tracking-widest">Receita Bruta</p>
+                            <p class="text-sm sm:text-base xl:text-lg font-black text-white print:text-black tracking-tighter break-words my-2">${formatCurr(tv)}</p>
+                            <p class="text-[8px] text-slate-500 uppercase font-bold tracking-widest mt-auto opacity-50 group-hover:opacity-100 no-print">Ver Obras ➔</p>
+                        </div>
+                        <div onclick="window.setReportKpi('entradas')" class="cursor-pointer hover:-translate-y-1 hover:shadow-xl transition-all ${state.reportActiveKpi === 'entradas' ? 'bg-slate-800 ring-2 ring-emerald-500' : 'bg-slate-900'} p-3 sm:p-4 rounded-2xl border border-slate-700 border-l-4 border-l-emerald-500 shadow-lg print:bg-transparent print:border-slate-300 print:shadow-none print:ring-0 relative group flex flex-col justify-between h-full min-h-[110px]">
+                            <p class="text-[9px] sm:text-[10px] font-black uppercase text-emerald-500 mb-1 tracking-widest">Entradas</p>
+                            <p class="text-sm sm:text-base xl:text-lg font-black text-white print:text-emerald-700 tracking-tighter break-words my-2">${formatCurr(totalCollected)}</p>
+                            <p class="text-[8px] text-emerald-500/50 uppercase font-bold tracking-widest mt-auto group-hover:text-emerald-400 no-print">Ver Recebidos ➔</p>
+                        </div>
+                        <div onclick="window.setReportKpi('fluxo')" class="cursor-pointer hover:-translate-y-1 hover:shadow-xl transition-all ${state.reportActiveKpi === 'fluxo' ? 'bg-slate-800 ring-2 ring-amber-500' : 'bg-slate-900'} p-3 sm:p-4 rounded-2xl border border-slate-700 border-l-4 border-l-amber-500 shadow-lg print:bg-transparent print:border-slate-300 print:shadow-none print:ring-0 relative group flex flex-col justify-between h-full min-h-[110px]">
+                            <p class="text-[9px] sm:text-[10px] font-black uppercase text-amber-500 mb-1 tracking-widest">A Receber</p>
+                            <p class="text-sm sm:text-base xl:text-lg font-black text-white print:text-amber-700 tracking-tighter break-words my-2">${formatCurr(totalOutstanding)}</p>
+                            <p class="text-[8px] text-amber-500/50 uppercase font-bold tracking-widest mt-auto group-hover:text-amber-400 no-print">Ver Pendentes ➔</p>
+                        </div>
+                        <div onclick="window.setReportKpi('lucro')" class="cursor-pointer hover:-translate-y-1 hover:shadow-xl transition-all ${state.reportActiveKpi === 'lucro' ? 'bg-slate-800 ring-2 ring-cyan-500' : 'bg-slate-900'} p-3 sm:p-4 rounded-2xl border border-slate-700 border-l-4 border-l-cyan-500 shadow-lg print:bg-transparent print:border-slate-300 print:shadow-none print:ring-0 relative group flex flex-col justify-between h-full min-h-[110px]">
+                            <p class="text-[9px] sm:text-[10px] font-black uppercase text-cyan-500 mb-1 tracking-widest">Lucro Estimado</p>
+                            <p class="text-sm sm:text-base xl:text-lg font-black text-white print:text-cyan-700 tracking-tighter break-words my-2">${formatCurr(tProfit)}</p>
+                            <p class="text-[8px] text-cyan-500/50 uppercase font-bold tracking-widest mt-auto group-hover:text-cyan-400 no-print">Ver Detalhes ➔</p>
+                        </div>
+                        <div onclick="window.setReportKpi('overview')" class="cursor-pointer hover:-translate-y-1 hover:shadow-xl transition-all ${state.reportActiveKpi === 'overview' ? 'bg-slate-800 ring-2 ring-indigo-500' : 'bg-slate-900'} p-3 sm:p-4 rounded-2xl border border-slate-700 border-l-4 border-l-indigo-500 shadow-lg print:bg-transparent print:border-slate-300 print:shadow-none flex flex-col justify-between h-full min-h-[110px] group">
+                            <p class="text-[9px] sm:text-[10px] font-black uppercase text-indigo-400 mb-1 tracking-widest">Margem Global</p>
+                            <p class="text-sm sm:text-base xl:text-lg font-black ${avgMargin >= 0 ? 'text-white' : 'text-red-400'} print:text-indigo-700 tracking-tighter break-words my-2">${avgMargin.toFixed(1)}%</p>
+                            <p class="text-[8px] text-indigo-400/50 uppercase font-bold tracking-widest mt-auto group-hover:text-indigo-400 no-print">Ver Resumo ➔</p>
+                        </div>
+                    </div>
+
+                    <h4 class="text-xs sm:text-sm font-black uppercase mb-4 text-slate-500 tracking-widest border-b border-slate-100 pb-2">Funil de Operações Ativas</h4>
+                    <div class="grid grid-cols-2 md:grid-cols-4 gap-3 sm:gap-4 mb-4">
+                        ${funnelHTML}
+                    </div>
+                </div>
+            `;
+        }
+
+        let bottomHTML = '';
+        let kpiTitle = '';
+
+        if (state.reportActiveKpi === 'overview') {
+            let summaryRows = Object.keys(sellerStats).sort().map(vend => {
+                const stats = sellerStats[vend];
+                let monthsHtml = stats.months.map(mVal => `<td class="p-2 sm:p-3 text-right ${mVal > 0 ? 'text-amber-600 font-bold' : 'text-slate-400'}">${formatCurr(mVal)}</td>`).join('');
+                return `<tr class="border-b border-slate-100 text-[9px] sm:text-[10px] text-slate-800 hover:bg-slate-50 transition-colors"><td class="p-2 sm:p-3 font-black uppercase whitespace-nowrap">${vend.split('@')[0]}</td>${monthsHtml}<td class="p-2 sm:p-3 text-right font-black text-emerald-600 bg-slate-50">${formatCurr(stats.total)}</td></tr>`;
+            }).join('');
+            let summaryHeaderMonths = monthNames.map(m => `<th class="p-2 sm:p-3 text-right">${m}</th>`).join('');
+
+            const buildGroupedTable = (companyName) => {
+                const coProjects = enrichedProjects.filter(({p}) => p.empresa === companyName);
+                if (coProjects.length === 0) return '';
+                const tableRows = coProjects.map(({p, f}) => {
+                    const profitCol = canViewCosts ? `<td class="p-3 sm:p-4 text-right font-black ${f.lucroBruto >= 0 ? 'text-cyan-600' : 'text-red-500'}">${formatCurr(f.lucroBruto)}</td><td class="p-3 sm:p-4 text-right font-black ${f.margemLucro >= 0 ? 'text-indigo-500' : 'text-red-500'}">${f.margemLucro.toFixed(1)}%</td>` : '';
+                    return `<tr class="border-b border-slate-100 text-[10px] sm:text-xs text-left text-slate-800 hover:bg-slate-50 transition-colors"><td class="p-3 sm:p-4 font-bold text-[9px] sm:text-[10px] text-slate-500">${p.numeroProposta || '-'} / ${p.numeroInvoice || '-'}</td><td class="p-3 sm:p-4 font-black uppercase"><div class="flex flex-col"><span>${p.cliente || ''}</span><span class="text-[8px] sm:text-[9px] font-bold text-slate-400 mt-0.5">${p.status}</span></div></td><td class="p-3 sm:p-4 font-bold text-slate-600">${p.vendedor?.split('@')[0] || ''}</td><td class="p-3 sm:p-4 text-right">${formatCurr(p.valorTotal)}</td><td class="p-3 sm:p-4 text-right font-black text-emerald-600">${formatCurr(f.totalRecebido)}</td><td class="p-3 sm:p-4 text-right font-black text-amber-600">${formatCurr(f.commLiberada)}</td>${profitCol}</tr>`;
+                }).join('');
+                return `<div class="mb-10"><h4 class="text-sm font-black text-slate-700 bg-slate-100 inline-block px-4 py-2 rounded-t-xl uppercase tracking-widest border border-b-0 border-slate-200">${companyName}</h4><div class="overflow-x-auto print:overflow-visible border border-slate-200 rounded-xl rounded-tl-none print:border-none shadow-sm"><table class="w-full"><thead class="bg-slate-50 border-b border-slate-200 print:bg-transparent"><tr class="font-black uppercase text-[8px] sm:text-[9px] text-slate-500 text-left tracking-widest"><th class="p-3 sm:p-4">Prop / Invoice</th><th class="p-3 sm:p-4">Obra</th><th class="p-3 sm:p-4">Vendedor</th><th class="p-3 sm:p-4 text-right">Contrato Bruto</th><th class="p-3 sm:p-4 text-right bg-emerald-50 text-emerald-700 print:bg-transparent">Recebido</th><th class="p-3 sm:p-4 text-right bg-amber-50 text-amber-700 print:bg-transparent">Com. Liberada</th>${canViewCosts ? '<th class="p-3 sm:p-4 text-right bg-cyan-50 text-cyan-700 print:bg-transparent">Lucro Real</th><th class="p-3 sm:p-4 text-right bg-indigo-50 text-indigo-700 print:bg-transparent">Margem</th>' : ''}</tr></thead><tbody>${tableRows}</tbody></table></div></div>`;
+            };
+
+            let detailedTablesHTML = '';
+            if (state.company === 'Ambas') {
+                detailedTablesHTML += buildGroupedTable('D2 Smart Home');
+                detailedTablesHTML += buildGroupedTable('D2 HVAC Solutions');
+            } else {
+                detailedTablesHTML += buildGroupedTable(state.company === 'Smart Home' ? 'D2 Smart Home' : 'D2 HVAC Solutions');
+            }
+            if(!detailedTablesHTML) detailedTablesHTML = `<p class="p-6 text-center text-slate-400 text-xs italic">Nenhuma obra ativa encontrada.</p>`;
+
+            bottomHTML = `
+                <div class="full-report-only animate-fade-in mt-14">
+                    <div class="mb-14 print:mb-8">
+                        <div class="flex justify-between items-center mb-5 border-b-2 border-slate-100 pb-3">
+                            <h3 class="text-base sm:text-lg font-black uppercase tracking-tighter text-slate-800 flex items-center gap-2"><i data-lucide="users" class="w-5 h-5 text-amber-500"></i> Comissões Pagas por Mês (${currentYear})</h3>
+                            <button onclick="window.printKpiReport()" class="hidden sm:inline-flex items-center gap-2 text-white bg-slate-800 hover:bg-slate-700 transition-all font-black text-[10px] uppercase tracking-widest px-4 py-2 rounded-xl shadow-md no-print"><i data-lucide="printer" class="w-3.5 h-3.5"></i> Imprimir Visão</button>
+                        </div>
+                        <div class="overflow-x-auto print:overflow-visible border border-slate-200 rounded-2xl print:border-none shadow-sm">
+                            <table class="w-full">
+                                <thead class="bg-slate-100 border-b border-slate-200 print:bg-transparent"><tr class="font-black uppercase text-[8px] sm:text-[9px] text-slate-500 text-left tracking-widest"><th class="p-3 sm:p-4">Vendedor</th>${summaryHeaderMonths}<th class="p-3 sm:p-4 text-right bg-slate-200 print:bg-transparent text-slate-700">Total Ano</th></tr></thead>
+                                <tbody>${summaryRows || `<tr><td colspan="14" class="p-6 text-center text-slate-400 text-xs italic">Nenhum dado para o ano atual.</td></tr>`}</tbody>
+                            </table>
+                        </div>
+                    </div>
+                    <div class="mb-8">
+                        <h3 class="text-base sm:text-lg font-black uppercase tracking-tighter mb-5 text-slate-800 border-b-2 border-slate-100 pb-3 flex items-center gap-2"><i data-lucide="list-checks" class="w-5 h-5 text-emerald-500"></i> Detalhamento Estruturado de Obras</h3>
+                        ${detailedTablesHTML}
+                    </div>
+                </div>
+            `;
+        } else {
+            let specificTableHTML = '';
             
-            <h3 class="text-base sm:text-lg font-black uppercase tracking-tighter mb-4 text-slate-800">Detalhamento de Obras Ativas</h3>
-            <div class="overflow-x-auto print:overflow-visible border border-slate-100 rounded-2xl print:border-none">
-                <table class="w-full">
-                    <thead class="bg-slate-50 border-b border-slate-100 print:bg-transparent">
-                        <tr class="font-black uppercase text-[8px] sm:text-[9px] text-slate-500 text-left">
-                            <th class="p-4">Prop / Invoice</th><th class="p-4">Obra</th><th class="p-4">Vendedor</th>
-                            <th class="p-4 text-right">Contrato Bruto</th><th class="p-4 text-right bg-emerald-50 text-emerald-700 print:bg-transparent">Total Recebido</th>
-                            <th class="p-4 text-right bg-amber-50 text-amber-700 print:bg-transparent">Com. Liberada</th>
-                            ${canViewCosts ? '<th class="p-4 text-right bg-cyan-50 text-cyan-700 print:bg-transparent">Lucro Real</th>' : ''}
-                        </tr>
-                    </thead>
-                    <tbody>${rows}</tbody>
-                </table>
-            </div>
-            <div class="mt-10 pt-10 border-t-[8px] border-slate-950 flex flex-wrap justify-end gap-10 sm:gap-16 print:border-t-2 print:border-slate-300">
-                <div class="text-right">
-                    <p class="text-[10px] sm:text-[11px] font-black uppercase text-slate-400 mb-1">TOTAL CONTRATOS</p>
-                    <p class="text-3xl sm:text-4xl font-black">${formatCurr(tv)}</p>
+            if (state.reportActiveKpi === 'receita') {
+                kpiTitle = 'Detalhamento: Receita Bruta (Pipeline)';
+                const sRows = enrichedProjects.map(({p}) => `<tr class="border-b border-slate-100 text-[10px] sm:text-xs text-left text-slate-800 hover:bg-slate-50 transition-colors"><td class="p-3 sm:p-4 font-bold text-slate-500">${p.numeroProposta || '-'} / ${p.numeroInvoice || '-'}</td><td class="p-3 sm:p-4 font-black uppercase"><div class="flex flex-col"><span>${p.cliente || ''}</span><span class="text-[8px] sm:text-[9px] font-bold text-slate-400 mt-0.5">${p.status}</span></div></td><td class="p-3 sm:p-4 font-bold text-slate-600">${p.vendedor?.split('@')[0] || ''}</td><td class="p-3 sm:p-4 text-right font-black text-slate-800 text-sm">${formatCurr(p.valorTotal)}</td></tr>`).join('') || `<tr><td colspan="4" class="p-6 text-center text-slate-400 text-xs italic">Nenhuma obra encontrada.</td></tr>`;
+                specificTableHTML = `<table class="w-full"><thead class="bg-slate-100 border-b border-slate-200 print:bg-transparent"><tr class="font-black uppercase text-[8px] sm:text-[9px] text-slate-500 text-left tracking-widest"><th class="p-3 sm:p-4">Prop / Invoice</th><th class="p-3 sm:p-4">Obra</th><th class="p-3 sm:p-4">Vendedor</th><th class="p-3 sm:p-4 text-right">Contrato Bruto</th></tr></thead><tbody>${sRows}</tbody></table>`;
+            } else if (state.reportActiveKpi === 'entradas') {
+                kpiTitle = 'Detalhamento: Entradas (Valores já recebidos)';
+                const sRows = enrichedProjects.filter(({f}) => f.totalRecebido > 0).map(({p, f}) => `<tr class="border-b border-slate-100 text-[10px] sm:text-xs text-left text-slate-800 hover:bg-slate-50 transition-colors"><td class="p-3 sm:p-4 font-bold text-slate-500">${p.numeroProposta || '-'} / ${p.numeroInvoice || '-'}</td><td class="p-3 sm:p-4 font-black uppercase"><div class="flex flex-col"><span>${p.cliente || ''}</span><span class="text-[8px] sm:text-[9px] font-bold text-slate-400 mt-0.5">${p.status}</span></div></td><td class="p-3 sm:p-4 font-bold text-slate-600">${p.vendedor?.split('@')[0] || ''}</td><td class="p-3 sm:p-4 text-right text-slate-500">${formatCurr(p.valorTotal)}</td><td class="p-3 sm:p-4 text-right font-black text-emerald-600 text-sm">${formatCurr(f.totalRecebido)}</td></tr>`).join('') || `<tr><td colspan="5" class="p-6 text-center text-slate-400 text-xs italic">Nenhum recebimento encontrado.</td></tr>`;
+                specificTableHTML = `<table class="w-full"><thead class="bg-slate-100 border-b border-slate-200 print:bg-transparent"><tr class="font-black uppercase text-[8px] sm:text-[9px] text-slate-500 text-left tracking-widest"><th class="p-3 sm:p-4">Prop / Invoice</th><th class="p-3 sm:p-4">Obra</th><th class="p-3 sm:p-4">Vendedor</th><th class="p-3 sm:p-4 text-right">Contrato Bruto</th><th class="p-3 sm:p-4 text-right">Total Recebido</th></tr></thead><tbody>${sRows}</tbody></table>`;
+            } else if (state.reportActiveKpi === 'fluxo') {
+                kpiTitle = 'Detalhamento: Fluxo a Receber (Saldos Pendentes)';
+                const sRows = enrichedProjects.filter(({p, f}) => (p.valorTotal - f.totalRecebido) > 0).map(({p, f}) => `<tr class="border-b border-slate-100 text-[10px] sm:text-xs text-left text-slate-800 hover:bg-slate-50 transition-colors"><td class="p-3 sm:p-4 font-bold text-slate-500">${p.numeroProposta || '-'} / ${p.numeroInvoice || '-'}</td><td class="p-3 sm:p-4 font-black uppercase"><div class="flex flex-col"><span>${p.cliente || ''}</span><span class="text-[8px] sm:text-[9px] font-bold text-slate-400 mt-0.5">${p.status}</span></div></td><td class="p-3 sm:p-4 font-bold text-slate-600">${p.vendedor?.split('@')[0] || ''}</td><td class="p-3 sm:p-4 text-right text-slate-500">${formatCurr(p.valorTotal)}</td><td class="p-3 sm:p-4 text-right text-emerald-600">${formatCurr(f.totalRecebido)}</td><td class="p-3 sm:p-4 text-right font-black text-amber-500 text-sm">${formatCurr(p.valorTotal - f.totalRecebido)}</td></tr>`).join('') || `<tr><td colspan="6" class="p-6 text-center text-slate-400 text-xs italic">Nenhum saldo pendente.</td></tr>`;
+                specificTableHTML = `<table class="w-full"><thead class="bg-slate-100 border-b border-slate-200 print:bg-transparent"><tr class="font-black uppercase text-[8px] sm:text-[9px] text-slate-500 text-left tracking-widest"><th class="p-3 sm:p-4">Prop / Invoice</th><th class="p-3 sm:p-4">Obra</th><th class="p-3 sm:p-4">Vendedor</th><th class="p-3 sm:p-4 text-right">Contrato Bruto</th><th class="p-3 sm:p-4 text-right">Recebido</th><th class="p-3 sm:p-4 text-right">Falta Receber</th></tr></thead><tbody>${sRows}</tbody></table>`;
+            } else if (state.reportActiveKpi === 'lucro') {
+                kpiTitle = 'Detalhamento: Lucro Estimado e Margem';
+                const sRows = enrichedProjects.map(({p, f}) => `<tr class="border-b border-slate-100 text-[10px] sm:text-xs text-left text-slate-800 hover:bg-slate-50 transition-colors"><td class="p-3 sm:p-4 font-bold text-slate-500">${p.numeroProposta || '-'} / ${p.numeroInvoice || '-'}</td><td class="p-3 sm:p-4 font-black uppercase"><div class="flex flex-col"><span>${p.cliente || ''}</span><span class="text-[8px] sm:text-[9px] font-bold text-slate-400 mt-0.5">${p.status}</span></div></td><td class="p-3 sm:p-4 text-right text-slate-500">${formatCurr(p.valorTotal)}</td><td class="p-3 sm:p-4 text-right text-red-500">${formatCurr(f.totalDespesas)}</td><td class="p-3 sm:p-4 text-right font-black ${f.lucroBruto >= 0 ? 'text-cyan-600' : 'text-red-600'} text-sm">${formatCurr(f.lucroBruto)}</td><td class="p-3 sm:p-4 text-right font-black ${f.margemLucro >= 0 ? 'text-indigo-500' : 'text-red-500'} text-sm">${f.margemLucro.toFixed(1)}%</td></tr>`).join('') || `<tr><td colspan="6" class="p-6 text-center text-slate-400 text-xs italic">Nenhuma obra encontrada.</td></tr>`;
+                specificTableHTML = `<table class="w-full"><thead class="bg-slate-100 border-b border-slate-200 print:bg-transparent"><tr class="font-black uppercase text-[8px] sm:text-[9px] text-slate-500 text-left tracking-widest"><th class="p-3 sm:p-4">Prop / Invoice</th><th class="p-3 sm:p-4">Obra</th><th class="p-3 sm:p-4 text-right">Contrato Bruto</th><th class="p-3 sm:p-4 text-right">Despesas Totais</th><th class="p-3 sm:p-4 text-right">Lucro Real</th><th class="p-3 sm:p-4 text-right">Margem %</th></tr></thead><tbody>${sRows}</tbody></table>`;
+            }
+
+            bottomHTML = `
+                <div class="mt-14 mb-10 animate-fade-in">
+                    <div class="flex justify-between items-center mb-5 border-b-2 border-slate-100 pb-3">
+                        <h3 class="text-base sm:text-lg font-black uppercase tracking-tighter text-indigo-600 flex items-center gap-2">
+                            <i data-lucide="layout-list" class="w-5 h-5"></i> ${kpiTitle}
+                        </h3>
+                        <button onclick="window.printKpiReport()" class="hidden sm:inline-flex items-center gap-2 text-white bg-slate-800 hover:bg-slate-700 transition-all font-black text-[10px] uppercase tracking-widest px-4 py-2 rounded-xl shadow-md no-print">
+                            <i data-lucide="printer" class="w-3.5 h-3.5"></i> Imprimir Visão
+                        </button>
+                    </div>
+                    <div class="overflow-x-auto print:overflow-visible border border-slate-200 rounded-2xl print:border-none shadow-sm">
+                        ${specificTableHTML}
+                    </div>
                 </div>
-                <div class="text-right">
-                    <p class="text-[10px] sm:text-[11px] font-black uppercase text-amber-600 mb-1">COMISSÕES GERADAS</p>
-                    <p class="text-3xl sm:text-4xl font-black text-amber-600">${formatCurr(tc)}</p>
+            `;
+        }
+
+        out.innerHTML = `
+            <div class="bg-white text-slate-950 p-6 sm:p-12 rounded-[50px] shadow-2xl border-8 border-slate-50 text-left print:border-none print:shadow-none print:p-0 animate-fade-in">
+                
+                <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center border-b-[8px] border-slate-950 pb-8 mb-8 print:border-b-2 print:border-slate-300 gap-4">
+                    <div class="logo-frame-sm border p-3 rounded-2xl print:border-none print:p-0 bg-slate-50"><img src="logo-D2-Group-preto.png" class="h-10 sm:h-14"></div>
+                    <div class="text-left sm:text-right">
+                        <h2 class="text-2xl sm:text-3xl font-black uppercase tracking-tighter text-slate-900">${reportTitle}</h2>
+                        <p class="text-slate-500 font-black uppercase text-xs tracking-widest mt-1">Data: ${new Date().toLocaleDateString()}</p>
+                    </div>
                 </div>
-                ${canViewCosts ? `
-                <div class="text-right">
-                    <p class="text-[10px] sm:text-[11px] font-black uppercase text-cyan-600 mb-1">LUCRO TOTAL</p>
-                    <p class="text-3xl sm:text-4xl font-black text-cyan-600">${formatCurr(tProfit)}</p>
+                
+                ${ceoDashHTML}
+
+                <div id="dynamic-report-content">
+                    ${bottomHTML}
                 </div>
-                ` : ''}
-            </div>
-        </div>`;
+                
+                <div class="mt-12 pt-8 border-t-4 border-slate-100 flex justify-center no-print">
+                     <button onclick="window.printReport()" class="flex items-center gap-3 text-white bg-slate-900 hover:bg-slate-800 transition-all font-black text-sm uppercase tracking-widest px-8 py-4 rounded-2xl shadow-xl hover:-translate-y-1">
+                         <i data-lucide="printer" class="w-5 h-5"></i> Imprimir Relatório Completo
+                     </button>
+                </div>
+            </div>`;
+        try { lucide.createIcons(); } catch {}
     }
 
     onAuthStateChanged(auth, (u) => {
         state.user = u;
+        applyThemeConfig(); 
         if (u) {
             document.getElementById('auth-screen').classList.add('hidden'); document.getElementById('main-app').classList.remove('hidden');
             document.getElementById('user-display').innerText = u.email ? u.email.split('@')[0].toUpperCase() : "USR";
