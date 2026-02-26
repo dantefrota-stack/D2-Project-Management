@@ -46,10 +46,10 @@
         /* Conversão de cores Neon para tons escuros no Light Mode para leitura perfeita */
         .app-body-light .text-slate-200, .app-body-light .text-slate-300 { color: #334155 !important; }
         .app-body-light .text-slate-400 { color: #475569 !important; }
-        .app-body-light .text-gold { color: #b45309 !important; } /* Ouro Escuro */
-        .app-body-light .text-emerald-400, .app-body-light .text-emerald-500 { color: #059669 !important; } /* Verde Musgo */
-        .app-body-light .text-cyan-400, .app-body-light .text-cyan-300 { color: #0284c7 !important; } /* Azul Petróleo */
-        .app-body-light .text-red-400, .app-body-light .text-red-500 { color: #dc2626 !important; } /* Vermelho Fechado */
+        .app-body-light .text-gold { color: #b45309 !important; } 
+        .app-body-light .text-emerald-400, .app-body-light .text-emerald-500 { color: #059669 !important; } 
+        .app-body-light .text-cyan-400, .app-body-light .text-cyan-300 { color: #0284c7 !important; } 
+        .app-body-light .text-red-400, .app-body-light .text-red-500 { color: #dc2626 !important; } 
         
         .app-body-light .bg-black\/20, .app-body-light .bg-black\/30, .app-body-light .bg-black\/40 { background-color: #f1f5f9 !important; border-color: #cbd5e1 !important; }
         .app-body-light .bg-cyan-950\/20 { background-color: #f0f9ff !important; border-color: #bae6fd !important; }
@@ -93,7 +93,7 @@
         }
         .btn-premium-gold:hover { transform: translateY(-1px); box-shadow: 0 4px 15px rgba(251, 191, 36, 0.4); }
 
-        /* Calendário Premium - CORREÇÃO DE OVERLAP */
+        /* Calendário Premium */
         input[type="date"] { position: relative; } 
         input[type="date"]::-webkit-calendar-picker-indicator {
             background: transparent; bottom: 0; color: transparent; cursor: pointer;
@@ -122,7 +122,7 @@
         .project-card { transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1); cursor: pointer; }
         .project-card:hover { transform: translateY(-4px); box-shadow: 0 20px 40px -10px rgba(0,0,0,0.5); border-color: rgba(251, 191, 36, 0.3); }
 
-        /* Estilos de Impressão (PDF & Papel) OTIMIZADOS */
+        /* Estilos de Impressão */
         @media print { 
             @page { size: letter; margin: 10mm; }
             .no-print { display: none !important; } 
@@ -445,23 +445,31 @@
 
     window.d2Charts = {};
 
-    // --- SISTEMA DE MODAL CUSTOMIZADO COM ALTO CONTRASTE ---
+    // --- SISTEMA DE MODAL CUSTOMIZADO COM ALTO CONTRASTE (CORREÇÃO DE EXECUÇÃO) ---
+    window._tempOnConfirm = null;
+    
+    window.currentConfirmCallback = async () => {
+        if (typeof window._tempOnConfirm === 'function') {
+            try { await window._tempOnConfirm(); } 
+            catch (err) { console.error("Error in modal confirm:", err); }
+        }
+        window.closeCustomModal();
+    };
+
     window.showModal = (title, msg, type = 'alert', onConfirm = null) => {
         document.getElementById('custom-modal-title').innerText = title;
         document.getElementById('custom-modal-msg').innerText = msg;
         const btnContainer = document.getElementById('custom-modal-buttons');
         const iconContainer = document.getElementById('custom-modal-icon');
         
+        window._tempOnConfirm = onConfirm; // Salva o callback globalmente
+        
         if (type === 'confirm') {
             iconContainer.innerHTML = '<i data-lucide="help-circle" class="w-12 h-12 text-gold"></i>';
             btnContainer.innerHTML = `
                 <button onclick="window.closeCustomModal()" class="flex-1 px-4 py-3 bg-slate-700 text-white rounded-xl font-bold hover:bg-slate-600 transition-colors text-xs uppercase tracking-widest shadow-lg">Cancelar</button>
-                <button id="custom-confirm-btn" class="flex-1 px-4 py-3 bg-red-600 text-white font-black rounded-xl hover:bg-red-500 transition-colors text-xs uppercase tracking-widest shadow-lg shadow-red-500/20">Confirmar</button>
+                <button onclick="window.currentConfirmCallback()" class="flex-1 px-4 py-3 bg-red-600 text-white font-black rounded-xl hover:bg-red-500 transition-colors text-xs uppercase tracking-widest shadow-lg shadow-red-500/20">Confirmar</button>
             `;
-            document.getElementById('custom-confirm-btn').onclick = () => {
-                if (onConfirm) onConfirm();
-                window.closeCustomModal();
-            };
         } else if (type === 'error') {
             iconContainer.innerHTML = '<i data-lucide="alert-circle" class="w-12 h-12 text-red-500"></i>';
             btnContainer.innerHTML = `
@@ -478,6 +486,7 @@
     };
 
     window.closeCustomModal = () => {
+        window._tempOnConfirm = null;
         document.getElementById('custom-modal').classList.remove('active');
     };
 
@@ -652,7 +661,7 @@
             try {
                 await updateDoc(doc(db, 'artifacts', appId, 'public', 'data', 'projects', projectId), { despesas: updatedExpenses });
                 logAccess(state.user.email, `Excluiu despesa de $${expenseVal} (${expenseDesc}) na obra ID: ${projectId}`);
-            } catch (e) { console.error("Erro ao remover despesa:", e); }
+            } catch (e) { console.error("Erro ao remover despesa:", e); window.showModal('Erro', 'Falha ao excluir despesa.', 'error'); }
         });
     };
 
@@ -745,7 +754,7 @@
     // --- NOVA LÓGICA DE NAVEGAÇÃO INTERNA (DRILL-DOWN) E HIDE HEADER ---
     window.openProjectDetails = (id) => { 
         state.focusedProject = id; 
-        state.activeModule = null; // Abre no nível dos Botões Gigantes
+        state.activeModule = null; 
         renderProjects(); 
         window.scrollTo({ top: 0, behavior: 'smooth' }); 
     };
@@ -775,6 +784,26 @@
         document.getElementById('t-id').value = id; document.getElementById('t-email').value = email; document.getElementById('t-pass').value = pass; document.getElementById('t-role').value = role || 'editor';
         document.getElementById('t-viewall').checked = viewAll === true || String(viewAll) === 'true'; document.getElementById('t-viewcosts').checked = viewCosts === true || String(viewCosts) === 'true';
         window.scrollTo({ top: 0, behavior: 'smooth' });
+    };
+
+    window.deleteTeam = (id) => {
+        window.showModal('Remover Acesso', 'Deseja realmente remover o acesso deste membro?', 'confirm', async () => {
+            try {
+                await deleteDoc(doc(db, 'artifacts', appId, 'public', 'data', 'user_credentials', id));
+                logAccess(state.user.email, `Removeu utilizador.`);
+            } catch(e) { console.error(e); }
+        });
+    };
+
+    window.deleteP = (id) => {
+        window.showModal('Excluir Obra', 'Tem certeza que deseja excluir esta obra permanentemente?', 'confirm', async () => {
+            try {
+                const p = state.projects.find(x => x.id === id);
+                await deleteDoc(doc(db, 'artifacts', appId, 'public', 'data', 'projects', id));
+                logAccess(state.user.email, `Excluiu a obra: ${p?.cliente || id}`);
+                if (state.focusedProject === id) window.closeProjectDetails();
+            } catch(e) { console.error(e); }
+        });
     };
 
     window.editP = (id) => {
@@ -899,7 +928,7 @@
                 mainContainer.classList.remove('pt-6', 'sm:pt-8');
                 mainContainer.classList.add('pt-2', 'sm:pt-4');
             }
-            grid.className = "flex flex-col max-w-4xl mx-auto gap-6 text-left w-full animate-fade-in pb-20";
+            grid.className = "flex flex-col max-w-4xl mx-auto gap-6 text-left w-full animate-fade-in pb-20 mt-4";
             filtered = state.projects.filter(p => p.id === state.focusedProject); 
             
             // Botão de Voltar padrão se NENHUM módulo estiver aberto (Nível 2)
