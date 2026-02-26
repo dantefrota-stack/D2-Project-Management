@@ -81,7 +81,7 @@
         }
         .btn-premium-gold:hover { transform: translateY(-1px); box-shadow: 0 4px 15px rgba(251, 191, 36, 0.4); }
 
-        /* Calendário Premium */
+        /* Calendário Premium - CORREÇÃO DE OVERLAP */
         input[type="date"] { position: relative; } 
         input[type="date"]::-webkit-calendar-picker-indicator {
             background: transparent; bottom: 0; color: transparent; cursor: pointer;
@@ -99,9 +99,9 @@
         .scrollbar-hide::-webkit-scrollbar { display: none; }
         
         /* Modais */
-        .modal-overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.7); backdrop-filter: blur(4px); z-index: 1000; display: none; align-items: center; justify-content: center; }
+        .modal-overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.8); backdrop-filter: blur(6px); z-index: 1000; display: none; align-items: center; justify-content: center; }
         .modal-overlay.active { display: flex; }
-        .modal-content { background: #1e293b; border-radius: 24px; padding: 32px; max-width: 600px; width: 90%; max-height: 80vh; overflow-y: auto; border: 1px solid rgba(255,255,255,0.1); box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5); }
+        .modal-content { background: #0f172a; border-radius: 24px; padding: 32px; max-width: 600px; width: 90%; max-height: 80vh; overflow-y: auto; border: 1px solid rgba(255,255,255,0.1); box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5); }
         .app-body-light .modal-content { background: #ffffff; color: #0f172a; border-color: #cbd5e1; }
 
         /* Animações e Hover Dinâmico */
@@ -117,10 +117,10 @@
             body, .app-body-dark, .app-body-light { background: #fff !important; color: #0f172a !important; -webkit-print-color-adjust: exact; print-color-adjust: exact; }
             .glass { background: #fff !important; border: 1px solid #cbd5e1 !important; box-shadow: none !important; filter: none !important; backdrop-filter: none !important; page-break-inside: avoid; }
             .text-white, .text-slate-200, .text-slate-300, .text-slate-400 { color: #0f172a !important; }
-            .text-gold { color: #b45309 !important; font-weight: 900 !important; } /* Escurece o dourado na impressão para leitura */
+            .text-gold { color: #b45309 !important; font-weight: 900 !important; } 
             .bg-black\/20, .bg-slate-900\/80, .bg-gradient-to-br, .bg-white\/5, .bg-cyan-950\/20, .bg-black\/40 { background: #f8fafc !important; border-color: #cbd5e1 !important; }
             canvas { max-width: 100% !important; max-height: 250px !important; page-break-inside: avoid; }
-            .overflow-x-auto { overflow: visible !important; } /* Impede corte de tabelas */
+            .overflow-x-auto { overflow: visible !important; } 
             tr { page-break-inside: avoid !important; }
         }
 
@@ -178,6 +178,18 @@
     </div>
 </div>
 
+<!-- Modal Global de Alertas e Confirmações do Sistema -->
+<div id="custom-modal" class="modal-overlay" style="z-index: 9999;">
+    <div class="modal-content animate-fade-in max-w-sm w-full p-8 text-center !rounded-[32px]">
+        <div id="custom-modal-icon" class="flex justify-center mb-5"></div>
+        <h3 id="custom-modal-title" class="text-xl font-black text-white mb-2">Atenção</h3>
+        <p id="custom-modal-msg" class="text-sm text-slate-400 mb-8"></p>
+        <div class="flex justify-center gap-3" id="custom-modal-buttons">
+            <!-- Botões injetados dinamicamente via JS -->
+        </div>
+    </div>
+</div>
+
 <!-- Modal de Edição de Recebimentos -->
 <div id="edit-rec-modal" class="modal-overlay">
     <div class="modal-content animate-fade-in">
@@ -205,7 +217,7 @@
 <!-- Interface Interna -->
 <div id="main-app" class="hidden min-h-screen flex flex-col app-body-dark text-center">
     
-    <!-- HEADER PRINCIPAL (Oculto no Modo Foco) -->
+    <!-- HEADER PRINCIPAL -->
     <header id="main-header" class="no-print bg-white/5 backdrop-blur-md border-b border-white/5 p-4 sticky top-0 z-40 shadow-sm transition-all duration-300">
         <div class="max-w-7xl mx-auto flex justify-between items-center">
             <div class="flex items-center gap-6">
@@ -225,7 +237,7 @@
 
     <main id="main-container" class="max-w-7xl mx-auto w-full p-4 sm:p-6 flex-1 pt-6 sm:pt-8 transition-all duration-300">
         
-        <!-- NAVEGAÇÃO PRINCIPAL (Oculta no Modo Foco) -->
+        <!-- NAVEGAÇÃO PRINCIPAL -->
         <nav id="main-nav" class="no-print flex gap-10 mb-6 border-b border-white/5 overflow-x-auto justify-center sm:justify-start scrollbar-hide">
             <button onclick="showView('projects')" class="tab-btn pb-4 font-black uppercase tracking-[0.2em] tab-active" id="tab-projects" data-i18n="nav_proj">Projetos</button>
             <button onclick="window.cancelEdit(); showView('new')" class="tab-btn pb-4 font-black uppercase tracking-[0.2em] editor-only hidden" id="tab-new" data-i18n="nav_new">Nova Obra</button>
@@ -316,7 +328,7 @@
                 <div class="col-span-2 space-y-2">
                     <label class="text-xs font-black uppercase text-slate-500 ml-1 tracking-widest">Status</label>
                     <select id="f-status" class="modern-input !pr-10">
-                        <option value="Cotação">Cotação</option>
+                        <!-- 'Cotação' Removida conforme solicitação -->
                         <option value="✅ Aprovado">✅ Aprovado</option>
                         <option value="Aguardando Início">Aguardando Início</option>
                         <option value="Em Execução">Em Execução</option>
@@ -421,6 +433,42 @@
     };
 
     window.d2Charts = {};
+
+    // --- SISTEMA DE MODAL CUSTOMIZADO (SUBSTITUI ALERT E CONFIRM) ---
+    window.showModal = (title, msg, type = 'alert', onConfirm = null) => {
+        document.getElementById('custom-modal-title').innerText = title;
+        document.getElementById('custom-modal-msg').innerText = msg;
+        const btnContainer = document.getElementById('custom-modal-buttons');
+        const iconContainer = document.getElementById('custom-modal-icon');
+        
+        if (type === 'confirm') {
+            iconContainer.innerHTML = '<i data-lucide="help-circle" class="w-12 h-12 text-gold"></i>';
+            btnContainer.innerHTML = `
+                <button onclick="window.closeCustomModal()" class="flex-1 px-4 py-3 bg-slate-800 text-white rounded-xl font-bold hover:bg-slate-700 transition-colors text-[10px] uppercase tracking-widest">Cancelar</button>
+                <button id="custom-confirm-btn" class="flex-1 px-4 py-3 bg-red-500 text-white font-black rounded-xl hover:bg-red-400 transition-colors text-[10px] uppercase tracking-widest shadow-lg shadow-red-500/20">Confirmar</button>
+            `;
+            document.getElementById('custom-confirm-btn').onclick = () => {
+                if (onConfirm) onConfirm();
+                window.closeCustomModal();
+            };
+        } else if (type === 'error') {
+            iconContainer.innerHTML = '<i data-lucide="alert-circle" class="w-12 h-12 text-red-500"></i>';
+            btnContainer.innerHTML = `
+                <button onclick="window.closeCustomModal()" class="w-full px-6 py-3 bg-slate-800 text-white font-black rounded-xl hover:bg-slate-700 transition-colors text-[10px] uppercase tracking-widest">OK</button>
+            `;
+        } else {
+            iconContainer.innerHTML = '<i data-lucide="info" class="w-12 h-12 text-cyan-400"></i>';
+            btnContainer.innerHTML = `
+                <button onclick="window.closeCustomModal()" class="w-full px-6 py-3 bg-cyan-600 text-white font-black rounded-xl hover:bg-cyan-500 transition-colors text-[10px] uppercase tracking-widest shadow-lg shadow-cyan-500/20">Entendido</button>
+            `;
+        }
+        document.getElementById('custom-modal').classList.add('active');
+        try { lucide.createIcons(); } catch {}
+    };
+
+    window.closeCustomModal = () => {
+        document.getElementById('custom-modal').classList.remove('active');
+    };
 
     function showLoginError(msg) {
         const box = document.getElementById('login-error-msg');
@@ -567,7 +615,7 @@
         const cat = document.getElementById(`exp-cat-${projectId}`)?.value;
         const val = document.getElementById(`exp-val-${projectId}`)?.value;
 
-        if (!date || !desc || !cat || !val) { alert('Preencha todos os campos da despesa.'); return; }
+        if (!date || !desc || !cat || !val) { window.showModal('Atenção', 'Preencha todos os campos da despesa.'); return; }
         
         const newExpense = { id: crypto.randomUUID(), data: date, descricao: desc, categoria: cat, valor: parseFloat(val), adicionadoPor: state.user.email, criadoEm: new Date().toISOString() };
 
@@ -577,18 +625,19 @@
         } catch (e) { console.error("Erro ao adicionar despesa:", e); }
     };
 
-    window.deleteExpense = async (projectId, expenseId, expenseDesc, expenseVal) => {
+    window.deleteExpense = (projectId, expenseId, expenseDesc, expenseVal) => {
         if (!state.user || !state.currentUserViewCosts) return;
-        if (!confirm(`Remover a despesa: ${expenseDesc}?`)) return;
+        
+        window.showModal('Excluir Despesa', `Deseja realmente remover a despesa: ${expenseDesc}?`, 'confirm', async () => {
+            const p = state.projects.find(x => x.id === projectId);
+            if (!p) return;
+            const updatedExpenses = (p.despesas || []).filter(e => e.id !== expenseId);
 
-        const p = state.projects.find(x => x.id === projectId);
-        if (!p) return;
-        const updatedExpenses = (p.despesas || []).filter(e => e.id !== expenseId);
-
-        try {
-            await updateDoc(doc(db, 'artifacts', appId, 'public', 'data', 'projects', projectId), { despesas: updatedExpenses });
-            logAccess(state.user.email, `Excluiu despesa de $${expenseVal} (${expenseDesc}) na obra ID: ${projectId}`);
-        } catch (e) { console.error("Erro ao remover despesa:", e); }
+            try {
+                await updateDoc(doc(db, 'artifacts', appId, 'public', 'data', 'projects', projectId), { despesas: updatedExpenses });
+                logAccess(state.user.email, `Excluiu despesa de $${expenseVal} (${expenseDesc}) na obra ID: ${projectId}`);
+            } catch (e) { console.error("Erro ao remover despesa:", e); }
+        });
     };
 
     function renderCharts(pId, budget, expensesByCategory, totalExpenses) {
@@ -640,10 +689,14 @@
         try { lucide.createIcons(); } catch {}
     }
     window.updatePaymentField = (index, field, value) => { if (!state.editingPayments) return; if (field === 'data') state.editingPayments.payments[index].data = value; if (field === 'valor') state.editingPayments.payments[index].valor = parseFloat(value || 0); };
-    window.removePaymentFromEdit = (index) => { if (!confirm('Remover este pagamento?')) return; state.editingPayments.payments.splice(index, 1); renderPaymentEditList(); };
+    window.removePaymentFromEdit = (index) => { 
+        window.showModal('Confirmar Exclusão', 'Deseja remover este pagamento?', 'confirm', () => {
+            state.editingPayments.payments.splice(index, 1); renderPaymentEditList(); 
+        });
+    };
     window.addNewPaymentToEdit = () => { if (!state.editingPayments) return; state.editingPayments.payments.push({ data: new Date().toISOString().split('T')[0], valor: 0 }); renderPaymentEditList(); };
-    window.saveEditedPayments = async () => { if (!state.editingPayments) return; try { await updateDoc(doc(db, 'artifacts', appId, 'public', 'data', 'projects', state.editingPayments.projectId), { pagamentosEfetuados: state.editingPayments.payments }); closeEditPaymentModal(); } catch (e) { alert('Erro ao salvar pagamentos: ' + e.message); } };
-    window.addPayment = async (projectId) => { if (!state.user) return; const v = document.getElementById(`pay-val-${projectId}`)?.value; const d = document.getElementById(`pay-date-${projectId}`)?.value; if (!v || !d) { alert('Preencha data e valor para o vendedor.'); return; } try { await updateDoc(doc(db, 'artifacts', appId, 'public', 'data', 'projects', projectId), { pagamentosEfetuados: arrayUnion({ valor: parseFloat(v), data: d }) }); logAccess(state.user.email, `Pagou vendedor $${v} na obra ID: ${projectId}`); } catch (e) { console.error(e); } };
+    window.saveEditedPayments = async () => { if (!state.editingPayments) return; try { await updateDoc(doc(db, 'artifacts', appId, 'public', 'data', 'projects', state.editingPayments.projectId), { pagamentosEfetuados: state.editingPayments.payments }); closeEditPaymentModal(); } catch (e) { window.showModal('Erro', 'Erro ao salvar pagamentos: ' + e.message, 'error'); } };
+    window.addPayment = async (projectId) => { if (!state.user) return; const v = document.getElementById(`pay-val-${projectId}`)?.value; const d = document.getElementById(`pay-date-${projectId}`)?.value; if (!v || !d) { window.showModal('Atenção', 'Preencha data e valor para o vendedor.'); return; } try { await updateDoc(doc(db, 'artifacts', appId, 'public', 'data', 'projects', projectId), { pagamentosEfetuados: arrayUnion({ valor: parseFloat(v), data: d }) }); logAccess(state.user.email, `Pagou vendedor $${v} na obra ID: ${projectId}`); } catch (e) { console.error(e); } };
 
     window.openEditRecModal = (projectId) => { const p = state.projects.find(x => x.id === projectId); if (!p) return; state.editingRecs = { projectId, recs: [...(p.recebimentos || [])] }; renderRecEditList(); document.getElementById('edit-rec-modal').classList.add('active'); };
     window.closeEditRecModal = () => { state.editingRecs = null; document.getElementById('edit-rec-modal').classList.remove('active'); };
@@ -654,10 +707,14 @@
         try { lucide.createIcons(); } catch {}
     }
     window.updateRecField = (index, field, value) => { if (!state.editingRecs) return; if (field === 'data') state.editingRecs.recs[index].data = value; if (field === 'valor') state.editingRecs.recs[index].valor = parseFloat(value || 0); if (field === 'metodo') state.editingRecs.recs[index].metodo = value; };
-    window.removeRecFromEdit = (index) => { if (!confirm('Remover este recebimento?')) return; state.editingRecs.recs.splice(index, 1); renderRecEditList(); };
+    window.removeRecFromEdit = (index) => { 
+        window.showModal('Confirmar Exclusão', 'Deseja remover este recebimento?', 'confirm', () => {
+            state.editingRecs.recs.splice(index, 1); renderRecEditList(); 
+        });
+    };
     window.addNewRecToEdit = () => { if (!state.editingRecs) return; state.editingRecs.recs.push({ data: new Date().toISOString().split('T')[0], valor: 0, metodo: 'Zelle' }); renderRecEditList(); };
-    window.saveEditedRecs = async () => { if (!state.editingRecs) return; try { await updateDoc(doc(db, 'artifacts', appId, 'public', 'data', 'projects', state.editingRecs.projectId), { recebimentos: state.editingRecs.recs }); closeEditRecModal(); } catch (e) { alert('Erro ao salvar: ' + e.message); } };
-    window.addRecebimento = async (projectId) => { if (!state.user) return; const v = document.getElementById(`rec-val-${projectId}`)?.value; const d = document.getElementById(`rec-date-${projectId}`)?.value; const m = document.getElementById(`rec-met-${projectId}`)?.value; if (!v || !d || !m) { alert('Preencha data, valor e método para o recebimento.'); return; } try { await updateDoc(doc(db, 'artifacts', appId, 'public', 'data', 'projects', projectId), { recebimentos: arrayUnion({ valor: parseFloat(v), data: d, metodo: m }) }); logAccess(state.user.email, `Registrou recebimento $${v} na obra ID: ${projectId}`); } catch (e) { console.error(e); } };
+    window.saveEditedRecs = async () => { if (!state.editingRecs) return; try { await updateDoc(doc(db, 'artifacts', appId, 'public', 'data', 'projects', state.editingRecs.projectId), { recebimentos: state.editingRecs.recs }); closeEditRecModal(); } catch (e) { window.showModal('Erro', 'Erro ao salvar: ' + e.message, 'error'); } };
+    window.addRecebimento = async (projectId) => { if (!state.user) return; const v = document.getElementById(`rec-val-${projectId}`)?.value; const d = document.getElementById(`rec-date-${projectId}`)?.value; const m = document.getElementById(`rec-met-${projectId}`)?.value; if (!v || !d || !m) { window.showModal('Atenção', 'Preencha data, valor e método para o recebimento.'); return; } try { await updateDoc(doc(db, 'artifacts', appId, 'public', 'data', 'projects', projectId), { recebimentos: arrayUnion({ valor: parseFloat(v), data: d, metodo: m }) }); logAccess(state.user.email, `Registrou recebimento $${v} na obra ID: ${projectId}`); } catch (e) { console.error(e); } };
 
     const formatCurr = (v) => new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD', minimumFractionDigits: 2 }).format(Number(v || 0));
 
@@ -704,17 +761,49 @@
         window.scrollTo({ top: 0, behavior: 'smooth' });
     };
 
+    window.deleteTeam = (id) => {
+        window.showModal('Remover Acesso', 'Deseja realmente remover o acesso deste membro?', 'confirm', async () => {
+            await deleteDoc(doc(db, 'artifacts', appId, 'public', 'data', 'user_credentials', id));
+        });
+    };
+
+    window.deleteP = (id) => {
+        window.showModal('Excluir Obra', 'Tem certeza que deseja excluir esta obra permanentemente?', 'confirm', async () => {
+            await deleteDoc(doc(db, 'artifacts', appId, 'public', 'data', 'projects', id));
+            if (state.focusedProject === id) window.closeProjectDetails();
+        });
+    };
+
     window.editP = (id) => {
         const p = state.projects.find(x => x.id === id); if (!p) return;
         renderVendedores(); const vendSelect = document.getElementById('f-vendedor');
         if (p.vendedor && !Array.from(vendSelect.options).some(opt => opt.value === p.vendedor)) { vendSelect.innerHTML += `<option value="${p.vendedor}">${p.vendedor} (Cadastro Antigo)</option>`; }
+        
+        // Assegura que o status não é mais Cotação, ou cria dinâmica caso ele ainda exista e precise ser mantido visível para edição
+        const statusSelect = document.getElementById('f-status');
+        if (statusSelect) {
+            statusSelect.innerHTML = `<option value="✅ Aprovado">✅ Aprovado</option><option value="Aguardando Início">Aguardando Início</option><option value="Em Execução">Em Execução</option><option value="Finalizado">Finalizado</option>`;
+            if (p.status && !Array.from(statusSelect.options).some(opt => opt.value === p.status)) {
+                statusSelect.innerHTML += `<option value="${p.status}">${p.status}</option>`;
+            }
+        }
+
         document.getElementById('edit-id').value = id; document.getElementById('f-proposta').value = p.numeroProposta || ''; document.getElementById('f-invoice').value = p.numeroInvoice || ''; document.getElementById('f-empresa').value = p.empresa || 'Smart Home';
         document.getElementById('f-cliente').value = p.cliente || ''; document.getElementById('f-vendedor').value = p.vendedor || ''; document.getElementById('f-valor').value = p.valorTotal ?? ''; document.getElementById('f-orcamento').value = p.orcamento ?? ''; 
-        document.getElementById('f-comm').value = p.percComissao ?? 5; document.getElementById('f-metodo').value = p.metodo || 'Zelle'; document.getElementById('f-inicio').value = p.dataInicio || ''; document.getElementById('f-entrega').value = p.dataEntrega || ''; document.getElementById('f-status').value = p.status || 'Cotação';
+        document.getElementById('f-comm').value = p.percComissao ?? 5; document.getElementById('f-metodo').value = p.metodo || 'Zelle'; document.getElementById('f-inicio').value = p.dataInicio || ''; document.getElementById('f-entrega').value = p.dataEntrega || ''; 
+        document.getElementById('f-status').value = p.status || '✅ Aprovado';
         window.showView('new');
     };
 
-    window.cancelEdit = () => { const form = document.getElementById('project-form'); if (form) form.reset(); document.getElementById('edit-id').value = ''; const fVendedor = document.getElementById('f-vendedor'); if (fVendedor && state.user) fVendedor.value = state.user.email; };
+    window.cancelEdit = () => { 
+        const form = document.getElementById('project-form'); if (form) form.reset(); 
+        document.getElementById('edit-id').value = ''; 
+        const fVendedor = document.getElementById('f-vendedor'); if (fVendedor && state.user) fVendedor.value = state.user.email; 
+        const statusSelect = document.getElementById('f-status');
+        if (statusSelect) {
+            statusSelect.innerHTML = `<option value="✅ Aprovado">✅ Aprovado</option><option value="Aguardando Início">Aguardando Início</option><option value="Em Execução">Em Execução</option><option value="Finalizado">Finalizado</option>`;
+        }
+    };
 
     window.showView = (v) => {
         ['projects', 'new', 'reports', 'users', 'logs'].forEach(id => {
@@ -1055,7 +1144,7 @@
 
                 <div class="grid grid-cols-2 gap-y-6 gap-x-4 p-6 bg-black/20 rounded-[24px] border border-white/5 mb-10 text-left shadow-inner print:bg-transparent print:border-slate-200">
                     <div><p class="text-xs font-black text-slate-500 uppercase tracking-widest mb-1.5">Vendedor</p><p class="text-sm font-bold text-slate-200 truncate print:text-black" title="${p.vendedor}">${p.vendedor?.split('@')[0] || '--'}</p></div>
-                    <div><p class="text-xs font-black text-slate-500 uppercase tracking-widest mb-1.5">Status da Obra</p><p class="text-sm font-black text-gold uppercase print:text-amber-700">${p.status || 'Cotação'}</p></div>
+                    <div><p class="text-xs font-black text-slate-500 uppercase tracking-widest mb-1.5">Status da Obra</p><p class="text-sm font-black text-gold uppercase print:text-amber-700">${p.status || '✅ Aprovado'}</p></div>
                     <div><p class="text-xs font-black text-slate-500 uppercase tracking-widest mb-1.5">Proposta / Invoice</p><p class="text-sm font-bold text-slate-200 print:text-black">${p.numeroProposta || '---'} <span class="text-slate-600 font-normal mx-1">|</span> ${p.numeroInvoice || '---'}</p></div>
                     <div><p class="text-xs font-black text-slate-500 uppercase tracking-widest mb-1.5">Pagamento • % Comissão</p><p class="text-sm font-bold text-slate-200 print:text-black">${p.metodo || '--'} <span class="text-slate-600 font-normal mx-1">•</span> ${p.percComissao || 0}%</p></div>
                 </div>
@@ -1263,7 +1352,7 @@
                 state.currentUserRole = 'superadmin'; state.currentUserViewAll = true; state.currentUserViewCosts = true;
             } else {
                 const myProfile = team.find(u => u.email.toLowerCase() === auth.currentUser.email.toLowerCase());
-                if (!myProfile) { alert("Acesso Negado."); signOut(auth); return; }
+                if (!myProfile) { window.showModal('Acesso Negado', 'Seu e-mail não foi autorizado pelo administrador do sistema.', 'error'); signOut(auth); return; }
                 state.currentUserRole = myProfile?.role || 'viewer';
                 state.currentUserViewAll = myProfile?.viewAll || false;
                 state.currentUserViewCosts = myProfile?.viewCosts || false;
@@ -1334,7 +1423,7 @@
                 if (!id) { await addDoc(collection(db, 'artifacts', appId, 'public', 'data', 'user_credentials'), { email: mail, password: pass, role: role, viewAll: viewAll, viewCosts: viewCosts, updatedAt: serverTimestamp() }); logAccess(state.user.email, `Adicionou usuário: ${mail}`); } 
                 else { await updateDoc(doc(db, 'artifacts', appId, 'public', 'data', 'user_credentials', id), { email: mail, password: pass, role: role, viewAll: viewAll, viewCosts: viewCosts, updatedAt: serverTimestamp() }); logAccess(state.user.email, `Atualizou usuário: ${mail}`); }
                 e.target.reset(); document.getElementById('t-id').value = ''; document.getElementById('t-viewall').checked = false; document.getElementById('t-viewcosts').checked = false;
-            } catch (err) { alert("Erro: " + err.message); }
+            } catch (err) { window.showModal('Erro', 'Erro ao salvar usuário: ' + err.message, 'error'); }
         };
     });
 </script>
