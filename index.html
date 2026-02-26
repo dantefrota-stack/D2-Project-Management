@@ -35,6 +35,8 @@
 
         /* Interface Interna */
         .app-body-dark { background-color: #030508; color: #f1f5f9; }
+        
+        /* O padding right de 45px era para o olho da senha. Foi corrigido nos sub-inputs usando !pr-3 nas classes do JS */
         .modern-input {
             width: 100%; padding: 14px 45px 14px 16px; border-radius: 12px;
             border: 1px solid rgba(148, 163, 184, 0.2); background: rgba(0,0,0,0.5);
@@ -76,8 +78,8 @@
         .calendar-icon-overlay { position: absolute; right: 14px; pointer-events: none; color: var(--gold); z-index: 10; }
 
         /* Painel Financeiro e Despesas Expansível */
-        .finance-panel { max-height: 0; overflow: hidden; transition: all 0.5s ease; opacity: 0; }
-        .finance-panel.open { max-height: 5000px; opacity: 1; margin-top: 1.5rem; border-top: 1px solid rgba(255,255,255,0.1); padding-top: 1.5rem; }
+        .finance-panel { max-height: 0; overflow: hidden; transition: all 0.4s ease-in-out; opacity: 0; }
+        .finance-panel.open { max-height: 5000px; opacity: 1; margin-top: 1rem; }
 
         /* Barra de Progresso */
         .progress-track { height: 16px; border-radius: 8px; background: rgba(255,255,255,0.05); overflow: hidden; border: 1px solid rgba(255,255,255,0.05); }
@@ -91,17 +93,19 @@
         .modal-overlay.active { display: flex; }
         .modal-content { background: #1e293b; border-radius: 24px; padding: 32px; max-width: 600px; width: 90%; max-height: 80vh; overflow-y: auto; border: 1px solid rgba(255,255,255,0.1); box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5); }
 
-        /* Animação Profissional de Modo Foco */
+        /* Animações e Hover Dinâmico */
         @keyframes fadeIn { from { opacity: 0; transform: translateY(15px); } to { opacity: 1; transform: translateY(0); } }
         .animate-fade-in { animation: fadeIn 0.4s cubic-bezier(0.16, 1, 0.3, 1) forwards; }
+        .project-card { transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1); }
+        .project-card.clickable:hover { transform: translateY(-4px); box-shadow: 0 20px 40px -10px rgba(0,0,0,0.5); border-color: rgba(251, 191, 36, 0.3); }
 
-        /* Estilos de Impressão de Relatório Limpo */
+        /* Estilos de Impressão */
         @media print { 
             .no-print { display: none !important; } 
             body.app-body-dark { background: #fff !important; color: #000 !important; }
             .glass { background: #fff !important; border: 1px solid #e2e8f0 !important; box-shadow: none !important; filter: none !important; backdrop-filter: none !important; }
             .text-white, .text-slate-200, .text-slate-300, .text-slate-400 { color: #0f172a !important; }
-            .bg-black\/20, .bg-slate-900\/80, .bg-gradient-to-br, .bg-white\/5 { background: #f8fafc !important; border-color: #cbd5e1 !important; }
+            .bg-black\/20, .bg-slate-900\/80, .bg-gradient-to-br, .bg-white\/5, .bg-indigo-950\/20 { background: #f8fafc !important; border-color: #cbd5e1 !important; }
             canvas { max-width: 100% !important; }
             .finance-panel.open { max-height: none !important; overflow: visible !important; }
         }
@@ -113,12 +117,16 @@
         .tab-active { color: var(--gold); border-bottom: 2px solid var(--gold); }
         .status-badge { width: 10px; height: 10px; border-radius: 999px; display: inline-block; }
         .text-gold { color: var(--gold); }
-        
-        /* Tag dinâmica visual para cargos */
         .role-tag { font-size: 9px; padding: 2px 6px; border-radius: 4px; font-weight: 800; text-transform: uppercase; letter-spacing: 0.1em; }
         .role-admin { background: rgba(251,191,36,0.2); color: var(--gold); }
         .role-editor { background: rgba(56,189,248,0.2); color: #38bdf8; }
         .role-viewer { background: rgba(148,163,184,0.2); color: #94a3b8; }
+        
+        /* Sub Tabs no Focus Mode */
+        .sub-tab-btn { padding: 10px 20px; font-size: 10px; font-weight: 900; text-transform: uppercase; letter-spacing: 0.1em; color: #64748b; border-bottom: 2px solid transparent; transition: 0.2s; }
+        .sub-tab-btn:hover { color: #fff; }
+        .sub-tab-active-comm { color: var(--gold); border-bottom-color: var(--gold); }
+        .sub-tab-active-costs { color: #818cf8; border-bottom-color: #818cf8; }
     </style>
 </head>
 <body class="auth-body">
@@ -239,28 +247,27 @@
 
                 <div class="col-span-2 md:col-span-1 space-y-2">
                     <label class="text-[10px] font-black uppercase text-slate-500 ml-1 tracking-widest">Nº Proposta</label>
-                    <input type="text" id="f-proposta" class="modern-input" placeholder="Ex: PROP-2026-001">
+                    <input type="text" id="f-proposta" class="modern-input !pr-4" placeholder="Ex: PROP-2026-001">
                 </div>
                 <div class="col-span-2 md:col-span-1 space-y-2">
                     <label class="text-[10px] font-black uppercase text-slate-500 ml-1 tracking-widest">Nº Invoice</label>
-                    <input type="text" id="f-invoice" class="modern-input" placeholder="Ex: INV-2026-001">
+                    <input type="text" id="f-invoice" class="modern-input !pr-4" placeholder="Ex: INV-2026-001">
                 </div>
 
                 <div class="col-span-2 space-y-2">
                     <label class="text-[10px] font-black uppercase text-slate-500 ml-1 tracking-widest">Unidade Responsável</label>
-                    <select id="f-empresa" class="modern-input"><option value="Smart Home">D2 Smart Home</option><option value="HVAC">D2 HVAC Solutions</option></select>
+                    <select id="f-empresa" class="modern-input !pr-8"><option value="Smart Home">D2 Smart Home</option><option value="HVAC">D2 HVAC Solutions</option></select>
                 </div>
-                <div class="col-span-2 md:col-span-1 space-y-2"><label class="text-[10px] font-black uppercase text-slate-500 ml-1 tracking-widest">Cliente</label><input type="text" id="f-cliente" required class="modern-input"></div>
-                <div class="col-span-2 md:col-span-1 space-y-2"><label class="text-[10px] font-black uppercase text-slate-500 ml-1 tracking-widest">Vendedor</label><select id="f-vendedor" required class="modern-input"></select></div>
+                <div class="col-span-2 md:col-span-1 space-y-2"><label class="text-[10px] font-black uppercase text-slate-500 ml-1 tracking-widest">Cliente</label><input type="text" id="f-cliente" required class="modern-input !pr-4"></div>
+                <div class="col-span-2 md:col-span-1 space-y-2"><label class="text-[10px] font-black uppercase text-slate-500 ml-1 tracking-widest">Vendedor</label><select id="f-vendedor" required class="modern-input !pr-8"></select></div>
                 
-                <!-- BLoco de Valores e Custos -->
                 <div class="space-y-2">
                     <label class="text-[10px] font-black uppercase text-slate-500 ml-1 tracking-widest">Valor Contrato Bruto</label>
-                    <div class="relative"><span class="absolute left-4 top-1/2 -translate-y-1/2 font-bold text-gold">$</span><input type="number" id="f-valor" step="0.01" required class="modern-input !pl-8"></div>
+                    <div class="relative"><span class="absolute left-4 top-1/2 -translate-y-1/2 font-bold text-gold">$</span><input type="number" id="f-valor" step="0.01" required class="modern-input !pl-8 !pr-4"></div>
                 </div>
                 <div class="space-y-2">
                     <label class="text-[10px] font-black uppercase text-indigo-400 ml-1 tracking-widest">Orçamento Custo (Budget)</label>
-                    <div class="relative"><span class="absolute left-4 top-1/2 -translate-y-1/2 font-bold text-indigo-400">$</span><input type="number" id="f-orcamento" step="0.01" placeholder="Opcional" class="modern-input !pl-8 border-indigo-500/20 focus:border-indigo-500"></div>
+                    <div class="relative"><span class="absolute left-4 top-1/2 -translate-y-1/2 font-bold text-indigo-400">$</span><input type="number" id="f-orcamento" step="0.01" placeholder="Opcional" class="modern-input !pl-8 !pr-4 border-indigo-500/20 focus:border-indigo-500"></div>
                 </div>
 
                 <div class="space-y-2">
@@ -269,7 +276,7 @@
                 </div>
                 <div class="space-y-2">
                     <label class="text-[10px] font-black uppercase text-slate-500 ml-1 tracking-widest">Forma Pagt. Prevista</label>
-                    <select id="f-metodo" class="modern-input">
+                    <select id="f-metodo" class="modern-input !pr-8">
                         <option value="Zelle">Zelle</option>
                         <option value="Wire Transfer">Wire Transfer</option>
                         <option value="Dinheiro">Dinheiro (Cash)</option>
@@ -280,20 +287,20 @@
                 <div class="space-y-2">
                     <label class="text-[10px] font-black uppercase text-slate-500 ml-1 tracking-widest">Início</label>
                     <div class="date-container" onclick="this.querySelector('input').showPicker()">
-                        <input type="date" id="f-inicio" required class="modern-input relative">
+                        <input type="date" id="f-inicio" required class="modern-input relative !pr-4">
                         <i data-lucide="calendar" class="calendar-icon-overlay w-5 h-5"></i>
                     </div>
                 </div>
                 <div class="space-y-2">
                     <label class="text-[10px] font-black uppercase text-slate-500 ml-1 tracking-widest">Entrega</label>
                     <div class="date-container" onclick="this.querySelector('input').showPicker()">
-                        <input type="date" id="f-entrega" required class="modern-input relative">
+                        <input type="date" id="f-entrega" required class="modern-input relative !pr-4">
                         <i data-lucide="calendar" class="calendar-icon-overlay w-5 h-5"></i>
                     </div>
                 </div>
                 <div class="col-span-2 space-y-2">
                     <label class="text-[10px] font-black uppercase text-slate-500 ml-1 tracking-widest">Status</label>
-                    <select id="f-status" class="modern-input">
+                    <select id="f-status" class="modern-input !pr-8">
                         <option value="Cotação">Cotação</option>
                         <option value="✅ Aprovado">✅ Aprovado</option>
                         <option value="Aguardando Início">Aguardando Início</option>
@@ -316,14 +323,14 @@
                     
                     <div class="space-y-1">
                         <label class="label-auth">Nível de Acesso (Autorização)</label>
-                        <select id="t-role" class="modern-input">
+                        <select id="t-role" class="modern-input !pr-8">
                             <option value="editor">Editor Padrão (Pode ver, adicionar e editar obras)</option>
                             <option value="viewer">Somente Leitura (Somente ver relatórios e obras)</option>
                             <option value="admin">Administrador (Total Acesso - Logs, Equipe e Edições)</option>
                         </select>
                     </div>
 
-                    <div class="space-y-1"><label class="label-auth">E-mail</label><input type="email" id="t-email" required class="modern-input"></div>
+                    <div class="space-y-1"><label class="label-auth">E-mail</label><input type="email" id="t-email" required class="modern-input !pr-4"></div>
                     <div class="space-y-1 relative">
                         <label class="label-auth">Senha</label>
                         <input type="password" id="t-pass" required class="modern-input">
@@ -336,7 +343,6 @@
                             <label for="t-viewall" class="text-[10px] font-black uppercase text-slate-300 cursor-pointer">Visão Global (Visualizar TODAS as obras)</label>
                         </div>
                         
-                        <!-- NOVO: Acesso a Custos -->
                         <div class="flex items-center gap-3 bg-indigo-900/20 p-4 rounded-xl border border-indigo-500/20">
                             <input type="checkbox" id="t-viewcosts" class="w-5 h-5 accent-indigo-500 cursor-pointer rounded bg-transparent">
                             <label for="t-viewcosts" class="text-[10px] font-black uppercase text-indigo-300 cursor-pointer">Acesso ao Centro de Custos e Lucro Real</label>
@@ -368,7 +374,6 @@
         </div>
 
         <div id="view-reports" class="hidden space-y-8 max-w-7xl mx-auto text-left animate-fade-in">
-            <!-- Os relatórios usarão os mesmos botões de filtro no topo se necessário, mas o painel atual já os tem internamente -->
             <div id="report-output"></div>
         </div>
     </main>
@@ -394,17 +399,14 @@
     const db = getFirestore(app);
     const SUPER_ADMIN = "dante.frota@allcablingtech.com";
 
-    // Modificado: state.showArchived e state.currentUserViewCosts
     let state = { 
         user: null, currentUserRole: 'viewer', currentUserViewAll: false, currentUserViewCosts: false, 
         projects: [], team: [], company: 'Ambas', lang: 'pt', theme: 'dark', 
-        editingPayments: null, editingRecs: null, focusedProject: null, showArchived: false 
+        editingPayments: null, editingRecs: null, focusedProject: null, activeModule: null, showArchived: false 
     };
 
-    // Armazena instâncias de gráficos para destruí-los ao recarregar
     window.d2Charts = {};
 
-    // Helpers UI
     function showLoginError(msg) {
         const box = document.getElementById('login-error-msg');
         const hint = document.getElementById('login-hint-msg');
@@ -427,7 +429,7 @@
         logs.unshift({ timestamp: new Date().toISOString(), user: userEmail, action });
         if (logs.length > 500) logs.splice(500);
         localStorage.setItem('access_logs', JSON.stringify(logs));
-        renderLogs(); // Force render if open
+        renderLogs();
     }
 
     function renderLogs() {
@@ -503,6 +505,7 @@
         document.getElementById('filter-active').classList.toggle('active', !showArchived);
         document.getElementById('filter-archived').classList.toggle('active', showArchived);
         state.focusedProject = null;
+        state.activeModule = null;
         renderProjects();
     };
 
@@ -516,10 +519,9 @@
         } catch (e) { console.error(e); }
     };
 
-    // --- LÓGICA DE CENTRO DE CUSTOS (DESPESAS) ---
+    // --- CUSTOS ---
     window.addExpense = async (projectId) => {
         if (!state.user || !state.currentUserViewCosts) return;
-        
         const date = document.getElementById(`exp-date-${projectId}`)?.value;
         const desc = document.getElementById(`exp-desc-${projectId}`)?.value;
         const cat = document.getElementById(`exp-cat-${projectId}`)?.value;
@@ -527,20 +529,10 @@
 
         if (!date || !desc || !cat || !val) { alert('Preencha todos os campos da despesa.'); return; }
         
-        const newExpense = {
-            id: crypto.randomUUID(),
-            data: date,
-            descricao: desc,
-            categoria: cat,
-            valor: parseFloat(val),
-            adicionadoPor: state.user.email,
-            criadoEm: new Date().toISOString()
-        };
+        const newExpense = { id: crypto.randomUUID(), data: date, descricao: desc, categoria: cat, valor: parseFloat(val), adicionadoPor: state.user.email, criadoEm: new Date().toISOString() };
 
         try {
-            await updateDoc(doc(db, 'artifacts', appId, 'public', 'data', 'projects', projectId), { 
-                despesas: arrayUnion(newExpense) 
-            });
+            await updateDoc(doc(db, 'artifacts', appId, 'public', 'data', 'projects', projectId), { despesas: arrayUnion(newExpense) });
             logAccess(state.user.email, `Adicionou despesa de $${val} (${cat}) na obra ID: ${projectId}`);
         } catch (e) { console.error("Erro ao adicionar despesa:", e); }
     };
@@ -551,27 +543,19 @@
 
         const p = state.projects.find(x => x.id === projectId);
         if (!p) return;
-        
         const updatedExpenses = (p.despesas || []).filter(e => e.id !== expenseId);
 
         try {
-            await updateDoc(doc(db, 'artifacts', appId, 'public', 'data', 'projects', projectId), { 
-                despesas: updatedExpenses 
-            });
+            await updateDoc(doc(db, 'artifacts', appId, 'public', 'data', 'projects', projectId), { despesas: updatedExpenses });
             logAccess(state.user.email, `Removeu despesa de $${expenseVal} (${expenseDesc}) na obra ID: ${projectId}`);
         } catch (e) { console.error("Erro ao remover despesa:", e); }
     };
 
-    // Renderização dos Gráficos (Chart.js)
     function renderCharts(pId, budget, expensesByCategory, totalExpenses) {
-        // Grafico de Budget (Donut)
         const ctxBudget = document.getElementById(`chart-budget-${pId}`);
         if (ctxBudget) {
             if (window.d2Charts[`budget-${pId}`]) window.d2Charts[`budget-${pId}`].destroy();
-            
-            const remaining = Math.max(0, budget - totalExpenses);
-            const overspent = Math.max(0, totalExpenses - budget);
-            
+            const remaining = Math.max(0, budget - totalExpenses); const overspent = Math.max(0, totalExpenses - budget);
             let dataArr, bgColors, labels;
             
             if (budget === 0 && totalExpenses === 0) {
@@ -583,49 +567,36 @@
             }
 
             window.d2Charts[`budget-${pId}`] = new Chart(ctxBudget, {
-                type: 'doughnut',
-                data: { labels: labels, datasets: [{ data: dataArr, backgroundColor: bgColors, borderWidth: 0 }] },
+                type: 'doughnut', data: { labels: labels, datasets: [{ data: dataArr, backgroundColor: bgColors, borderWidth: 0 }] },
                 options: { responsive: true, maintainAspectRatio: false, cutout: '75%', plugins: { legend: { display: false } } }
             });
         }
 
-        // Gráfico de Categoria (Barras)
         const ctxCat = document.getElementById(`chart-cat-${pId}`);
         if (ctxCat) {
             if (window.d2Charts[`cat-${pId}`]) window.d2Charts[`cat-${pId}`].destroy();
-            
-            const labels = Object.keys(expensesByCategory);
-            const dataArr = Object.values(expensesByCategory);
-            
+            const labels = Object.keys(expensesByCategory); const dataArr = Object.values(expensesByCategory);
             window.d2Charts[`cat-${pId}`] = new Chart(ctxCat, {
-                type: 'bar',
-                data: { labels: labels, datasets: [{ label: 'Gastos', data: dataArr, backgroundColor: '#818cf8', borderRadius: 4 }] },
-                options: { 
-                    responsive: true, maintainAspectRatio: false, 
-                    plugins: { legend: { display: false } },
-                    scales: { 
-                        y: { beginAtZero: true, grid: { color: 'rgba(255,255,255,0.05)' }, ticks: { color: '#94a3b8', font: {size: 9} } },
-                        x: { grid: { display: false }, ticks: { color: '#94a3b8', font: {size: 9} } }
-                    }
+                type: 'bar', data: { labels: labels, datasets: [{ label: 'Gastos', data: dataArr, backgroundColor: '#818cf8', borderRadius: 4 }] },
+                options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { display: false } },
+                    scales: { y: { beginAtZero: true, grid: { color: 'rgba(255,255,255,0.05)' }, ticks: { color: '#94a3b8', font: {size: 9} } }, x: { grid: { display: false }, ticks: { color: '#94a3b8', font: {size: 9} } } }
                 }
             });
         }
     }
 
-
-    // --- LÓGICA DE PAGAMENTOS E RECEBIMENTOS (MANTIDA INTACTA) ---
+    // --- PAGAMENTOS E RECEBIMENTOS ---
     window.openEditPaymentModal = (projectId) => {
         const p = state.projects.find(x => x.id === projectId);
         if (!p) return;
         state.editingPayments = { projectId, payments: [...(p.pagamentosEfetuados || [])] };
-        renderPaymentEditList();
-        document.getElementById('edit-payment-modal').classList.add('active');
+        renderPaymentEditList(); document.getElementById('edit-payment-modal').classList.add('active');
     };
     window.closeEditPaymentModal = () => { state.editingPayments = null; document.getElementById('edit-payment-modal').classList.remove('active'); };
     function renderPaymentEditList() {
         const container = document.getElementById('payment-edit-list');
         if (!container || !state.editingPayments) return;
-        container.innerHTML = state.editingPayments.payments.map((pay, i) => `<div class="flex items-center gap-4 p-4 bg-white/5 rounded-xl border border-white/10"><input type="date" value="${pay.data || ''}" onchange="updatePaymentField(${i}, 'data', this.value)" class="modern-input relative flex-1"><input type="number" step="0.01" value="${(pay.valor ?? 0)}" onchange="updatePaymentField(${i}, 'valor', this.value)" class="modern-input flex-1"><button onclick="removePaymentFromEdit(${i})" class="p-2 bg-red-500/20 text-red-400 rounded-lg hover:bg-red-500/30"><i data-lucide="trash-2" class="w-5 h-5"></i></button></div>`).join('') + `<button onclick="addNewPaymentToEdit()" class="w-full p-4 border-2 border-dashed border-gold/30 rounded-xl text-gold font-bold hover:bg-gold/10 transition-all">+ Adicionar Novo Pagamento</button>`;
+        container.innerHTML = state.editingPayments.payments.map((pay, i) => `<div class="flex items-center gap-4 p-4 bg-white/5 rounded-xl border border-white/10"><input type="date" value="${pay.data || ''}" onchange="updatePaymentField(${i}, 'data', this.value)" class="modern-input relative !pr-3 flex-1"><input type="number" step="0.01" value="${(pay.valor ?? 0)}" onchange="updatePaymentField(${i}, 'valor', this.value)" class="modern-input !pr-3 flex-1"><button onclick="removePaymentFromEdit(${i})" class="p-2 bg-red-500/20 text-red-400 rounded-lg hover:bg-red-500/30"><i data-lucide="trash-2" class="w-5 h-5"></i></button></div>`).join('') + `<button onclick="addNewPaymentToEdit()" class="w-full p-4 border-2 border-dashed border-gold/30 rounded-xl text-gold font-bold hover:bg-gold/10 transition-all">+ Adicionar Novo Pagamento</button>`;
         try { lucide.createIcons(); } catch {}
     }
     window.updatePaymentField = (index, field, value) => { if (!state.editingPayments) return; if (field === 'data') state.editingPayments.payments[index].data = value; if (field === 'valor') state.editingPayments.payments[index].valor = parseFloat(value || 0); };
@@ -639,7 +610,7 @@
     function renderRecEditList() {
         const container = document.getElementById('rec-edit-list');
         if (!container || !state.editingRecs) return;
-        container.innerHTML = state.editingRecs.recs.map((r, i) => `<div class="flex items-center gap-2 p-3 bg-white/5 rounded-xl border border-white/10 flex-wrap sm:flex-nowrap"><input type="date" value="${r.data || ''}" onchange="updateRecField(${i}, 'data', this.value)" class="modern-input relative flex-1 !p-2 !text-xs"><input type="number" step="0.01" value="${(r.valor ?? 0)}" onchange="updateRecField(${i}, 'valor', this.value)" class="modern-input w-24 !p-2 !text-xs"><select onchange="updateRecField(${i}, 'metodo', this.value)" class="modern-input w-28 !p-2 !text-xs"><option value="Zelle" ${r.metodo==='Zelle'?'selected':''}>Zelle</option><option value="Wire Transfer" ${r.metodo==='Wire Transfer'?'selected':''}>Wire</option><option value="Dinheiro" ${r.metodo==='Dinheiro'?'selected':''}>Cash</option><option value="CC" ${r.metodo==='CC'?'selected':''}>Cartão</option></select><button onclick="removeRecFromEdit(${i})" class="p-2 bg-red-500/20 text-red-400 rounded-lg hover:bg-red-500/30"><i data-lucide="trash-2" class="w-4 h-4"></i></button></div>`).join('') + `<button onclick="addNewRecToEdit()" class="w-full p-4 border-2 border-dashed border-emerald-500/30 rounded-xl text-emerald-400 font-bold hover:bg-emerald-500/10 transition-all">+ Adicionar Novo Recebimento</button>`;
+        container.innerHTML = state.editingRecs.recs.map((r, i) => `<div class="flex items-center gap-2 p-3 bg-white/5 rounded-xl border border-white/10 flex-wrap sm:flex-nowrap"><input type="date" value="${r.data || ''}" onchange="updateRecField(${i}, 'data', this.value)" class="modern-input relative flex-1 !pl-3 !pr-3 !py-2.5 !text-xs"><input type="number" step="0.01" value="${(r.valor ?? 0)}" onchange="updateRecField(${i}, 'valor', this.value)" class="modern-input w-24 !pl-3 !pr-3 !py-2.5 !text-xs"><select onchange="updateRecField(${i}, 'metodo', this.value)" class="modern-input w-28 !pl-3 !pr-8 !py-2.5 !text-xs"><option value="Zelle" ${r.metodo==='Zelle'?'selected':''}>Zelle</option><option value="Wire Transfer" ${r.metodo==='Wire Transfer'?'selected':''}>Wire</option><option value="Dinheiro" ${r.metodo==='Dinheiro'?'selected':''}>Cash</option><option value="CC" ${r.metodo==='CC'?'selected':''}>Cartão</option></select><button onclick="removeRecFromEdit(${i})" class="p-2 bg-red-500/20 text-red-400 rounded-lg hover:bg-red-500/30"><i data-lucide="trash-2" class="w-4 h-4"></i></button></div>`).join('') + `<button onclick="addNewRecToEdit()" class="w-full p-4 border-2 border-dashed border-emerald-500/30 rounded-xl text-emerald-400 font-bold hover:bg-emerald-500/10 transition-all">+ Adicionar Novo Recebimento</button>`;
         try { lucide.createIcons(); } catch {}
     }
     window.updateRecField = (index, field, value) => { if (!state.editingRecs) return; if (field === 'data') state.editingRecs.recs[index].data = value; if (field === 'valor') state.editingRecs.recs[index].valor = parseFloat(value || 0); if (field === 'metodo') state.editingRecs.recs[index].metodo = value; };
@@ -655,20 +626,8 @@
         if (el && btn) { const isPass = el.type === 'password'; el.type = isPass ? 'text' : 'password'; btn.innerHTML = isPass ? '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M17.94 17.94A10.07 10.07 0 0 1 12 20c-7 0-11-8-11-8a18.45 18.45 0 0 1 5.06-5.94M9.9 4.24A9.12 9.12 0 0 1 12 4c7 0 11 8 11 8a18.5 18.5 0 0 1-2.16 3.19m-6.72-1.07a3 3 0 1 1-4.24-4.24"></path><line x1="1" y1="1" x2="23" y2="23"></line></svg>' : '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>'; }
     };
 
-    window.setLang = (l) => {
-        state.lang = l;
-        document.querySelectorAll('.flag-btn').forEach(b => b.classList.toggle('active', b.id.includes(l)));
-        renderProjects(); renderReport();
-    };
-
-    window.selectUnit = (unit) => {
-        state.company = unit;
-        document.querySelectorAll('.unit-pill').forEach(b => b.classList.remove('active'));
-        const map = { 'Smart Home': 'unit-smart', 'HVAC': 'unit-hvac', 'Ambas': 'unit-all' };
-        document.getElementById(map[unit]).classList.add('active');
-        state.focusedProject = null;
-        renderProjects(); renderReport();
-    };
+    window.setLang = (l) => { state.lang = l; document.querySelectorAll('.flag-btn').forEach(b => b.classList.toggle('active', b.id.includes(l))); renderProjects(); renderReport(); };
+    window.selectUnit = (unit) => { state.company = unit; document.querySelectorAll('.unit-pill').forEach(b => b.classList.remove('active')); const map = { 'Smart Home': 'unit-smart', 'HVAC': 'unit-hvac', 'Ambas': 'unit-all' }; document.getElementById(map[unit]).classList.add('active'); state.focusedProject = null; state.activeModule = null; renderProjects(); renderReport(); };
 
     window.toggleTheme = () => {
         state.theme = state.theme === 'dark' ? 'light' : 'dark';
@@ -679,47 +638,52 @@
         try { lucide.createIcons(); } catch {}
     };
 
-    window.openProjectDetails = (id) => { state.focusedProject = id; renderProjects(); window.scrollTo({ top: 0, behavior: 'smooth' }); };
-    window.closeProjectDetails = () => { state.focusedProject = null; renderProjects(); window.scrollTo({ top: 0, behavior: 'smooth' }); };
+    // --- NOVA LÓGICA DE NAVEGAÇÃO INTERNA (DRILL-DOWN) ---
+    window.openProjectDetails = (id) => { 
+        state.focusedProject = id; 
+        state.activeModule = null; 
+        renderProjects(); 
+        window.scrollTo({ top: 0, behavior: 'smooth' }); 
+    };
+    
+    window.closeProjectDetails = () => { 
+        state.focusedProject = null; 
+        state.activeModule = null;
+        renderProjects(); 
+        window.scrollTo({ top: 0, behavior: 'smooth' }); 
+    };
+
+    window.openProjectModule = (moduleName) => {
+        state.activeModule = moduleName;
+        renderProjects();
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+    };
+
+    window.closeProjectModule = () => {
+        state.activeModule = null;
+        renderProjects();
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+    };
+
     window.printReport = () => { window.print(); };
 
     window.editTeamMember = (id, email, pass, role, viewAll, viewCosts) => {
-        document.getElementById('t-id').value = id;
-        document.getElementById('t-email').value = email;
-        document.getElementById('t-pass').value = pass;
-        document.getElementById('t-role').value = role || 'editor';
-        document.getElementById('t-viewall').checked = viewAll === true || String(viewAll) === 'true';
-        document.getElementById('t-viewcosts').checked = viewCosts === true || String(viewCosts) === 'true';
+        document.getElementById('t-id').value = id; document.getElementById('t-email').value = email; document.getElementById('t-pass').value = pass; document.getElementById('t-role').value = role || 'editor';
+        document.getElementById('t-viewall').checked = viewAll === true || String(viewAll) === 'true'; document.getElementById('t-viewcosts').checked = viewCosts === true || String(viewCosts) === 'true';
         window.scrollTo({ top: 0, behavior: 'smooth' });
     };
 
     window.editP = (id) => {
-        const p = state.projects.find(x => x.id === id);
-        if (!p) return;
-        renderVendedores();
-        const vendSelect = document.getElementById('f-vendedor');
+        const p = state.projects.find(x => x.id === id); if (!p) return;
+        renderVendedores(); const vendSelect = document.getElementById('f-vendedor');
         if (p.vendedor && !Array.from(vendSelect.options).some(opt => opt.value === p.vendedor)) { vendSelect.innerHTML += `<option value="${p.vendedor}">${p.vendedor} (Cadastro Antigo)</option>`; }
-        document.getElementById('edit-id').value = id;
-        document.getElementById('f-proposta').value = p.numeroProposta || '';
-        document.getElementById('f-invoice').value = p.numeroInvoice || '';
-        document.getElementById('f-empresa').value = p.empresa || 'Smart Home';
-        document.getElementById('f-cliente').value = p.cliente || '';
-        document.getElementById('f-vendedor').value = p.vendedor || '';
-        document.getElementById('f-valor').value = p.valorTotal ?? '';
-        document.getElementById('f-orcamento').value = p.orcamento ?? ''; // NOVO: Orçamento
-        document.getElementById('f-comm').value = p.percComissao ?? 5;
-        document.getElementById('f-metodo').value = p.metodo || 'Zelle';
-        document.getElementById('f-inicio').value = p.dataInicio || '';
-        document.getElementById('f-entrega').value = p.dataEntrega || '';
-        document.getElementById('f-status').value = p.status || 'Cotação';
+        document.getElementById('edit-id').value = id; document.getElementById('f-proposta').value = p.numeroProposta || ''; document.getElementById('f-invoice').value = p.numeroInvoice || ''; document.getElementById('f-empresa').value = p.empresa || 'Smart Home';
+        document.getElementById('f-cliente').value = p.cliente || ''; document.getElementById('f-vendedor').value = p.vendedor || ''; document.getElementById('f-valor').value = p.valorTotal ?? ''; document.getElementById('f-orcamento').value = p.orcamento ?? ''; 
+        document.getElementById('f-comm').value = p.percComissao ?? 5; document.getElementById('f-metodo').value = p.metodo || 'Zelle'; document.getElementById('f-inicio').value = p.dataInicio || ''; document.getElementById('f-entrega').value = p.dataEntrega || ''; document.getElementById('f-status').value = p.status || 'Cotação';
         window.showView('new');
     };
 
-    window.cancelEdit = () => {
-        const form = document.getElementById('project-form'); if (form) form.reset();
-        document.getElementById('edit-id').value = '';
-        const fVendedor = document.getElementById('f-vendedor'); if (fVendedor && state.user) fVendedor.value = state.user.email;
-    };
+    window.cancelEdit = () => { const form = document.getElementById('project-form'); if (form) form.reset(); document.getElementById('edit-id').value = ''; const fVendedor = document.getElementById('f-vendedor'); if (fVendedor && state.user) fVendedor.value = state.user.email; };
 
     window.showView = (v) => {
         ['projects', 'new', 'reports', 'users', 'logs'].forEach(id => {
@@ -730,7 +694,7 @@
         if (tv) tv.classList.remove('hidden'); if (tt) tt.classList.add('tab-active');
 
         if (v === 'logs') renderLogs();
-        if (v === 'projects') { state.focusedProject = null; renderProjects(); }
+        if (v === 'projects') { state.focusedProject = null; state.activeModule = null; renderProjects(); }
         try { lucide.createIcons(); } catch {}
     };
 
@@ -764,16 +728,12 @@
         else if (balance === 0 && commLiberada > 0) statusColor = "bg-emerald-500";
         else if (totalPaid > 0) statusColor = "bg-orange-500"; 
 
-        // DESPESAS
         const despesas = Array.isArray(p?.despesas) ? p.despesas : [];
-        let totalDespesas = 0;
-        let gastosPorCategoria = { 'Materiais': 0, 'Mão-de-obra': 0, 'Equipamentos': 0, 'Licenças': 0, 'Outros': 0 };
+        let totalDespesas = 0; let gastosPorCategoria = { 'Materiais': 0, 'Mão-de-obra': 0, 'Equipamentos': 0, 'Licenças': 0, 'Outros': 0 };
         
         despesas.forEach(d => {
-            const val = Number(d.valor || 0);
-            totalDespesas += val;
-            if (gastosPorCategoria[d.categoria] !== undefined) { gastosPorCategoria[d.categoria] += val; } 
-            else { gastosPorCategoria['Outros'] += val; }
+            const val = Number(d.valor || 0); totalDespesas += val;
+            if (gastosPorCategoria[d.categoria] !== undefined) { gastosPorCategoria[d.categoria] += val; } else { gastosPorCategoria['Outros'] += val; }
         });
 
         const lucroBruto = valorTotal - totalDespesas;
@@ -807,16 +767,18 @@
             grid.className = "flex flex-col max-w-4xl mx-auto gap-6 text-left w-full animate-fade-in pb-20";
             filtered = state.projects.filter(p => p.id === state.focusedProject); 
             
-            grid.innerHTML += `
-                <div class="mb-4 flex justify-between items-center no-print">
-                    <button onclick="window.closeProjectDetails()" class="inline-flex items-center gap-2 text-gold hover:text-white transition-all font-black text-[10px] uppercase tracking-widest px-5 py-3 bg-white/5 rounded-2xl border border-white/10 hover:bg-white/10 hover:scale-105 hover:-translate-y-1 shadow-lg">
-                        <i data-lucide="arrow-left" class="w-4 h-4"></i> Voltar aos Projetos
-                    </button>
-                    <button onclick="window.printReport()" class="inline-flex items-center gap-2 text-slate-300 hover:text-white transition-all font-black text-[10px] uppercase tracking-widest px-5 py-3 bg-white/5 rounded-2xl border border-white/10 hover:bg-white/10 shadow-lg">
-                        <i data-lucide="printer" class="w-4 h-4"></i> Imprimir Relatório
-                    </button>
-                </div>
-            `;
+            if (!state.activeModule) {
+                grid.innerHTML += `
+                    <div class="mb-4 flex justify-between items-center no-print">
+                        <button onclick="window.closeProjectDetails()" class="inline-flex items-center gap-2 text-gold hover:text-white transition-all font-black text-[10px] uppercase tracking-widest px-5 py-3 bg-white/5 rounded-2xl border border-white/10 hover:bg-white/10 hover:scale-105 hover:-translate-y-1 shadow-lg">
+                            <i data-lucide="arrow-left" class="w-4 h-4"></i> Voltar aos Projetos
+                        </button>
+                        <button onclick="window.printReport()" class="hidden sm:inline-flex items-center gap-2 text-slate-300 hover:text-white transition-all font-black text-[10px] uppercase tracking-widest px-5 py-3 bg-white/5 rounded-2xl border border-white/10 hover:bg-white/10 shadow-lg">
+                            <i data-lucide="printer" class="w-4 h-4"></i> Imprimir Resumo
+                        </button>
+                    </div>
+                `;
+            }
         } else {
             filtersDiv.classList.remove('hidden');
             filtersDiv.classList.add('flex');
@@ -838,26 +800,12 @@
             const f = getFin(p);
             const isFocused = state.focusedProject === p.id;
 
-            // Variáveis de Cores Corrigidas
-            let balText = "SALDO A PAGAR";
-            let balColor = "text-red-400";
-            let balDisplay = formatCurr(f.balance);
+            let balText = "SALDO A PAGAR"; let balColor = "text-red-400"; let balDisplay = formatCurr(f.balance);
+            if (f.balance < 0) { balText = "PAGO A MAIOR"; balColor = "text-blue-400"; balDisplay = "+ " + formatCurr(Math.abs(f.balance)); } 
+            else if (f.balance === 0) { balText = "TOTALMENTE PAGO"; balColor = "text-emerald-400"; }
 
-            if (f.balance < 0) {
-                balText = "PAGO A MAIOR (CRÉDITO)";
-                balColor = "text-blue-400";
-                balDisplay = "+ " + formatCurr(Math.abs(f.balance));
-            } else if (f.balance === 0) {
-                balText = "TOTALMENTE PAGO";
-                balColor = "text-emerald-400";
-            }
-
-            // Variáveis das Pílulas de Status 100% PAGO (Restauradas)
-            let clientPaidPerc = p.valorTotal > 0 ? Math.floor((f.totalRecebido / p.valorTotal) * 100) : 0;
-            if (clientPaidPerc > 100) clientPaidPerc = 100;
-            
-            let sellerPaidPerc = f.commTotalProjetada > 0 ? Math.floor((f.totalPaid / f.commTotalProjetada) * 100) : 0;
-            if (sellerPaidPerc > 100) sellerPaidPerc = 100;
+            let clientPaidPerc = p.valorTotal > 0 ? Math.floor((f.totalRecebido / p.valorTotal) * 100) : 0; if (clientPaidPerc > 100) clientPaidPerc = 100;
+            let sellerPaidPerc = f.commTotalProjetada > 0 ? Math.floor((f.totalPaid / f.commTotalProjetada) * 100) : 0; if (sellerPaidPerc > 100) sellerPaidPerc = 100;
 
             const clientPaidText = clientPaidPerc >= 100 ? '100% PAGO' : (clientPaidPerc > 0 ? `${clientPaidPerc}% PAGO` : 'PENDENTE');
             const clientPaidColor = clientPaidPerc >= 100 ? 'text-emerald-400' : (clientPaidPerc > 0 ? 'text-orange-400' : 'text-slate-500');
@@ -867,213 +815,257 @@
             const sellerPaidColor = sellerPaidPerc >= 100 ? 'text-emerald-400' : (sellerPaidPerc > 0 ? 'text-orange-400' : 'text-slate-500');
             const sellerBorderColor = sellerPaidPerc >= 100 ? 'border-emerald-500/30 bg-emerald-500/10' : 'border-white/5 bg-black/20';
 
-            const financeBtnAction = isFocused ? `window.closeProjectDetails()` : `window.openProjectDetails('${p.id}')`;
-            const financeBtnIcon = isFocused ? "chevron-up" : "wallet";
-            const financeBtnText = isFocused ? "FECHAR DETALHES" : "FINANCEIRO DA OBRA";
-
-            // Constroi UI do Centro de Custos (Somente se Focused e se tem Permissão)
-            let costsUI = '';
-            if (isFocused && canViewCosts) {
-                const budgetColor = f.totalDespesas > f.orcamento && f.orcamento > 0 ? 'text-red-500' : 'text-slate-300';
-                const profitColor = f.lucroBruto >= 0 ? 'text-emerald-500' : 'text-red-500';
-                const marginColor = f.margemLucro >= 0 ? 'text-emerald-400' : 'text-red-400';
-                
-                const expensesList = (p.despesas || []).sort((a,b) => new Date(b.data) - new Date(a.data)).map(exp => `
-                    <div class="flex justify-between items-center text-[10px] py-2 border-b border-indigo-500/10 last:border-0 hover:bg-white/5 transition-colors px-2 rounded-lg">
-                        <div class="flex-1">
-                            <span class="text-slate-400 mr-2">${exp.data ? new Date(exp.data + 'T12:00:00').toLocaleDateString() : '-'}</span>
-                            <span class="font-bold text-slate-200 uppercase">${exp.descricao}</span>
-                            <span class="text-[8px] px-2 py-0.5 ml-2 bg-indigo-500/20 text-indigo-300 rounded-md border border-indigo-500/30">${exp.categoria}</span>
-                        </div>
-                        <div class="flex items-center gap-3">
-                            <span class="font-black text-gold">${formatCurr(exp.valor)}</span>
-                            <button onclick="window.deleteExpense('${p.id}', '${exp.id}', '${exp.descricao.replace(/'/g,"\\'")}', ${exp.valor})" class="p-1 text-red-500/70 hover:text-red-400 no-print"><i data-lucide="trash-2" class="w-3.5 h-3.5"></i></button>
-                        </div>
-                    </div>
-                `).join('') || '<p class="text-[10px] italic text-indigo-300/50 text-center py-4">Nenhuma despesa lançada.</p>';
-
-                costsUI = `
-                <div class="mt-8 pt-8 border-t-2 border-indigo-500/20">
-                    <h4 class="text-lg font-black uppercase text-indigo-400 flex items-center gap-2 mb-6"><i data-lucide="calculator" class="w-5 h-5"></i> Centro de Custos e Rentabilidade</h4>
-                    
-                    <!-- KPIs -->
-                    <div class="grid grid-cols-2 sm:grid-cols-4 gap-4 mb-8">
-                        <div class="bg-black/30 p-4 rounded-2xl border border-white/5 shadow-inner">
-                            <p class="text-[8px] font-black uppercase text-slate-500 mb-1">Orçamento (Budget)</p>
-                            <p class="text-lg font-black text-white">${formatCurr(f.orcamento)}</p>
-                        </div>
-                        <div class="bg-black/30 p-4 rounded-2xl border border-white/5 shadow-inner">
-                            <p class="text-[8px] font-black uppercase text-slate-500 mb-1">Despesas Totais</p>
-                            <p class="text-lg font-black ${budgetColor}">${formatCurr(f.totalDespesas)}</p>
-                        </div>
-                        <div class="bg-black/30 p-4 rounded-2xl border border-white/5 shadow-inner">
-                            <p class="text-[8px] font-black uppercase text-slate-500 mb-1">Lucro Real (Contrato - Despesas)</p>
-                            <p class="text-lg font-black ${profitColor}">${formatCurr(f.lucroBruto)}</p>
-                        </div>
-                        <div class="bg-black/30 p-4 rounded-2xl border border-white/5 shadow-inner">
-                            <p class="text-[8px] font-black uppercase text-slate-500 mb-1">Margem de Lucro</p>
-                            <p class="text-lg font-black ${marginColor}">${f.margemLucro.toFixed(1)}%</p>
-                        </div>
-                    </div>
-
-                    <!-- Gráficos -->
-                    <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8 no-print">
-                        <div class="bg-black/20 p-4 rounded-2xl border border-indigo-500/10 flex flex-col items-center">
-                            <p class="text-[9px] font-black uppercase text-indigo-300/70 mb-2 w-full text-left">Orçamento vs Gasto</p>
-                            <div class="relative w-32 h-32"><canvas id="chart-budget-${p.id}"></canvas></div>
-                        </div>
-                        <div class="md:col-span-2 bg-black/20 p-4 rounded-2xl border border-indigo-500/10">
-                            <p class="text-[9px] font-black uppercase text-indigo-300/70 mb-2">Despesas por Categoria</p>
-                            <div class="relative w-full h-32"><canvas id="chart-cat-${p.id}"></canvas></div>
-                        </div>
-                    </div>
-
-                    <!-- Formulário e Tabela de Despesas -->
-                    <div class="bg-indigo-950/20 p-5 rounded-3xl border border-indigo-500/20">
-                        <div class="no-print">
-                            <p class="text-[10px] font-black text-indigo-400 uppercase mb-3">Lançar Nova Despesa</p>
-                            <div class="flex flex-col sm:flex-row gap-3 mb-6">
-                                <input type="date" id="exp-date-${p.id}" class="modern-input relative !bg-black/40 !border-indigo-500/30 !px-3 !py-2.5 !text-xs sm:w-36">
-                                <input type="text" id="exp-desc-${p.id}" placeholder="Descrição (ex: Compra Cabo 100m)" class="modern-input !bg-black/40 !border-indigo-500/30 !px-3 !py-2.5 !text-xs flex-1">
-                                <select id="exp-cat-${p.id}" class="modern-input !bg-black/40 !border-indigo-500/30 !px-3 !py-2.5 !text-xs sm:w-36">
-                                    <option value="Materiais">Materiais</option><option value="Mão-de-obra">Mão-de-obra</option><option value="Equipamentos">Equipamentos</option>
-                                    <option value="Licenças">Licenças (Permits)</option><option value="Outros">Outros</option>
-                                </select>
-                                <input type="number" id="exp-val-${p.id}" placeholder="$ Valor" step="0.01" class="modern-input !bg-black/40 !border-indigo-500/30 !px-3 !py-2.5 !text-xs sm:w-28 text-gold font-bold">
-                                <button onclick="window.addExpense('${p.id}')" class="bg-indigo-600 hover:bg-indigo-500 text-white px-4 py-2 rounded-xl font-black text-[10px] uppercase tracking-widest transition-colors">Adicionar</button>
-                            </div>
-                        </div>
-
-                        <p class="text-[10px] font-black text-indigo-400 uppercase mb-3 border-b border-indigo-500/20 pb-2">Histórico de Despesas</p>
-                        <div class="max-h-60 overflow-y-auto scrollbar-hide pr-2 print:max-h-none">
-                            ${expensesList}
-                        </div>
-                    </div>
-                </div>
-                `;
-            }
-
-            // Ações do Cartão (Edit, Arquivar, Lixeira)
             let actionButtons = '';
             if (isEditor) {
                 const archiveIcon = p.archived ? 'package-open' : 'archive';
                 const archiveColor = p.archived ? 'text-indigo-400 hover:text-indigo-300' : 'text-slate-400 hover:text-white';
                 actionButtons = `
                     <div class="w-px h-3 bg-white/10 mx-1"></div>
-                    <button onclick="window.toggleArchive('${p.id}', ${!!p.archived})" class="hover:scale-110 transition-transform no-print"><i data-lucide="${archiveIcon}" class="w-3.5 h-3.5 ${archiveColor}"></i></button>
-                    <button onclick="window.editP('${p.id}')" class="hover:scale-110 transition-transform no-print"><i data-lucide="edit-3" class="w-3.5 h-3.5 text-slate-400 hover:text-white"></i></button>
-                    <button onclick="window.deleteP('${p.id}')" class="hover:scale-110 transition-transform no-print"><i data-lucide="trash-2" class="w-3.5 h-3.5 text-red-500/70 hover:text-red-400"></i></button>
+                    <button onclick="event.stopPropagation(); window.toggleArchive('${p.id}', ${!!p.archived})" class="hover:scale-110 transition-transform no-print"><i data-lucide="${archiveIcon}" class="w-3.5 h-3.5 ${archiveColor}"></i></button>
+                    <button onclick="event.stopPropagation(); window.editP('${p.id}')" class="hover:scale-110 transition-transform no-print"><i data-lucide="edit-3" class="w-3.5 h-3.5 text-slate-400 hover:text-white"></i></button>
+                    <button onclick="event.stopPropagation(); window.deleteP('${p.id}')" class="hover:scale-110 transition-transform no-print"><i data-lucide="trash-2" class="w-3.5 h-3.5 text-red-500/70 hover:text-red-400"></i></button>
                 `;
             }
 
-            grid.innerHTML += `<div class="glass p-6 md:p-8 rounded-[40px] border-l-[8px] relative shadow-2xl flex flex-col h-full print:border print:border-slate-300 print:shadow-none print:break-inside-avoid" style="border-left-color: ${p.status === 'Finalizado' ? '#10b981' : '#f59e0b'}">
-                <div class="flex justify-between items-start mb-5">
-                    <span class="px-3 py-1.5 bg-white/5 border border-white/10 rounded-xl text-[9px] font-black uppercase tracking-widest text-slate-300 shadow-sm print:bg-slate-100 print:text-slate-800">${p.empresa || 'Sem Unidade'} ${p.archived ? '<span class="text-indigo-400 ml-1">(ARQUIVADA)</span>' : ''}</span>
-                    <div class="flex items-center gap-3 bg-black/20 p-1.5 px-3 rounded-full border border-white/5 print:hidden">
-                        <span class="status-badge ${f.statusColor}" title="Status Financeiro"></span>
-                        ${actionButtons}
+            if (!isFocused || !state.activeModule) {
+                const cardClickEvent = isFocused ? '' : `onclick="window.openProjectDetails('${p.id}')"`;
+                const cardHoverClasses = isFocused ? '' : 'project-card clickable cursor-pointer';
+
+                let cardHTML = `<div class="glass p-6 md:p-8 rounded-[40px] border-l-[8px] relative shadow-2xl flex flex-col h-full print:border print:border-slate-300 print:shadow-none print:break-inside-avoid ${cardHoverClasses}" style="border-left-color: ${p.status === 'Finalizado' ? '#10b981' : '#f59e0b'}" ${cardClickEvent}>
+                    
+                    <div class="flex justify-between items-start mb-5">
+                        <span class="px-3 py-1.5 bg-white/5 border border-white/10 rounded-xl text-[9px] font-black uppercase tracking-widest text-slate-300 shadow-sm print:bg-slate-100 print:text-slate-800">${p.empresa || 'Sem Unidade'} ${p.archived ? '<span class="text-indigo-400 ml-1">(ARQUIVADA)</span>' : ''}</span>
+                        <div class="flex items-center gap-3 bg-black/20 p-1.5 px-3 rounded-full border border-white/5 print:hidden">
+                            <span class="status-badge ${f.statusColor}" title="Status Financeiro"></span>
+                            ${actionButtons}
+                        </div>
                     </div>
-                </div>
 
-                <div class="text-left mb-6"><h4 class="font-black text-2xl uppercase tracking-tight text-white leading-none print:text-black">${p.cliente || 'Sem Nome'}</h4></div>
+                    <div class="text-left mb-6"><h4 class="font-black text-2xl uppercase tracking-tight text-white leading-none print:text-black">${p.cliente || 'Sem Nome'}</h4></div>
 
-                <div class="grid grid-cols-2 gap-y-5 gap-x-4 p-5 bg-black/20 rounded-[24px] border border-white/5 mb-8 text-left shadow-inner print:bg-transparent print:border-slate-200">
-                    <div><p class="text-[8px] font-black text-slate-500 uppercase tracking-widest mb-1">Vendedor</p><p class="text-[11px] font-bold text-slate-200 truncate print:text-black" title="${p.vendedor}">${p.vendedor?.split('@')[0] || '--'}</p></div>
-                    <div><p class="text-[8px] font-black text-slate-500 uppercase tracking-widest mb-1">Status da Obra</p><p class="text-[11px] font-black text-gold uppercase print:text-amber-700">${p.status || 'Cotação'}</p></div>
-                    <div><p class="text-[8px] font-black text-slate-500 uppercase tracking-widest mb-1">Proposta / Invoice</p><p class="text-[10px] font-mono font-bold text-slate-400 print:text-black">${p.numeroProposta || '---'} <span class="text-slate-600 font-normal mx-1">|</span> ${p.numeroInvoice || '---'}</p></div>
-                    <div><p class="text-[8px] font-black text-slate-500 uppercase tracking-widest mb-1">Pagt Previsto • Comiss.</p><p class="text-[11px] font-bold text-slate-200 print:text-black">${p.metodo || '--'} <span class="text-slate-600 font-normal mx-1">•</span> ${p.percComissao || 0}%</p></div>
-                </div>
-
-                <div class="mt-auto"></div>
-
-                <div class="space-y-3 mb-8 text-left">
-                    <div class="flex justify-between text-[10px] font-black uppercase text-slate-400 print:text-slate-800"><span>Timeline</span><span style="color: ${colorHex}">${prog}%</span></div>
-                    <div class="progress-track print:bg-slate-200"><div class="progress-bar-fill print:!bg-black" style="width: ${prog}%; background-color: ${colorHex};"></div></div>
-                    <div class="flex justify-between text-[9px] font-extrabold uppercase">
-                        <span class="print:text-black">${p.dataInicio ? new Date(p.dataInicio + 'T12:00:00').toLocaleDateString() : '-'}</span>
-                        <span class="${n > e && p.status !== 'Finalizado' ? 'text-red-500' : 'text-gold'} print:!text-black">${n > e && p.status !== 'Finalizado' ? 'ATRASADA' : (prog === 100 ? 'CONCLUÍDA' : (Number.isFinite(e) ? Math.ceil((e - n) / (1000 * 3600 * 24)) : 0) + ' DIAS RESTANTES')}</span>
+                    <div class="grid grid-cols-2 gap-y-5 gap-x-4 p-5 bg-black/20 rounded-[24px] border border-white/5 mb-8 text-left shadow-inner print:bg-transparent print:border-slate-200">
+                        <div><p class="text-[8px] font-black text-slate-500 uppercase tracking-widest mb-1">Vendedor</p><p class="text-[11px] font-bold text-slate-200 truncate print:text-black" title="${p.vendedor}">${p.vendedor?.split('@')[0] || '--'}</p></div>
+                        <div><p class="text-[8px] font-black text-slate-500 uppercase tracking-widest mb-1">Status da Obra</p><p class="text-[11px] font-black text-gold uppercase print:text-amber-700">${p.status || 'Cotação'}</p></div>
+                        <div><p class="text-[8px] font-black text-slate-500 uppercase tracking-widest mb-1">Proposta / Invoice</p><p class="text-[10px] font-mono font-bold text-slate-400 print:text-black">${p.numeroProposta || '---'} <span class="text-slate-600 font-normal mx-1">|</span> ${p.numeroInvoice || '---'}</p></div>
+                        <div><p class="text-[8px] font-black text-slate-500 uppercase tracking-widest mb-1">Pagt Previsto • Comiss.</p><p class="text-[11px] font-bold text-slate-200 print:text-black">${p.metodo || '--'} <span class="text-slate-600 font-normal mx-1">•</span> ${p.percComissao || 0}%</p></div>
                     </div>
-                </div>
 
-                <div class="bg-gradient-to-br from-black/50 to-transparent p-5 rounded-3xl border border-white/5 shadow-inner print:bg-transparent print:border-slate-300">
-                    <p class="text-[9px] font-black text-slate-500 uppercase mb-1 text-center">Valor Contrato Bruto</p>
-                    <p class="text-3xl font-black text-white text-center tracking-tight print:text-black">${formatCurr(p.valorTotal)}</p>
-                </div>
+                    <div class="mt-auto"></div>
 
-                <!-- Novos Indicadores de Pagamento no Card Principal -->
-                <div class="flex justify-between gap-3 mt-4 no-print">
-                    <div class="flex-1 rounded-xl p-2.5 text-center border ${clientBorderColor} shadow-inner transition-colors">
-                        <p class="text-[7px] font-black uppercase text-slate-400 mb-0.5 tracking-widest">Cliente</p>
-                        <p class="text-[10px] font-black ${clientPaidColor}">${clientPaidText}</p>
+                    <div class="space-y-3 mb-8 text-left">
+                        <div class="flex justify-between text-[10px] font-black uppercase text-slate-400 print:text-slate-800"><span>Timeline</span><span style="color: ${colorHex}">${prog}%</span></div>
+                        <div class="progress-track print:bg-slate-200"><div class="progress-bar-fill print:!bg-black" style="width: ${prog}%; background-color: ${colorHex};"></div></div>
+                        <div class="flex justify-between text-[9px] font-extrabold uppercase">
+                            <span class="print:text-black">${p.dataInicio ? new Date(p.dataInicio + 'T12:00:00').toLocaleDateString() : '-'}</span>
+                            <span class="${n > e && p.status !== 'Finalizado' ? 'text-red-500' : 'text-gold'} print:!text-black">${n > e && p.status !== 'Finalizado' ? 'ATRASADA' : (prog === 100 ? 'CONCLUÍDA' : (Number.isFinite(e) ? Math.ceil((e - n) / (1000 * 3600 * 24)) : 0) + ' DIAS RESTANTES')}</span>
+                        </div>
                     </div>
-                    <div class="flex-1 rounded-xl p-2.5 text-center border ${sellerBorderColor} shadow-inner transition-colors">
-                        <p class="text-[7px] font-black uppercase text-slate-400 mb-0.5 tracking-widest">Comissão</p>
-                        <p class="text-[10px] font-black ${sellerPaidColor}">${sellerPaidText}</p>
+
+                    <div class="bg-gradient-to-br from-black/50 to-transparent p-5 rounded-3xl border border-white/5 shadow-inner print:bg-transparent print:border-slate-300">
+                        <p class="text-[9px] font-black text-slate-500 uppercase mb-1 text-center">Valor Contrato Bruto</p>
+                        <p class="text-3xl font-black text-white text-center tracking-tight print:text-black">${formatCurr(p.valorTotal)}</p>
                     </div>
-                </div>
 
-                <button onclick="${financeBtnAction}" class="w-full mt-6 py-3 bg-white/5 rounded-xl border border-white/5 text-[10px] font-black uppercase text-gold hover:bg-white/10 transition-all flex items-center justify-center gap-2 no-print">
-                    <i data-lucide="${financeBtnIcon}" class="w-4 h-4"></i> ${financeBtnText}
-                </button>
+                    <div class="flex justify-between gap-3 mt-4 no-print">
+                        <div class="flex-1 rounded-xl p-2.5 text-center border ${clientBorderColor} shadow-inner transition-colors">
+                            <p class="text-[7px] font-black uppercase text-slate-400 mb-0.5 tracking-widest">Cliente</p>
+                            <p class="text-[10px] font-black ${clientPaidColor}">${clientPaidText}</p>
+                        </div>
+                        <div class="flex-1 rounded-xl p-2.5 text-center border ${sellerBorderColor} shadow-inner transition-colors">
+                            <p class="text-[7px] font-black uppercase text-slate-400 mb-0.5 tracking-widest">Comissão</p>
+                            <p class="text-[10px] font-black ${sellerPaidColor}">${sellerPaidText}</p>
+                        </div>
+                    </div>
+                `;
 
-                <!-- Painel Financeiro e Custos (Só abre no Focus Mode) -->
-                ${isFocused ? `
-                <div class="finance-panel open">
-                    <!-- Bloco Comissões/Pagamentos -->
-                    <div class="bg-slate-900/80 p-5 rounded-3xl border border-white/10 space-y-5 mt-4 text-left shadow-2xl print:bg-transparent print:border-slate-300 print:shadow-none">
-                        <h4 class="text-sm font-black uppercase text-gold flex items-center gap-2 mb-4 border-b border-white/10 pb-2 print:border-slate-200 print:text-black"><i data-lucide="wallet" class="w-4 h-4"></i> Gestão de Comissões</h4>
-                        <div class="grid grid-cols-2 gap-4 pb-4 border-b border-white/5 print:border-slate-200">
-                            <div><p class="text-[8px] font-bold text-slate-500 uppercase print:text-black">Comissão Projetada</p><p class="text-sm font-black text-slate-400 print:text-black">${formatCurr(f.commTotalProjetada)}</p></div>
-                            <div class="text-right"><p class="text-[8px] font-bold text-emerald-500/80 uppercase print:text-emerald-700">Comissão Liberada</p><p class="text-lg font-black text-emerald-500 print:text-emerald-700">${formatCurr(f.commLiberada)}</p></div>
-                            <div><p class="text-[8px] font-bold text-slate-500 uppercase print:text-black">Pago ao Vendedor</p><p class="text-sm font-black text-slate-300 print:text-black">${formatCurr(f.totalPaid)}</p></div>
-                            <div class="text-right"><p class="text-[8px] font-bold ${balColor} uppercase print:text-black">${balText}</p><p class="text-xl font-black ${balColor} print:text-black">${balDisplay}</p></div>
+                if (!isFocused) {
+                    cardHTML += `
+                        <div class="mt-6 text-center text-[9px] text-slate-500 font-bold uppercase tracking-widest no-print opacity-50 group-hover:opacity-100 flex items-center justify-center gap-1 transition-opacity">
+                            CLIQUE NO CARD PARA ABRIR <i data-lucide="chevron-right" class="w-3 h-3"></i>
+                        </div>
+                    </div>`; 
+                } else {
+                    cardHTML += `
+                        <div class="grid grid-cols-1 ${canViewCosts ? 'sm:grid-cols-2' : ''} gap-4 mt-8 pt-6 border-t border-white/10 no-print animate-fade-in">
+                            <button onclick="event.stopPropagation(); window.openProjectModule('commissions')" class="py-6 px-4 bg-gradient-to-br from-slate-900 to-black rounded-[24px] border border-gold/20 hover:border-gold/60 hover:shadow-[0_0_30px_-5px_rgba(251,191,36,0.3)] transition-all flex flex-col items-center justify-center gap-3 group relative overflow-hidden">
+                                <div class="absolute inset-0 bg-gold/5 transform scale-0 group-hover:scale-100 transition-transform rounded-[24px] duration-500 origin-center"></div>
+                                <i data-lucide="wallet" class="w-8 h-8 text-gold group-hover:scale-110 group-hover:-translate-y-1 transition-all relative z-10"></i>
+                                <span class="text-xs font-black uppercase text-gold tracking-[0.2em] relative z-10 text-center">Comissões e Finanças</span>
+                            </button>
+                            ${canViewCosts ? `
+                            <button onclick="event.stopPropagation(); window.openProjectModule('costs')" class="py-6 px-4 bg-gradient-to-br from-slate-900 to-black rounded-[24px] border border-indigo-500/20 hover:border-indigo-500/60 hover:shadow-[0_0_30px_-5px_rgba(99,102,241,0.3)] transition-all flex flex-col items-center justify-center gap-3 group relative overflow-hidden">
+                                <div class="absolute inset-0 bg-indigo-500/5 transform scale-0 group-hover:scale-100 transition-transform rounded-[24px] duration-500 origin-center"></div>
+                                <i data-lucide="calculator" class="w-8 h-8 text-indigo-400 group-hover:scale-110 group-hover:-translate-y-1 transition-all relative z-10"></i>
+                                <span class="text-xs font-black uppercase text-indigo-400 tracking-[0.2em] relative z-10 text-center">Gestão de Custos</span>
+                            </button>
+                            ` : ''}
+                        </div>
+                    </div>`; 
+                }
+                
+                grid.innerHTML += cardHTML;
+            }
+
+            if (isFocused && state.activeModule) {
+                let moduleContent = '';
+                let moduleTitle = '';
+                
+                if (state.activeModule === 'commissions') {
+                    moduleTitle = 'Comissões e Recebimentos';
+                    moduleContent = `
+                        <div class="bg-slate-900/80 p-6 md:p-8 rounded-[32px] border border-white/10 space-y-6 text-left shadow-2xl print:bg-transparent print:border-slate-300 print:shadow-none print:p-0">
+                            <div class="grid grid-cols-2 gap-4 sm:gap-6 pb-6 border-b border-white/5 print:border-slate-200">
+                                <div><p class="text-[9px] font-bold text-slate-500 uppercase print:text-black">Comissão Projetada</p><p class="text-lg font-black text-slate-400 print:text-black">${formatCurr(f.commTotalProjetada)}</p></div>
+                                <div class="text-right"><p class="text-[9px] font-bold text-emerald-500/80 uppercase print:text-emerald-700">Comissão Liberada</p><p class="text-2xl font-black text-emerald-500 print:text-emerald-700">${formatCurr(f.commLiberada)}</p></div>
+                                <div><p class="text-[9px] font-bold text-slate-500 uppercase print:text-black">Pago ao Vendedor</p><p class="text-lg font-black text-slate-300 print:text-black">${formatCurr(f.totalPaid)}</p></div>
+                                <div class="text-right"><p class="text-[9px] font-bold ${balColor} uppercase print:text-black">${balText}</p><p class="text-3xl font-black ${balColor} tracking-tighter print:text-black">${balDisplay}</p></div>
+                            </div>
+
+                            <div class="space-y-4">
+                                <div class="flex justify-between items-center bg-emerald-500/10 p-3 px-4 rounded-xl border border-emerald-500/20 print:bg-emerald-50 print:border-emerald-200">
+                                    <p class="text-[10px] font-black text-emerald-400 uppercase tracking-widest print:text-emerald-800">Recebimentos do Cliente</p>
+                                    <div class="flex items-center gap-4">
+                                        <span class="text-[10px] font-bold text-emerald-500 print:text-emerald-800">${formatCurr(f.totalRecebido)} / ${formatCurr(p.valorTotal)}</span>
+                                        ${isAdmin ? `<button onclick="openEditRecModal('${p.id}')" class="text-[10px] font-bold text-emerald-400 hover:text-white transition-colors no-print"><i data-lucide="edit-3" class="w-4 h-4"></i></button>` : ''}
+                                    </div>
+                                </div>
+                                <div class="max-h-48 overflow-y-auto scrollbar-hide px-2 print:max-h-none">
+                                    ${(p.recebimentos || []).map(r => `<div class="flex justify-between items-center text-xs py-2 border-b border-white/5 last:border-0 print:border-slate-200 hover:bg-white/5 rounded px-2"><span class="text-slate-300 print:text-black">${r.data ? new Date(r.data + 'T12:00:00').toLocaleDateString() : '-'} <span class="text-[9px] font-black text-slate-500 ml-2 uppercase bg-black/30 px-2 py-0.5 rounded">${r.metodo}</span></span><span class="font-black text-emerald-400 print:text-emerald-700 text-sm">+ ${formatCurr(r.valor)}</span></div>`).join('') || '<p class="text-xs italic text-slate-600 text-center py-4">Nenhum recebimento registrado.</p>'}
+                                </div>
+                                ${isAdmin ? `
+                                <div class="grid grid-cols-2 md:grid-cols-3 gap-3 mt-4 no-print bg-black/20 p-4 rounded-2xl border border-white/5">
+                                    <input type="date" id="rec-date-${p.id}" class="modern-input relative !pr-3 !text-sm col-span-2 md:col-span-1" onclick="event.stopPropagation();">
+                                    <input type="number" id="rec-val-${p.id}" placeholder="$ Valor" class="modern-input !pr-3 !text-sm" onclick="event.stopPropagation();">
+                                    <select id="rec-met-${p.id}" class="modern-input !pr-8 !text-sm" onclick="event.stopPropagation();"><option value="Zelle">Zelle</option><option value="Wire Transfer">Wire Transfer</option><option value="Dinheiro">Dinheiro (Cash)</option><option value="CC">Cartão de Crédito (CC)</option></select>
+                                    <button onclick="window.addRecebimento('${p.id}')" class="col-span-2 md:col-span-3 w-full btn-premium-gold !py-3 !text-[11px] bg-emerald-500 !text-emerald-950 flex items-center justify-center gap-2 hover:brightness-110"><i data-lucide="arrow-down-to-line" class="w-4 h-4"></i> Guardar Pagamento do Cliente</button>
+                                </div>` : ''}
+                            </div>
+
+                            <div class="space-y-4 pt-6 border-t border-white/10 print:border-slate-200">
+                                <div class="flex justify-between items-center bg-gold/10 p-3 px-4 rounded-xl border border-gold/20 print:bg-amber-50 print:border-amber-200">
+                                    <p class="text-[10px] font-black text-gold uppercase tracking-widest print:text-amber-800">Pagamentos ao Vendedor</p>
+                                    ${isAdmin ? `<button onclick="openEditPaymentModal('${p.id}')" class="text-[10px] font-bold text-gold hover:text-white transition-colors no-print"><i data-lucide="edit-3" class="w-4 h-4"></i></button>` : ''}
+                                </div>
+                                <div class="max-h-48 overflow-y-auto scrollbar-hide px-2 print:max-h-none">
+                                    ${(p.pagamentosEfetuados || []).map(pay => `<div class="flex justify-between items-center text-xs py-2 border-b border-white/5 last:border-0 print:border-slate-200 hover:bg-white/5 rounded px-2"><span class="text-slate-300 print:text-black">${pay.data ? new Date(pay.data + 'T12:00:00').toLocaleDateString() : '-'}</span><span class="font-black text-gold print:text-amber-700 text-sm">- ${formatCurr(pay.valor)}</span></div>`).join('') || '<p class="text-xs italic text-slate-600 text-center py-4">Nenhum pagamento efetuado.</p>'}
+                                </div>
+                                ${isAdmin ? `
+                                <div class="grid grid-cols-1 sm:grid-cols-2 gap-3 mt-4 no-print bg-black/20 p-4 rounded-2xl border border-white/5">
+                                    <input type="date" id="pay-date-${p.id}" class="modern-input relative !pr-3 !text-sm" onclick="event.stopPropagation();">
+                                    <input type="number" id="pay-val-${p.id}" placeholder="$ Valor a Pagar" class="modern-input !pr-3 !text-sm" onclick="event.stopPropagation();">
+                                    <button onclick="window.addPayment('${p.id}')" class="sm:col-span-2 w-full btn-premium-gold !py-3 !text-[11px] flex items-center justify-center gap-2 hover:brightness-110"><i data-lucide="arrow-up-from-line" class="w-4 h-4"></i> Efetuar Pagamento ao Vendedor</button>
+                                </div>` : ''}
+                            </div>
+                        </div>
+                    `;
+                } else if (state.activeModule === 'costs' && canViewCosts) {
+                    moduleTitle = 'Centro de Custos e Rentabilidade';
+                    const budgetColor = f.totalDespesas > f.orcamento && f.orcamento > 0 ? 'text-red-500' : 'text-slate-300';
+                    const profitColor = f.lucroBruto >= 0 ? 'text-emerald-500' : 'text-red-500';
+                    const marginColor = f.margemLucro >= 0 ? 'text-emerald-400' : 'text-red-400';
+                    
+                    const expensesList = (p.despesas || []).sort((a,b) => new Date(b.data) - new Date(a.data)).map(exp => `
+                        <div class="flex justify-between items-center text-xs py-2.5 border-b border-indigo-500/10 last:border-0 hover:bg-white/5 transition-colors px-3 rounded-lg print:border-slate-200">
+                            <div class="flex-1 flex flex-col sm:flex-row sm:items-center gap-1 sm:gap-3">
+                                <span class="text-slate-400 print:text-slate-600 font-mono text-[10px]">${exp.data ? new Date(exp.data + 'T12:00:00').toLocaleDateString() : '-'}</span>
+                                <span class="font-black text-slate-200 print:text-black uppercase">${exp.descricao}</span>
+                                <span class="text-[9px] px-2 py-0.5 bg-indigo-500/20 text-indigo-300 rounded-md border border-indigo-500/30 font-bold self-start sm:self-auto">${exp.categoria}</span>
+                            </div>
+                            <div class="flex items-center gap-4">
+                                <span class="font-black text-gold text-sm">${formatCurr(exp.valor)}</span>
+                                <button onclick="window.deleteExpense('${p.id}', '${exp.id}', '${exp.descricao.replace(/'/g,"\\'")}', ${exp.valor})" class="p-1.5 text-red-500/70 hover:text-red-400 hover:bg-red-500/10 rounded transition-colors no-print"><i data-lucide="trash-2" class="w-4 h-4"></i></button>
+                            </div>
+                        </div>
+                    `).join('') || '<p class="text-xs italic text-indigo-300/50 text-center py-6">Nenhuma despesa lançada nesta obra.</p>';
+
+                    moduleContent = `
+                        <div class="grid grid-cols-2 sm:grid-cols-4 gap-4 sm:gap-6 mb-8">
+                            <div class="bg-black/40 p-5 rounded-[24px] border border-white/5 shadow-inner print:bg-transparent print:border-slate-300">
+                                <p class="text-[9px] font-black uppercase text-slate-500 mb-1.5 tracking-widest print:text-slate-600">Orçamento (Budget)</p>
+                                <p class="text-xl sm:text-2xl font-black text-white print:text-black">${formatCurr(f.orcamento)}</p>
+                            </div>
+                            <div class="bg-black/40 p-5 rounded-[24px] border border-white/5 shadow-inner print:bg-transparent print:border-slate-300">
+                                <p class="text-[9px] font-black uppercase text-slate-500 mb-1.5 tracking-widest print:text-slate-600">Despesas Totais</p>
+                                <p class="text-xl sm:text-2xl font-black ${budgetColor} print:!text-black">${formatCurr(f.totalDespesas)}</p>
+                            </div>
+                            <div class="bg-black/40 p-5 rounded-[24px] border border-white/5 shadow-inner print:bg-transparent print:border-slate-300">
+                                <p class="text-[9px] font-black uppercase text-slate-500 mb-1.5 tracking-widest print:text-slate-600">Lucro Real</p>
+                                <p class="text-xl sm:text-2xl font-black ${profitColor}">${formatCurr(f.lucroBruto)}</p>
+                            </div>
+                            <div class="bg-black/40 p-5 rounded-[24px] border border-white/5 shadow-inner print:bg-transparent print:border-slate-300">
+                                <p class="text-[9px] font-black uppercase text-slate-500 mb-1.5 tracking-widest print:text-slate-600">Margem</p>
+                                <p class="text-xl sm:text-2xl font-black ${marginColor}">${f.margemLucro.toFixed(1)}%</p>
+                            </div>
                         </div>
 
-                        <div class="space-y-3">
-                            <div class="flex justify-between items-center bg-emerald-500/10 p-2 px-3 rounded-lg border border-emerald-500/20 print:bg-emerald-50 print:border-emerald-200">
-                                <p class="text-[9px] font-black text-emerald-400 uppercase print:text-emerald-800">Recebimentos do Cliente</p>
-                                <div class="flex items-center gap-3">
-                                    <span class="text-[9px] font-bold text-emerald-500 print:text-emerald-800">${formatCurr(f.totalRecebido)} / ${formatCurr(p.valorTotal)}</span>
-                                    ${isAdmin ? `<button onclick="openEditRecModal('${p.id}')" class="text-[9px] font-bold text-emerald-400 hover:text-white transition-colors no-print">✏️</button>` : ''}
+                        <div class="grid grid-cols-1 lg:grid-cols-3 gap-6 mb-8 no-print">
+                            <div class="bg-black/20 p-6 rounded-[24px] border border-indigo-500/10 flex flex-col items-center shadow-lg">
+                                <p class="text-[10px] font-black uppercase text-indigo-300/70 mb-4 w-full text-left tracking-widest">Orçamento vs Gasto</p>
+                                <div class="relative w-40 h-40"><canvas id="chart-budget-${p.id}"></canvas></div>
+                            </div>
+                            <div class="lg:col-span-2 bg-black/20 p-6 rounded-[24px] border border-indigo-500/10 shadow-lg">
+                                <p class="text-[10px] font-black uppercase text-indigo-300/70 mb-4 tracking-widest">Distribuição por Categoria</p>
+                                <div class="relative w-full h-40"><canvas id="chart-cat-${p.id}"></canvas></div>
+                            </div>
+                        </div>
+
+                        <div class="bg-indigo-950/20 p-6 sm:p-8 rounded-[32px] border border-indigo-500/20 shadow-2xl print:bg-transparent print:border-slate-300 print:p-0 print:shadow-none">
+                            <div class="no-print mb-8 pb-6 border-b border-indigo-500/20">
+                                <p class="text-xs font-black text-indigo-400 uppercase mb-4 tracking-widest flex items-center gap-2"><i data-lucide="plus-circle" class="w-4 h-4"></i> Registrar Nova Despesa</p>
+                                <div class="grid grid-cols-2 md:grid-cols-4 gap-3">
+                                    <input type="date" id="exp-date-${p.id}" class="modern-input relative !bg-black/40 !border-indigo-500/30 !pr-3" onclick="event.stopPropagation();">
+                                    <input type="text" id="exp-desc-${p.id}" placeholder="Descrição do gasto" class="modern-input !bg-black/40 !border-indigo-500/30 !pr-3 md:col-span-1" onclick="event.stopPropagation();">
+                                    <select id="exp-cat-${p.id}" class="modern-input !bg-black/40 !border-indigo-500/30 !pr-8" onclick="event.stopPropagation();">
+                                        <option value="Materiais">Materiais</option><option value="Mão-de-obra">Mão-de-obra</option><option value="Equipamentos">Equipamentos</option>
+                                        <option value="Licenças">Licenças (Permits)</option><option value="Outros">Outros</option>
+                                    </select>
+                                    <input type="number" id="exp-val-${p.id}" placeholder="$ Valor" step="0.01" class="modern-input !bg-black/40 !border-indigo-500/30 !pr-3 text-gold font-bold" onclick="event.stopPropagation();">
+                                    <button onclick="event.stopPropagation(); window.addExpense('${p.id}')" class="bg-indigo-600 hover:bg-indigo-500 text-white p-3 rounded-xl font-black text-[11px] uppercase tracking-widest transition-colors col-span-2 md:col-span-4 mt-1 shadow-lg">Adicionar à Tabela</button>
                                 </div>
                             </div>
-                            <div class="max-h-32 overflow-y-auto scrollbar-hide px-1 print:max-h-none">
-                                ${(p.recebimentos || []).map(r => `<div class="flex justify-between text-[11px] py-1.5 border-b border-white/5 last:border-0 print:border-slate-200"><span class="text-slate-300 print:text-black">${r.data ? new Date(r.data + 'T12:00:00').toLocaleDateString() : '-'} <span class="text-[9px] text-slate-500 ml-1">(${r.metodo})</span></span><span class="font-black text-emerald-400 print:text-emerald-700">+ ${formatCurr(r.valor)}</span></div>`).join('') || '<p class="text-[10px] italic text-slate-600 text-center py-2">Nenhum recebimento ainda</p>'}
-                            </div>
-                            ${isAdmin ? `
-                            <div class="grid grid-cols-3 gap-2 mt-2 no-print">
-                                <input type="date" id="rec-date-${p.id}" class="modern-input relative !px-2 !py-2 h-8 text-[10px]"><input type="number" id="rec-val-${p.id}" placeholder="$" class="modern-input !px-2 !py-2 h-8 text-[10px]"><select id="rec-met-${p.id}" class="modern-input !px-2 !py-2 h-8 text-[10px]"><option value="Zelle">Zelle</option><option value="Wire Transfer">Wire</option><option value="Dinheiro">Cash</option><option value="CC">Cartão (CC)</option></select>
-                            </div>
-                            <button onclick="window.addRecebimento('${p.id}')" class="w-full btn-premium-gold !py-2 !text-[9px] bg-emerald-500 !text-emerald-950 flex items-center justify-center gap-2 hover:brightness-110 no-print"><i data-lucide="arrow-down-to-line" class="w-3 h-3"></i> Lançar Recebimento</button>
-                            ` : ''}
-                        </div>
 
-                        <div class="space-y-3 pt-4 border-t border-white/5 print:border-slate-200">
-                            <div class="flex justify-between items-center bg-gold/10 p-2 px-3 rounded-lg border border-gold/20 print:bg-amber-50 print:border-amber-200">
-                                <p class="text-[9px] font-black text-gold uppercase print:text-amber-800">Pagamentos ao Vendedor</p>
-                                ${isAdmin ? `<button onclick="openEditPaymentModal('${p.id}')" class="text-[9px] font-bold text-gold hover:text-white transition-colors no-print">✏️</button>` : ''}
+                            <p class="text-[11px] font-black text-indigo-300 uppercase mb-4 tracking-widest">Histórico Completo de Gastos</p>
+                            <div class="max-h-80 overflow-y-auto scrollbar-hide pr-2 print:max-h-none">
+                                ${expensesList}
                             </div>
-                            <div class="max-h-32 overflow-y-auto scrollbar-hide px-1 print:max-h-none">
-                                ${(p.pagamentosEfetuados || []).map(pay => `<div class="flex justify-between text-[11px] py-1.5 border-b border-white/5 last:border-0 print:border-slate-200"><span class="text-slate-300 print:text-black">${pay.data ? new Date(pay.data + 'T12:00:00').toLocaleDateString() : '-'}</span><span class="font-black text-gold print:text-amber-700">- ${formatCurr(pay.valor)}</span></div>`).join('') || '<p class="text-[10px] italic text-slate-600 text-center py-2">Nenhum pagamento</p>'}
-                            </div>
-                            ${isAdmin ? `
-                            <div class="grid grid-cols-2 gap-2 mt-2 no-print">
-                                <input type="date" id="pay-date-${p.id}" class="modern-input relative !px-2 !py-2 h-8 text-[10px]"><input type="number" id="pay-val-${p.id}" placeholder="$" class="modern-input !px-2 !py-2 h-8 text-[10px]">
-                            </div>
-                            <button onclick="window.addPayment('${p.id}')" class="w-full btn-premium-gold !py-2 !text-[9px] flex items-center justify-center gap-2 hover:brightness-110 no-print"><i data-lucide="arrow-up-from-line" class="w-3 h-3"></i> Lançar Pagamento ao Vendedor</button>
-                            ` : ''}
                         </div>
+                    `;
+                }
+
+                grid.innerHTML += `
+                <div class="glass p-6 md:p-10 rounded-[40px] border-l-[8px] relative shadow-2xl flex flex-col w-full print:border print:border-slate-300 print:shadow-none animate-fade-in" style="border-left-color: ${p.status === 'Finalizado' ? '#10b981' : '#f59e0b'}">
+                    <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-8 border-b border-white/10 pb-6 gap-6 no-print">
+                        <div class="flex items-center gap-5">
+                            <button onclick="window.closeProjectModule()" class="p-4 bg-white/5 hover:bg-white/10 rounded-2xl transition-all border border-white/10 group shadow-lg">
+                                <i data-lucide="arrow-left" class="w-6 h-6 text-slate-300 group-hover:text-white group-hover:-translate-x-1 transition-all"></i>
+                            </button>
+                            <div>
+                                <h4 class="font-black text-2xl md:text-3xl uppercase tracking-tight text-white leading-none">${p.cliente || 'Sem Nome'}</h4>
+                                <div class="flex items-center gap-3 mt-3">
+                                    <span class="px-2.5 py-1 bg-white/5 rounded-md text-[9px] font-black uppercase tracking-widest text-slate-400 border border-white/10">${p.empresa}</span>
+                                    <span class="text-[11px] font-black text-gold uppercase tracking-widest px-3 py-1 bg-gold/10 rounded-lg border border-gold/20">${moduleTitle}</span>
+                                </div>
+                            </div>
+                        </div>
+                        <button onclick="window.printReport()" class="hidden md:flex items-center gap-2 text-slate-300 hover:text-white transition-all font-black text-[10px] uppercase tracking-widest px-5 py-4 bg-white/5 rounded-2xl border border-white/10 hover:bg-white/10 shadow-lg">
+                            <i data-lucide="printer" class="w-4 h-4"></i> Imprimir Ficha
+                        </button>
                     </div>
-                    
-                    <!-- Bloco Centro de Custos -->
-                    ${costsUI}
-                </div>
-                ` : ``}
-            </div>`;
 
-            // Agenda a renderização dos gráficos se o painel estiver aberto e os gráficos existirem
-            if (isFocused && canViewCosts) {
-                setTimeout(() => renderCharts(p.id, f.orcamento, f.gastosPorCategoria, f.totalDespesas), 100);
+                    <div class="hidden print:block mb-8 border-b border-slate-300 pb-4">
+                        <h4 class="font-black text-3xl uppercase tracking-tight text-black leading-none">${p.cliente || 'Sem Nome'}</h4>
+                        <p class="text-xs font-bold text-slate-500 uppercase tracking-widest mt-2">${p.empresa} | Módulo: ${moduleTitle}</p>
+                    </div>
+
+                    <div class="module-body animate-fade-in w-full">
+                        ${moduleContent}
+                    </div>
+                </div>
+                `;
+
+                if (state.activeModule === 'costs' && canViewCosts) {
+                    setTimeout(() => renderCharts(p.id, f.orcamento, f.gastosPorCategoria, f.totalDespesas), 100);
+                }
             }
         });
 
@@ -1087,17 +1079,16 @@
         const canViewAll = ['admin', 'superadmin'].includes(state.currentUserRole) || state.currentUserViewAll;
         const canViewCosts = ['admin', 'superadmin'].includes(state.currentUserRole) || state.currentUserViewCosts;
 
-        // Note: No relatório mantemos apenas ativas por padrão ou permitimos todas? Filtramos só as Ativas para o relatorio de comissoes e lucros.
         const filtered = state.projects.filter(p => {
             const matchCompany = state.company === 'Ambas' || p.empresa === state.company;
             const matchUser = canViewAll || p.vendedor === state.user.email; 
-            return matchCompany && matchUser && !p.archived; // Relatorio ignora arquivadas
+            return matchCompany && matchUser && !p.archived;
         });
 
         let tv = 0, tc = 0, tProfit = 0; 
 
         const currentYear = new Date().getFullYear();
-        const monthNames = state.lang === 'en' ? ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'] : ['Jan','Fev','Mar','Abr','Mai','Jun','Jul','Ago','Set','Out','Nov','Dez'];
+        const monthNames = state.lang === 'en' ? ['Jan','Feb','Mar','Apr','May','Jun','Jul','Ago','Sep','Out','Nov','Dez'] : ['Jan','Fev','Mar','Abr','Mai','Jun','Jul','Ago','Set','Out','Nov','Dez'];
         const sellerStats = {};
 
         const rows = filtered.map(p => {
@@ -1120,7 +1111,6 @@
                 }
             });
 
-            // Coluna de Lucro só aparece se tiver viewCosts
             const profitCol = canViewCosts ? `<td class="p-4 text-right font-black ${f.lucroBruto >= 0 ? 'text-emerald-500' : 'text-red-500'}">${formatCurr(f.lucroBruto)}</td>` : '';
 
             return `<tr class="border-b border-slate-100 text-xs text-left text-slate-800">
@@ -1278,7 +1268,7 @@
 
             try {
                 if (id) { await updateDoc(doc(db, 'artifacts', appId, 'public', 'data', 'projects', id), d); logAccess(state.user.email, `Editou a obra: ${d.cliente}`); } 
-                else { await addDoc(collection(db, 'artifacts', appId, 'public', 'data', 'projects'), { ...d, archived: false, createdAt: serverTimestamp(), pagamentosEfetuados: [], recebimentos: [], despesas: [] }); logAccess(state.user.email, `Registou nova obra: ${d.cliente}`); }
+                else { await addDoc(collection(db, 'artifacts', appId, 'public', 'data', 'projects'), { ...d, archived: false, createdAt: serverTimestamp(), pagamentosEfetuados: [], recebimentos: [], despesas: [] }); logAccess(state.user.email, `Registrou nova obra: ${d.cliente}`); }
                 e.target.reset(); document.getElementById('edit-id').value = ''; document.getElementById('f-vendedor').value = auth.currentUser.email; window.showView('projects');
             } catch (err) { console.error(err); }
         };
@@ -1288,12 +1278,12 @@
             const id = document.getElementById('t-id').value; const mail = document.getElementById('t-email').value.trim();
             const pass = document.getElementById('t-pass').value; const role = document.getElementById('t-role').value;
             const viewAll = document.getElementById('t-viewall').checked; 
-            const viewCosts = document.getElementById('t-viewcosts').checked; // NOVO CAMPO
+            const viewCosts = document.getElementById('t-viewcosts').checked; 
 
             try {
                 try { const secApp = initializeApp(firebaseConfig, "SecApp_" + Date.now()); const secAuth = getAuth(secApp); await createUserWithEmailAndPassword(secAuth, mail, pass); await signOut(secAuth); await deleteApp(secApp); } catch (authErr) {}
-                if (!id) { await addDoc(collection(db, 'artifacts', appId, 'public', 'data', 'user_credentials'), { email: mail, password: pass, role: role, viewAll: viewAll, viewCosts: viewCosts, updatedAt: serverTimestamp() }); logAccess(state.user.email, `Adicionou utilizador: ${mail}`); } 
-                else { await updateDoc(doc(db, 'artifacts', appId, 'public', 'data', 'user_credentials', id), { email: mail, password: pass, role: role, viewAll: viewAll, viewCosts: viewCosts, updatedAt: serverTimestamp() }); logAccess(state.user.email, `Atualizou utilizador: ${mail}`); }
+                if (!id) { await addDoc(collection(db, 'artifacts', appId, 'public', 'data', 'user_credentials'), { email: mail, password: pass, role: role, viewAll: viewAll, viewCosts: viewCosts, updatedAt: serverTimestamp() }); logAccess(state.user.email, `Adicionou usuário: ${mail}`); } 
+                else { await updateDoc(doc(db, 'artifacts', appId, 'public', 'data', 'user_credentials', id), { email: mail, password: pass, role: role, viewAll: viewAll, viewCosts: viewCosts, updatedAt: serverTimestamp() }); logAccess(state.user.email, `Atualizou usuário: ${mail}`); }
                 e.target.reset(); document.getElementById('t-id').value = ''; document.getElementById('t-viewall').checked = false; document.getElementById('t-viewcosts').checked = false;
             } catch (err) { alert("Erro: " + err.message); }
         };
