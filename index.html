@@ -41,12 +41,12 @@
         .app-body-light .glass { background: #ffffff !important; border-color: #e2e8f0 !important; color: #0f172a; box-shadow: 0 10px 30px -10px rgba(0,0,0,0.1) !important;}
         .app-body-light .text-white { color: #0f172a !important; }
         .app-body-light .text-slate-200, .app-body-light .text-slate-300, .app-body-light .text-slate-400 { color: #475569 !important; }
-        .app-body-light .bg-black\/20, .app-body-light .bg-black\/30, .app-body-light .bg-black\/40, .app-body-light .bg-indigo-950\/20 { background-color: #f1f5f9 !important; border-color: #cbd5e1 !important; }
+        .app-body-light .bg-black\/20, .app-body-light .bg-black\/30, .app-body-light .bg-black\/40, .app-body-light .bg-cyan-950\/20 { background-color: #f1f5f9 !important; border-color: #cbd5e1 !important; }
         .app-body-light .border-white\/5, .app-body-light .border-white\/10 { border-color: #e2e8f0 !important; }
         .app-body-light header { background-color: #ffffff !important; border-bottom-color: #e2e8f0 !important; }
         
         .modern-input {
-            width: 100%; padding: 14px 16px; border-radius: 12px; /* Removido o padding right excessivo */
+            width: 100%; padding: 14px 16px; border-radius: 12px;
             border: 1px solid rgba(148, 163, 184, 0.2); background: rgba(0,0,0,0.5);
             color: inherit; outline: none; transition: all 0.2s; font-size: 14px;
         }
@@ -89,6 +89,10 @@
         .date-container { position: relative; display: flex; align-items: center; width: 100%; }
         .calendar-icon-overlay { position: absolute; right: 14px; pointer-events: none; color: var(--gold); z-index: 10; }
 
+        /* Painel Financeiro e Despesas Expansível */
+        .finance-panel { max-height: 0; overflow: hidden; transition: all 0.4s ease-in-out; opacity: 0; }
+        .finance-panel.open { max-height: 5000px; opacity: 1; margin-top: 1rem; }
+
         /* Barra de Progresso */
         .progress-track { height: 16px; border-radius: 8px; background: rgba(255,255,255,0.05); overflow: hidden; border: 1px solid rgba(255,255,255,0.05); }
         .app-body-light .progress-track { background: #e2e8f0; border-color: #cbd5e1; }
@@ -115,8 +119,9 @@
             body { background: #fff !important; color: #000 !important; }
             .glass { background: #fff !important; border: 1px solid #e2e8f0 !important; box-shadow: none !important; filter: none !important; backdrop-filter: none !important; }
             .text-white, .text-slate-200, .text-slate-300, .text-slate-400 { color: #0f172a !important; }
-            .bg-black\/20, .bg-slate-900\/80, .bg-gradient-to-br, .bg-white\/5, .bg-indigo-950\/20 { background: #f8fafc !important; border-color: #cbd5e1 !important; }
+            .bg-black\/20, .bg-slate-900\/80, .bg-gradient-to-br, .bg-white\/5, .bg-cyan-950\/20 { background: #f8fafc !important; border-color: #cbd5e1 !important; }
             canvas { max-width: 100% !important; }
+            .finance-panel.open { max-height: none !important; overflow: visible !important; }
         }
 
         /* Pequenos estilos auxiliares */
@@ -199,7 +204,9 @@
 
 <!-- Interface Interna -->
 <div id="main-app" class="hidden min-h-screen flex flex-col app-body-dark text-center">
-    <header class="no-print bg-white/5 backdrop-blur-md border-b border-white/5 p-4 sticky top-0 z-40 shadow-sm">
+    
+    <!-- HEADER PRINCIPAL (Ganhou um ID para poder ser escondido no Celular) -->
+    <header id="main-header" class="no-print bg-white/5 backdrop-blur-md border-b border-white/5 p-4 sticky top-0 z-40 shadow-sm transition-all duration-300">
         <div class="max-w-7xl mx-auto flex justify-between items-center">
             <div class="flex items-center gap-6">
                 <div class="bg-white p-2 rounded-xl shadow-md"><img id="header-logo" src="logo-D2-Group-preto.png" class="h-10"></div>
@@ -216,8 +223,10 @@
         </div>
     </header>
 
-    <main class="max-w-7xl mx-auto w-full p-4 sm:p-6 flex-1">
-        <nav class="no-print flex gap-10 mb-6 border-b border-white/5 overflow-x-auto justify-center sm:justify-start scrollbar-hide">
+    <main id="main-container" class="max-w-7xl mx-auto w-full p-4 sm:p-6 flex-1 pt-6 sm:pt-8 transition-all duration-300">
+        
+        <!-- NAVEGAÇÃO PRINCIPAL (Ganhou um ID para poder ser escondida) -->
+        <nav id="main-nav" class="no-print flex gap-10 mb-6 border-b border-white/5 overflow-x-auto justify-center sm:justify-start scrollbar-hide">
             <button onclick="showView('projects')" class="tab-btn pb-4 font-black text-[11px] uppercase tracking-[0.2em] tab-active" id="tab-projects" data-i18n="nav_proj">Projetos</button>
             <button onclick="window.cancelEdit(); showView('new')" class="tab-btn pb-4 font-black text-[11px] uppercase tracking-[0.2em] editor-only hidden" id="tab-new" data-i18n="nav_new">Nova Obra</button>
             <button onclick="showView('reports')" class="tab-btn pb-4 font-black text-[11px] uppercase tracking-[0.2em]" id="tab-reports" data-i18n="nav_rep">Relatórios</button>
@@ -271,8 +280,8 @@
                     <div class="relative"><span class="absolute left-4 top-1/2 -translate-y-1/2 font-bold text-gold">$</span><input type="number" id="f-valor" step="0.01" required class="modern-input !pl-8"></div>
                 </div>
                 <div class="space-y-2">
-                    <label class="text-[10px] font-black uppercase text-indigo-400 ml-1 tracking-widest">Orçamento Custo (Budget)</label>
-                    <div class="relative"><span class="absolute left-4 top-1/2 -translate-y-1/2 font-bold text-indigo-400">$</span><input type="number" id="f-orcamento" step="0.01" placeholder="Opcional" class="modern-input !pl-8 border-indigo-500/20 focus:border-indigo-500"></div>
+                    <label class="text-[10px] font-black uppercase text-cyan-400 ml-1 tracking-widest">Orçamento Custo (Budget)</label>
+                    <div class="relative"><span class="absolute left-4 top-1/2 -translate-y-1/2 font-bold text-cyan-400">$</span><input type="number" id="f-orcamento" step="0.01" placeholder="Opcional" class="modern-input !pl-8 border-cyan-500/20 focus:border-cyan-500"></div>
                 </div>
 
                 <div class="space-y-2">
@@ -348,9 +357,9 @@
                             <label for="t-viewall" class="text-[10px] font-black uppercase text-slate-300 cursor-pointer">Visão Global (Visualizar TODAS as obras)</label>
                         </div>
                         
-                        <div class="flex items-center gap-3 bg-indigo-900/20 p-4 rounded-xl border border-indigo-500/20">
-                            <input type="checkbox" id="t-viewcosts" class="w-5 h-5 accent-indigo-500 cursor-pointer rounded bg-transparent">
-                            <label for="t-viewcosts" class="text-[10px] font-black uppercase text-indigo-300 cursor-pointer">Acesso ao Centro de Custos e Lucro Real</label>
+                        <div class="flex items-center gap-3 bg-cyan-900/20 p-4 rounded-xl border border-cyan-500/20">
+                            <input type="checkbox" id="t-viewcosts" class="w-5 h-5 accent-cyan-500 cursor-pointer rounded bg-transparent">
+                            <label for="t-viewcosts" class="text-[10px] font-black uppercase text-cyan-300 cursor-pointer">Acesso ao Centro de Custos e Lucro Real</label>
                         </div>
                     </div>
                     
@@ -591,9 +600,9 @@
             if (budget === 0 && totalExpenses === 0) {
                 labels = ['Sem Orçamento']; dataArr = [1]; bgColors = ['#334155'];
             } else if (overspent > 0) {
-                labels = ['Orçamento Usado', 'Estouro (Overbudget)']; dataArr = [budget, overspent]; bgColors = ['#fbbf24', '#ef4444'];
+                labels = ['Orçamento Usado', 'Estouro (Overbudget)']; dataArr = [budget, overspent]; bgColors = ['#22d3ee', '#ef4444'];
             } else {
-                labels = ['Gasto', 'Restante']; dataArr = [totalExpenses, remaining]; bgColors = ['#fbbf24', '#10b981'];
+                labels = ['Gasto', 'Restante']; dataArr = [totalExpenses, remaining]; bgColors = ['#22d3ee', '#10b981'];
             }
 
             window.d2Charts[`budget-${pId}`] = new Chart(ctxBudget, {
@@ -607,7 +616,7 @@
             if (window.d2Charts[`cat-${pId}`]) window.d2Charts[`cat-${pId}`].destroy();
             const labels = Object.keys(expensesByCategory); const dataArr = Object.values(expensesByCategory);
             window.d2Charts[`cat-${pId}`] = new Chart(ctxCat, {
-                type: 'bar', data: { labels: labels, datasets: [{ label: 'Gastos', data: dataArr, backgroundColor: '#818cf8', borderRadius: 4 }] },
+                type: 'bar', data: { labels: labels, datasets: [{ label: 'Gastos', data: dataArr, backgroundColor: '#22d3ee', borderRadius: 4 }] },
                 options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { display: false } },
                     scales: { y: { beginAtZero: true, grid: { color: 'rgba(255,255,255,0.05)' }, ticks: { color: '#94a3b8', font: {size: 9} } }, x: { grid: { display: false }, ticks: { color: '#94a3b8', font: {size: 9} } } }
                 }
@@ -659,7 +668,7 @@
     window.setLang = (l) => { state.lang = l; document.querySelectorAll('.flag-btn').forEach(b => b.classList.toggle('active', b.id.includes(l))); renderProjects(); renderReport(); };
     window.selectUnit = (unit) => { state.company = unit; document.querySelectorAll('.unit-pill').forEach(b => b.classList.remove('active')); const map = { 'Smart Home': 'unit-smart', 'HVAC': 'unit-hvac', 'Ambas': 'unit-all' }; document.getElementById(map[unit]).classList.add('active'); state.focusedProject = null; state.activeModule = null; renderProjects(); renderReport(); };
 
-    // --- NOVA LÓGICA DE NAVEGAÇÃO INTERNA (DRILL-DOWN) ---
+    // --- NOVA LÓGICA DE NAVEGAÇÃO INTERNA (DRILL-DOWN) E HIDE HEADER ---
     window.openProjectDetails = (id) => { 
         state.focusedProject = id; 
         state.activeModule = null; // Abre no nível dos Botões Gigantes
@@ -766,6 +775,9 @@
     function renderProjects() {
         const grid = document.getElementById('projects-grid');
         const filtersDiv = document.getElementById('projects-filters');
+        const mainHeader = document.getElementById('main-header');
+        const mainNav = document.getElementById('main-nav');
+
         if (!grid || !state.user) return;
 
         grid.innerHTML = '';
@@ -783,8 +795,13 @@
             return matchCompany && matchUser && matchArchive;
         });
 
+        // ==========================================
+        // CONTROLE DO MODO FOCO (ESCONDER TOPO)
+        // ==========================================
         if (state.focusedProject) {
             filtersDiv.classList.add('hidden');
+            if (mainHeader) mainHeader.style.display = 'none';
+            if (mainNav) mainNav.style.display = 'none';
             grid.className = "flex flex-col max-w-4xl mx-auto gap-6 text-left w-full animate-fade-in pb-20";
             filtered = state.projects.filter(p => p.id === state.focusedProject); 
             
@@ -792,8 +809,8 @@
             if (!state.activeModule) {
                 grid.innerHTML += `
                     <div class="mb-4 flex justify-between items-center no-print">
-                        <button onclick="window.closeProjectDetails()" class="inline-flex items-center gap-2 text-gold hover:text-white transition-all font-black text-[10px] uppercase tracking-widest px-5 py-3 bg-white/5 rounded-2xl border border-white/10 hover:bg-white/10 hover:scale-105 shadow-lg">
-                            <i data-lucide="arrow-left" class="w-4 h-4"></i> Voltar aos Projetos
+                        <button onclick="window.closeProjectDetails()" class="inline-flex items-center gap-2 text-gold hover:text-white transition-all font-black text-xs uppercase tracking-widest px-6 py-4 bg-white/5 rounded-2xl border border-white/10 hover:bg-white/10 hover:scale-105 shadow-lg">
+                            <i data-lucide="arrow-left" class="w-5 h-5"></i> Voltar aos Projetos
                         </button>
                     </div>
                 `;
@@ -801,6 +818,8 @@
         } else {
             filtersDiv.classList.remove('hidden');
             filtersDiv.classList.add('flex');
+            if (mainHeader) mainHeader.style.display = '';
+            if (mainNav) mainNav.style.display = 'flex';
             grid.className = "grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-10 text-left animate-fade-in pb-10";
         }
 
@@ -861,7 +880,7 @@
                                 <div><p class="text-[9px] font-bold text-slate-500 uppercase print:text-black">Comissão Projetada</p><p class="text-lg font-black text-slate-400 print:text-black">${formatCurr(f.commTotalProjetada)}</p></div>
                                 <div class="text-right"><p class="text-[9px] font-bold text-emerald-500/80 uppercase print:text-emerald-700">Comissão Liberada</p><p class="text-2xl font-black text-emerald-500 print:text-emerald-700">${formatCurr(f.commLiberada)}</p></div>
                                 <div><p class="text-[9px] font-bold text-slate-500 uppercase print:text-black">Pago ao Vendedor</p><p class="text-lg font-black text-slate-300 print:text-black">${formatCurr(f.totalPaid)}</p></div>
-                                <div class="text-right"><p class="text-[9px] font-bold ${balColor} uppercase print:text-black">${balText}</p><p class="text-2xl font-black ${balColor} tracking-tighter print:text-black">${balDisplay}</p></div>
+                                <div class="text-right"><p class="text-[9px] font-bold ${balColor} uppercase print:text-black">${balText}</p><p class="text-2xl sm:text-3xl font-black ${balColor} tracking-tighter print:text-black">${balDisplay}</p></div>
                             </div>
 
                             <div class="space-y-4">
@@ -908,18 +927,18 @@
                     const marginColor = f.margemLucro >= 0 ? 'text-emerald-400' : 'text-red-400';
                     
                     const expensesList = (p.despesas || []).sort((a,b) => new Date(b.data) - new Date(a.data)).map(exp => `
-                        <div class="flex justify-between items-center text-sm py-3 border-b border-indigo-500/10 last:border-0 hover:bg-white/5 transition-colors px-3 rounded-lg print:border-slate-200">
+                        <div class="flex justify-between items-center text-sm py-3 border-b border-cyan-500/10 last:border-0 hover:bg-white/5 transition-colors px-3 rounded-lg print:border-slate-200">
                             <div class="flex-1 flex flex-col sm:flex-row sm:items-center gap-1 sm:gap-3">
                                 <span class="text-slate-400 print:text-slate-600 font-mono text-xs">${exp.data ? new Date(exp.data + 'T12:00:00').toLocaleDateString() : '-'}</span>
                                 <span class="font-black text-slate-200 print:text-black uppercase">${exp.descricao}</span>
-                                <span class="text-[10px] px-2 py-0.5 bg-indigo-500/20 text-indigo-300 rounded-md border border-indigo-500/30 font-bold self-start sm:self-auto">${exp.categoria}</span>
+                                <span class="text-[10px] px-2 py-0.5 bg-cyan-500/20 text-cyan-300 rounded-md border border-cyan-500/30 font-bold self-start sm:self-auto">${exp.categoria}</span>
                             </div>
                             <div class="flex items-center gap-4">
                                 <span class="font-black text-gold text-base">${formatCurr(exp.valor)}</span>
                                 <button onclick="window.deleteExpense('${p.id}', '${exp.id}', '${exp.descricao.replace(/'/g,"\\'")}', ${exp.valor})" class="p-2 text-red-500/70 hover:text-red-400 hover:bg-red-500/10 rounded transition-colors no-print"><i data-lucide="trash-2" class="w-5 h-5"></i></button>
                             </div>
                         </div>
-                    `).join('') || '<p class="text-sm italic text-indigo-300/50 text-center py-6">Nenhuma despesa lançada nesta obra.</p>';
+                    `).join('') || '<p class="text-sm italic text-cyan-300/50 text-center py-6">Nenhuma despesa lançada nesta obra.</p>';
 
                     moduleContent = `
                         <!-- KPIs -->
@@ -944,33 +963,33 @@
 
                         <!-- Gráficos -->
                         <div class="grid grid-cols-1 lg:grid-cols-3 gap-6 mb-8 no-print">
-                            <div class="bg-black/20 p-6 rounded-[24px] border border-indigo-500/10 flex flex-col items-center shadow-lg">
-                                <p class="text-[10px] font-black uppercase text-indigo-300/70 mb-4 w-full text-left tracking-widest">Orçamento vs Gasto</p>
+                            <div class="bg-black/20 p-6 rounded-[24px] border border-cyan-500/10 flex flex-col items-center shadow-lg">
+                                <p class="text-[10px] font-black uppercase text-cyan-300/70 mb-4 w-full text-left tracking-widest">Orçamento vs Gasto</p>
                                 <div class="relative w-40 h-40"><canvas id="chart-budget-${p.id}"></canvas></div>
                             </div>
-                            <div class="lg:col-span-2 bg-black/20 p-6 rounded-[24px] border border-indigo-500/10 shadow-lg">
-                                <p class="text-[10px] font-black uppercase text-indigo-300/70 mb-4 tracking-widest">Distribuição por Categoria</p>
+                            <div class="lg:col-span-2 bg-black/20 p-6 rounded-[24px] border border-cyan-500/10 shadow-lg">
+                                <p class="text-[10px] font-black uppercase text-cyan-300/70 mb-4 tracking-widest">Distribuição por Categoria</p>
                                 <div class="relative w-full h-40"><canvas id="chart-cat-${p.id}"></canvas></div>
                             </div>
                         </div>
 
                         <!-- Formulário e Tabela de Despesas -->
-                        <div class="bg-indigo-950/20 p-6 sm:p-8 rounded-[32px] border border-indigo-500/20 shadow-2xl print:bg-transparent print:border-slate-300 print:p-0 print:shadow-none">
-                            <div class="no-print mb-8 pb-8 border-b border-indigo-500/20">
-                                <p class="text-sm font-black text-indigo-400 uppercase mb-4 tracking-widest flex items-center gap-2"><i data-lucide="plus-circle" class="w-5 h-5"></i> Registrar Nova Despesa</p>
+                        <div class="bg-cyan-950/20 p-6 sm:p-8 rounded-[32px] border border-cyan-500/20 shadow-2xl print:bg-transparent print:border-slate-300 print:p-0 print:shadow-none">
+                            <div class="no-print mb-8 pb-8 border-b border-cyan-500/20">
+                                <p class="text-sm font-black text-cyan-400 uppercase mb-4 tracking-widest flex items-center gap-2"><i data-lucide="plus-circle" class="w-5 h-5"></i> Registrar Nova Despesa</p>
                                 <div class="grid grid-cols-1 sm:grid-cols-12 gap-3">
-                                    <input type="date" id="exp-date-${p.id}" class="modern-input relative !bg-black/40 !border-indigo-500/30 !text-sm sm:col-span-3" onclick="event.stopPropagation();">
-                                    <input type="text" id="exp-desc-${p.id}" placeholder="Descrição do gasto" class="modern-input !bg-black/40 !border-indigo-500/30 !text-sm sm:col-span-4" onclick="event.stopPropagation();">
-                                    <select id="exp-cat-${p.id}" class="modern-input !bg-black/40 !border-indigo-500/30 !text-sm sm:col-span-3 !pr-8" onclick="event.stopPropagation();">
+                                    <input type="date" id="exp-date-${p.id}" class="modern-input relative !bg-black/40 !border-cyan-500/30 !text-sm sm:col-span-3" onclick="event.stopPropagation();">
+                                    <input type="text" id="exp-desc-${p.id}" placeholder="Descrição do gasto" class="modern-input !bg-black/40 !border-cyan-500/30 !text-sm sm:col-span-4" onclick="event.stopPropagation();">
+                                    <select id="exp-cat-${p.id}" class="modern-input !bg-black/40 !border-cyan-500/30 !text-sm sm:col-span-3 !pr-8" onclick="event.stopPropagation();">
                                         <option value="Materiais">Materiais</option><option value="Mão-de-obra">Mão-de-obra</option><option value="Equipamentos">Equipamentos</option>
                                         <option value="Licenças">Licenças (Permits)</option><option value="Outros">Outros</option>
                                     </select>
-                                    <input type="number" id="exp-val-${p.id}" placeholder="$ Valor" step="0.01" class="modern-input !bg-black/40 !border-indigo-500/30 !text-sm sm:col-span-2 text-gold font-bold" onclick="event.stopPropagation();">
-                                    <button onclick="event.stopPropagation(); window.addExpense('${p.id}')" class="bg-indigo-600 hover:bg-indigo-500 text-white p-3.5 rounded-xl font-black text-[11px] uppercase tracking-widest transition-colors sm:col-span-12 mt-2 shadow-lg">Adicionar à Tabela</button>
+                                    <input type="number" id="exp-val-${p.id}" placeholder="$ Valor" step="0.01" class="modern-input !bg-black/40 !border-cyan-500/30 !text-sm sm:col-span-2 text-gold font-bold" onclick="event.stopPropagation();">
+                                    <button onclick="event.stopPropagation(); window.addExpense('${p.id}')" class="bg-cyan-600 hover:bg-cyan-500 text-white p-3.5 rounded-xl font-black text-[11px] uppercase tracking-widest transition-colors sm:col-span-12 mt-2 shadow-lg">Adicionar à Tabela</button>
                                 </div>
                             </div>
 
-                            <p class="text-xs font-black text-indigo-300 uppercase mb-4 tracking-widest">Histórico Completo de Gastos</p>
+                            <p class="text-xs font-black text-cyan-300 uppercase mb-4 tracking-widest">Histórico Completo de Gastos</p>
                             <div class="max-h-96 overflow-y-auto scrollbar-hide pr-2 print:max-h-none">
                                 ${expensesList}
                             </div>
@@ -983,12 +1002,12 @@
                 <div class="glass p-6 md:p-10 rounded-[40px] border-l-[8px] relative shadow-2xl flex flex-col w-full print:border print:border-slate-300 print:shadow-none animate-fade-in" style="border-left-color: ${p.status === 'Finalizado' ? '#10b981' : '#f59e0b'}">
                     <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-8 border-b border-white/10 pb-6 gap-6 no-print">
                         <div class="flex items-center gap-4">
-                            <button onclick="window.closeProjectModule()" class="p-3 bg-white/5 hover:bg-white/10 rounded-xl transition-all border border-white/10 shadow-sm flex items-center gap-2 text-[10px] font-black uppercase text-slate-300 hover:text-white">
-                                <i data-lucide="arrow-left" class="w-4 h-4"></i> Voltar
+                            <button onclick="window.closeProjectModule()" class="p-3 sm:p-4 bg-white/5 hover:bg-white/10 rounded-xl sm:rounded-2xl transition-all border border-white/10 shadow-sm flex items-center gap-2 text-[11px] sm:text-xs font-black uppercase text-slate-300 hover:text-white">
+                                <i data-lucide="arrow-left" class="w-5 h-5"></i> Voltar
                             </button>
                             <div>
-                                <h4 class="font-black text-xl sm:text-2xl uppercase tracking-tight text-white leading-none truncate max-w-[200px] sm:max-w-md">${p.cliente || 'Sem Nome'}</h4>
-                                <p class="text-[10px] font-black text-gold uppercase tracking-widest mt-1">${moduleTitle}</p>
+                                <h4 class="font-black text-xl sm:text-3xl uppercase tracking-tight text-white leading-none truncate max-w-[200px] sm:max-w-md">${p.cliente || 'Sem Nome'}</h4>
+                                <p class="text-[10px] sm:text-xs font-black text-gold uppercase tracking-widest mt-1.5">${moduleTitle}</p>
                             </div>
                         </div>
                         <button onclick="window.printReport()" class="hidden md:flex items-center gap-2 text-slate-300 hover:text-white transition-all font-black text-[10px] uppercase tracking-widest px-5 py-3 bg-white/5 rounded-2xl border border-white/10 hover:bg-white/10 shadow-lg">
@@ -1081,14 +1100,14 @@
                     <div class="grid grid-cols-1 ${gridCols} gap-4 mt-8 pt-6 border-t border-white/10 no-print animate-fade-in">
                         <button onclick="event.stopPropagation(); window.openProjectModule('commissions')" class="py-8 px-4 bg-gradient-to-br from-slate-900 to-black rounded-[24px] border border-gold/20 hover:border-gold/60 hover:shadow-[0_0_30px_-5px_rgba(251,191,36,0.3)] transition-all flex flex-col items-center justify-center gap-3 group relative overflow-hidden">
                             <div class="absolute inset-0 bg-gold/5 transform scale-0 group-hover:scale-100 transition-transform rounded-[24px] duration-500 origin-center"></div>
-                            <i data-lucide="wallet" class="w-10 h-10 text-gold group-hover:scale-110 group-hover:-translate-y-1 transition-all relative z-10"></i>
-                            <span class="text-[11px] font-black uppercase text-gold tracking-[0.2em] relative z-10 text-center">Comissões e Finanças</span>
+                            <i data-lucide="wallet" class="w-10 h-10 sm:w-12 sm:h-12 text-gold group-hover:scale-110 group-hover:-translate-y-1 transition-all relative z-10"></i>
+                            <span class="text-sm font-black uppercase text-gold tracking-[0.1em] relative z-10 text-center">Comissões e Finanças</span>
                         </button>
                         ${canViewCosts ? `
-                        <button onclick="event.stopPropagation(); window.openProjectModule('costs')" class="py-8 px-4 bg-gradient-to-br from-slate-900 to-black rounded-[24px] border border-indigo-500/20 hover:border-indigo-500/60 hover:shadow-[0_0_30px_-5px_rgba(99,102,241,0.3)] transition-all flex flex-col items-center justify-center gap-3 group relative overflow-hidden">
-                            <div class="absolute inset-0 bg-indigo-500/5 transform scale-0 group-hover:scale-100 transition-transform rounded-[24px] duration-500 origin-center"></div>
-                            <i data-lucide="calculator" class="w-10 h-10 text-indigo-400 group-hover:scale-110 group-hover:-translate-y-1 transition-all relative z-10"></i>
-                            <span class="text-[11px] font-black uppercase text-indigo-400 tracking-[0.2em] relative z-10 text-center">Gestão de Custos</span>
+                        <button onclick="event.stopPropagation(); window.openProjectModule('costs')" class="py-8 px-4 bg-gradient-to-br from-slate-900 to-black rounded-[24px] border border-cyan-500/20 hover:border-cyan-500/60 hover:shadow-[0_0_30px_-5px_rgba(34,211,238,0.3)] transition-all flex flex-col items-center justify-center gap-3 group relative overflow-hidden">
+                            <div class="absolute inset-0 bg-cyan-500/5 transform scale-0 group-hover:scale-100 transition-transform rounded-[24px] duration-500 origin-center"></div>
+                            <i data-lucide="calculator" class="w-10 h-10 sm:w-12 sm:h-12 text-cyan-400 group-hover:scale-110 group-hover:-translate-y-1 transition-all relative z-10"></i>
+                            <span class="text-sm font-black uppercase text-cyan-400 tracking-[0.1em] relative z-10 text-center">Gestão de Custos</span>
                         </button>
                         ` : ''}
                     </div>
@@ -1190,7 +1209,7 @@
                             <th class="p-4">Prop / Invoice</th><th class="p-4">Obra</th><th class="p-4">Vendedor</th>
                             <th class="p-4 text-right">Contrato Bruto</th><th class="p-4 text-right bg-emerald-50 text-emerald-700">Total Recebido</th>
                             <th class="p-4 text-right bg-amber-50 text-amber-700">Com. Liberada</th>
-                            ${canViewCosts ? '<th class="p-4 text-right bg-indigo-50 text-indigo-700">Lucro Real</th>' : ''}
+                            ${canViewCosts ? '<th class="p-4 text-right bg-indigo-50 text-cyan-700">Lucro Real</th>' : ''}
                         </tr>
                     </thead>
                     <tbody>${rows}</tbody>
@@ -1207,8 +1226,8 @@
                 </div>
                 ${canViewCosts ? `
                 <div class="text-right">
-                    <p class="text-[11px] font-black uppercase text-indigo-600 mb-1">LUCRO TOTAL</p>
-                    <p class="text-4xl font-black text-indigo-600">${formatCurr(tProfit)}</p>
+                    <p class="text-[11px] font-black uppercase text-cyan-600 mb-1">LUCRO TOTAL</p>
+                    <p class="text-4xl font-black text-cyan-600">${formatCurr(tProfit)}</p>
                 </div>
                 ` : ''}
             </div>
@@ -1217,7 +1236,7 @@
 
     onAuthStateChanged(auth, (u) => {
         state.user = u;
-        applyThemeConfig(); // Aplica o tema guardado na inicialização
+        applyThemeConfig(); 
         if (u) {
             document.getElementById('auth-screen').classList.add('hidden'); document.getElementById('main-app').classList.remove('hidden');
             document.getElementById('user-display').innerText = u.email ? u.email.split('@')[0].toUpperCase() : "USR";
@@ -1257,7 +1276,7 @@
                     let roleStr = "Editor Padrão", roleClass = "role-editor";
                     if(u.role === 'admin' || u.email.toLowerCase() === SUPER_ADMIN.toLowerCase()) { roleStr = "Admin"; roleClass = "role-admin"; }
                     if(u.role === 'viewer') { roleStr = "Modo Leitura"; roleClass = "role-viewer"; }
-                    const tagViewAll = u.viewAll ? '<span class="role-tag bg-indigo-500/20 text-indigo-400 ml-1">VISÃO GLOBAL</span>' : '';
+                    const tagViewAll = u.viewAll ? '<span class="role-tag bg-cyan-500/20 text-cyan-400 ml-1">VISÃO GLOBAL</span>' : '';
                     const tagCosts = u.viewCosts ? '<span class="role-tag bg-emerald-500/20 text-emerald-400 ml-1">CUSTOS</span>' : '';
                     return `<div class="glass p-6 rounded-[24px] flex justify-between items-center border-l-8 border-gold shadow-lg transition-all hover:scale-[1.01]"><div class="text-left"><p class="font-black text-slate-100 text-lg flex items-center gap-2 flex-wrap">${u.email} <span class="role-tag ${roleClass}">${roleStr}</span> ${tagViewAll} ${tagCosts}</p><p class="text-[11px] text-slate-500 mt-1 uppercase tracking-widest">Senha: <span class="text-gold font-bold normal-case">${u.password}</span></p></div><div class="flex gap-2"><button onclick="window.editTeamMember('${u.id}', '${u.email}', '${u.password}', '${u.role}', ${!!u.viewAll}, ${!!u.viewCosts})" class="p-2 text-gold hover:bg-gold/10 rounded-lg"><i data-lucide="edit" size="18"></i></button><button onclick="window.deleteTeam('${u.id}')" class="p-2 text-red-500 hover:bg-red-500/10 rounded-lg ${u.email.toLowerCase() === SUPER_ADMIN.toLowerCase() ? 'hidden' : ''}"><i data-lucide="user-minus" size="18"></i></button></div></div>`;
                 }).join('');
@@ -1290,7 +1309,7 @@
                 numeroProposta: document.getElementById('f-proposta').value || '', numeroInvoice: document.getElementById('f-invoice').value || '',
                 empresa: document.getElementById('f-empresa').value, cliente: document.getElementById('f-cliente').value, vendedor: document.getElementById('f-vendedor').value,
                 valorTotal: parseFloat(document.getElementById('f-valor').value),
-                orcamento: parseFloat(document.getElementById('f-orcamento').value || 0), // NOVO CAMPO
+                orcamento: parseFloat(document.getElementById('f-orcamento').value || 0), 
                 metodo: document.getElementById('f-metodo').value, percComissao: parseInt(document.getElementById('f-comm').value),
                 dataInicio: document.getElementById('f-inicio').value, dataEntrega: document.getElementById('f-entrega').value,
                 status: document.getElementById('f-status').value, updatedAt: serverTimestamp()
