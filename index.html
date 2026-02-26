@@ -41,6 +41,8 @@
         .app-body-light .text-emerald-400, .app-body-light .text-emerald-500 { color: #059669 !important; } 
         .app-body-light .text-cyan-400, .app-body-light .text-cyan-300 { color: #0284c7 !important; } 
         .app-body-light .text-red-400, .app-body-light .text-red-500 { color: #dc2626 !important; } 
+        .app-body-light .text-lime-500, .app-body-light .text-lime-400 { color: #4d7c0f !important; } 
+        .app-body-light .text-lime-600\/70 { color: rgba(77, 124, 15, 0.8) !important; } 
         
         /* Ajustes Estruturais Light Mode - Fundo dos Cards */
         .app-body-light .bg-black\/20, .app-body-light .bg-black\/30, .app-body-light .bg-black\/40 { background-color: #f1f5f9 !important; border-color: #cbd5e1 !important; }
@@ -52,9 +54,6 @@
         
         /* Ajuste de Contraste para KPIs e Funil no Light Mode */
         .app-body-light .kpi-card { background-color: #ffffff !important; border-color: #cbd5e1 !important; box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1) !important; }
-        .app-body-light .kpi-card .kpi-title { color: #64748b !important; }
-        .app-body-light .kpi-card .kpi-value { color: #0f172a !important; }
-        .app-body-light .kpi-card .kpi-link { color: #94a3b8 !important; }
         .app-body-light .kpi-card.active { background-color: #f8fafc !important; border-color: #94a3b8 !important; }
         
         .modern-input { width: 100%; padding: 14px 16px; border-radius: 12px; border: 1px solid rgba(148, 163, 184, 0.2); background: rgba(0,0,0,0.5); color: inherit; outline: none; transition: all 0.2s; font-size: 16px; }
@@ -94,6 +93,8 @@
 
         @keyframes fadeIn { from { opacity: 0; transform: translateY(15px); } to { opacity: 1; transform: translateY(0); } }
         .animate-fade-in { animation: fadeIn 0.4s cubic-bezier(0.16, 1, 0.3, 1) forwards; }
+        
+        /* Interação Global do Card */
         .project-card { transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1); cursor: pointer; }
         .project-card:hover { transform: translateY(-4px); box-shadow: 0 20px 40px -10px rgba(0,0,0,0.5); border-color: rgba(251, 191, 36, 0.3); }
 
@@ -105,16 +106,15 @@
             .glass { background: #fff !important; border: 1px solid #cbd5e1 !important; box-shadow: none !important; filter: none !important; backdrop-filter: none !important; page-break-inside: avoid; }
             .text-white, .text-slate-200, .text-slate-300, .text-slate-400, .force-white-text { color: #0f172a !important; }
             .text-gold { color: #b45309 !important; font-weight: 900 !important; } 
-            .kpi-value { color: #0f172a !important; } 
             .bg-slate-900, .bg-slate-800, .bg-black\/40 { background: #f8fafc !important; border-color: #cbd5e1 !important; color: #0f172a !important; }
             canvas { max-width: 100% !important; max-height: 250px !important; page-break-inside: avoid; }
             .overflow-x-auto { overflow: visible !important; } 
             tr { page-break-inside: avoid !important; }
             #report-output .grid { display: grid !important; }
-            
-            /* Esta classe esconde os KPIs se estiver a imprimir apenas a visão específica */
-            body.printing-kpi .hide-on-kpi-print { display: none !important; }
             body.printing-kpi .full-report-only { display: none !important; }
+            
+            /* Força a cor branca nos badges do funil durante a impressão para ficarem legíveis */
+            .print-force-white { color: #ffffff !important; }
         }
 
         .flag-btn { border: 1px solid rgba(15,23,42,0.12); border-radius: 14px; padding: 10px; transition: .2s; background: #fff; }
@@ -390,11 +390,6 @@
         </div>
 
         <div id="view-reports" class="hidden space-y-8 max-w-7xl mx-auto text-left animate-fade-in print:block">
-            <div class="flex justify-center gap-3 mb-8 no-print" id="report-unit-filters">
-                <button onclick="window.selectUnit('Smart Home')" id="r-unit-smart" class="unit-pill">SMART HOME</button>
-                <button onclick="window.selectUnit('HVAC')" id="r-unit-hvac" class="unit-pill">HVAC</button>
-                <button onclick="window.selectUnit('Ambas')" id="r-unit-all" class="unit-pill active">AMBAS</button>
-            </div>
             <div id="report-output"></div>
         </div>
     </main>
@@ -1290,10 +1285,10 @@
 
         let tv = 0, tc = 0, tProfit = 0, totalCollected = 0; 
         let statusFunnel = {
-            '✅ Aprovado': { id: 'status_aprovado', count: 0, val: 0, label: 'Aprovados', color: 'text-emerald-500', border: 'border-emerald-500/20', bg: 'bg-emerald-500/10', hoverRing: 'hover:ring-emerald-400' },
-            'Aguardando Início': { id: 'status_aguardando', count: 0, val: 0, label: 'Aguardando Início', color: 'text-amber-500', border: 'border-amber-500/20', bg: 'bg-amber-500/10', hoverRing: 'hover:ring-amber-400' },
-            'Em Execução': { id: 'status_execucao', count: 0, val: 0, label: 'Em Execução', color: 'text-blue-500', border: 'border-blue-500/20', bg: 'bg-blue-500/10', hoverRing: 'hover:ring-blue-400' },
-            'Finalizado': { id: 'status_finalizado', count: 0, val: 0, label: 'Concluídas', color: 'text-gold', border: 'border-gold/20', bg: 'bg-gold/10', hoverRing: 'hover:ring-gold' }
+            '✅ Aprovado': { id: 'status_aprovado', count: 0, val: 0, label: 'Aprovados', color: 'text-emerald-500', border: 'border-emerald-500/20', bg: 'bg-emerald-500/10', hoverRing: 'hover:ring-emerald-400', badgeBg: 'bg-emerald-500' },
+            'Aguardando Início': { id: 'status_aguardando', count: 0, val: 0, label: 'Aguardando Início', color: 'text-amber-500', border: 'border-amber-500/20', bg: 'bg-amber-500/10', hoverRing: 'hover:ring-amber-400', badgeBg: 'bg-amber-500' },
+            'Em Execução': { id: 'status_execucao', count: 0, val: 0, label: 'Em Execução', color: 'text-blue-500', border: 'border-blue-500/20', bg: 'bg-blue-500/10', hoverRing: 'hover:ring-blue-400', badgeBg: 'bg-blue-500' },
+            'Finalizado': { id: 'status_finalizado', count: 0, val: 0, label: 'Concluídas', color: 'text-yellow-500', border: 'border-yellow-500/20', bg: 'bg-yellow-500/10', hoverRing: 'hover:ring-yellow-500', badgeBg: 'bg-yellow-500' }
         };
 
         const currentYear = new Date().getFullYear();
@@ -1340,10 +1335,10 @@
                 const s = statusFunnel[k];
                 const isActive = state.reportActiveKpi === s.id;
                 return `
-                <div onclick="window.setReportKpi('${s.id}')" class="cursor-pointer hover:-translate-y-1 hover:shadow-md transition-all p-4 sm:p-5 rounded-2xl border ${s.border} ${s.bg} flex flex-col justify-between print:bg-transparent print:border-slate-300 shadow-sm force-dark-bg group ${isActive ? `ring-2 ring-offset-2 ring-offset-slate-900 ${s.hoverRing.replace('hover:', '')}` : ''}">
+                <div onclick="window.setReportKpi('${s.id}')" class="cursor-pointer hover:-translate-y-1 hover:shadow-md transition-all p-4 sm:p-5 rounded-2xl border ${s.border} ${s.bg} flex flex-col justify-between print:bg-transparent print:border-slate-300 shadow-sm group ${isActive ? `ring-2 ring-offset-2 ring-offset-slate-900 ${s.hoverRing.replace('hover:', '')}` : ''}">
                     <div class="flex justify-between items-start mb-3">
                         <p class="text-[9px] sm:text-[10px] font-black uppercase ${s.color} tracking-widest print:text-slate-600 pr-2 leading-tight">${s.label}</p>
-                        <span class="text-[10px] sm:text-xs font-black text-white force-white-text bg-black/40 px-2 py-0.5 rounded-lg print:text-white print:bg-slate-800">${s.count}</span>
+                        <span class="text-[10px] sm:text-xs font-black text-white force-white-text ${s.badgeBg} px-2 py-0.5 rounded-lg shadow-sm print:text-white print:bg-slate-800">${s.count}</span>
                     </div>
                     <p class="text-base sm:text-lg font-black text-slate-200 tracking-tight print:text-black break-words">${formatCurr(s.val)}</p>
                 </div>
@@ -1355,30 +1350,30 @@
                     <h3 class="text-lg sm:text-xl font-black uppercase tracking-tighter mb-5 text-slate-800 border-b-2 border-slate-100 pb-3 flex items-center gap-2"><i data-lucide="bar-chart-2" class="w-5 h-5 text-indigo-500"></i> Visão Executiva Institucional</h3>
                     
                     <div class="grid grid-cols-2 md:grid-cols-5 gap-3 sm:gap-4 mb-8">
-                        <div onclick="window.setReportKpi('receita')" class="cursor-pointer hover:-translate-y-1 hover:shadow-xl transition-all ${state.reportActiveKpi === 'receita' ? 'bg-slate-800 ring-2 ring-slate-400' : 'bg-slate-900'} p-3 sm:p-4 rounded-2xl border border-slate-700 border-l-4 border-l-slate-400 shadow-lg print:bg-transparent print:border-slate-300 print:shadow-none print:ring-0 relative group flex flex-col justify-between h-full min-h-[110px] force-dark-bg">
-                            <p class="text-[9px] sm:text-[10px] font-black uppercase text-slate-400 mb-1 tracking-widest">Receita Bruta</p>
-                            <p class="text-sm sm:text-base xl:text-lg font-black text-white force-white-text print:text-black tracking-tighter break-words my-2">${formatCurr(tv)}</p>
-                            <p class="text-[8px] text-slate-500 uppercase font-bold tracking-widest mt-auto opacity-50 group-hover:opacity-100 no-print">Ver Obras ➔</p>
+                        <div onclick="window.setReportKpi('receita')" class="cursor-pointer hover:-translate-y-1 hover:shadow-xl transition-all ${state.reportActiveKpi === 'receita' ? 'bg-slate-800 ring-2 ring-lime-500' : 'bg-slate-900'} p-3 sm:p-4 rounded-2xl border border-slate-700 border-l-4 border-l-lime-500 shadow-lg print:bg-transparent print:border-slate-300 print:shadow-none print:ring-0 relative group flex flex-col justify-between h-full min-h-[110px]">
+                            <p class="text-[9px] sm:text-[10px] font-black uppercase text-lime-500 mb-1 tracking-widest">Receita Bruta</p>
+                            <p class="text-sm sm:text-base xl:text-lg font-black text-white print:text-black tracking-tighter break-words my-2">${formatCurr(tv)}</p>
+                            <p class="text-[8px] text-lime-600/70 uppercase font-bold tracking-widest mt-auto group-hover:text-lime-500 no-print transition-colors">Ver Obras ➔</p>
                         </div>
-                        <div onclick="window.setReportKpi('entradas')" class="cursor-pointer hover:-translate-y-1 hover:shadow-xl transition-all ${state.reportActiveKpi === 'entradas' ? 'bg-slate-800 ring-2 ring-emerald-500' : 'bg-slate-900'} p-3 sm:p-4 rounded-2xl border border-slate-700 border-l-4 border-l-emerald-500 shadow-lg print:bg-transparent print:border-slate-300 print:shadow-none print:ring-0 relative group flex flex-col justify-between h-full min-h-[110px] force-dark-bg">
+                        <div onclick="window.setReportKpi('entradas')" class="cursor-pointer hover:-translate-y-1 hover:shadow-xl transition-all ${state.reportActiveKpi === 'entradas' ? 'bg-slate-800 ring-2 ring-emerald-500' : 'bg-slate-900'} p-3 sm:p-4 rounded-2xl border border-slate-700 border-l-4 border-l-emerald-500 shadow-lg print:bg-transparent print:border-slate-300 print:shadow-none print:ring-0 relative group flex flex-col justify-between h-full min-h-[110px]">
                             <p class="text-[9px] sm:text-[10px] font-black uppercase text-emerald-500 mb-1 tracking-widest">Entradas</p>
-                            <p class="text-sm sm:text-base xl:text-lg font-black text-white force-white-text print:text-emerald-700 tracking-tighter break-words my-2">${formatCurr(totalCollected)}</p>
-                            <p class="text-[8px] text-emerald-600/50 uppercase font-bold tracking-widest mt-auto group-hover:text-emerald-400 no-print">Ver Recebidos ➔</p>
+                            <p class="text-sm sm:text-base xl:text-lg font-black text-white print:text-emerald-700 tracking-tighter break-words my-2">${formatCurr(totalCollected)}</p>
+                            <p class="text-[8px] text-emerald-600/70 uppercase font-bold tracking-widest mt-auto group-hover:text-emerald-500 no-print transition-colors">Ver Recebidos ➔</p>
                         </div>
-                        <div onclick="window.setReportKpi('fluxo')" class="cursor-pointer hover:-translate-y-1 hover:shadow-xl transition-all ${state.reportActiveKpi === 'fluxo' ? 'bg-slate-800 ring-2 ring-amber-500' : 'bg-slate-900'} p-3 sm:p-4 rounded-2xl border border-slate-700 border-l-4 border-l-amber-500 shadow-lg print:bg-transparent print:border-slate-300 print:shadow-none print:ring-0 relative group flex flex-col justify-between h-full min-h-[110px] force-dark-bg">
+                        <div onclick="window.setReportKpi('fluxo')" class="cursor-pointer hover:-translate-y-1 hover:shadow-xl transition-all ${state.reportActiveKpi === 'fluxo' ? 'bg-slate-800 ring-2 ring-amber-500' : 'bg-slate-900'} p-3 sm:p-4 rounded-2xl border border-slate-700 border-l-4 border-l-amber-500 shadow-lg print:bg-transparent print:border-slate-300 print:shadow-none print:ring-0 relative group flex flex-col justify-between h-full min-h-[110px]">
                             <p class="text-[9px] sm:text-[10px] font-black uppercase text-amber-500 mb-1 tracking-widest">A Receber</p>
-                            <p class="text-sm sm:text-base xl:text-lg font-black text-white force-white-text print:text-amber-700 tracking-tighter break-words my-2">${formatCurr(totalOutstanding)}</p>
-                            <p class="text-[8px] text-amber-600/50 uppercase font-bold tracking-widest mt-auto group-hover:text-amber-400 no-print">Ver Pendentes ➔</p>
+                            <p class="text-sm sm:text-base xl:text-lg font-black text-white print:text-amber-700 tracking-tighter break-words my-2">${formatCurr(totalOutstanding)}</p>
+                            <p class="text-[8px] text-amber-600/70 uppercase font-bold tracking-widest mt-auto group-hover:text-amber-500 no-print transition-colors">Ver Pendentes ➔</p>
                         </div>
-                        <div onclick="window.setReportKpi('lucro')" class="cursor-pointer hover:-translate-y-1 hover:shadow-xl transition-all ${state.reportActiveKpi === 'lucro' ? 'bg-slate-800 ring-2 ring-cyan-500' : 'bg-slate-900'} p-3 sm:p-4 rounded-2xl border border-slate-700 border-l-4 border-l-cyan-500 shadow-lg print:bg-transparent print:border-slate-300 print:shadow-none print:ring-0 relative group flex flex-col justify-between h-full min-h-[110px] force-dark-bg">
+                        <div onclick="window.setReportKpi('lucro')" class="cursor-pointer hover:-translate-y-1 hover:shadow-xl transition-all ${state.reportActiveKpi === 'lucro' ? 'bg-slate-800 ring-2 ring-cyan-500' : 'bg-slate-900'} p-3 sm:p-4 rounded-2xl border border-slate-700 border-l-4 border-l-cyan-500 shadow-lg print:bg-transparent print:border-slate-300 print:shadow-none print:ring-0 relative group flex flex-col justify-between h-full min-h-[110px]">
                             <p class="text-[9px] sm:text-[10px] font-black uppercase text-cyan-500 mb-1 tracking-widest">Lucro Estimado</p>
-                            <p class="text-sm sm:text-base xl:text-lg font-black text-white force-white-text print:text-cyan-700 tracking-tighter break-words my-2">${formatCurr(tProfit)}</p>
-                            <p class="text-[8px] text-cyan-600/50 uppercase font-bold tracking-widest mt-auto group-hover:text-cyan-500 no-print">Ver Detalhes ➔</p>
+                            <p class="text-sm sm:text-base xl:text-lg font-black text-white print:text-cyan-700 tracking-tighter break-words my-2">${formatCurr(tProfit)}</p>
+                            <p class="text-[8px] text-cyan-600/70 uppercase font-bold tracking-widest mt-auto group-hover:text-cyan-500 no-print transition-colors">Ver Detalhes ➔</p>
                         </div>
-                        <div onclick="window.setReportKpi('overview')" class="cursor-pointer hover:-translate-y-1 hover:shadow-xl transition-all ${state.reportActiveKpi === 'overview' ? 'bg-slate-800 ring-2 ring-indigo-500' : 'bg-slate-900'} p-3 sm:p-4 rounded-2xl border border-slate-700 border-l-4 border-l-indigo-500 shadow-lg print:bg-transparent print:border-slate-300 print:shadow-none flex flex-col justify-between h-full min-h-[110px] group force-dark-bg">
+                        <div onclick="window.setReportKpi('overview')" class="cursor-pointer hover:-translate-y-1 hover:shadow-xl transition-all ${state.reportActiveKpi === 'overview' ? 'bg-slate-800 ring-2 ring-indigo-500' : 'bg-slate-900'} p-3 sm:p-4 rounded-2xl border border-slate-700 border-l-4 border-l-indigo-500 shadow-lg print:bg-transparent print:border-slate-300 print:shadow-none flex flex-col justify-between h-full min-h-[110px] group">
                             <p class="text-[9px] sm:text-[10px] font-black uppercase text-indigo-400 mb-1 tracking-widest">Margem Global</p>
-                            <p class="text-sm sm:text-base xl:text-lg font-black ${avgMargin >= 0 ? 'text-white force-white-text' : 'text-red-400'} print:text-indigo-700 tracking-tighter break-words my-2">${avgMargin.toFixed(1)}%</p>
-                            <p class="text-[8px] text-indigo-400/50 uppercase font-bold tracking-widest mt-auto group-hover:text-indigo-400 no-print">Ver Resumo ➔</p>
+                            <p class="text-sm sm:text-base xl:text-lg font-black ${avgMargin >= 0 ? 'text-white' : 'text-red-400'} print:text-indigo-700 tracking-tighter break-words my-2">${avgMargin.toFixed(1)}%</p>
+                            <p class="text-[8px] text-indigo-400/70 uppercase font-bold tracking-widest mt-auto group-hover:text-indigo-400 no-print transition-colors">Ver Resumo ➔</p>
                         </div>
                     </div>
 
