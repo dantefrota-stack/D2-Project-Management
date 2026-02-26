@@ -7,6 +7,7 @@
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
     <script src="https://unpkg.com/lucide@latest"></script>
+    <!-- Chart.js para Gráficos Interativos -->
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <style>
         :root { --gold: #fbbf24; --gold-dark: #b45309; --d2-blue: #0f172a; }
@@ -29,7 +30,7 @@
         .app-body-light { background-color: #f8fafc; color: #0f172a; }
         .app-body-light .glass { background: #ffffff !important; border-color: #e2e8f0 !important; color: #0f172a; box-shadow: 0 10px 30px -10px rgba(0,0,0,0.1) !important;}
         
-        /* Proteção de contraste para textos que DEVEM ficar brancos mesmo no modo claro */
+        /* Proteção de contraste para textos no Light Mode */
         .app-body-light .text-white:not(button *):not(button):not(.status-badge):not(.force-white-text) { color: #0f172a !important; }
         .force-white-text { color: #ffffff !important; }
         
@@ -41,12 +42,20 @@
         .app-body-light .text-cyan-400, .app-body-light .text-cyan-300 { color: #0284c7 !important; } 
         .app-body-light .text-red-400, .app-body-light .text-red-500 { color: #dc2626 !important; } 
         
+        /* Ajustes Estruturais Light Mode - Fundo dos Cards */
         .app-body-light .bg-black\/20, .app-body-light .bg-black\/30, .app-body-light .bg-black\/40 { background-color: #f1f5f9 !important; border-color: #cbd5e1 !important; }
         .app-body-light .bg-cyan-950\/20 { background-color: #f0f9ff !important; border-color: #bae6fd !important; }
         .app-body-light .bg-emerald-500\/10 { background-color: #ecfdf5 !important; border-color: #a7f3d0 !important; }
         .app-body-light .bg-gold\/10 { background-color: #fffbeb !important; border-color: #fde68a !important; }
         .app-body-light .border-white\/5, .app-body-light .border-white\/10 { border-color: #e2e8f0 !important; }
         .app-body-light header { background-color: #ffffff !important; border-bottom-color: #e2e8f0 !important; }
+        
+        /* Ajuste de Contraste para KPIs e Funil no Light Mode */
+        .app-body-light .kpi-card { background-color: #ffffff !important; border-color: #cbd5e1 !important; box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1) !important; }
+        .app-body-light .kpi-card .kpi-title { color: #64748b !important; }
+        .app-body-light .kpi-card .kpi-value { color: #0f172a !important; }
+        .app-body-light .kpi-card .kpi-link { color: #94a3b8 !important; }
+        .app-body-light .kpi-card.active { background-color: #f8fafc !important; border-color: #94a3b8 !important; }
         
         .modern-input { width: 100%; padding: 14px 16px; border-radius: 12px; border: 1px solid rgba(148, 163, 184, 0.2); background: rgba(0,0,0,0.5); color: inherit; outline: none; transition: all 0.2s; font-size: 16px; }
         .app-body-light .modern-input { background: #fff !important; border: 1px solid #cbd5e1 !important; color: #0f172a !important; }
@@ -85,8 +94,6 @@
 
         @keyframes fadeIn { from { opacity: 0; transform: translateY(15px); } to { opacity: 1; transform: translateY(0); } }
         .animate-fade-in { animation: fadeIn 0.4s cubic-bezier(0.16, 1, 0.3, 1) forwards; }
-        
-        /* Interação Global do Card */
         .project-card { transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1); cursor: pointer; }
         .project-card:hover { transform: translateY(-4px); box-shadow: 0 20px 40px -10px rgba(0,0,0,0.5); border-color: rgba(251, 191, 36, 0.3); }
 
@@ -98,15 +105,18 @@
             .glass { background: #fff !important; border: 1px solid #cbd5e1 !important; box-shadow: none !important; filter: none !important; backdrop-filter: none !important; page-break-inside: avoid; }
             .text-white, .text-slate-200, .text-slate-300, .text-slate-400, .force-white-text { color: #0f172a !important; }
             .text-gold { color: #b45309 !important; font-weight: 900 !important; } 
+            .kpi-value { color: #0f172a !important; } 
             .bg-slate-900, .bg-slate-800, .bg-black\/40 { background: #f8fafc !important; border-color: #cbd5e1 !important; color: #0f172a !important; }
             canvas { max-width: 100% !important; max-height: 250px !important; page-break-inside: avoid; }
             .overflow-x-auto { overflow: visible !important; } 
             tr { page-break-inside: avoid !important; }
             #report-output .grid { display: grid !important; }
+            
+            /* Esta classe esconde os KPIs se estiver a imprimir apenas a visão específica */
+            body.printing-kpi .hide-on-kpi-print { display: none !important; }
             body.printing-kpi .full-report-only { display: none !important; }
         }
 
-        /* Pequenos estilos auxiliares */
         .flag-btn { border: 1px solid rgba(15,23,42,0.12); border-radius: 14px; padding: 10px; transition: .2s; background: #fff; }
         .flag-btn.active { border-color: var(--gold); box-shadow: 0 0 0 4px rgba(251,191,36,.12); }
         .tab-btn { color: rgba(148,163,184,0.9); font-size: 12px; }
@@ -380,6 +390,11 @@
         </div>
 
         <div id="view-reports" class="hidden space-y-8 max-w-7xl mx-auto text-left animate-fade-in print:block">
+            <div class="flex justify-center gap-3 mb-8 no-print" id="report-unit-filters">
+                <button onclick="window.selectUnit('Smart Home')" id="r-unit-smart" class="unit-pill">SMART HOME</button>
+                <button onclick="window.selectUnit('HVAC')" id="r-unit-hvac" class="unit-pill">HVAC</button>
+                <button onclick="window.selectUnit('Ambas')" id="r-unit-all" class="unit-pill active">AMBAS</button>
+            </div>
             <div id="report-output"></div>
         </div>
     </main>
@@ -604,12 +619,17 @@
         }
     }
 
+    // --- NOVA LÓGICA DE FILTROS GLOBAIS DE EMPRESA ---
     window.selectUnit = (unit) => {
         state.company = unit;
         
         document.querySelectorAll('#projects-filters .unit-pill').forEach(b => b.classList.remove('active'));
         const mapProj = { 'Smart Home': 'unit-smart', 'HVAC': 'unit-hvac', 'Ambas': 'unit-all' };
         if (document.getElementById(mapProj[unit])) document.getElementById(mapProj[unit]).classList.add('active');
+        
+        document.querySelectorAll('#report-unit-filters .unit-pill').forEach(b => b.classList.remove('active'));
+        const mapRep = { 'Smart Home': 'r-unit-smart', 'HVAC': 'r-unit-hvac', 'Ambas': 'r-unit-all' };
+        if (document.getElementById(mapRep[unit])) document.getElementById(mapRep[unit]).classList.add('active');
         
         state.reportActiveKpi = 'receita'; 
         
@@ -679,9 +699,9 @@
             if (budget === 0 && totalExpenses === 0) {
                 labels = ['Sem Orçamento']; dataArr = [1]; bgColors = ['#334155'];
             } else if (overspent > 0) {
-                labels = ['Orçamento Usado', 'Estouro (Overbudget)']; dataArr = [budget, overspent]; bgColors = ['#0891b2', '#dc2626'];
+                labels = ['Orçamento Usado', 'Estouro (Overbudget)']; dataArr = [budget, overspent]; bgColors = ['#0891b2', '#dc2626']; /* Cyan escuro e Vermelho */
             } else {
-                labels = ['Gasto', 'Restante']; dataArr = [totalExpenses, remaining]; bgColors = ['#0891b2', '#059669'];
+                labels = ['Gasto', 'Restante']; dataArr = [totalExpenses, remaining]; bgColors = ['#0891b2', '#059669']; /* Cyan escuro e Emerald escuro */
             }
 
             window.d2Charts[`budget-${pId}`] = new Chart(ctxBudget, {
@@ -850,7 +870,7 @@
 
         if (v === 'logs') window.renderLogs();
         if (v === 'projects') { state.focusedProject = null; state.activeModule = null; window.renderProjects(); }
-        if (v === 'reports') { state.reportActiveKpi = 'receita'; window.renderReport(); }
+        if (v === 'reports') { state.reportActiveKpi = 'receita'; window.renderReport(); } // Sempre abre na Receita Bruta
         try { lucide.createIcons(); } catch {}
     };
 
@@ -922,6 +942,9 @@
             return matchCompany && matchUser && matchArchive;
         });
 
+        // ==========================================
+        // CONTROLE DO MODO FOCO (ESCONDER TOPO)
+        // ==========================================
         if (state.focusedProject) {
             filtersDiv.classList.add('hidden');
             if (mainHeader) mainHeader.style.display = 'none';
@@ -933,6 +956,7 @@
             grid.className = "flex flex-col max-w-4xl mx-auto gap-6 text-left w-full animate-fade-in pb-20 mt-4";
             filtered = state.projects.filter(p => p.id === state.focusedProject); 
             
+            // Botão de Voltar padrão se NENHUM módulo estiver aberto (Nível 2)
             if (!state.activeModule) {
                 grid.innerHTML += `
                     <div class="mb-2 flex justify-between items-center no-print w-full">
@@ -1248,7 +1272,7 @@
         });
 
         try { lucide.createIcons(); } catch {}
-    }
+    };
 
     // --- RENDERIZAÇÃO DO RELATÓRIO EXECUTIVO (CEO DASHBOARD & DRILL-DOWN) ---
     window.renderReport = () => {
@@ -1273,7 +1297,7 @@
         };
 
         const currentYear = new Date().getFullYear();
-        const monthNames = state.lang === 'en' ? ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'] : ['Jan','Fev','Mar','Abr','Mai','Jun','Jul','Ago','Sep','Out','Nov','Dez'];
+        const monthNames = state.lang === 'en' ? ['Jan','Fev','Mar','Abr','Mai','Jun','Jul','Ago','Sep','Out','Nov','Dez'] : ['Jan','Fev','Mar','Abr','Mai','Jun','Jul','Ago','Set','Out','Nov','Dez'];
         const sellerStats = {};
 
         const enrichedProjects = baseFiltered.map(p => {
@@ -1327,7 +1351,7 @@
             }).join('');
 
             ceoDashHTML = `
-                <div class="mb-10 print:mb-8 animate-fade-in">
+                <div class="mb-10 print:mb-8 animate-fade-in hide-on-kpi-print">
                     <h3 class="text-lg sm:text-xl font-black uppercase tracking-tighter mb-5 text-slate-800 border-b-2 border-slate-100 pb-3 flex items-center gap-2"><i data-lucide="bar-chart-2" class="w-5 h-5 text-indigo-500"></i> Visão Executiva Institucional</h3>
                     
                     <div class="grid grid-cols-2 md:grid-cols-5 gap-3 sm:gap-4 mb-8">
@@ -1397,11 +1421,10 @@
             if(!detailedTablesHTML) detailedTablesHTML = `<p class="p-6 text-center text-slate-400 text-xs italic">Nenhuma obra ativa encontrada.</p>`;
 
             bottomHTML = `
-                <div class="full-report-only animate-fade-in">
+                <div class="full-report-only animate-fade-in mt-14">
                     <div class="mb-14 print:mb-8">
                         <div class="flex justify-between items-center mb-5 border-b-2 border-slate-100 pb-3">
                             <h3 class="text-base sm:text-lg font-black uppercase tracking-tighter text-slate-800 flex items-center gap-2"><i data-lucide="users" class="w-5 h-5 text-amber-500"></i> Comissões Pagas por Mês (${currentYear})</h3>
-                            <button onclick="window.printKpiReport()" class="hidden sm:inline-flex items-center gap-2 text-white force-white-text bg-slate-800 hover:bg-slate-700 transition-all font-black text-[10px] uppercase tracking-widest px-4 py-2 rounded-xl shadow-md no-print"><i data-lucide="printer" class="w-3.5 h-3.5"></i> Imprimir Visão</button>
                         </div>
                         <div class="overflow-x-auto print:overflow-visible border border-slate-200 rounded-2xl print:border-none shadow-sm">
                             <table class="w-full">
@@ -1471,7 +1494,7 @@
                 
                 <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center border-b-[8px] border-slate-950 pb-8 mb-8 print:border-b-2 print:border-slate-300 gap-4">
                     <div class="logo-frame-sm border p-3 rounded-2xl print:border-none print:p-0 bg-slate-50"><img src="logo-D2-Group-preto.png" class="h-10 sm:h-14"></div>
-                    <div>
+                    <div class="text-left sm:text-right">
                         <h2 class="text-2xl sm:text-3xl font-black uppercase tracking-tighter text-slate-900">${reportTitle}</h2>
                         <p class="text-slate-500 font-black uppercase text-xs tracking-widest mt-1">Data: ${new Date().toLocaleDateString()}</p>
                     </div>
@@ -1491,7 +1514,7 @@
                 </div>` : ''}
             </div>`;
         try { lucide.createIcons(); } catch {}
-    }
+    };
 
     onAuthStateChanged(auth, (u) => {
         state.user = u;
