@@ -39,19 +39,31 @@
         /* Interface Interna Clara (Light Mode) */
         .app-body-light { background-color: #f8fafc; color: #0f172a; }
         .app-body-light .glass { background: #ffffff !important; border-color: #e2e8f0 !important; color: #0f172a; box-shadow: 0 10px 30px -10px rgba(0,0,0,0.1) !important;}
-        .app-body-light .text-white { color: #0f172a !important; }
-        .app-body-light .text-slate-200, .app-body-light .text-slate-300, .app-body-light .text-slate-400 { color: #475569 !important; }
-        .app-body-light .bg-black\/20, .app-body-light .bg-black\/30, .app-body-light .bg-black\/40, .app-body-light .bg-cyan-950\/20 { background-color: #f1f5f9 !important; border-color: #cbd5e1 !important; }
+        
+        /* Proteção de contraste para botões no Light Mode: Ignora a inversão se for botão ou ícone de botão */
+        .app-body-light .text-white:not(button *):not(button):not(.status-badge) { color: #0f172a !important; }
+        
+        /* Conversão de cores Neon para tons escuros no Light Mode para leitura perfeita */
+        .app-body-light .text-slate-200, .app-body-light .text-slate-300 { color: #334155 !important; }
+        .app-body-light .text-slate-400 { color: #475569 !important; }
+        .app-body-light .text-gold { color: #b45309 !important; } /* Ouro Escuro */
+        .app-body-light .text-emerald-400, .app-body-light .text-emerald-500 { color: #059669 !important; } /* Verde Musgo */
+        .app-body-light .text-cyan-400, .app-body-light .text-cyan-300 { color: #0284c7 !important; } /* Azul Petróleo */
+        .app-body-light .text-red-400, .app-body-light .text-red-500 { color: #dc2626 !important; } /* Vermelho Fechado */
+        
+        .app-body-light .bg-black\/20, .app-body-light .bg-black\/30, .app-body-light .bg-black\/40 { background-color: #f1f5f9 !important; border-color: #cbd5e1 !important; }
+        .app-body-light .bg-cyan-950\/20 { background-color: #f0f9ff !important; border-color: #bae6fd !important; }
+        .app-body-light .bg-emerald-500\/10 { background-color: #ecfdf5 !important; border-color: #a7f3d0 !important; }
+        .app-body-light .bg-gold\/10 { background-color: #fffbeb !important; border-color: #fde68a !important; }
         .app-body-light .border-white\/5, .app-body-light .border-white\/10 { border-color: #e2e8f0 !important; }
         .app-body-light header { background-color: #ffffff !important; border-bottom-color: #e2e8f0 !important; }
         
-        /* Font-size 16px evita o zoom automático no iPhone ao clicar em campos */
         .modern-input {
             width: 100%; padding: 14px 16px; border-radius: 12px;
             border: 1px solid rgba(148, 163, 184, 0.2); background: rgba(0,0,0,0.5);
             color: inherit; outline: none; transition: all 0.2s; font-size: 16px; 
         }
-        .app-body-light .modern-input { background: #fff !important; border: 1px solid #cbd5e1 !important; color: #000 !important; }
+        .app-body-light .modern-input { background: #fff !important; border: 1px solid #cbd5e1 !important; color: #0f172a !important; }
 
         /* FIX DO OLHO - SVG Puro embutido */
         .password-toggle {
@@ -185,7 +197,7 @@
         <h3 id="custom-modal-title" class="text-xl font-black text-white mb-2">Atenção</h3>
         <p id="custom-modal-msg" class="text-sm text-slate-400 mb-8"></p>
         <div class="flex justify-center gap-3" id="custom-modal-buttons">
-            <!-- Botões injetados dinamicamente via JS -->
+            <!-- Botões injetados dinamicamente via JS com alto contraste -->
         </div>
     </div>
 </div>
@@ -193,11 +205,11 @@
 <!-- Modal de Edição de Recebimentos -->
 <div id="edit-rec-modal" class="modal-overlay">
     <div class="modal-content animate-fade-in">
-        <h3 class="text-2xl font-black text-emerald-400 mb-6">Editar Recebimentos (Cliente)</h3>
+        <h3 class="text-2xl font-black text-emerald-500 mb-6">Editar Recebimentos (Cliente)</h3>
         <div id="rec-edit-list" class="space-y-4 mb-6"></div>
         <div class="flex justify-end gap-4">
             <button onclick="closeEditRecModal()" class="px-6 py-3 bg-slate-700 text-white rounded-xl font-bold hover:bg-slate-600 transition-colors">Cancelar</button>
-            <button onclick="saveEditedRecs()" class="px-8 py-3 bg-emerald-500 text-emerald-950 font-black rounded-xl hover:bg-emerald-400 transition-colors">Salvar Alterações</button>
+            <button onclick="saveEditedRecs()" class="px-8 py-3 bg-emerald-600 text-white font-black rounded-xl hover:bg-emerald-500 transition-colors shadow-lg">Salvar Alterações</button>
         </div>
     </div>
 </div>
@@ -209,7 +221,7 @@
         <div id="payment-edit-list" class="space-y-4 mb-6"></div>
         <div class="flex justify-end gap-4">
             <button onclick="closeEditPaymentModal()" class="px-6 py-3 bg-slate-700 text-white rounded-xl font-bold hover:bg-slate-600 transition-colors">Cancelar</button>
-            <button onclick="saveEditedPayments()" class="btn-premium-gold !w-auto px-8">Salvar Alterações</button>
+            <button onclick="saveEditedPayments()" class="px-8 py-3 bg-slate-800 text-white border border-gold/30 font-black rounded-xl hover:bg-slate-700 transition-colors shadow-lg">Salvar Alterações</button>
         </div>
     </div>
 </div>
@@ -328,7 +340,6 @@
                 <div class="col-span-2 space-y-2">
                     <label class="text-xs font-black uppercase text-slate-500 ml-1 tracking-widest">Status</label>
                     <select id="f-status" class="modern-input !pr-10">
-                        <!-- 'Cotação' Removida conforme solicitação -->
                         <option value="✅ Aprovado">✅ Aprovado</option>
                         <option value="Aguardando Início">Aguardando Início</option>
                         <option value="Em Execução">Em Execução</option>
@@ -434,7 +445,7 @@
 
     window.d2Charts = {};
 
-    // --- SISTEMA DE MODAL CUSTOMIZADO (SUBSTITUI ALERT E CONFIRM) ---
+    // --- SISTEMA DE MODAL CUSTOMIZADO COM ALTO CONTRASTE ---
     window.showModal = (title, msg, type = 'alert', onConfirm = null) => {
         document.getElementById('custom-modal-title').innerText = title;
         document.getElementById('custom-modal-msg').innerText = msg;
@@ -444,8 +455,8 @@
         if (type === 'confirm') {
             iconContainer.innerHTML = '<i data-lucide="help-circle" class="w-12 h-12 text-gold"></i>';
             btnContainer.innerHTML = `
-                <button onclick="window.closeCustomModal()" class="flex-1 px-4 py-3 bg-slate-800 text-white rounded-xl font-bold hover:bg-slate-700 transition-colors text-[10px] uppercase tracking-widest">Cancelar</button>
-                <button id="custom-confirm-btn" class="flex-1 px-4 py-3 bg-red-500 text-white font-black rounded-xl hover:bg-red-400 transition-colors text-[10px] uppercase tracking-widest shadow-lg shadow-red-500/20">Confirmar</button>
+                <button onclick="window.closeCustomModal()" class="flex-1 px-4 py-3 bg-slate-700 text-white rounded-xl font-bold hover:bg-slate-600 transition-colors text-xs uppercase tracking-widest shadow-lg">Cancelar</button>
+                <button id="custom-confirm-btn" class="flex-1 px-4 py-3 bg-red-600 text-white font-black rounded-xl hover:bg-red-500 transition-colors text-xs uppercase tracking-widest shadow-lg shadow-red-500/20">Confirmar</button>
             `;
             document.getElementById('custom-confirm-btn').onclick = () => {
                 if (onConfirm) onConfirm();
@@ -454,12 +465,12 @@
         } else if (type === 'error') {
             iconContainer.innerHTML = '<i data-lucide="alert-circle" class="w-12 h-12 text-red-500"></i>';
             btnContainer.innerHTML = `
-                <button onclick="window.closeCustomModal()" class="w-full px-6 py-3 bg-slate-800 text-white font-black rounded-xl hover:bg-slate-700 transition-colors text-[10px] uppercase tracking-widest">OK</button>
+                <button onclick="window.closeCustomModal()" class="w-full px-6 py-3 bg-slate-800 text-white font-black rounded-xl hover:bg-slate-700 transition-colors text-xs uppercase tracking-widest shadow-lg">OK</button>
             `;
         } else {
             iconContainer.innerHTML = '<i data-lucide="info" class="w-12 h-12 text-cyan-400"></i>';
             btnContainer.innerHTML = `
-                <button onclick="window.closeCustomModal()" class="w-full px-6 py-3 bg-cyan-600 text-white font-black rounded-xl hover:bg-cyan-500 transition-colors text-[10px] uppercase tracking-widest shadow-lg shadow-cyan-500/20">Entendido</button>
+                <button onclick="window.closeCustomModal()" class="w-full px-6 py-3 bg-cyan-600 text-white font-black rounded-xl hover:bg-cyan-500 transition-colors text-xs uppercase tracking-widest shadow-lg shadow-cyan-500/20">Entendido</button>
             `;
         }
         document.getElementById('custom-modal').classList.add('active');
@@ -525,6 +536,11 @@
             else { moon.classList.add('hidden'); sun.classList.remove('hidden'); }
         }
     }
+
+    // Inicializa o tema imediatamente para não dar "pisca" na tela
+    document.addEventListener('DOMContentLoaded', () => {
+        applyThemeConfig();
+    });
 
     window.toggleTheme = () => {
         state.theme = state.theme === 'dark' ? 'light' : 'dark';
@@ -650,9 +666,9 @@
             if (budget === 0 && totalExpenses === 0) {
                 labels = ['Sem Orçamento']; dataArr = [1]; bgColors = ['#334155'];
             } else if (overspent > 0) {
-                labels = ['Orçamento Usado', 'Estouro (Overbudget)']; dataArr = [budget, overspent]; bgColors = ['#22d3ee', '#ef4444'];
+                labels = ['Orçamento Usado', 'Estouro (Overbudget)']; dataArr = [budget, overspent]; bgColors = ['#0891b2', '#dc2626']; /* Cyan escuro e Vermelho */
             } else {
-                labels = ['Gasto', 'Restante']; dataArr = [totalExpenses, remaining]; bgColors = ['#22d3ee', '#10b981'];
+                labels = ['Gasto', 'Restante']; dataArr = [totalExpenses, remaining]; bgColors = ['#0891b2', '#059669']; /* Cyan escuro e Emerald escuro */
             }
 
             window.d2Charts[`budget-${pId}`] = new Chart(ctxBudget, {
@@ -666,9 +682,9 @@
             if (window.d2Charts[`cat-${pId}`]) window.d2Charts[`cat-${pId}`].destroy();
             const labels = Object.keys(expensesByCategory); const dataArr = Object.values(expensesByCategory);
             window.d2Charts[`cat-${pId}`] = new Chart(ctxCat, {
-                type: 'bar', data: { labels: labels, datasets: [{ label: 'Gastos', data: dataArr, backgroundColor: '#22d3ee', borderRadius: 4 }] },
+                type: 'bar', data: { labels: labels, datasets: [{ label: 'Gastos', data: dataArr, backgroundColor: '#0891b2', borderRadius: 4 }] },
                 options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { display: false } },
-                    scales: { y: { beginAtZero: true, grid: { color: 'rgba(255,255,255,0.05)' }, ticks: { color: '#94a3b8', font: {size: 11} } }, x: { grid: { display: false }, ticks: { color: '#94a3b8', font: {size: 11} } } }
+                    scales: { y: { beginAtZero: true, grid: { color: 'rgba(148,163,184,0.1)' }, ticks: { color: '#64748b', font: {size: 11} } }, x: { grid: { display: false }, ticks: { color: '#64748b', font: {size: 11} } } }
                 }
             });
         }
@@ -729,7 +745,7 @@
     // --- NOVA LÓGICA DE NAVEGAÇÃO INTERNA (DRILL-DOWN) E HIDE HEADER ---
     window.openProjectDetails = (id) => { 
         state.focusedProject = id; 
-        state.activeModule = null; 
+        state.activeModule = null; // Abre no nível dos Botões Gigantes
         renderProjects(); 
         window.scrollTo({ top: 0, behavior: 'smooth' }); 
     };
@@ -761,25 +777,11 @@
         window.scrollTo({ top: 0, behavior: 'smooth' });
     };
 
-    window.deleteTeam = (id) => {
-        window.showModal('Remover Acesso', 'Deseja realmente remover o acesso deste membro?', 'confirm', async () => {
-            await deleteDoc(doc(db, 'artifacts', appId, 'public', 'data', 'user_credentials', id));
-        });
-    };
-
-    window.deleteP = (id) => {
-        window.showModal('Excluir Obra', 'Tem certeza que deseja excluir esta obra permanentemente?', 'confirm', async () => {
-            await deleteDoc(doc(db, 'artifacts', appId, 'public', 'data', 'projects', id));
-            if (state.focusedProject === id) window.closeProjectDetails();
-        });
-    };
-
     window.editP = (id) => {
         const p = state.projects.find(x => x.id === id); if (!p) return;
         renderVendedores(); const vendSelect = document.getElementById('f-vendedor');
         if (p.vendedor && !Array.from(vendSelect.options).some(opt => opt.value === p.vendedor)) { vendSelect.innerHTML += `<option value="${p.vendedor}">${p.vendedor} (Cadastro Antigo)</option>`; }
         
-        // Assegura que o status não é mais Cotação, ou cria dinâmica caso ele ainda exista e precise ser mantido visível para edição
         const statusSelect = document.getElementById('f-status');
         if (statusSelect) {
             statusSelect.innerHTML = `<option value="✅ Aprovado">✅ Aprovado</option><option value="Aguardando Início">Aguardando Início</option><option value="Em Execução">Em Execução</option><option value="Finalizado">Finalizado</option>`;
@@ -867,6 +869,7 @@
         const filtersDiv = document.getElementById('projects-filters');
         const mainHeader = document.getElementById('main-header');
         const mainNav = document.getElementById('main-nav');
+        const mainContainer = document.getElementById('main-container');
 
         if (!grid || !state.user) return;
 
@@ -892,14 +895,18 @@
             filtersDiv.classList.add('hidden');
             if (mainHeader) mainHeader.style.display = 'none';
             if (mainNav) mainNav.style.display = 'none';
-            grid.className = "flex flex-col max-w-4xl mx-auto gap-6 text-left w-full animate-fade-in pb-20 mt-4";
+            if (mainContainer) {
+                mainContainer.classList.remove('pt-6', 'sm:pt-8');
+                mainContainer.classList.add('pt-2', 'sm:pt-4');
+            }
+            grid.className = "flex flex-col max-w-4xl mx-auto gap-6 text-left w-full animate-fade-in pb-20";
             filtered = state.projects.filter(p => p.id === state.focusedProject); 
             
             // Botão de Voltar padrão se NENHUM módulo estiver aberto (Nível 2)
             if (!state.activeModule) {
                 grid.innerHTML += `
-                    <div class="mb-4 flex justify-between items-center no-print w-full">
-                        <button onclick="window.closeProjectDetails()" class="inline-flex items-center gap-3 text-white hover:text-gold transition-all font-black text-sm uppercase tracking-widest px-6 py-4 bg-white/10 rounded-2xl border border-white/20 hover:bg-white/20 hover:scale-105 shadow-xl w-full sm:w-auto justify-center">
+                    <div class="mb-2 flex justify-between items-center no-print w-full">
+                        <button onclick="window.closeProjectDetails()" class="inline-flex items-center gap-3 text-white hover:text-gold transition-all font-black text-xs sm:text-sm uppercase tracking-widest px-6 py-4 bg-slate-800 rounded-2xl border border-white/10 hover:bg-slate-700 hover:scale-105 shadow-xl w-full sm:w-auto justify-center">
                             <i data-lucide="arrow-left" class="w-5 h-5"></i> Voltar aos Projetos
                         </button>
                     </div>
@@ -910,6 +917,10 @@
             filtersDiv.classList.add('flex');
             if (mainHeader) mainHeader.style.display = '';
             if (mainNav) mainNav.style.display = 'flex';
+            if (mainContainer) {
+                mainContainer.classList.add('pt-6', 'sm:pt-8');
+                mainContainer.classList.remove('pt-2', 'sm:pt-4');
+            }
             grid.className = "grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-10 text-left animate-fade-in pb-10";
         }
 
@@ -978,7 +989,7 @@
                                     <p class="text-xs sm:text-sm font-black text-emerald-400 uppercase tracking-widest print:text-emerald-800">Recebimentos do Cliente</p>
                                     <div class="flex items-center gap-4">
                                         <span class="text-xs sm:text-sm font-bold text-emerald-500 print:text-emerald-800">${formatCurr(f.totalRecebido)} / ${formatCurr(p.valorTotal)}</span>
-                                        ${isAdmin ? `<button onclick="openEditRecModal('${p.id}')" class="text-sm font-bold text-emerald-400 hover:text-white transition-colors no-print p-2 bg-emerald-500/20 rounded-lg"><i data-lucide="edit-3" class="w-5 h-5"></i></button>` : ''}
+                                        ${isAdmin ? `<button onclick="openEditRecModal('${p.id}')" class="text-sm font-bold text-white hover:text-emerald-200 transition-colors no-print p-2 bg-emerald-600 rounded-lg shadow-md"><i data-lucide="edit-3" class="w-5 h-5"></i></button>` : ''}
                                     </div>
                                 </div>
                                 <div class="max-h-60 overflow-y-auto scrollbar-hide px-2 print:max-h-none">
@@ -989,14 +1000,14 @@
                                     <input type="date" id="rec-date-${p.id}" class="modern-input relative !text-sm sm:col-span-4" onclick="event.stopPropagation();">
                                     <input type="number" id="rec-val-${p.id}" placeholder="$ Valor do Recebimento" class="modern-input !text-sm sm:col-span-4" onclick="event.stopPropagation();">
                                     <select id="rec-met-${p.id}" class="modern-input !text-sm sm:col-span-4 !pr-8" onclick="event.stopPropagation();"><option value="Zelle">Zelle</option><option value="Wire Transfer">Wire Transfer</option><option value="Dinheiro">Dinheiro (Cash)</option><option value="CC">Cartão de Crédito (CC)</option></select>
-                                    <button onclick="window.addRecebimento('${p.id}')" class="sm:col-span-12 w-full btn-premium-gold !py-4 !text-xs bg-emerald-500 !text-emerald-950 flex items-center justify-center gap-2 hover:brightness-110 shadow-lg"><i data-lucide="arrow-down-to-line" class="w-5 h-5"></i> Guardar Pagamento do Cliente</button>
+                                    <button onclick="window.addRecebimento('${p.id}')" class="sm:col-span-12 w-full bg-emerald-600 hover:bg-emerald-500 text-white py-4 rounded-xl font-black text-xs uppercase tracking-widest transition-colors shadow-lg flex items-center justify-center gap-2"><i data-lucide="arrow-down-to-line" class="w-5 h-5"></i> Guardar Pagamento do Cliente</button>
                                 </div>` : ''}
                             </div>
 
                             <div class="space-y-4 pt-8 border-t border-white/10 print:border-slate-200">
                                 <div class="flex justify-between items-center bg-gold/10 p-4 px-5 rounded-2xl border border-gold/20 print:bg-amber-50 print:border-amber-200">
                                     <p class="text-xs sm:text-sm font-black text-gold uppercase tracking-widest print:text-amber-800">Pagamentos ao Vendedor</p>
-                                    ${isAdmin ? `<button onclick="openEditPaymentModal('${p.id}')" class="text-sm font-bold text-gold hover:text-white transition-colors no-print p-2 bg-gold/20 rounded-lg"><i data-lucide="edit-3" class="w-5 h-5"></i></button>` : ''}
+                                    ${isAdmin ? `<button onclick="openEditPaymentModal('${p.id}')" class="text-sm font-bold text-white hover:text-gold transition-colors no-print p-2 bg-slate-800 rounded-lg shadow-md border border-gold/30"><i data-lucide="edit-3" class="w-5 h-5"></i></button>` : ''}
                                 </div>
                                 <div class="max-h-60 overflow-y-auto scrollbar-hide px-2 print:max-h-none">
                                     ${(p.pagamentosEfetuados || []).map(pay => `<div class="flex justify-between items-center text-sm sm:text-base py-4 border-b border-white/5 last:border-0 print:border-slate-200 hover:bg-white/5 rounded px-2"><span class="text-slate-300 print:text-black">${pay.data ? new Date(pay.data + 'T12:00:00').toLocaleDateString() : '-'}</span><span class="font-black text-gold print:text-amber-700">- ${formatCurr(pay.valor)}</span></div>`).join('') || '<p class="text-sm italic text-slate-600 text-center py-6">Nenhum pagamento efetuado.</p>'}
@@ -1005,7 +1016,7 @@
                                 <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 mt-6 no-print bg-black/20 p-5 rounded-2xl border border-white/5">
                                     <input type="date" id="pay-date-${p.id}" class="modern-input relative !text-sm" onclick="event.stopPropagation();">
                                     <input type="number" id="pay-val-${p.id}" placeholder="$ Valor a Pagar" class="modern-input !text-sm" onclick="event.stopPropagation();">
-                                    <button onclick="window.addPayment('${p.id}')" class="sm:col-span-2 w-full btn-premium-gold !py-4 !text-xs flex items-center justify-center gap-2 hover:brightness-110 shadow-lg"><i data-lucide="arrow-up-from-line" class="w-5 h-5"></i> Efetuar Pagamento ao Vendedor</button>
+                                    <button onclick="window.addPayment('${p.id}')" class="sm:col-span-2 w-full bg-slate-800 hover:bg-slate-700 border border-gold/30 text-white py-4 rounded-xl font-black text-xs uppercase tracking-widest transition-colors shadow-lg flex items-center justify-center gap-2"><i data-lucide="arrow-up-from-line" class="w-5 h-5"></i> Efetuar Pagamento ao Vendedor</button>
                                 </div>` : ''}
                             </div>
                         </div>
@@ -1092,7 +1103,7 @@
                 <div class="glass p-6 md:p-10 rounded-[40px] border-l-[8px] relative shadow-2xl flex flex-col w-full print:border print:border-none print:shadow-none animate-fade-in" style="border-left-color: ${p.status === 'Finalizado' ? '#10b981' : '#f59e0b'}">
                     <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-8 border-b border-white/10 pb-6 gap-6 no-print">
                         <div class="flex flex-col sm:flex-row items-start sm:items-center gap-4 w-full sm:w-auto">
-                            <button onclick="window.closeProjectModule()" class="p-4 w-full sm:w-auto bg-white/5 hover:bg-white/10 rounded-2xl transition-all border border-white/10 shadow-sm flex items-center justify-center gap-3 text-xs font-black uppercase text-slate-300 hover:text-white">
+                            <button onclick="window.closeProjectModule()" class="p-4 w-full sm:w-auto bg-slate-800 hover:bg-slate-700 rounded-2xl transition-all border border-white/10 shadow-lg flex items-center justify-center gap-3 text-xs font-black uppercase text-white">
                                 <i data-lucide="arrow-left" class="w-5 h-5"></i> Voltar
                             </button>
                             <div class="mt-2 sm:mt-0">
@@ -1100,12 +1111,13 @@
                                 <p class="text-xs sm:text-sm font-black text-gold uppercase tracking-widest mt-2">${moduleTitle}</p>
                             </div>
                         </div>
-                        <button onclick="window.printReport()" class="w-full sm:w-auto mt-4 sm:mt-0 flex items-center justify-center gap-2 text-slate-300 hover:text-white transition-all font-black text-xs uppercase tracking-widest px-6 py-4 bg-white/5 rounded-2xl border border-white/10 hover:bg-white/10 shadow-lg">
+                        <button onclick="window.printReport()" class="w-full sm:w-auto mt-4 sm:mt-0 flex items-center justify-center gap-2 text-white bg-slate-800 hover:bg-slate-700 transition-all font-black text-xs uppercase tracking-widest px-6 py-4 rounded-2xl border border-white/10 shadow-lg">
                             <i data-lucide="printer" class="w-5 h-5"></i> Imprimir Ficha
                         </button>
                     </div>
 
                     <div class="hidden print:block mb-8 border-b border-slate-300 pb-4">
+                        <div class="mb-4"><img src="logo-D2-Group-preto.png" class="h-12"></div>
                         <h4 class="font-black text-3xl uppercase tracking-tight text-black leading-none">${p.cliente || 'Sem Nome'}</h4>
                         <p class="text-sm font-bold text-slate-500 uppercase tracking-widest mt-2">${p.empresa} | Módulo: ${moduleTitle}</p>
                     </div>
@@ -1325,7 +1337,6 @@
 
     onAuthStateChanged(auth, (u) => {
         state.user = u;
-        applyThemeConfig(); 
         if (u) {
             document.getElementById('auth-screen').classList.add('hidden'); document.getElementById('main-app').classList.remove('hidden');
             document.getElementById('user-display').innerText = u.email ? u.email.split('@')[0].toUpperCase() : "USR";
