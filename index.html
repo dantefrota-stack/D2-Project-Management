@@ -796,9 +796,17 @@
     };
 
     window.deleteP = (id) => {
+        const p = state.projects.find(x => x.id === id);
+        
+        // Bloqueio de segurança para não-administradores
+        if (!['admin', 'superadmin'].includes(state.currentUserRole)) {
+            logAccess(state.user.email, `Tentativa bloqueada de exclusão da obra: ${p?.cliente || id}`);
+            window.showModal('Acesso Negado', 'Para apagar um projeto, por favor solicite ao administrador.', 'error');
+            return;
+        }
+
         window.showModal('Excluir Obra', 'Tem certeza que deseja excluir esta obra permanentemente?', 'confirm', async () => {
             try {
-                const p = state.projects.find(x => x.id === id);
                 await deleteDoc(doc(db, 'artifacts', appId, 'public', 'data', 'projects', id));
                 logAccess(state.user.email, `Excluiu a obra: ${p?.cliente || id}`);
                 if (state.focusedProject === id) window.closeProjectDetails();
