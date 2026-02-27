@@ -7,13 +7,12 @@
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
     <script src="https://unpkg.com/lucide@latest"></script>
-    <!-- Chart.js para Gráficos Interativos -->
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <style>
         :root { --gold: #fbbf24; --gold-dark: #b45309; --d2-blue: #0f172a; }
         body { font-family: 'Inter', sans-serif; transition: background-color 0.3s, color 0.3s; margin: 0; }
 
-        /* Design Login - Enterprise Portal Pattern */
+        /* Design Login */
         .auth-body { background-color: #f1f5f9; color: #0f172a; display: flex; align-items: center; justify-content: center; min-height: 100vh; }
         .auth-card { background: white; border-radius: 40px; width: 100%; max-width: 440px; padding: 48px; box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.1); text-align: center; }
         .logo-box { background: var(--d2-blue); border-radius: 20px; padding: 20px; display: inline-block; margin-bottom: 24px; }
@@ -23,35 +22,28 @@
         .btn-access { width: 100%; background: var(--d2-blue); color: white; padding: 18px; border-radius: 14px; font-weight: 800; text-transform: uppercase; letter-spacing: 0.1em; transition: all 0.3s; margin-top: 10px; border: none; cursor: pointer; font-size: 14px; }
         .btn-access:hover { transform: translateY(-2px); box-shadow: 0 10px 20px rgba(15, 23, 42, 0.2); }
 
-        /* Interface Interna Escura (Padrão) */
+        /* Temas Base */
         .app-body-dark { background-color: #030508; color: #f1f5f9; }
-        
-        /* Interface Interna Clara (Light Mode) */
         .app-body-light { background-color: #f8fafc; color: #0f172a; }
+        
         .app-body-light .glass { background: #ffffff !important; border-color: #e2e8f0 !important; color: #0f172a !important; box-shadow: 0 10px 30px -10px rgba(0,0,0,0.1) !important;}
         
-        /* --- PROTEÇÃO INTELIGENTE DE CONTRASTE LIGHT MODE --- */
+        /* Proteção de contraste Inteligente para Light Mode */
         .app-body-light .glass .text-white:not(.kpi-card *):not(.force-white-text) { color: #0f172a !important; }
         .force-white-text { color: #ffffff !important; }
         
-        /* Conversões de texto de tabelas e listas para o Light Mode */
-        .app-body-light .glass .text-slate-200:not(.kpi-card *), 
+        .app-body-light .glass .text-slate-200:not(.kpi-card *) { color: #334155 !important; }
         .app-body-light .glass .text-slate-300:not(.kpi-card *) { color: #334155 !important; }
         .app-body-light .glass .text-slate-400:not(.kpi-card *) { color: #475569 !important; }
         .app-body-light .glass .text-slate-500:not(.kpi-card *) { color: #64748b !important; }
         .app-body-light .glass .text-gold:not(.kpi-card *) { color: #b45309 !important; } 
-        .app-body-light .glass .text-emerald-400:not(.kpi-card *), 
-        .app-body-light .glass .text-emerald-500:not(.kpi-card *) { color: #059669 !important; } 
-        .app-body-light .glass .text-cyan-400:not(.kpi-card *), 
-        .app-body-light .glass .text-cyan-300:not(.kpi-card *) { color: #0284c7 !important; } 
-        .app-body-light .glass .text-red-400:not(.kpi-card *), 
-        .app-body-light .glass .text-red-500:not(.kpi-card *) { color: #dc2626 !important; } 
-        .app-body-light .glass .text-amber-400:not(.kpi-card *), 
-        .app-body-light .glass .text-amber-500:not(.kpi-card *) { color: #d97706 !important; }
-        .app-body-light .glass .text-indigo-400:not(.kpi-card *), 
-        .app-body-light .glass .text-indigo-500:not(.kpi-card *) { color: #4f46e5 !important; }
+        .app-body-light .glass .text-emerald-400:not(.kpi-card *), .app-body-light .glass .text-emerald-500:not(.kpi-card *) { color: #059669 !important; } 
+        .app-body-light .glass .text-cyan-400:not(.kpi-card *), .app-body-light .glass .text-cyan-300:not(.kpi-card *) { color: #0284c7 !important; } 
+        .app-body-light .glass .text-red-400:not(.kpi-card *), .app-body-light .glass .text-red-500:not(.kpi-card *) { color: #dc2626 !important; } 
+        .app-body-light .glass .text-amber-400:not(.kpi-card *), .app-body-light .glass .text-amber-500:not(.kpi-card *) { color: #d97706 !important; }
+        .app-body-light .glass .text-indigo-400:not(.kpi-card *), .app-body-light .glass .text-indigo-500:not(.kpi-card *) { color: #4f46e5 !important; }
         
-        /* Ajustes Estruturais Light Mode - Fundo dos Cards e Tabelas */
+        /* Ajustes Estruturais e Fundos no Light Mode */
         .app-body-light .bg-black\/20, .app-body-light .bg-black\/30, .app-body-light .bg-black\/40 { background-color: #f1f5f9 !important; border-color: #cbd5e1 !important; }
         .app-body-light .bg-white\/5 { background-color: #ffffff !important; border-color: #e2e8f0 !important; }
         .app-body-light .hover\:bg-white\/5:hover { background-color: #f8fafc !important; }
@@ -61,16 +53,13 @@
         .app-body-light .border-white\/5, .app-body-light .border-white\/10 { border-color: #e2e8f0 !important; }
         .app-body-light header { background-color: #ffffff !important; border-bottom-color: #e2e8f0 !important; }
         
-        /* Dashboard KPI Cards (Fixos em escuro/verde para máximo contraste) */
+        /* Dashboard KPI Cards (Blindados contra Light Mode) */
         .kpi-card { background-color: #1e293b !important; border: 1px solid #334155 !important; }
         .kpi-card.kpi-emerald { background-color: #059669 !important; border-color: #047857 !important; }
         .kpi-card .kpi-label { color: #94a3b8 !important; }
         .kpi-card.kpi-emerald .kpi-label { color: #d1fae5 !important; }
         .kpi-card .text-white { color: #ffffff !important; }
-        
-        /* Valores Numéricos do Funil (Dinâmicos) */
-        .funnel-value { color: #f8fafc; }
-        .app-body-light .funnel-value { color: #0f172a !important; }
+        .app-body-light .kpi-card.active { background-color: #f8fafc !important; border-color: #94a3b8 !important; }
         
         .modern-input { width: 100%; padding: 14px 16px; border-radius: 12px; border: 1px solid rgba(148, 163, 184, 0.2); background: rgba(0,0,0,0.5); color: inherit; outline: none; transition: all 0.2s; font-size: 16px; }
         .app-body-light .modern-input { background: #fff !important; border: 1px solid #cbd5e1 !important; color: #0f172a !important; }
@@ -78,14 +67,25 @@
         .password-toggle { position: absolute; right: 12px; top: 50%; transform: translateY(-50%); z-index: 100; color: var(--gold); cursor: pointer; background: rgba(0,0,0,0.2); border-radius: 8px; padding: 6px; display: flex; align-items: center; justify-content: center; border: none; }
         .password-toggle svg { width: 18px; height: 18px; stroke-width: 2.5; }
 
+        /* Filtros Pílula */
         .unit-pill { padding: 10px 20px; border-radius: 20px; font-size: 12px; font-weight: 800; border: 1px solid rgba(255,255,255,0.1); cursor: pointer; transition: 0.2s; color: #64748b; background: transparent; }
         .unit-pill.active { background: var(--gold); color: #000; border-color: var(--gold); }
         .app-body-light .unit-pill { border-color: #cbd5e1; }
+        .app-body-light .unit-pill.active { background: var(--gold); color: #000; border-color: var(--gold); }
         
         .filter-pill { padding: 8px 18px; border-radius: 12px; font-size: 11px; font-weight: 800; border: 1px solid rgba(255,255,255,0.05); cursor: pointer; transition: 0.2s; color: #64748b; background: rgba(255,255,255,0.02); }
         .filter-pill.active { background: rgba(255,255,255,0.1); color: #fff; border-color: rgba(255,255,255,0.2); }
         .app-body-light .filter-pill { border-color: #cbd5e1; background: #fff; }
         .app-body-light .filter-pill.active { background: #0f172a; color: #fff; border-color: #0f172a; }
+
+        /* Permissões UI - Caixas de Seleção Estilizadas */
+        .perm-box { display: flex; align-items: center; gap: 0.75rem; padding: 1rem; background: rgba(0,0,0,0.3); border: 1px solid rgba(255,255,255,0.05); border-radius: 1rem; cursor: pointer; transition: all 0.2s; }
+        .app-body-light .perm-box { background: #f8fafc; border-color: #e2e8f0; }
+        .perm-box:hover { background: rgba(0,0,0,0.5); border-color: rgba(251,191,36,0.3); }
+        .app-body-light .perm-box:hover { background: #f1f5f9; border-color: #b45309; }
+        .perm-checkbox { width: 1.25rem; height: 1.25rem; accent-color: var(--gold); cursor: pointer; }
+        .perm-label { font-size: 11px; font-weight: 800; color: #cbd5e1; text-transform: uppercase; cursor: pointer; letter-spacing: 0.05em;}
+        .app-body-light .perm-label { color: #475569; }
 
         .btn-premium-gold { background: linear-gradient(135deg, var(--gold) 0%, var(--gold-dark) 100%); color: #000; font-weight: 900; padding: 16px; border-radius: 14px; text-transform: uppercase; letter-spacing: 0.1em; border: none; width: 100%; cursor: pointer; transition: all 0.3s; text-align: center; font-size: 14px; }
         .btn-premium-gold:hover { transform: translateY(-1px); box-shadow: 0 4px 15px rgba(251, 191, 36, 0.4); }
@@ -113,7 +113,7 @@
         .project-card { transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1); cursor: pointer; }
         .project-card:hover { transform: translateY(-4px); box-shadow: 0 20px 40px -10px rgba(0,0,0,0.5); border-color: rgba(251, 191, 36, 0.3); }
 
-        /* Estilos de Impressão (PDF & Papel) OTIMIZADOS */
+        /* Estilos de Impressão */
         @media print { 
             @page { size: letter; margin: 10mm; }
             .no-print { display: none !important; } 
@@ -127,12 +127,8 @@
             .overflow-x-auto { overflow: visible !important; } 
             tr { page-break-inside: avoid !important; }
             #report-output .grid { display: grid !important; }
-            
-            /* Impressão Direcionada Inteligente (Oculta cards se for imprimir visão) */
             body.printing-kpi .hide-on-kpi-print { display: none !important; }
             body.printing-kpi .full-report-only { display: none !important; }
-            
-            /* Força a cor branca nos badges do funil durante a impressão para ficarem legíveis */
             .print-force-white { color: #ffffff !important; }
             .funnel-value { color: #0f172a !important; }
         }
@@ -145,10 +141,9 @@
         .app-body-light .tab-active { color: var(--gold-dark); border-bottom-color: var(--gold-dark); }
         .status-badge { width: 12px; height: 12px; border-radius: 999px; display: inline-block; }
         .text-gold { color: var(--gold); }
-        .role-tag { font-size: 10px; padding: 3px 8px; border-radius: 6px; font-weight: 800; text-transform: uppercase; letter-spacing: 0.1em; }
-        .role-admin { background: rgba(251,191,36,0.2); color: var(--gold); }
-        .role-editor { background: rgba(56,189,248,0.2); color: #38bdf8; }
-        .role-viewer { background: rgba(148,163,184,0.2); color: #94a3b8; }
+        
+        .role-tag { font-size: 9px; padding: 4px 8px; border-radius: 8px; font-weight: 800; text-transform: uppercase; letter-spacing: 0.1em; border: 1px solid currentColor; background: transparent;}
+        .app-body-light .role-tag { background: white; }
     </style>
 </head>
 <body class="auth-body">
@@ -190,37 +185,13 @@
     </div>
 </div>
 
-<!-- Modal Global de Alertas e Confirmações do Sistema -->
+<!-- Modal Global -->
 <div id="custom-modal" class="modal-overlay" style="z-index: 9999;">
     <div class="modal-content animate-fade-in max-w-sm w-full p-8 text-center !rounded-[32px]">
         <div id="custom-modal-icon" class="flex justify-center mb-5"></div>
         <h3 id="custom-modal-title" class="text-xl font-black text-white force-white-text mb-2">Atenção</h3>
         <p id="custom-modal-msg" class="text-sm text-slate-400 mb-8"></p>
         <div class="flex justify-center gap-3" id="custom-modal-buttons"></div>
-    </div>
-</div>
-
-<!-- Modal de Edição de Recebimentos -->
-<div id="edit-rec-modal" class="modal-overlay">
-    <div class="modal-content animate-fade-in">
-        <h3 class="text-2xl font-black text-emerald-500 mb-6" data-i18n="client_receipts">Editar Recebimentos (Cliente)</h3>
-        <div id="rec-edit-list" class="space-y-4 mb-6"></div>
-        <div class="flex justify-end gap-4">
-            <button onclick="window.closeEditRecModal()" class="px-6 py-3 bg-slate-700 text-white rounded-xl font-bold hover:bg-slate-600 transition-colors" data-i18n="cancel">Cancelar</button>
-            <button onclick="window.saveEditedRecs()" class="px-8 py-3 bg-emerald-600 text-white font-black rounded-xl hover:bg-emerald-500 transition-colors shadow-lg" data-i18n="btn_save">Salvar Alterações</button>
-        </div>
-    </div>
-</div>
-
-<!-- Modal de Edição de Pagamentos -->
-<div id="edit-payment-modal" class="modal-overlay">
-    <div class="modal-content animate-fade-in">
-        <h3 class="text-2xl font-black text-gold mb-6" data-i18n="seller_payments">Editar Pagamentos (Vendedor)</h3>
-        <div id="payment-edit-list" class="space-y-4 mb-6"></div>
-        <div class="flex justify-end gap-4">
-            <button onclick="window.closeEditPaymentModal()" class="px-6 py-3 bg-slate-700 text-white rounded-xl font-bold hover:bg-slate-600 transition-colors" data-i18n="cancel">Cancelar</button>
-            <button onclick="window.saveEditedPayments()" class="px-8 py-3 bg-slate-800 text-white border border-gold/30 font-black rounded-xl hover:bg-slate-700 transition-colors shadow-lg" data-i18n="btn_save">Salvar Alterações</button>
-        </div>
     </div>
 </div>
 
@@ -238,7 +209,7 @@
                 <button onclick="window.toggleTheme()" class="p-3 rounded-2xl bg-white/5 hover:bg-gold/20 transition-all"><i data-lucide="sun" id="theme-icon-light" class="hidden text-gold"></i><i data-lucide="moon" id="theme-icon-dark" class="text-slate-400"></i></button>
                 <div class="text-right hidden sm:block">
                     <p id="user-display" class="text-sm font-black uppercase text-gold tracking-tight"></p>
-                    <p id="user-role-display" class="text-[10px] text-slate-500 font-bold uppercase tracking-widest" data-i18n="admin_panel">Gestão Corporativa</p>
+                    <p id="user-role-display" class="text-[10px] text-slate-500 font-bold uppercase tracking-widest"></p>
                 </div>
                 <button onclick="window.handleLogout()" class="p-3 rounded-2xl text-red-500 hover:bg-red-500/10 transition-all border border-red-500/20 shadow-sm"><i data-lucide="log-out" class="w-5 h-5"></i></button>
             </div>
@@ -249,20 +220,18 @@
         
         <!-- NAVEGAÇÃO PRINCIPAL -->
         <nav id="main-nav" class="no-print flex gap-10 mb-6 border-b border-white/5 overflow-x-auto justify-center sm:justify-start scrollbar-hide">
-            <button onclick="window.showView('projects')" class="tab-btn pb-4 font-black uppercase tracking-[0.2em] tab-active" id="tab-projects" data-i18n="nav_proj">Projetos</button>
-            <button onclick="window.cancelEdit(); window.showView('new')" class="tab-btn pb-4 font-black uppercase tracking-[0.2em] editor-only hidden" id="tab-new" data-i18n="nav_new">Nova Obra</button>
-            <button onclick="window.showView('reports')" class="tab-btn pb-4 font-black uppercase tracking-[0.2em]" id="tab-reports" data-i18n="nav_rep">Relatórios</button>
-            <button onclick="window.showView('users')" class="tab-btn pb-4 font-black uppercase tracking-[0.2em] admin-only hidden" id="tab-users" data-i18n="nav_users">Equipe</button>
-            <button onclick="window.showView('logs')" class="tab-btn pb-4 font-black uppercase tracking-[0.2em] admin-only hidden" id="tab-logs">📋 Logs</button>
+            <button onclick="window.showView('projects')" class="tab-btn pb-4 font-black uppercase tracking-[0.2em] tab-active hidden" id="tab-projects" data-i18n="nav_proj">Projetos</button>
+            <button onclick="window.cancelEdit(); window.showView('new')" class="tab-btn pb-4 font-black uppercase tracking-[0.2em] hidden" id="tab-new" data-i18n="nav_new">Nova Obra</button>
+            <button onclick="window.showView('reports')" class="tab-btn pb-4 font-black uppercase tracking-[0.2em] hidden" id="tab-reports" data-i18n="nav_rep">Relatórios</button>
+            
+            <button onclick="window.showView('users')" class="tab-btn pb-4 font-black uppercase tracking-[0.2em] hidden text-gold" id="tab-users" data-i18n="nav_users">Equipe</button>
+            <button onclick="window.showView('logs')" class="tab-btn pb-4 font-black uppercase tracking-[0.2em] hidden text-gold" id="tab-logs">📋 Logs</button>
         </nav>
 
-        <div id="view-projects" class="w-full">
-            <!-- Filtros Superiores do Painel de Projetos -->
+        <div id="view-projects" class="w-full hidden">
             <div id="projects-filters" class="flex flex-col sm:flex-row justify-between items-center mb-8 gap-4 no-print">
-                <div class="flex gap-3">
-                    <button onclick="window.selectUnit('Smart Home')" class="unit-pill unit-pill-btn">SMART HOME</button>
-                    <button onclick="window.selectUnit('HVAC')" class="unit-pill unit-pill-btn">HVAC</button>
-                    <button onclick="window.selectUnit('Ambas')" class="unit-pill unit-pill-btn active" data-i18n="filter_both">AMBAS</button>
+                <div class="flex gap-3" id="dynamic-unit-pills-proj">
+                    <!-- Injetado dinamicamente -->
                 </div>
                 <div class="flex gap-2">
                     <button onclick="window.setArchiveFilter(false)" id="filter-active" class="filter-pill active" data-i18n="filter_active">ATIVAS</button>
@@ -293,7 +262,10 @@
 
                 <div class="col-span-2 space-y-2">
                     <label class="text-xs font-black uppercase text-slate-500 ml-1 tracking-widest" data-i18n="f_unit">Unidade Responsável</label>
-                    <select id="f-empresa" class="modern-input !pr-10"><option value="Smart Home">D2 Smart Home</option><option value="HVAC">D2 HVAC Solutions</option></select>
+                    <select id="f-empresa" class="modern-input !pr-10">
+                        <option value="Smart Home">D2 Smart Home</option>
+                        <option value="HVAC">D2 HVAC Solutions</option>
+                    </select>
                 </div>
                 <div class="col-span-2 md:col-span-1 space-y-2"><label class="text-xs font-black uppercase text-slate-500 ml-1 tracking-widest" data-i18n="f_client">Cliente</label><input type="text" id="f-cliente" required class="modern-input"></div>
                 <div class="col-span-2 md:col-span-1 space-y-2"><label class="text-xs font-black uppercase text-slate-500 ml-1 tracking-widest" data-i18n="f_seller">Vendedor</label><select id="f-vendedor" required class="modern-input !pr-10"></select></div>
@@ -352,48 +324,61 @@
         </div>
 
         <div id="view-users" class="hidden space-y-10 animate-fade-in">
-            <div class="glass p-6 sm:p-10 max-w-lg mx-auto rounded-[32px] text-left border border-white/5 shadow-2xl">
+            <div class="glass p-6 sm:p-10 max-w-2xl mx-auto rounded-[32px] text-left border border-white/5 shadow-2xl">
                 <h3 class="text-2xl font-black text-gold mb-8 uppercase tracking-tighter" data-i18n="team_title">Gestão de Equipe</h3>
                 <form id="team-form" class="space-y-6">
                     <input type="hidden" id="t-id">
-                    
-                    <div class="space-y-1">
-                        <label class="label-auth text-xs" data-i18n="team_role">Nível de Acesso (Autorização)</label>
-                        <select id="t-role" class="modern-input !pr-10">
-                            <option value="editor">Editor Padrão (Pode ver, adicionar e editar obras)</option>
-                            <option value="viewer">Somente Leitura (Somente ver relatórios e obras)</option>
-                            <option value="admin">Administrador (Total Acesso - Logs, Equipe e Edições)</option>
-                        </select>
-                    </div>
 
-                    <div class="space-y-1"><label class="label-auth text-xs" data-i18n="team_email">E-mail</label><input type="email" id="t-email" required class="modern-input"></div>
-                    <div class="space-y-1 relative">
-                        <label class="label-auth text-xs" data-i18n="team_pass">Senha</label>
-                        <input type="password" id="t-pass" required class="modern-input !pr-10">
-                        <button type="button" onclick="window.togglePassword('t-pass', 'eye-team-btn')" class="password-toggle" id="eye-team-btn" style="top:70%"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg></button>
-                    </div>
-
-                    <div class="space-y-3 mt-6 pt-6 border-t border-white/10">
-                        <div class="flex items-center gap-4 bg-black/30 p-5 rounded-2xl border border-white/5">
-                            <input type="checkbox" id="t-viewall" class="w-6 h-6 accent-gold cursor-pointer rounded bg-transparent">
-                            <label for="t-viewall" class="text-xs font-black uppercase text-slate-300 cursor-pointer" data-i18n="team_viewall">Visão Global (Visualizar TODAS as obras)</label>
-                        </div>
-                        
-                        <div class="flex items-center gap-4 bg-cyan-900/20 p-5 rounded-2xl border border-cyan-500/20">
-                            <input type="checkbox" id="t-viewcosts" class="w-6 h-6 accent-cyan-500 cursor-pointer rounded bg-transparent">
-                            <label for="t-viewcosts" class="text-xs font-black uppercase text-cyan-300 cursor-pointer" data-i18n="team_viewcosts">Acesso ao Centro de Custos e Lucro Real</label>
+                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-6">
+                        <div class="space-y-1"><label class="label-auth text-xs" data-i18n="team_email">E-mail</label><input type="email" id="t-email" required class="modern-input"></div>
+                        <div class="space-y-1 relative">
+                            <label class="label-auth text-xs" data-i18n="team_pass">Senha</label>
+                            <input type="password" id="t-pass" required class="modern-input !pr-10">
+                            <button type="button" onclick="window.togglePassword('t-pass', 'eye-team-btn')" class="password-toggle" id="eye-team-btn" style="top:70%"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg></button>
                         </div>
                     </div>
+
+                    <!-- NOVO PAINEL DE CONTROLE DE ACESSO GRANULAR -->
+                    <div class="space-y-6 mt-8 pt-8 border-t border-white/10">
+                        <div>
+                            <p class="text-[10px] font-black uppercase text-gold tracking-widest mb-3" data-i18n="team_scope">Visibilidade e Escopo</p>
+                            <div class="grid grid-cols-1 sm:grid-cols-3 gap-3">
+                                <label class="perm-box"><input type="checkbox" id="p_smart" class="perm-checkbox"><span class="perm-label">D2 Smart Home</span></label>
+                                <label class="perm-box"><input type="checkbox" id="p_hvac" class="perm-checkbox"><span class="perm-label">D2 HVAC</span></label>
+                                <label class="perm-box border-indigo-500/30"><input type="checkbox" id="p_global" class="perm-checkbox accent-indigo-500"><span class="perm-label text-indigo-400">Ver Outros Vendedores</span></label>
+                            </div>
+                        </div>
+
+                        <div>
+                            <p class="text-[10px] font-black uppercase text-gold tracking-widest mb-3" data-i18n="team_tabs">Acesso às Abas</p>
+                            <div class="grid grid-cols-1 sm:grid-cols-3 gap-3">
+                                <label class="perm-box"><input type="checkbox" id="p_tab_proj" class="perm-checkbox" checked><span class="perm-label">Aba Projetos</span></label>
+                                <label class="perm-box"><input type="checkbox" id="p_tab_new" class="perm-checkbox"><span class="perm-label">Aba Nova Obra</span></label>
+                                <label class="perm-box"><input type="checkbox" id="p_tab_rep" class="perm-checkbox"><span class="perm-label">Aba Relatórios</span></label>
+                            </div>
+                        </div>
+
+                        <div>
+                            <p class="text-[10px] font-black uppercase text-gold tracking-widest mb-3" data-i18n="team_perms">Permissões de Escrita</p>
+                            <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                                <label class="perm-box border-emerald-500/30"><input type="checkbox" id="p_fin" class="perm-checkbox accent-emerald-500"><span class="perm-label text-emerald-400">Inserir Receb./Pagtos.</span></label>
+                                <label class="perm-box border-cyan-500/30"><input type="checkbox" id="p_costs" class="perm-checkbox accent-cyan-500"><span class="perm-label text-cyan-400">Acesso a Custos e Margem</span></label>
+                            </div>
+                        </div>
+                    </div>
                     
-                    <button type="submit" id="btn-save-team" class="btn-premium-gold shadow-xl mt-4" data-i18n="btn_team">Salvar e Autorizar Acesso</button>
+                    <button type="submit" id="btn-save-team" class="btn-premium-gold shadow-xl mt-6" data-i18n="btn_team">Salvar e Autorizar Acesso</button>
                 </form>
             </div>
-            <div id="users-list" class="grid grid-cols-1 md:grid-cols-2 gap-8 text-left max-w-7xl mx-auto"></div>
+            <div id="users-list" class="flex flex-col gap-4 text-left max-w-7xl mx-auto mt-10"></div>
         </div>
 
         <div id="view-logs" class="hidden space-y-6 max-w-7xl mx-auto animate-fade-in">
             <div class="glass p-6 sm:p-8 rounded-[32px] border border-white/5">
-                <h3 class="text-2xl font-black text-gold mb-6 uppercase tracking-tighter">📋 Logs de Auditoria</h3>
+                <div class="flex justify-between items-center mb-6">
+                    <h3 class="text-2xl font-black text-gold uppercase tracking-tighter">📋 Logs de Auditoria</h3>
+                    <button onclick="window.clearLogs()" class="text-[10px] font-bold text-red-500 hover:text-red-400 uppercase tracking-widest border border-red-500/20 px-4 py-2 rounded-xl transition-all">Limpar Histórico</button>
+                </div>
                 <div class="overflow-x-auto">
                     <table class="w-full text-left" id="logs-table">
                         <thead class="border-b border-white/10">
@@ -410,13 +395,6 @@
         </div>
 
         <div id="view-reports" class="hidden space-y-8 max-w-7xl mx-auto text-left animate-fade-in print:block">
-            <!-- Filtros Superiores Exclusivos do Relatório (Como solicitado pelo CEO) -->
-            <div class="flex justify-center gap-3 mb-8 no-print" id="report-unit-filters">
-                <button onclick="window.selectUnit('Smart Home')" class="unit-pill unit-pill-btn">SMART HOME</button>
-                <button onclick="window.selectUnit('HVAC')" class="unit-pill unit-pill-btn">HVAC</button>
-                <button onclick="window.selectUnit('Ambas')" class="unit-pill unit-pill-btn active" data-i18n="filter_both">AMBAS</button>
-            </div>
-            
             <div id="report-output"></div>
         </div>
     </main>
@@ -443,7 +421,9 @@
     const SUPER_ADMIN = "dante.frota@allcablingtech.com";
 
     let state = { 
-        user: null, currentUserRole: 'viewer', currentUserViewAll: false, currentUserViewCosts: false, 
+        user: null, 
+        isSuperAdmin: false,
+        userPerms: { tab_proj: true, tab_new: false, tab_rep: false, fin: false, costs: false, smart: true, hvac: false, global: false },
         projects: [], team: [], company: 'Ambas', lang: 'pt', theme: 'dark', 
         editingPayments: null, editingRecs: null, focusedProject: null, activeModule: null, showArchived: false,
         reportActiveKpi: 'receita' 
@@ -458,7 +438,6 @@
         if (el && btn) { const isPass = el.type === 'password'; el.type = isPass ? 'text' : 'password'; btn.innerHTML = isPass ? '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M17.94 17.94A10.07 10.07 0 0 1 12 20c-7 0-11-8-11-8a18.45 18.45 0 0 1 5.06-5.94M9.9 4.24A9.12 9.12 0 0 1 12 4c7 0 11 8 11 8a18.5 18.5 0 0 1-2.16 3.19m-6.72-1.07a3 3 0 1 1-4.24-4.24"></path><line x1="1" y1="1" x2="23" y2="23"></line></svg>' : '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>'; }
     };
 
-    // --- DICIONÁRIO DE TRADUÇÃO COMPLETO ---
     const translations = {
         pt: {
             admin_panel: "Gestão Corporativa", nav_proj: "Projetos", nav_new: "Nova Obra", nav_rep: "Relatórios", nav_users: "Equipe",
@@ -469,7 +448,8 @@
             f_gross: "Valor Contrato Bruto", f_budget: "Orçamento Custo (Budget)", f_comm_perc: "% Comissão",
             f_pay_method: "Forma Pagt. Prevista", f_start: "Início", f_end: "Entrega", f_status: "Status",
             btn_save: "Salvar Registro", btn_cancel: "Cancelar",
-            team_role: "Nível de Acesso (Autorização)", team_email: "E-mail", team_pass: "Senha", team_viewall: "Visão Global (Visualizar TODAS as obras)", team_viewcosts: "Acesso ao Centro de Custos e Lucro Real",
+            team_email: "E-mail", team_pass: "Senha", 
+            team_scope: "Visibilidade e Escopo", team_tabs: "Acesso às Abas do Sistema", team_perms: "Permissões de Escrita",
             seller: "Vendedor", status_obra: "Status da Obra", prop_inv: "Proposta / Invoice", pay_comm: "Pagamento • % Comissão",
             timeline: "Timeline", days_left: "DIAS RESTANTES", completed: "CONCLUÍDA", late: "ATRASADA", gross_contract: "Valor Contrato Bruto",
             client: "Cliente", commission: "Comissão", paid_100: "100% PAGO", paid_perc: "% PAGO", pending: "PENDENTE",
@@ -486,7 +466,7 @@
             gross_revenue: "Receita Bruta", entries: "Entradas", to_receive: "A Receber", est_profit: "Lucro Estimado", global_margin: "Margem Global",
             see_works: "Ver Obras ➔", see_received: "Ver Recebidos ➔", see_pending: "Ver Pendentes ➔", see_details: "Ver Detalhes ➔", see_summary: "Ver Resumo ➔",
             active_funnel: "Funil de Operações Ativas", comm_paid_month: "Comissões Pagas por Mês", total_year: "Total Ano", no_data_year: "Nenhum dado para o ano atual.",
-            detailed_struct: "Detalhamento Estruturado de Obras", no_active_works: "Nenhuma obra encontrada.", print_full_rep: "Imprimir Relatório Completo",
+            detailed_struct: "Detalhamento Estruturado de Obras", no_active_works: "Nenhuma obra ativa encontrada.", print_full_rep: "Imprimir Relatório Completo",
             print_view: "Imprimir Visão", missing_receive: "Falta Receber",
             status_appr: "✅ Aprovado", status_wait: "Aguardando Início", status_exec: "Em Execução", status_fin: "Finalizado",
             funnel_appr: "Aprovados", funnel_wait: "Aguardando Início", funnel_exec: "Em Execução", funnel_fin: "Concluídas",
@@ -507,7 +487,7 @@
             f_gross: "Gross Contract Value", f_budget: "Cost Budget", f_comm_perc: "% Commission",
             f_pay_method: "Expected Pay Method", f_start: "Start Date", f_end: "Delivery", f_status: "Status",
             btn_save: "Save Record", btn_cancel: "Cancel",
-            team_role: "Access Level", team_email: "Email", team_pass: "Password", team_viewall: "Global View (View ALL projects)", team_viewcosts: "Access to Cost Center and Real Profit",
+            team_email: "Email", team_pass: "Password", team_scope: "Visibility & Scope", team_tabs: "System Tabs Access", team_perms: "Write Permissions",
             seller: "Seller", status_obra: "Project Status", prop_inv: "Proposal / Invoice", pay_comm: "Payment • % Comm",
             timeline: "Timeline", days_left: "DAYS LEFT", completed: "COMPLETED", late: "LATE", gross_contract: "Gross Contract Value",
             client: "Client", commission: "Commission", paid_100: "100% PAID", paid_perc: "% PAID", pending: "PENDING",
@@ -627,6 +607,7 @@
     }
 
     function logAccess(userEmail, action) {
+        if (!state.isSuperAdmin) return; // Apenas grava logs gerais se precisar, mas a visão é só do Admin. Na verdade, grave sempre.
         const logs = JSON.parse(localStorage.getItem('access_logs') || '[]');
         logs.unshift({ timestamp: new Date().toISOString(), user: userEmail, action });
         if (logs.length > 500) logs.splice(500);
@@ -634,9 +615,17 @@
         window.renderLogs();
     }
 
+    window.clearLogs = () => {
+        if(!state.isSuperAdmin) return;
+        if(confirm("Tem certeza que deseja limpar todo o histórico?")) {
+            localStorage.removeItem('access_logs');
+            window.renderLogs();
+        }
+    }
+
     window.renderLogs = () => {
         const tbody = document.getElementById('logs-body');
-        if (!tbody) return;
+        if (!tbody || !state.isSuperAdmin) return;
         const logs = JSON.parse(localStorage.getItem('access_logs') || '[]');
         tbody.innerHTML = logs.map(log => `
             <tr class="border-b border-white/5 hover:bg-white/5">
@@ -677,31 +666,51 @@
     };
 
     window.applyPermissions = () => {
-        const role = state.currentUserRole;
-        const isViewer = role === 'viewer';
-        const isEditor = ['editor', 'admin', 'superadmin'].includes(role);
-        const isAdmin = ['admin', 'superadmin'].includes(role);
-
-        const roleDisplay = document.getElementById('user-role-display');
-        if (roleDisplay) {
-            let roleStr = "Modo Leitura";
-            if (role === 'superadmin') roleStr = "⭐ Super Admin";
-            else if (role === 'admin') roleStr = "Administrador";
-            else if (role === 'editor') roleStr = "Editor";
-            
-            if (state.currentUserViewAll && !isAdmin) roleStr += " (Visão Global)";
-            if (state.currentUserViewCosts && !isAdmin) roleStr += " | Custos";
-            roleDisplay.innerText = roleStr;
+        // Aplica exibição de abas e botões baseado no Objeto state.userPerms
+        const p = state.userPerms;
+        
+        // Super Admin Force
+        if (state.isSuperAdmin) {
+            document.getElementById('tab-users').classList.remove('hidden');
+            document.getElementById('tab-logs').classList.remove('hidden');
+        } else {
+            document.getElementById('tab-users').classList.add('hidden');
+            document.getElementById('tab-logs').classList.add('hidden');
         }
 
-        document.querySelectorAll('.admin-only').forEach(el => {
-            if (isAdmin) el.classList.remove('hidden'); else el.classList.add('hidden');
-        });
-
-        document.querySelectorAll('.editor-only').forEach(el => {
-            if (isEditor) el.classList.remove('hidden'); else el.classList.add('hidden');
-        });
+        // Abas Normais
+        const tabProj = document.getElementById('tab-projects');
+        const tabNew = document.getElementById('tab-new');
+        const tabRep = document.getElementById('tab-reports');
         
+        if(p.tab_proj) tabProj.classList.remove('hidden'); else tabProj.classList.add('hidden');
+        if(p.tab_new) tabNew.classList.remove('hidden'); else tabNew.classList.add('hidden');
+        if(p.tab_rep) tabRep.classList.remove('hidden'); else tabRep.classList.add('hidden');
+
+        // Renderiza Pílulas de Empresa (Condicional)
+        const renderCompanyPills = (containerId) => {
+            const c = document.getElementById(containerId);
+            if(!c) return;
+            c.innerHTML = '';
+            if(p.smart) c.innerHTML += `<button onclick="window.selectUnit('Smart Home')" class="unit-pill unit-pill-btn ${state.company === 'Smart Home' ? 'active':''}">SMART HOME</button>`;
+            if(p.hvac) c.innerHTML += `<button onclick="window.selectUnit('HVAC')" class="unit-pill unit-pill-btn ${state.company === 'HVAC' ? 'active':''}">HVAC</button>`;
+            if(p.smart && p.hvac) c.innerHTML += `<button onclick="window.selectUnit('Ambas')" class="unit-pill unit-pill-btn ${state.company === 'Ambas' ? 'active':''}" data-i18n="filter_both">${window.t('filter_both')}</button>`;
+        };
+        
+        renderCompanyPills('dynamic-unit-pills-proj');
+        renderCompanyPills('report-unit-filters');
+
+        // Se o usuário perdeu acesso à empresa selecionada, força para a primeira disponível
+        if(state.company === 'Ambas' && (!p.smart || !p.hvac)) {
+            if(p.smart) state.company = 'Smart Home';
+            else if(p.hvac) state.company = 'HVAC';
+        }
+        
+        // Direcionamento Inicial Lógico
+        if(p.tab_proj) window.showView('projects');
+        else if(p.tab_rep) window.showView('reports');
+        else if(p.tab_new) window.showView('new');
+
         if (state.projects.length > 0) {
             window.renderProjects();
             window.renderReport();
@@ -712,7 +721,7 @@
         const select = document.getElementById('f-vendedor');
         if (!select || !state.user) return;
         
-        const canViewAll = ['admin', 'superadmin'].includes(state.currentUserRole) || state.currentUserViewAll;
+        const canViewAll = state.userPerms.global;
         const currentValue = select.value;
 
         select.innerHTML = '';
@@ -731,11 +740,10 @@
         }
     }
 
-    // --- LÓGICA DE FILTROS GLOBAIS DE EMPRESA COM CORES ATIVAS CORRIGIDAS ---
+    // --- NOVA LÓGICA DE FILTROS GLOBAIS DE EMPRESA ---
     window.selectUnit = (unit) => {
         state.company = unit;
         
-        // Atualiza a cor de todos os botões de filtro na tela baseados na escolha
         document.querySelectorAll('.unit-pill-btn').forEach(b => {
              b.classList.remove('active');
              if (b.getAttribute('onclick').includes(`'${unit}'`)) {
@@ -759,7 +767,7 @@
     };
 
     window.toggleArchive = async (id, currentArchivedStatus) => {
-        if (!['editor', 'admin', 'superadmin'].includes(state.currentUserRole)) return;
+        if (!state.userPerms.tab_proj) return;
         try {
             const action = currentArchivedStatus ? "Desarquivou" : "Arquivou";
             await updateDoc(doc(db, 'artifacts', appId, 'public', 'data', 'projects', id), { archived: !currentArchivedStatus });
@@ -770,7 +778,7 @@
 
     // --- CUSTOS ---
     window.addExpense = async (projectId) => {
-        if (!state.user || !state.currentUserViewCosts) return;
+        if (!state.userPerms.costs) return;
         const date = document.getElementById(`exp-date-${projectId}`)?.value;
         const desc = document.getElementById(`exp-desc-${projectId}`)?.value;
         const cat = document.getElementById(`exp-cat-${projectId}`)?.value;
@@ -787,7 +795,7 @@
     };
 
     window.deleteExpense = (projectId, expenseId, expenseDesc, expenseVal) => {
-        if (!state.user || !state.currentUserViewCosts) return;
+        if (!state.userPerms.costs) return;
         
         window.showModal(window.t('modal_del_exp_title'), `${window.t('modal_del_exp_msg')} ${expenseDesc}?`, 'confirm', async () => {
             const p = state.projects.find(x => x.id === projectId);
@@ -857,7 +865,7 @@
     };
     window.addNewPaymentToEdit = () => { if (!state.editingPayments) return; state.editingPayments.payments.push({ data: new Date().toISOString().split('T')[0], valor: 0 }); window.renderPaymentEditList(); };
     window.saveEditedPayments = async () => { if (!state.editingPayments) return; try { await updateDoc(doc(db, 'artifacts', appId, 'public', 'data', 'projects', state.editingPayments.projectId), { pagamentosEfetuados: state.editingPayments.payments }); window.closeEditPaymentModal(); } catch (e) { window.showModal(window.t('error'), 'Erro ao salvar pagamentos: ' + e.message, 'error'); } };
-    window.addPayment = async (projectId) => { if (!state.user) return; const v = document.getElementById(`pay-val-${projectId}`)?.value; const d = document.getElementById(`pay-date-${projectId}`)?.value; if (!v || !d) { window.showModal(window.t('attention'), 'Preencha data e valor.', 'error'); return; } try { await updateDoc(doc(db, 'artifacts', appId, 'public', 'data', 'projects', projectId), { pagamentosEfetuados: arrayUnion({ valor: parseFloat(v), data: d }) }); logAccess(state.user.email, `Pagou vendedor $${v} na obra ID: ${projectId}`); } catch (e) { console.error(e); } };
+    window.addPayment = async (projectId) => { if (!state.userPerms.fin) return; const v = document.getElementById(`pay-val-${projectId}`)?.value; const d = document.getElementById(`pay-date-${projectId}`)?.value; if (!v || !d) { window.showModal(window.t('attention'), 'Preencha data e valor.', 'error'); return; } try { await updateDoc(doc(db, 'artifacts', appId, 'public', 'data', 'projects', projectId), { pagamentosEfetuados: arrayUnion({ valor: parseFloat(v), data: d }) }); logAccess(state.user.email, `Pagou vendedor $${v} na obra ID: ${projectId}`); } catch (e) { console.error(e); } };
 
     window.openEditRecModal = (projectId) => { const p = state.projects.find(x => x.id === projectId); if (!p) return; state.editingRecs = { projectId, recs: [...(p.recebimentos || [])] }; window.renderRecEditList(); document.getElementById('edit-rec-modal').classList.add('active'); };
     window.closeEditRecModal = () => { state.editingRecs = null; document.getElementById('edit-rec-modal').classList.remove('active'); };
@@ -875,7 +883,7 @@
     };
     window.addNewRecToEdit = () => { if (!state.editingRecs) return; state.editingRecs.recs.push({ data: new Date().toISOString().split('T')[0], valor: 0, metodo: 'Zelle' }); window.renderRecEditList(); };
     window.saveEditedRecs = async () => { if (!state.editingRecs) return; try { await updateDoc(doc(db, 'artifacts', appId, 'public', 'data', 'projects', state.editingRecs.projectId), { recebimentos: state.editingRecs.recs }); window.closeEditRecModal(); } catch (e) { window.showModal(window.t('error'), 'Erro ao salvar: ' + e.message, 'error'); } };
-    window.addRecebimento = async (projectId) => { if (!state.user) return; const v = document.getElementById(`rec-val-${projectId}`)?.value; const d = document.getElementById(`rec-date-${projectId}`)?.value; const m = document.getElementById(`rec-met-${projectId}`)?.value; if (!v || !d || !m) { window.showModal(window.t('attention'), 'Preencha data, valor e método.', 'error'); return; } try { await updateDoc(doc(db, 'artifacts', appId, 'public', 'data', 'projects', projectId), { recebimentos: arrayUnion({ valor: parseFloat(v), data: d, metodo: m }) }); logAccess(state.user.email, `Registrou recebimento $${v} na obra ID: ${projectId}`); } catch (e) { console.error(e); } };
+    window.addRecebimento = async (projectId) => { if (!state.userPerms.fin) return; const v = document.getElementById(`rec-val-${projectId}`)?.value; const d = document.getElementById(`rec-date-${projectId}`)?.value; const m = document.getElementById(`rec-met-${projectId}`)?.value; if (!v || !d || !m) { window.showModal(window.t('attention'), 'Preencha data, valor e método.', 'error'); return; } try { await updateDoc(doc(db, 'artifacts', appId, 'public', 'data', 'projects', projectId), { recebimentos: arrayUnion({ valor: parseFloat(v), data: d, metodo: m }) }); logAccess(state.user.email, `Registrou recebimento $${v} na obra ID: ${projectId}`); } catch (e) { console.error(e); } };
 
     // --- NAVEGAÇÃO INTERNA DO MODO FOCO ---
     window.openProjectDetails = (id) => { 
@@ -906,28 +914,46 @@
 
     window.printReport = () => { window.print(); };
 
-    // --- IMPRESSÃO DIRECIONADA DE KPI ---
     window.printKpiReport = () => {
         document.body.classList.add('printing-kpi');
         window.print();
         setTimeout(() => document.body.classList.remove('printing-kpi'), 500);
     };
 
-    // --- CONTROLE DE KPIs NO RELATÓRIO (DRILL DOWN) ---
     window.setReportKpi = (kpiName) => {
         state.reportActiveKpi = kpiName;
         window.renderReport();
     };
 
-    window.editTeamMember = (id, email, pass, role, viewAll, viewCosts) => {
-        document.getElementById('t-id').value = id; document.getElementById('t-email').value = email; document.getElementById('t-pass').value = pass; document.getElementById('t-role').value = role || 'editor';
-        document.getElementById('t-viewall').checked = viewAll === true || String(viewAll) === 'true'; document.getElementById('t-viewcosts').checked = viewCosts === true || String(viewCosts) === 'true';
+    window.editTeamMember = (id, email, password, permObj) => {
+        document.getElementById('t-id').value = id; 
+        document.getElementById('t-email').value = email; 
+        document.getElementById('t-pass').value = password; 
+        
+        document.getElementById('p_smart').checked = permObj.smart;
+        document.getElementById('p_hvac').checked = permObj.hvac;
+        document.getElementById('p_global').checked = permObj.global;
+        document.getElementById('p_tab_proj').checked = permObj.tab_proj;
+        document.getElementById('p_tab_new').checked = permObj.tab_new;
+        document.getElementById('p_tab_rep').checked = permObj.tab_rep;
+        document.getElementById('p_fin').checked = permObj.fin;
+        document.getElementById('p_costs').checked = permObj.costs;
+
         window.scrollTo({ top: 0, behavior: 'smooth' });
+    };
+
+    window.deleteTeam = (id) => {
+        window.showModal(window.t('modal_del_team_title'), window.t('modal_del_team_msg'), 'confirm', async () => {
+            try {
+                await deleteDoc(doc(db, 'artifacts', appId, 'public', 'data', 'user_credentials', id));
+                logAccess(state.user.email, `Removeu acesso de membro da equipe.`);
+            } catch(e) { console.error(e); }
+        });
     };
 
     window.deleteP = (id) => {
         const p = state.projects.find(x => x.id === id);
-        if (!['admin', 'superadmin'].includes(state.currentUserRole)) {
+        if (!state.isSuperAdmin) {
             logAccess(state.user.email, `Tentativa bloqueada de exclusão da obra: ${p?.cliente || id}`);
             window.showModal(window.t('modal_access_denied'), window.t('modal_access_denied_msg'), 'error');
             return;
@@ -950,7 +976,7 @@
         const statusSelect = document.getElementById('f-status');
         if (statusSelect) {
             statusSelect.innerHTML = `<option value="✅ Aprovado">${window.t('status_appr')}</option><option value="Aguardando Início">${window.t('status_wait')}</option><option value="Em Execução">${window.t('status_exec')}</option><option value="Finalizado">${window.t('status_fin')}</option>`;
-            if (p.status && !Array.from(statusSelect.options).some(opt => opt.value === p.status)) {
+            if (p.status && !Array.from(statusSelect.options).some(opt => opt.value === p.status) && p.status !== 'Cotação') {
                 statusSelect.innerHTML += `<option value="${p.status}">${p.status}</option>`;
             }
         }
@@ -958,7 +984,7 @@
         document.getElementById('edit-id').value = id; document.getElementById('f-proposta').value = p.numeroProposta || ''; document.getElementById('f-invoice').value = p.numeroInvoice || ''; document.getElementById('f-empresa').value = p.empresa || 'Smart Home';
         document.getElementById('f-cliente').value = p.cliente || ''; document.getElementById('f-vendedor').value = p.vendedor || ''; document.getElementById('f-valor').value = p.valorTotal ?? ''; document.getElementById('f-orcamento').value = p.orcamento ?? ''; 
         document.getElementById('f-comm').value = p.percComissao ?? 5; document.getElementById('f-metodo').value = p.metodo || 'Zelle'; document.getElementById('f-inicio').value = p.dataInicio || ''; document.getElementById('f-entrega').value = p.dataEntrega || ''; 
-        document.getElementById('f-status').value = p.status || '✅ Aprovado';
+        document.getElementById('f-status').value = p.status === 'Cotação' ? '✅ Aprovado' : (p.status || '✅ Aprovado');
         window.showView('new');
     };
 
@@ -982,7 +1008,7 @@
 
         if (v === 'logs') window.renderLogs();
         if (v === 'projects') { state.focusedProject = null; state.activeModule = null; window.renderProjects(); }
-        if (v === 'reports') { state.reportActiveKpi = 'receita'; window.renderReport(); } 
+        if (v === 'reports') { state.reportActiveKpi = 'receita'; window.renderReport(); }
         try { lucide.createIcons(); } catch {}
     };
 
@@ -1041,22 +1067,18 @@
 
         grid.innerHTML = '';
 
-        const isEditor = ['editor', 'admin', 'superadmin'].includes(state.currentUserRole);
-        const isAdmin = ['admin', 'superadmin'].includes(state.currentUserRole); 
-        const canViewAll = isAdmin || state.currentUserViewAll;
-        const canViewCosts = isAdmin || state.currentUserViewCosts;
+        const canViewAll = state.userPerms.global;
+        const canViewCosts = state.userPerms.costs;
 
         let filtered = state.projects.filter(p => {
-            const matchCompany = state.company === 'Ambas' || p.empresa === state.company;
+            const matchCompany = (p.empresa === 'Smart Home' && state.userPerms.smart) || (p.empresa === 'HVAC' && state.userPerms.hvac);
+            const matchSelectedTab = state.company === 'Ambas' || p.empresa === state.company;
             const matchUser = canViewAll || p.vendedor === state.user.email; 
             const isArchived = p.archived === true;
             const matchArchive = isArchived === state.showArchived;
-            return matchCompany && matchUser && matchArchive;
+            return matchCompany && matchSelectedTab && matchUser && matchArchive;
         });
 
-        // ==========================================
-        // CONTROLE DO MODO FOCO (ESCONDER TOPO)
-        // ==========================================
         if (state.focusedProject) {
             filtersDiv.classList.add('hidden');
             if (mainHeader) mainHeader.style.display = 'none';
@@ -1068,7 +1090,6 @@
             grid.className = "flex flex-col max-w-4xl mx-auto gap-6 text-left w-full animate-fade-in pb-20 mt-4";
             filtered = state.projects.filter(p => p.id === state.focusedProject); 
             
-            // Botão de Voltar padrão se NENHUM módulo estiver aberto (Nível 2)
             if (!state.activeModule) {
                 grid.innerHTML += `
                     <div class="mb-2 flex justify-between items-center no-print w-full">
@@ -1121,16 +1142,15 @@
             const sellerBorderColor = sellerPaidPerc >= 100 ? 'border-emerald-500/30 bg-emerald-500/10' : 'border-white/5 bg-black/20';
 
             let actionButtons = '';
-            if (isEditor) {
-                const archiveIcon = p.archived ? 'package-open' : 'archive';
-                const archiveColor = p.archived ? 'text-indigo-400 hover:text-indigo-300' : 'text-slate-400 hover:text-white';
-                actionButtons = `
-                    <div class="w-px h-4 bg-white/10 mx-2"></div>
-                    <button onclick="event.stopPropagation(); window.toggleArchive('${p.id}', ${!!p.archived})" class="p-1 hover:scale-110 transition-transform no-print"><i data-lucide="${archiveIcon}" class="w-5 h-5 ${archiveColor}"></i></button>
-                    <button onclick="event.stopPropagation(); window.editP('${p.id}')" class="p-1 hover:scale-110 transition-transform no-print"><i data-lucide="edit-3" class="w-5 h-5 text-slate-400 hover:text-white"></i></button>
-                    <button onclick="event.stopPropagation(); window.deleteP('${p.id}')" class="p-1 hover:scale-110 transition-transform no-print"><i data-lucide="trash-2" class="w-5 h-5 text-red-500/70 hover:text-red-400"></i></button>
-                `;
-            }
+            const archiveIcon = p.archived ? 'package-open' : 'archive';
+            const archiveColor = p.archived ? 'text-indigo-400 hover:text-indigo-300' : 'text-slate-400 hover:text-white';
+            
+            actionButtons = `
+                <div class="w-px h-4 bg-white/10 mx-2"></div>
+                <button onclick="event.stopPropagation(); window.toggleArchive('${p.id}', ${!!p.archived})" class="p-1 hover:scale-110 transition-transform no-print"><i data-lucide="${archiveIcon}" class="w-5 h-5 ${archiveColor}"></i></button>
+                <button onclick="event.stopPropagation(); window.editP('${p.id}')" class="p-1 hover:scale-110 transition-transform no-print"><i data-lucide="edit-3" class="w-5 h-5 text-slate-400 hover:text-white"></i></button>
+                <button onclick="event.stopPropagation(); window.deleteP('${p.id}')" class="p-1 hover:scale-110 transition-transform no-print ${state.isSuperAdmin ? '' : 'hidden'}"><i data-lucide="trash-2" class="w-5 h-5 text-red-500/70 hover:text-red-400"></i></button>
+            `;
 
             if (isFocused && state.activeModule) {
                 let moduleContent = '';
@@ -1152,13 +1172,13 @@
                                     <p class="text-xs sm:text-sm font-black text-emerald-400 uppercase tracking-widest print:text-emerald-800">${window.t('client_receipts')}</p>
                                     <div class="flex items-center gap-4">
                                         <span class="text-xs sm:text-sm font-bold text-emerald-500 print:text-emerald-800">${formatCurr(f.totalRecebido)} / ${formatCurr(p.valorTotal)}</span>
-                                        ${isAdmin ? `<button onclick="window.openEditRecModal('${p.id}')" class="text-sm font-bold text-white force-white-text hover:text-emerald-200 transition-colors no-print p-2 bg-emerald-600 rounded-lg shadow-md force-dark-bg"><i data-lucide="edit-3" class="w-5 h-5"></i></button>` : ''}
+                                        ${state.userPerms.fin ? `<button onclick="window.openEditRecModal('${p.id}')" class="text-sm font-bold text-white force-white-text hover:text-emerald-200 transition-colors no-print p-2 bg-emerald-600 rounded-lg shadow-md force-dark-bg"><i data-lucide="edit-3" class="w-5 h-5"></i></button>` : ''}
                                     </div>
                                 </div>
                                 <div class="max-h-60 overflow-y-auto scrollbar-hide px-2 print:max-h-none">
                                     ${(p.recebimentos || []).map(r => `<div class="flex justify-between items-center text-sm sm:text-base py-4 border-b border-white/5 last:border-0 print:border-slate-200 hover:bg-white/5 rounded px-2"><span class="text-slate-300 print:text-black">${r.data ? new Date(r.data + 'T12:00:00').toLocaleDateString(state.lang === 'pt' ? 'pt-BR' : 'en-US') : '-'} <span class="text-[10px] font-black text-slate-500 ml-2 uppercase bg-black/30 px-2 py-1 rounded print:bg-slate-200 print:text-slate-800">${r.metodo}</span></span><span class="font-black text-emerald-400 print:text-emerald-700">+ ${formatCurr(r.valor)}</span></div>`).join('') || `<p class="text-sm italic text-slate-600 text-center py-6">${window.t('no_receipts')}</p>`}
                                 </div>
-                                ${isAdmin ? `
+                                ${state.userPerms.fin ? `
                                 <div class="grid grid-cols-1 sm:grid-cols-12 gap-4 mt-6 no-print bg-black/20 p-5 rounded-2xl border border-white/5">
                                     <input type="date" id="rec-date-${p.id}" class="modern-input relative !text-sm sm:col-span-4" onclick="event.stopPropagation();">
                                     <input type="number" id="rec-val-${p.id}" placeholder="$ Valor" class="modern-input !text-sm sm:col-span-4" onclick="event.stopPropagation();">
@@ -1170,12 +1190,12 @@
                             <div class="space-y-4 pt-8 border-t border-white/10 print:border-slate-200">
                                 <div class="flex justify-between items-center bg-gold/10 p-4 px-5 rounded-2xl border border-gold/20 print:bg-amber-50 print:border-amber-200">
                                     <p class="text-xs sm:text-sm font-black text-gold uppercase tracking-widest print:text-amber-800">${window.t('seller_payments')}</p>
-                                    ${isAdmin ? `<button onclick="window.openEditPaymentModal('${p.id}')" class="text-sm font-bold text-white force-white-text hover:text-gold transition-colors no-print p-2 bg-slate-800 rounded-lg shadow-md border border-gold/30 force-dark-bg"><i data-lucide="edit-3" class="w-5 h-5"></i></button>` : ''}
+                                    ${state.userPerms.fin ? `<button onclick="window.openEditPaymentModal('${p.id}')" class="text-sm font-bold text-white force-white-text hover:text-gold transition-colors no-print p-2 bg-slate-800 rounded-lg shadow-md border border-gold/30 force-dark-bg"><i data-lucide="edit-3" class="w-5 h-5"></i></button>` : ''}
                                 </div>
                                 <div class="max-h-60 overflow-y-auto scrollbar-hide px-2 print:max-h-none">
                                     ${(p.pagamentosEfetuados || []).map(pay => `<div class="flex justify-between items-center text-sm sm:text-base py-4 border-b border-white/5 last:border-0 print:border-slate-200 hover:bg-white/5 rounded px-2"><span class="text-slate-300 print:text-black">${pay.data ? new Date(pay.data + 'T12:00:00').toLocaleDateString(state.lang === 'pt' ? 'pt-BR' : 'en-US') : '-'}</span><span class="font-black text-gold print:text-amber-700">- ${formatCurr(pay.valor)}</span></div>`).join('') || `<p class="text-sm italic text-slate-600 text-center py-6">${window.t('no_payments')}</p>`}
                                 </div>
-                                ${isAdmin ? `
+                                ${state.userPerms.fin ? `
                                 <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 mt-6 no-print bg-black/20 p-5 rounded-2xl border border-white/5">
                                     <input type="date" id="pay-date-${p.id}" class="modern-input relative !text-sm" onclick="event.stopPropagation();">
                                     <input type="number" id="pay-val-${p.id}" placeholder="$ Valor" class="modern-input !text-sm" onclick="event.stopPropagation();">
@@ -1205,6 +1225,7 @@
                     `).join('') || `<p class="text-sm italic text-cyan-300/50 text-center py-8">${window.t('no_expenses')}</p>`;
 
                     moduleContent = `
+                        <!-- KPIs -->
                         <div class="grid grid-cols-2 print:grid-cols-4 sm:grid-cols-4 gap-4 sm:gap-6 mb-10 print:mb-6">
                             <div class="bg-black/40 p-5 rounded-[24px] border border-white/5 shadow-inner print:bg-transparent print:border-slate-300 print:p-3 print:rounded-xl force-dark-bg">
                                 <p class="text-[10px] font-black uppercase text-slate-400 mb-2 tracking-widest print:text-slate-600 print:text-[8px]">${window.t('budget')}</p>
@@ -1224,6 +1245,7 @@
                             </div>
                         </div>
 
+                        <!-- Gráficos -->
                         <div class="grid grid-cols-1 lg:grid-cols-3 gap-6 mb-10 print:mb-6 no-print">
                             <div class="bg-black/20 p-6 rounded-[24px] border border-cyan-500/10 flex flex-col items-center shadow-lg print:border-slate-300 print:bg-transparent">
                                 <p class="text-[11px] font-black uppercase text-cyan-300/70 mb-4 w-full text-left tracking-widest print:text-black">${window.t('budget_vs_spent')}</p>
@@ -1235,6 +1257,7 @@
                             </div>
                         </div>
 
+                        <!-- Formulário e Tabela de Despesas -->
                         <div class="bg-cyan-950/20 p-6 sm:p-8 rounded-[32px] border border-cyan-500/20 shadow-2xl print:bg-transparent print:border-slate-300 print:p-0 print:shadow-none">
                             <div class="no-print mb-8 pb-8 border-b border-cyan-500/20">
                                 <p class="text-sm sm:text-base font-black text-cyan-400 uppercase mb-4 tracking-widest flex items-center gap-2"><i data-lucide="plus-circle" class="w-6 h-6"></i> ${window.t('reg_expense')}</p>
@@ -1385,13 +1408,14 @@
         const out = document.getElementById('report-output');
         if (!out || !state.user) return;
 
-        const canViewAll = ['admin', 'superadmin'].includes(state.currentUserRole) || state.currentUserViewAll;
-        const canViewCosts = ['admin', 'superadmin'].includes(state.currentUserRole) || state.currentUserViewCosts;
+        const canViewAll = state.userPerms.global;
+        const canViewCosts = state.userPerms.costs;
 
         const baseFiltered = state.projects.filter(p => {
-            const matchCompany = state.company === 'Ambas' || p.empresa === state.company;
+            const matchCompany = (p.empresa === 'Smart Home' && state.userPerms.smart) || (p.empresa === 'HVAC' && state.userPerms.hvac);
+            const matchSelectedTab = state.company === 'Ambas' || p.empresa === state.company;
             const matchUser = canViewAll || p.vendedor === state.user.email; 
-            return matchCompany && matchUser && !p.archived;
+            return matchCompany && matchSelectedTab && matchUser && !p.archived;
         });
 
         let tv = 0, tc = 0, tProfit = 0, totalCollected = 0; 
@@ -1451,7 +1475,7 @@
                         <p class="text-[9px] sm:text-[10px] font-black uppercase ${s.color} tracking-widest print:text-slate-600 pr-2 leading-tight">${s.label}</p>
                         <span class="text-[10px] sm:text-xs font-black text-white force-white-text bg-slate-800 px-2 py-0.5 rounded-lg shadow-sm print:text-white print-force-white">${s.count}</span>
                     </div>
-                    <p class="text-base sm:text-lg font-black text-slate-200 funnel-value tracking-tight print:text-black break-words">${formatCurr(s.val)}</p>
+                    <p class="text-base sm:text-lg font-black text-slate-200 tracking-tight print:text-black break-words">${formatCurr(s.val)}</p>
                 </div>
                 `;
             }).join('');
@@ -1461,27 +1485,27 @@
                     <h3 class="text-lg sm:text-xl font-black uppercase tracking-tighter mb-5 text-slate-800 border-b-2 border-slate-100 pb-3 flex items-center gap-2"><i data-lucide="bar-chart-2" class="w-5 h-5 text-indigo-500"></i> ${window.t('exec_vision')}</h3>
                     
                     <div class="grid grid-cols-2 md:grid-cols-5 gap-3 sm:gap-4 mb-8">
-                        <div onclick="window.setReportKpi('receita')" class="kpi-card cursor-pointer hover:-translate-y-1 hover:shadow-xl transition-all ${state.reportActiveKpi === 'receita' ? 'bg-emerald-700 ring-2 ring-emerald-400' : 'bg-emerald-600'} p-3 sm:p-4 rounded-2xl border border-emerald-500 shadow-lg print:bg-emerald-600 print:border-emerald-500 print:shadow-none print:ring-0 relative group flex flex-col justify-between h-full min-h-[110px] force-dark-bg">
+                        <div onclick="window.setReportKpi('receita')" class="cursor-pointer hover:-translate-y-1 hover:shadow-xl transition-all ${state.reportActiveKpi === 'receita' ? 'bg-emerald-700 ring-2 ring-emerald-400' : 'bg-emerald-600'} p-3 sm:p-4 rounded-2xl border border-emerald-500 shadow-lg print:bg-emerald-600 print:border-emerald-500 print:shadow-none print:ring-0 relative group flex flex-col justify-between h-full min-h-[110px] force-dark-bg">
                             <p class="text-[9px] sm:text-[10px] font-black uppercase text-emerald-100 mb-1 tracking-widest">${window.t('gross_revenue')}</p>
                             <p class="text-sm sm:text-base xl:text-lg font-black text-white force-white-text print:text-white tracking-tighter break-words my-2">${formatCurr(tv)}</p>
                             <p class="text-[8px] text-emerald-200 uppercase font-bold tracking-widest mt-auto opacity-80 group-hover:opacity-100 no-print transition-colors">${window.t('see_works')}</p>
                         </div>
-                        <div onclick="window.setReportKpi('entradas')" class="kpi-card cursor-pointer hover:-translate-y-1 hover:shadow-xl transition-all ${state.reportActiveKpi === 'entradas' ? 'bg-slate-800 ring-2 ring-emerald-500' : 'bg-slate-900'} p-3 sm:p-4 rounded-2xl border border-slate-700 border-l-4 border-l-emerald-500 shadow-lg print:bg-transparent print:border-slate-300 print:shadow-none print:ring-0 relative group flex flex-col justify-between h-full min-h-[110px] force-dark-bg">
+                        <div onclick="window.setReportKpi('entradas')" class="cursor-pointer hover:-translate-y-1 hover:shadow-xl transition-all ${state.reportActiveKpi === 'entradas' ? 'bg-slate-800 ring-2 ring-emerald-500' : 'bg-slate-900'} p-3 sm:p-4 rounded-2xl border border-slate-700 border-l-4 border-l-emerald-500 shadow-lg print:bg-transparent print:border-slate-300 print:shadow-none print:ring-0 relative group flex flex-col justify-between h-full min-h-[110px] force-dark-bg">
                             <p class="text-[9px] sm:text-[10px] font-black uppercase text-emerald-500 mb-1 tracking-widest">${window.t('entries')}</p>
                             <p class="text-sm sm:text-base xl:text-lg font-black text-white force-white-text print:text-emerald-700 tracking-tighter break-words my-2">${formatCurr(totalCollected)}</p>
                             <p class="text-[8px] text-emerald-600/50 uppercase font-bold tracking-widest mt-auto group-hover:text-emerald-400 no-print transition-colors">${window.t('see_received')}</p>
                         </div>
-                        <div onclick="window.setReportKpi('fluxo')" class="kpi-card cursor-pointer hover:-translate-y-1 hover:shadow-xl transition-all ${state.reportActiveKpi === 'fluxo' ? 'bg-slate-800 ring-2 ring-amber-500' : 'bg-slate-900'} p-3 sm:p-4 rounded-2xl border border-slate-700 border-l-4 border-l-amber-500 shadow-lg print:bg-transparent print:border-slate-300 print:shadow-none print:ring-0 relative group flex flex-col justify-between h-full min-h-[110px] force-dark-bg">
+                        <div onclick="window.setReportKpi('fluxo')" class="cursor-pointer hover:-translate-y-1 hover:shadow-xl transition-all ${state.reportActiveKpi === 'fluxo' ? 'bg-slate-800 ring-2 ring-amber-500' : 'bg-slate-900'} p-3 sm:p-4 rounded-2xl border border-slate-700 border-l-4 border-l-amber-500 shadow-lg print:bg-transparent print:border-slate-300 print:shadow-none print:ring-0 relative group flex flex-col justify-between h-full min-h-[110px] force-dark-bg">
                             <p class="text-[9px] sm:text-[10px] font-black uppercase text-amber-500 mb-1 tracking-widest">${window.t('to_receive')}</p>
                             <p class="text-sm sm:text-base xl:text-lg font-black text-white force-white-text print:text-amber-700 tracking-tighter break-words my-2">${formatCurr(totalOutstanding)}</p>
                             <p class="text-[8px] text-amber-600/50 uppercase font-bold tracking-widest mt-auto group-hover:text-amber-400 no-print transition-colors">${window.t('see_pending')}</p>
                         </div>
-                        <div onclick="window.setReportKpi('lucro')" class="kpi-card cursor-pointer hover:-translate-y-1 hover:shadow-xl transition-all ${state.reportActiveKpi === 'lucro' ? 'bg-slate-800 ring-2 ring-cyan-500' : 'bg-slate-900'} p-3 sm:p-4 rounded-2xl border border-slate-700 border-l-4 border-l-cyan-500 shadow-lg print:bg-transparent print:border-slate-300 print:shadow-none print:ring-0 relative group flex flex-col justify-between h-full min-h-[110px] force-dark-bg">
+                        <div onclick="window.setReportKpi('lucro')" class="cursor-pointer hover:-translate-y-1 hover:shadow-xl transition-all ${state.reportActiveKpi === 'lucro' ? 'bg-slate-800 ring-2 ring-cyan-500' : 'bg-slate-900'} p-3 sm:p-4 rounded-2xl border border-slate-700 border-l-4 border-l-cyan-500 shadow-lg print:bg-transparent print:border-slate-300 print:shadow-none print:ring-0 relative group flex flex-col justify-between h-full min-h-[110px] force-dark-bg">
                             <p class="text-[9px] sm:text-[10px] font-black uppercase text-cyan-500 mb-1 tracking-widest">${window.t('est_profit')}</p>
                             <p class="text-sm sm:text-base xl:text-lg font-black text-white force-white-text print:text-cyan-700 tracking-tighter break-words my-2">${formatCurr(tProfit)}</p>
                             <p class="text-[8px] text-cyan-600/50 uppercase font-bold tracking-widest mt-auto group-hover:text-cyan-500 no-print transition-colors">${window.t('see_details')}</p>
                         </div>
-                        <div onclick="window.setReportKpi('overview')" class="kpi-card cursor-pointer hover:-translate-y-1 hover:shadow-xl transition-all ${state.reportActiveKpi === 'overview' ? 'bg-slate-800 ring-2 ring-indigo-500' : 'bg-slate-900'} p-3 sm:p-4 rounded-2xl border border-slate-700 border-l-4 border-l-indigo-500 shadow-lg print:bg-transparent print:border-slate-300 print:shadow-none flex flex-col justify-between h-full min-h-[110px] group force-dark-bg">
+                        <div onclick="window.setReportKpi('overview')" class="cursor-pointer hover:-translate-y-1 hover:shadow-xl transition-all ${state.reportActiveKpi === 'overview' ? 'bg-slate-800 ring-2 ring-indigo-500' : 'bg-slate-900'} p-3 sm:p-4 rounded-2xl border border-slate-700 border-l-4 border-l-indigo-500 shadow-lg print:bg-transparent print:border-slate-300 print:shadow-none flex flex-col justify-between h-full min-h-[110px] group force-dark-bg">
                             <p class="text-[9px] sm:text-[10px] font-black uppercase text-indigo-400 mb-1 tracking-widest">${window.t('global_margin')}</p>
                             <p class="text-sm sm:text-base xl:text-lg font-black ${avgMargin >= 0 ? 'text-white force-white-text' : 'text-red-400'} print:text-indigo-700 tracking-tighter break-words my-2">${avgMargin.toFixed(1)}%</p>
                             <p class="text-[8px] text-indigo-400/50 uppercase font-bold tracking-widest mt-auto group-hover:text-indigo-400 no-print transition-colors">${window.t('see_summary')}</p>
@@ -1503,7 +1527,7 @@
             let summaryRows = Object.keys(sellerStats).sort().map(vend => {
                 const stats = sellerStats[vend];
                 let monthsHtml = stats.months.map(mVal => `<td class="p-2 sm:p-3 text-right ${mVal > 0 ? 'text-amber-600 font-bold' : 'text-slate-400'}">${formatCurr(mVal)}</td>`).join('');
-                return `<tr class="border-b border-white/5 hover:bg-white/5 transition-colors"><td class="p-2 sm:p-3 font-black uppercase whitespace-nowrap">${vend.split('@')[0]}</td>${monthsHtml}<td class="p-2 sm:p-3 text-right font-black text-emerald-500 bg-black/30">${formatCurr(stats.total)}</td></tr>`;
+                return `<tr class="border-b border-white/5 hover:bg-white/5 transition-colors"><td class="p-2 sm:p-3 font-black uppercase whitespace-nowrap text-slate-200 print:text-slate-800">${vend.split('@')[0]}</td>${monthsHtml}<td class="p-2 sm:p-3 text-right font-black text-emerald-500 bg-black/30 print:bg-slate-50">${formatCurr(stats.total)}</td></tr>`;
             }).join('');
             let summaryHeaderMonths = monthNames.map(m => `<th class="p-2 sm:p-3 text-right">${m}</th>`).join('');
 
@@ -1511,10 +1535,10 @@
                 const coProjects = enrichedProjects.filter(({p}) => p.empresa === companyName);
                 if (coProjects.length === 0) return '';
                 const tableRows = coProjects.map(({p, f}) => {
-                    const profitCol = canViewCosts ? `<td class="p-3 sm:p-4 text-right font-black ${f.lucroBruto >= 0 ? 'text-cyan-500' : 'text-red-500'}">${formatCurr(f.lucroBruto)}</td><td class="p-3 sm:p-4 text-right font-black ${f.margemLucro >= 0 ? 'text-indigo-400' : 'text-red-500'}">${f.margemLucro.toFixed(1)}%</td>` : '';
-                    return `<tr class="border-b border-white/5 text-[10px] sm:text-xs text-left text-slate-200 hover:bg-white/5 transition-colors"><td class="p-3 sm:p-4 font-bold text-[9px] sm:text-[10px] text-slate-400">${p.numeroProposta || '-'} / ${p.numeroInvoice || '-'}</td><td class="p-3 sm:p-4 font-black uppercase text-white"><div class="flex flex-col"><span>${p.cliente || ''}</span><span class="text-[8px] sm:text-[9px] font-bold text-slate-500 mt-0.5">${tStatus(p.status)}</span></div></td><td class="p-3 sm:p-4 font-bold text-slate-300">${p.vendedor?.split('@')[0] || ''}</td><td class="p-3 sm:p-4 text-right">${formatCurr(p.valorTotal)}</td><td class="p-3 sm:p-4 text-right font-black text-emerald-400">${formatCurr(f.totalRecebido)}</td><td class="p-3 sm:p-4 text-right font-black text-amber-500">${formatCurr(f.commLiberada)}</td>${profitCol}</tr>`;
+                    const profitCol = canViewCosts ? `<td class="p-3 sm:p-4 text-right font-black ${f.lucroBruto >= 0 ? 'text-cyan-500 print:text-cyan-600' : 'text-red-500'}">${formatCurr(f.lucroBruto)}</td><td class="p-3 sm:p-4 text-right font-black ${f.margemLucro >= 0 ? 'text-indigo-400 print:text-indigo-600' : 'text-red-500'}">${f.margemLucro.toFixed(1)}%</td>` : '';
+                    return `<tr class="border-b border-white/5 text-[10px] sm:text-xs text-left text-slate-200 print:text-slate-800 hover:bg-white/5 transition-colors"><td class="p-3 sm:p-4 font-bold text-[9px] sm:text-[10px] text-slate-400 print:text-slate-500">${p.numeroProposta || '-'} / ${p.numeroInvoice || '-'}</td><td class="p-3 sm:p-4 font-black uppercase text-white print:text-black"><div class="flex flex-col"><span>${p.cliente || ''}</span><span class="text-[8px] sm:text-[9px] font-bold text-slate-500 print:text-slate-400 mt-0.5">${tStatus(p.status)}</span></div></td><td class="p-3 sm:p-4 font-bold text-slate-300 print:text-slate-600">${p.vendedor?.split('@')[0] || ''}</td><td class="p-3 sm:p-4 text-right">${formatCurr(p.valorTotal)}</td><td class="p-3 sm:p-4 text-right font-black text-emerald-400 print:text-emerald-600">${formatCurr(f.totalRecebido)}</td><td class="p-3 sm:p-4 text-right font-black text-amber-500 print:text-amber-600">${formatCurr(f.commLiberada)}</td>${profitCol}</tr>`;
                 }).join('');
-                return `<div class="mb-10"><h4 class="text-sm font-black text-slate-300 bg-black/40 inline-block px-4 py-2 rounded-t-xl uppercase tracking-widest border border-b-0 border-white/5">${companyName}</h4><div class="overflow-x-auto print:overflow-visible border border-white/5 rounded-xl rounded-tl-none print:border-none shadow-sm"><table class="w-full"><thead class="bg-black/20 border-b border-white/5 print:bg-transparent"><tr class="font-black uppercase text-[8px] sm:text-[9px] text-slate-500 text-left tracking-widest"><th class="p-3 sm:p-4">${window.t('prop_inv')}</th><th class="p-3 sm:p-4">${window.t('f_client')}</th><th class="p-3 sm:p-4">${window.t('f_seller')}</th><th class="p-3 sm:p-4 text-right">${window.t('f_gross')}</th><th class="p-3 sm:p-4 text-right bg-emerald-500/10 text-emerald-400 print:bg-transparent">Recebido</th><th class="p-3 sm:p-4 text-right bg-amber-500/10 text-amber-400 print:bg-transparent">${window.t('comm_released')}</th>${canViewCosts ? `<th class="p-3 sm:p-4 text-right bg-cyan-950/20 text-cyan-400 print:bg-transparent">${window.t('real_profit')}</th><th class="p-3 sm:p-4 text-right bg-indigo-900/20 text-indigo-400 print:bg-transparent">${window.t('margin')}</th>` : ''}</tr></thead><tbody>${tableRows}</tbody></table></div></div>`;
+                return `<div class="mb-10"><h4 class="text-sm font-black text-slate-300 print:text-slate-700 bg-black/40 print:bg-slate-100 inline-block px-4 py-2 rounded-t-xl uppercase tracking-widest border border-b-0 border-white/5 print:border-slate-200">${companyName}</h4><div class="overflow-x-auto print:overflow-visible border border-white/5 print:border-slate-200 rounded-xl rounded-tl-none print:border-none shadow-sm"><table class="w-full"><thead class="bg-black/20 print:bg-slate-50 border-b border-white/5 print:border-slate-200 print:bg-transparent"><tr class="font-black uppercase text-[8px] sm:text-[9px] text-slate-500 text-left tracking-widest"><th class="p-3 sm:p-4">${window.t('prop_inv')}</th><th class="p-3 sm:p-4">${window.t('f_client')}</th><th class="p-3 sm:p-4">${window.t('f_seller')}</th><th class="p-3 sm:p-4 text-right">${window.t('f_gross')}</th><th class="p-3 sm:p-4 text-right bg-emerald-500/10 print:bg-emerald-50 text-emerald-400 print:text-emerald-700 print:bg-transparent">Recebido</th><th class="p-3 sm:p-4 text-right bg-amber-500/10 print:bg-amber-50 text-amber-400 print:text-amber-700 print:bg-transparent">${window.t('comm_released')}</th>${canViewCosts ? `<th class="p-3 sm:p-4 text-right bg-cyan-950/20 print:bg-cyan-50 text-cyan-400 print:text-cyan-700 print:bg-transparent">${window.t('real_profit')}</th><th class="p-3 sm:p-4 text-right bg-indigo-900/20 print:bg-indigo-50 text-indigo-400 print:text-indigo-700 print:bg-transparent">${window.t('margin')}</th>` : ''}</tr></thead><tbody>${tableRows}</tbody></table></div></div>`;
             };
 
             let detailedTablesHTML = '';
@@ -1529,18 +1553,18 @@
             bottomHTML = `
                 <div class="full-report-only animate-fade-in mt-14">
                     <div class="mb-14 print:mb-8">
-                        <div class="flex justify-between items-center mb-5 border-b-2 border-white/5 pb-3">
-                            <h3 class="text-base sm:text-lg font-black uppercase tracking-tighter text-slate-200 flex items-center gap-2"><i data-lucide="users" class="w-5 h-5 text-amber-500"></i> ${window.t('comm_paid_month')} (${currentYear})</h3>
+                        <div class="flex justify-between items-center mb-5 border-b-2 border-white/5 print:border-slate-100 pb-3">
+                            <h3 class="text-base sm:text-lg font-black uppercase tracking-tighter text-slate-200 print:text-slate-800 flex items-center gap-2"><i data-lucide="users" class="w-5 h-5 text-amber-500"></i> ${window.t('comm_paid_month')} (${currentYear})</h3>
                         </div>
-                        <div class="overflow-x-auto print:overflow-visible border border-white/5 rounded-2xl print:border-none shadow-sm">
+                        <div class="overflow-x-auto print:overflow-visible border border-white/5 print:border-slate-200 rounded-2xl print:border-none shadow-sm">
                             <table class="w-full">
-                                <thead class="bg-black/20 border-b border-white/5 print:bg-transparent"><tr class="font-black uppercase text-[8px] sm:text-[9px] text-slate-500 text-left tracking-widest"><th class="p-3 sm:p-4">${window.t('f_seller')}</th>${summaryHeaderMonths}<th class="p-3 sm:p-4 text-right bg-black/40 print:bg-transparent text-slate-300">${window.t('total_year')}</th></tr></thead>
+                                <thead class="bg-black/20 print:bg-slate-100 border-b border-white/5 print:border-slate-200 print:bg-transparent"><tr class="font-black uppercase text-[8px] sm:text-[9px] text-slate-500 text-left tracking-widest"><th class="p-3 sm:p-4">${window.t('f_seller')}</th>${summaryHeaderMonths}<th class="p-3 sm:p-4 text-right bg-black/40 print:bg-slate-200 print:bg-transparent text-slate-300 print:text-slate-700">${window.t('total_year')}</th></tr></thead>
                                 <tbody>${summaryRows || `<tr><td colspan="14" class="p-6 text-center text-slate-500 text-xs italic">${window.t('no_data_year')}</td></tr>`}</tbody>
                             </table>
                         </div>
                     </div>
                     <div class="mb-8">
-                        <h3 class="text-base sm:text-lg font-black uppercase tracking-tighter mb-5 text-slate-200 border-b-2 border-white/5 pb-3 flex items-center gap-2"><i data-lucide="list-checks" class="w-5 h-5 text-emerald-500"></i> ${window.t('detailed_struct')}</h3>
+                        <h3 class="text-base sm:text-lg font-black uppercase tracking-tighter mb-5 text-slate-200 print:text-slate-800 border-b-2 border-white/5 print:border-slate-100 pb-3 flex items-center gap-2"><i data-lucide="list-checks" class="w-5 h-5 text-emerald-500"></i> ${window.t('detailed_struct')}</h3>
                         ${detailedTablesHTML}
                     </div>
                 </div>
@@ -1551,20 +1575,20 @@
             
             if (state.reportActiveKpi === 'receita') {
                 kpiTitle = `Detalhamento: ${window.t('gross_revenue')}`;
-                sRows = enrichedProjects.map(({p}) => `<tr class="border-b border-white/5 text-[10px] sm:text-xs text-left text-slate-200 hover:bg-white/5 transition-colors"><td class="p-3 sm:p-4 font-bold text-slate-400">${p.numeroProposta || '-'} / ${p.numeroInvoice || '-'}</td><td class="p-3 sm:p-4 font-black uppercase text-white"><div class="flex flex-col"><span>${p.cliente || ''}</span><span class="text-[8px] sm:text-[9px] font-bold text-slate-500 mt-0.5">${tStatus(p.status)}</span></div></td><td class="p-3 sm:p-4 font-bold text-slate-300">${p.vendedor?.split('@')[0] || ''}</td><td class="p-3 sm:p-4 text-right font-black text-slate-100 text-sm">${formatCurr(p.valorTotal)}</td></tr>`).join('');
-                specificTableHTML = `<table class="w-full"><thead class="bg-black/20 border-b border-white/5 print:bg-transparent"><tr class="font-black uppercase text-[8px] sm:text-[9px] text-slate-500 text-left tracking-widest"><th class="p-3 sm:p-4">${window.t('prop_inv')}</th><th class="p-3 sm:p-4">${window.t('f_client')}</th><th class="p-3 sm:p-4">${window.t('f_seller')}</th><th class="p-3 sm:p-4 text-right">${window.t('f_gross')}</th></tr></thead><tbody>${sRows || `<tr><td colspan="4" class="p-6 text-center text-slate-500 text-xs italic">${window.t('no_active_works')}</td></tr>`}</tbody></table>`;
+                sRows = enrichedProjects.map(({p}) => `<tr class="border-b border-white/5 print:border-slate-100 text-[10px] sm:text-xs text-left text-slate-200 print:text-slate-800 hover:bg-white/5 transition-colors"><td class="p-3 sm:p-4 font-bold text-slate-400 print:text-slate-500">${p.numeroProposta || '-'} / ${p.numeroInvoice || '-'}</td><td class="p-3 sm:p-4 font-black uppercase text-white print:text-black"><div class="flex flex-col"><span>${p.cliente || ''}</span><span class="text-[8px] sm:text-[9px] font-bold text-slate-500 print:text-slate-400 mt-0.5">${tStatus(p.status)}</span></div></td><td class="p-3 sm:p-4 font-bold text-slate-300 print:text-slate-600">${p.vendedor?.split('@')[0] || ''}</td><td class="p-3 sm:p-4 text-right font-black text-slate-100 print:text-slate-800 text-sm">${formatCurr(p.valorTotal)}</td></tr>`).join('');
+                specificTableHTML = `<table class="w-full"><thead class="bg-black/20 print:bg-slate-100 border-b border-white/5 print:border-slate-200 print:bg-transparent"><tr class="font-black uppercase text-[8px] sm:text-[9px] text-slate-500 text-left tracking-widest"><th class="p-3 sm:p-4">${window.t('prop_inv')}</th><th class="p-3 sm:p-4">${window.t('f_client')}</th><th class="p-3 sm:p-4">${window.t('f_seller')}</th><th class="p-3 sm:p-4 text-right">${window.t('f_gross')}</th></tr></thead><tbody>${sRows || `<tr><td colspan="4" class="p-6 text-center text-slate-500 text-xs italic">${window.t('no_active_works')}</td></tr>`}</tbody></table>`;
             } else if (state.reportActiveKpi === 'entradas') {
                 kpiTitle = `Detalhamento: ${window.t('entries')}`;
-                sRows = enrichedProjects.filter(({f}) => f.totalRecebido > 0).map(({p, f}) => `<tr class="border-b border-white/5 text-[10px] sm:text-xs text-left text-slate-200 hover:bg-white/5 transition-colors"><td class="p-3 sm:p-4 font-bold text-slate-400">${p.numeroProposta || '-'} / ${p.numeroInvoice || '-'}</td><td class="p-3 sm:p-4 font-black uppercase text-white"><div class="flex flex-col"><span>${p.cliente || ''}</span><span class="text-[8px] sm:text-[9px] font-bold text-slate-500 mt-0.5">${tStatus(p.status)}</span></div></td><td class="p-3 sm:p-4 font-bold text-slate-300">${p.vendedor?.split('@')[0] || ''}</td><td class="p-3 sm:p-4 text-right text-slate-400">${formatCurr(p.valorTotal)}</td><td class="p-3 sm:p-4 text-right font-black text-emerald-400 text-sm">${formatCurr(f.totalRecebido)}</td></tr>`).join('');
-                specificTableHTML = `<table class="w-full"><thead class="bg-black/20 border-b border-white/5 print:bg-transparent"><tr class="font-black uppercase text-[8px] sm:text-[9px] text-slate-500 text-left tracking-widest"><th class="p-3 sm:p-4">${window.t('prop_inv')}</th><th class="p-3 sm:p-4">${window.t('f_client')}</th><th class="p-3 sm:p-4">${window.t('f_seller')}</th><th class="p-3 sm:p-4 text-right">${window.t('f_gross')}</th><th class="p-3 sm:p-4 text-right">Total Recebido</th></tr></thead><tbody>${sRows || `<tr><td colspan="5" class="p-6 text-center text-slate-500 text-xs italic">Nenhum recebimento encontrado.</td></tr>`}</tbody></table>`;
+                sRows = enrichedProjects.filter(({f}) => f.totalRecebido > 0).map(({p, f}) => `<tr class="border-b border-white/5 print:border-slate-100 text-[10px] sm:text-xs text-left text-slate-200 print:text-slate-800 hover:bg-white/5 transition-colors"><td class="p-3 sm:p-4 font-bold text-slate-400 print:text-slate-500">${p.numeroProposta || '-'} / ${p.numeroInvoice || '-'}</td><td class="p-3 sm:p-4 font-black uppercase text-white print:text-black"><div class="flex flex-col"><span>${p.cliente || ''}</span><span class="text-[8px] sm:text-[9px] font-bold text-slate-500 print:text-slate-400 mt-0.5">${tStatus(p.status)}</span></div></td><td class="p-3 sm:p-4 font-bold text-slate-300 print:text-slate-600">${p.vendedor?.split('@')[0] || ''}</td><td class="p-3 sm:p-4 text-right text-slate-400 print:text-slate-500">${formatCurr(p.valorTotal)}</td><td class="p-3 sm:p-4 text-right font-black text-emerald-400 print:text-emerald-600 text-sm">${formatCurr(f.totalRecebido)}</td></tr>`).join('');
+                specificTableHTML = `<table class="w-full"><thead class="bg-black/20 print:bg-slate-100 border-b border-white/5 print:border-slate-200 print:bg-transparent"><tr class="font-black uppercase text-[8px] sm:text-[9px] text-slate-500 text-left tracking-widest"><th class="p-3 sm:p-4">${window.t('prop_inv')}</th><th class="p-3 sm:p-4">${window.t('f_client')}</th><th class="p-3 sm:p-4">${window.t('f_seller')}</th><th class="p-3 sm:p-4 text-right">${window.t('f_gross')}</th><th class="p-3 sm:p-4 text-right">Total Recebido</th></tr></thead><tbody>${sRows || `<tr><td colspan="5" class="p-6 text-center text-slate-500 text-xs italic">Nenhum recebimento encontrado.</td></tr>`}</tbody></table>`;
             } else if (state.reportActiveKpi === 'fluxo') {
                 kpiTitle = `Detalhamento: ${window.t('to_receive')}`;
-                sRows = enrichedProjects.filter(({p, f}) => (p.valorTotal - f.totalRecebido) > 0).map(({p, f}) => `<tr class="border-b border-white/5 text-[10px] sm:text-xs text-left text-slate-200 hover:bg-white/5 transition-colors"><td class="p-3 sm:p-4 font-bold text-slate-400">${p.numeroProposta || '-'} / ${p.numeroInvoice || '-'}</td><td class="p-3 sm:p-4 font-black uppercase text-white"><div class="flex flex-col"><span>${p.cliente || ''}</span><span class="text-[8px] sm:text-[9px] font-bold text-slate-500 mt-0.5">${tStatus(p.status)}</span></div></td><td class="p-3 sm:p-4 font-bold text-slate-300">${p.vendedor?.split('@')[0] || ''}</td><td class="p-3 sm:p-4 text-right text-slate-400">${formatCurr(p.valorTotal)}</td><td class="p-3 sm:p-4 text-right text-emerald-400">${formatCurr(f.totalRecebido)}</td><td class="p-3 sm:p-4 text-right font-black text-amber-500 text-sm">${formatCurr(p.valorTotal - f.totalRecebido)}</td></tr>`).join('');
-                specificTableHTML = `<table class="w-full"><thead class="bg-black/20 border-b border-white/5 print:bg-transparent"><tr class="font-black uppercase text-[8px] sm:text-[9px] text-slate-500 text-left tracking-widest"><th class="p-3 sm:p-4">${window.t('prop_inv')}</th><th class="p-3 sm:p-4">${window.t('f_client')}</th><th class="p-3 sm:p-4">${window.t('f_seller')}</th><th class="p-3 sm:p-4 text-right">${window.t('f_gross')}</th><th class="p-3 sm:p-4 text-right">Recebido</th><th class="p-3 sm:p-4 text-right">${window.t('missing_receive')}</th></tr></thead><tbody>${sRows || `<tr><td colspan="6" class="p-6 text-center text-slate-500 text-xs italic">Nenhum saldo pendente.</td></tr>`}</tbody></table>`;
+                sRows = enrichedProjects.filter(({p, f}) => (p.valorTotal - f.totalRecebido) > 0).map(({p, f}) => `<tr class="border-b border-white/5 print:border-slate-100 text-[10px] sm:text-xs text-left text-slate-200 print:text-slate-800 hover:bg-white/5 transition-colors"><td class="p-3 sm:p-4 font-bold text-slate-400 print:text-slate-500">${p.numeroProposta || '-'} / ${p.numeroInvoice || '-'}</td><td class="p-3 sm:p-4 font-black uppercase text-white print:text-black"><div class="flex flex-col"><span>${p.cliente || ''}</span><span class="text-[8px] sm:text-[9px] font-bold text-slate-500 print:text-slate-400 mt-0.5">${tStatus(p.status)}</span></div></td><td class="p-3 sm:p-4 font-bold text-slate-300 print:text-slate-600">${p.vendedor?.split('@')[0] || ''}</td><td class="p-3 sm:p-4 text-right text-slate-400 print:text-slate-500">${formatCurr(p.valorTotal)}</td><td class="p-3 sm:p-4 text-right text-emerald-400 print:text-emerald-600">${formatCurr(f.totalRecebido)}</td><td class="p-3 sm:p-4 text-right font-black text-amber-500 print:text-amber-500 text-sm">${formatCurr(p.valorTotal - f.totalRecebido)}</td></tr>`).join('');
+                specificTableHTML = `<table class="w-full"><thead class="bg-black/20 print:bg-slate-100 border-b border-white/5 print:border-slate-200 print:bg-transparent"><tr class="font-black uppercase text-[8px] sm:text-[9px] text-slate-500 text-left tracking-widest"><th class="p-3 sm:p-4">${window.t('prop_inv')}</th><th class="p-3 sm:p-4">${window.t('f_client')}</th><th class="p-3 sm:p-4">${window.t('f_seller')}</th><th class="p-3 sm:p-4 text-right">${window.t('f_gross')}</th><th class="p-3 sm:p-4 text-right">Recebido</th><th class="p-3 sm:p-4 text-right">${window.t('missing_receive')}</th></tr></thead><tbody>${sRows || `<tr><td colspan="6" class="p-6 text-center text-slate-500 text-xs italic">Nenhum saldo pendente.</td></tr>`}</tbody></table>`;
             } else if (state.reportActiveKpi === 'lucro') {
                 kpiTitle = `Detalhamento: ${window.t('est_profit')} e ${window.t('margin')}`;
-                sRows = enrichedProjects.map(({p, f}) => `<tr class="border-b border-white/5 text-[10px] sm:text-xs text-left text-slate-200 hover:bg-white/5 transition-colors"><td class="p-3 sm:p-4 font-bold text-slate-400">${p.numeroProposta || '-'} / ${p.numeroInvoice || '-'}</td><td class="p-3 sm:p-4 font-black uppercase text-white"><div class="flex flex-col"><span>${p.cliente || ''}</span><span class="text-[8px] sm:text-[9px] font-bold text-slate-500 mt-0.5">${tStatus(p.status)}</span></div></td><td class="p-3 sm:p-4 text-right text-slate-400">${formatCurr(p.valorTotal)}</td><td class="p-3 sm:p-4 text-right text-red-400">${formatCurr(f.totalDespesas)}</td><td class="p-3 sm:p-4 text-right font-black ${f.lucroBruto >= 0 ? 'text-cyan-400' : 'text-red-500'} text-sm">${formatCurr(f.lucroBruto)}</td><td class="p-3 sm:p-4 text-right font-black ${f.margemLucro >= 0 ? 'text-indigo-400' : 'text-red-500'} text-sm">${f.margemLucro.toFixed(1)}%</td></tr>`).join('');
-                specificTableHTML = `<table class="w-full"><thead class="bg-black/20 border-b border-white/5 print:bg-transparent"><tr class="font-black uppercase text-[8px] sm:text-[9px] text-slate-500 text-left tracking-widest"><th class="p-3 sm:p-4">${window.t('prop_inv')}</th><th class="p-3 sm:p-4">${window.t('f_client')}</th><th class="p-3 sm:p-4 text-right">${window.t('f_gross')}</th><th class="p-3 sm:p-4 text-right">${window.t('total_expenses')}</th><th class="p-3 sm:p-4 text-right">${window.t('real_profit')}</th><th class="p-3 sm:p-4 text-right">${window.t('margin')} %</th></tr></thead><tbody>${sRows || `<tr><td colspan="6" class="p-6 text-center text-slate-500 text-xs italic">${window.t('no_active_works')}</td></tr>`}</tbody></table>`;
+                sRows = enrichedProjects.map(({p, f}) => `<tr class="border-b border-white/5 print:border-slate-100 text-[10px] sm:text-xs text-left text-slate-200 print:text-slate-800 hover:bg-white/5 transition-colors"><td class="p-3 sm:p-4 font-bold text-slate-400 print:text-slate-500">${p.numeroProposta || '-'} / ${p.numeroInvoice || '-'}</td><td class="p-3 sm:p-4 font-black uppercase text-white print:text-black"><div class="flex flex-col"><span>${p.cliente || ''}</span><span class="text-[8px] sm:text-[9px] font-bold text-slate-500 print:text-slate-400 mt-0.5">${tStatus(p.status)}</span></div></td><td class="p-3 sm:p-4 text-right text-slate-400 print:text-slate-500">${formatCurr(p.valorTotal)}</td><td class="p-3 sm:p-4 text-right text-red-400 print:text-red-500">${formatCurr(f.totalDespesas)}</td><td class="p-3 sm:p-4 text-right font-black ${f.lucroBruto >= 0 ? 'text-cyan-400 print:text-cyan-600' : 'text-red-500'} text-sm">${formatCurr(f.lucroBruto)}</td><td class="p-3 sm:p-4 text-right font-black ${f.margemLucro >= 0 ? 'text-indigo-400 print:text-indigo-600' : 'text-red-500'} text-sm">${f.margemLucro.toFixed(1)}%</td></tr>`).join('');
+                specificTableHTML = `<table class="w-full"><thead class="bg-black/20 print:bg-slate-100 border-b border-white/5 print:border-slate-200 print:bg-transparent"><tr class="font-black uppercase text-[8px] sm:text-[9px] text-slate-500 text-left tracking-widest"><th class="p-3 sm:p-4">${window.t('prop_inv')}</th><th class="p-3 sm:p-4">${window.t('f_client')}</th><th class="p-3 sm:p-4 text-right">${window.t('f_gross')}</th><th class="p-3 sm:p-4 text-right">${window.t('total_expenses')}</th><th class="p-3 sm:p-4 text-right">${window.t('real_profit')}</th><th class="p-3 sm:p-4 text-right">${window.t('margin')} %</th></tr></thead><tbody>${sRows || `<tr><td colspan="6" class="p-6 text-center text-slate-500 text-xs italic">${window.t('no_active_works')}</td></tr>`}</tbody></table>`;
             } else if (state.reportActiveKpi.startsWith('status_')) {
                 const targetStatusMap = {
                     'status_aprovado': '✅ Aprovado',
@@ -1574,21 +1598,21 @@
                 };
                 const targetStatus = targetStatusMap[state.reportActiveKpi];
                 kpiTitle = `Funil: ${tStatus(targetStatus).replace('✅ ', '')}`;
-                sRows = enrichedProjects.filter(({p}) => p.status === targetStatus).map(({p, f}) => `<tr class="border-b border-white/5 text-[10px] sm:text-xs text-left text-slate-200 hover:bg-white/5 transition-colors"><td class="p-3 sm:p-4 font-bold text-slate-400">${p.numeroProposta || '-'} / ${p.numeroInvoice || '-'}</td><td class="p-3 sm:p-4 font-black uppercase text-white"><div class="flex flex-col"><span>${p.cliente || ''}</span><span class="text-[8px] sm:text-[9px] font-bold text-slate-500 mt-0.5">${tStatus(p.status)}</span></div></td><td class="p-3 sm:p-4 font-bold text-slate-300">${p.vendedor?.split('@')[0] || ''}</td><td class="p-3 sm:p-4 text-right font-black text-slate-100 text-sm">${formatCurr(p.valorTotal)}</td></tr>`).join('');
-                specificTableHTML = `<table class="w-full"><thead class="bg-black/20 border-b border-white/5 print:bg-transparent"><tr class="font-black uppercase text-[8px] sm:text-[9px] text-slate-500 text-left tracking-widest"><th class="p-3 sm:p-4">${window.t('prop_inv')}</th><th class="p-3 sm:p-4">${window.t('f_client')}</th><th class="p-3 sm:p-4">${window.t('f_seller')}</th><th class="p-3 sm:p-4 text-right">${window.t('f_gross')}</th></tr></thead><tbody>${sRows || `<tr><td colspan="4" class="p-6 text-center text-slate-500 text-xs italic">Nenhuma obra nesta etapa.</td></tr>`}</tbody></table>`;
+                sRows = enrichedProjects.filter(({p}) => p.status === targetStatus).map(({p, f}) => `<tr class="border-b border-white/5 print:border-slate-100 text-[10px] sm:text-xs text-left text-slate-200 print:text-slate-800 hover:bg-white/5 transition-colors"><td class="p-3 sm:p-4 font-bold text-slate-400 print:text-slate-500">${p.numeroProposta || '-'} / ${p.numeroInvoice || '-'}</td><td class="p-3 sm:p-4 font-black uppercase text-white print:text-black"><div class="flex flex-col"><span>${p.cliente || ''}</span><span class="text-[8px] sm:text-[9px] font-bold text-slate-500 print:text-slate-400 mt-0.5">${tStatus(p.status)}</span></div></td><td class="p-3 sm:p-4 font-bold text-slate-300 print:text-slate-600">${p.vendedor?.split('@')[0] || ''}</td><td class="p-3 sm:p-4 text-right font-black text-slate-100 print:text-slate-800 text-sm">${formatCurr(p.valorTotal)}</td></tr>`).join('');
+                specificTableHTML = `<table class="w-full"><thead class="bg-black/20 print:bg-slate-100 border-b border-white/5 print:border-slate-200 print:bg-transparent"><tr class="font-black uppercase text-[8px] sm:text-[9px] text-slate-500 text-left tracking-widest"><th class="p-3 sm:p-4">${window.t('prop_inv')}</th><th class="p-3 sm:p-4">${window.t('f_client')}</th><th class="p-3 sm:p-4">${window.t('f_seller')}</th><th class="p-3 sm:p-4 text-right">${window.t('f_gross')}</th></tr></thead><tbody>${sRows || `<tr><td colspan="4" class="p-6 text-center text-slate-500 text-xs italic">Nenhuma obra nesta etapa.</td></tr>`}</tbody></table>`;
             }
 
             bottomHTML = `
                 <div class="mt-8 mb-10 animate-fade-in">
-                    <div class="flex justify-between items-center mb-5 border-b-2 border-white/5 pb-3">
-                        <h3 class="text-base sm:text-lg font-black uppercase tracking-tighter text-indigo-400 flex items-center gap-2">
+                    <div class="flex justify-between items-center mb-5 border-b-2 border-white/5 print:border-slate-100 pb-3">
+                        <h3 class="text-base sm:text-lg font-black uppercase tracking-tighter text-indigo-400 print:text-indigo-600 flex items-center gap-2">
                             <i data-lucide="layout-list" class="w-5 h-5"></i> ${kpiTitle}
                         </h3>
                         <button onclick="window.printKpiReport()" class="hidden sm:inline-flex items-center gap-2 text-slate-800 bg-white hover:bg-slate-200 transition-all font-black text-[10px] uppercase tracking-widest px-4 py-2 rounded-xl shadow-md no-print force-dark-bg">
                             <i data-lucide="printer" class="w-3.5 h-3.5"></i> ${window.t('print_view')}
                         </button>
                     </div>
-                    <div class="overflow-x-auto print:overflow-visible border border-white/5 rounded-2xl print:border-none shadow-sm">
+                    <div class="overflow-x-auto print:overflow-visible border border-white/5 print:border-slate-200 rounded-2xl print:border-none shadow-sm">
                         ${specificTableHTML}
                     </div>
                 </div>
@@ -1606,7 +1630,7 @@
                     </div>
                 </div>
                 
-                <div class="bg-black/20 p-6 sm:p-10 rounded-[40px] shadow-inner text-slate-200 print:p-0 print:shadow-none print:bg-transparent">
+                <div class="bg-black/20 print:bg-transparent p-6 sm:p-10 rounded-[40px] shadow-inner text-slate-200 print:p-0 print:shadow-none border border-white/5 print:border-none">
                     ${ceoDashHTML}
 
                     <div id="dynamic-report-content">
@@ -1614,7 +1638,7 @@
                     </div>
                     
                     ${state.reportActiveKpi === 'overview' ? `
-                    <div class="mt-12 pt-8 border-t-4 border-white/10 flex justify-center no-print">
+                    <div class="mt-12 pt-8 border-t-4 border-white/10 print:border-slate-100 flex justify-center no-print">
                          <button onclick="window.printReport()" class="flex items-center gap-3 text-white force-white-text bg-slate-800 hover:bg-slate-700 transition-all font-black text-sm uppercase tracking-widest px-8 py-4 rounded-2xl shadow-xl hover:-translate-y-1">
                              <i data-lucide="printer" class="w-5 h-5"></i> ${window.t('print_full_rep')}
                          </button>
@@ -1630,6 +1654,10 @@
         if (u) {
             document.getElementById('auth-screen').classList.add('hidden'); document.getElementById('main-app').classList.remove('hidden');
             document.getElementById('user-display').innerText = u.email ? u.email.split('@')[0].toUpperCase() : "USR";
+            
+            // Check Se é o Super Admin (Mestre)
+            state.isSuperAdmin = (u.email.toLowerCase() === SUPER_ADMIN.toLowerCase());
+
             initData(); logAccess(u.email, 'Fez login no sistema');
         } else {
             document.getElementById('auth-screen').classList.remove('hidden'); document.getElementById('main-app').classList.add('hidden'); document.body.className = 'auth-body';
@@ -1649,26 +1677,64 @@
             if (!auth.currentUser) return; 
             const team = snap.docs.map(d => ({ id: d.id, ...d.data() })); state.team = team;
             
-            if (auth.currentUser.email.toLowerCase() === SUPER_ADMIN.toLowerCase()) {
-                state.currentUserRole = 'superadmin'; state.currentUserViewAll = true; state.currentUserViewCosts = true;
+            if (state.isSuperAdmin) {
+                // SUPER ADMIN tem passe livre para tudo
+                state.userPerms = { tab_proj: true, tab_new: true, tab_rep: true, fin: true, costs: true, smart: true, hvac: true, global: true };
             } else {
                 const myProfile = team.find(u => u.email.toLowerCase() === auth.currentUser.email.toLowerCase());
                 if (!myProfile) { window.showModal(window.t('modal_access_denied'), window.t('error'), 'error'); signOut(auth); return; }
-                state.currentUserRole = myProfile?.role || 'viewer';
-                state.currentUserViewAll = myProfile?.viewAll || false;
-                state.currentUserViewCosts = myProfile?.viewCosts || false;
+                
+                // Mapeia permissões do usuário
+                state.userPerms = {
+                    tab_proj: myProfile.p_tab_proj !== false, 
+                    tab_new: myProfile.p_tab_new === true, 
+                    tab_rep: myProfile.p_tab_rep === true,
+                    fin: myProfile.p_fin === true,
+                    costs: myProfile.p_costs === true || myProfile.viewCosts === true, // Mantém compatibilidade com perfil antigo
+                    smart: myProfile.p_smart !== false, // Default true
+                    hvac: myProfile.p_hvac !== false,   // Default true
+                    global: myProfile.p_global === true || myProfile.viewAll === true 
+                };
             }
+            
             window.applyPermissions(); renderVendedores();
 
             const container = document.getElementById('users-list');
-            if (container && ['admin', 'superadmin'].includes(state.currentUserRole)) {
+            if (container && state.isSuperAdmin) {
                 container.innerHTML = team.map(u => {
-                    let roleStr = "Editor", roleClass = "role-editor";
-                    if(u.role === 'admin' || u.email.toLowerCase() === SUPER_ADMIN.toLowerCase()) { roleStr = "Admin"; roleClass = "role-admin"; }
-                    if(u.role === 'viewer') { roleStr = "Viewer"; roleClass = "role-viewer"; }
-                    const tagViewAll = u.viewAll ? `<span class="role-tag bg-cyan-500/20 text-cyan-400 ml-1">GLOBAL</span>` : '';
-                    const tagCosts = u.viewCosts ? `<span class="role-tag bg-emerald-500/20 text-emerald-400 ml-1">COSTS</span>` : '';
-                    return `<div class="glass p-6 rounded-[24px] flex justify-between items-center border-l-8 border-gold shadow-lg transition-all hover:scale-[1.01]"><div class="text-left"><p class="font-black text-slate-100 text-lg flex items-center gap-2 flex-wrap">${u.email} <span class="role-tag ${roleClass}">${roleStr}</span> ${tagViewAll} ${tagCosts}</p><p class="text-xs text-slate-500 mt-1 uppercase tracking-widest">Senha: <span class="text-gold font-bold normal-case">${u.password}</span></p></div><div class="flex gap-2"><button onclick="window.editTeamMember('${u.id}', '${u.email}', '${u.password}', '${u.role}', ${!!u.viewAll}, ${!!u.viewCosts})" class="p-2 text-gold hover:bg-gold/10 rounded-lg"><i data-lucide="edit" size="18"></i></button><button onclick="window.deleteTeam('${u.id}')" class="p-2 text-red-500 hover:bg-red-500/10 rounded-lg ${u.email.toLowerCase() === SUPER_ADMIN.toLowerCase() ? 'hidden' : ''}"><i data-lucide="user-minus" size="18"></i></button></div></div>`;
+                    // Pega permissões do Firebase (ou defaults)
+                    const p = {
+                        smart: u.p_smart !== false, hvac: u.p_hvac !== false, global: u.p_global === true || u.viewAll === true,
+                        tab_proj: u.p_tab_proj !== false, tab_new: u.p_tab_new === true, tab_rep: u.p_tab_rep === true,
+                        fin: u.p_fin === true, costs: u.p_costs === true || u.viewCosts === true
+                    };
+                    
+                    const tagObj = encodeURIComponent(JSON.stringify(p));
+
+                    let tagsHTML = '';
+                    if(p.global) tagsHTML += `<span class="role-tag border-indigo-500 text-indigo-400 ml-1">VISÃO GLOBAL</span>`;
+                    if(p.smart) tagsHTML += `<span class="role-tag border-slate-500 text-slate-300 ml-1">SMART HOME</span>`;
+                    if(p.hvac) tagsHTML += `<span class="role-tag border-slate-500 text-slate-300 ml-1">HVAC</span>`;
+                    if(p.fin) tagsHTML += `<span class="role-tag border-emerald-500 text-emerald-400 ml-1">FINANÇAS</span>`;
+                    if(p.costs) tagsHTML += `<span class="role-tag border-cyan-500 text-cyan-400 ml-1">CUSTOS</span>`;
+                    
+                    let tabsHTML = '';
+                    if(p.tab_proj) tabsHTML += ' Projetos |';
+                    if(p.tab_new) tabsHTML += ' Nova Obra |';
+                    if(p.tab_rep) tabsHTML += ' Relatórios |';
+
+                    return `
+                    <div class="glass p-6 rounded-[24px] flex justify-between items-center border-l-8 border-gold shadow-lg transition-all hover:scale-[1.01]">
+                        <div class="text-left">
+                            <p class="font-black text-slate-100 text-lg flex items-center gap-2 flex-wrap">${u.email} ${tagsHTML}</p>
+                            <p class="text-[10px] text-slate-400 mt-1 uppercase tracking-widest font-bold">Abas Liberadas: <span class="text-gold">${tabsHTML}</span></p>
+                            <p class="text-[10px] text-slate-500 mt-1 uppercase tracking-widest">Senha: <span class="text-gold font-bold normal-case">${u.password}</span></p>
+                        </div>
+                        <div class="flex gap-2">
+                            <button onclick="window.editTeamMember('${u.id}', '${u.email}', '${u.password}', JSON.parse(decodeURIComponent('${tagObj}')))" class="p-2 text-gold hover:bg-gold/10 rounded-lg"><i data-lucide="edit" size="18"></i></button>
+                            <button onclick="window.deleteTeam('${u.id}')" class="p-2 text-red-500 hover:bg-red-500/10 rounded-lg ${u.email.toLowerCase() === SUPER_ADMIN.toLowerCase() ? 'hidden' : ''}"><i data-lucide="user-minus" size="18"></i></button>
+                        </div>
+                    </div>`;
                 }).join('');
                 try { lucide.createIcons(); } catch {}
             }
@@ -1713,17 +1779,32 @@
         };
 
         document.getElementById('team-form').onsubmit = async (e) => {
-            e.preventDefault(); if (!auth.currentUser) return;
-            const id = document.getElementById('t-id').value; const mail = document.getElementById('t-email').value.trim();
-            const pass = document.getElementById('t-pass').value; const role = document.getElementById('t-role').value;
-            const viewAll = document.getElementById('t-viewall').checked; 
-            const viewCosts = document.getElementById('t-viewcosts').checked; 
+            e.preventDefault(); if (!auth.currentUser || !state.isSuperAdmin) return;
+            
+            const id = document.getElementById('t-id').value; 
+            const mail = document.getElementById('t-email').value.trim();
+            const pass = document.getElementById('t-pass').value; 
+            
+            // Lê o novo sistema de permissões
+            const permData = {
+                email: mail, password: pass, updatedAt: serverTimestamp(),
+                p_smart: document.getElementById('p_smart').checked,
+                p_hvac: document.getElementById('p_hvac').checked,
+                p_global: document.getElementById('p_global').checked,
+                p_tab_proj: document.getElementById('p_tab_proj').checked,
+                p_tab_new: document.getElementById('p_tab_new').checked,
+                p_tab_rep: document.getElementById('p_tab_rep').checked,
+                p_fin: document.getElementById('p_fin').checked,
+                p_costs: document.getElementById('p_costs').checked
+            };
 
             try {
                 try { const secApp = initializeApp(firebaseConfig, "SecApp_" + Date.now()); const secAuth = getAuth(secApp); await createUserWithEmailAndPassword(secAuth, mail, pass); await signOut(secAuth); await deleteApp(secApp); } catch (authErr) {}
-                if (!id) { await addDoc(collection(db, 'artifacts', appId, 'public', 'data', 'user_credentials'), { email: mail, password: pass, role: role, viewAll: viewAll, viewCosts: viewCosts, updatedAt: serverTimestamp() }); logAccess(state.user.email, `Adicionou usuário: ${mail}`); } 
-                else { await updateDoc(doc(db, 'artifacts', appId, 'public', 'data', 'user_credentials', id), { email: mail, password: pass, role: role, viewAll: viewAll, viewCosts: viewCosts, updatedAt: serverTimestamp() }); logAccess(state.user.email, `Atualizou usuário: ${mail}`); }
-                e.target.reset(); document.getElementById('t-id').value = ''; document.getElementById('t-viewall').checked = false; document.getElementById('t-viewcosts').checked = false;
+                if (!id) { await addDoc(collection(db, 'artifacts', appId, 'public', 'data', 'user_credentials'), permData); logAccess(state.user.email, `Adicionou usuário: ${mail}`); } 
+                else { await updateDoc(doc(db, 'artifacts', appId, 'public', 'data', 'user_credentials', id), permData); logAccess(state.user.email, `Atualizou usuário: ${mail}`); }
+                e.target.reset(); document.getElementById('t-id').value = ''; 
+                document.querySelectorAll('.perm-checkbox').forEach(c => c.checked = false);
+                document.getElementById('p_smart').checked = true; document.getElementById('p_hvac').checked = true; document.getElementById('p_tab_proj').checked = true;
             } catch (err) { window.showModal('Erro', 'Erro ao salvar usuário: ' + err.message, 'error'); }
         };
     });
