@@ -30,21 +30,26 @@
         .app-body-light { background-color: #f8fafc; color: #0f172a; }
         .app-body-light .glass { background: #ffffff !important; border-color: #e2e8f0 !important; color: #0f172a; box-shadow: 0 10px 30px -10px rgba(0,0,0,0.1) !important;}
         
-        /* Proteção de contraste para textos no Light Mode */
-        .app-body-light .text-white:not(button *):not(button):not(.status-badge):not(.force-white-text) { color: #0f172a !important; }
+        /* --- PROTEÇÃO INTELIGENTE DE CONTRASTE --- 
+           Assegura que elementos escuros preservem a letra clara mesmo no Light Mode */
+        .app-body-light .text-white:not(button *):not(button):not(.status-badge):not(.force-white-text):not(.force-dark-bg):not(.force-dark-bg *) { color: #0f172a !important; }
         .force-white-text { color: #ffffff !important; }
         
-        /* Conversão de cores para o Light Mode */
-        .app-body-light .text-slate-200, .app-body-light .text-slate-300 { color: #334155 !important; }
-        .app-body-light .text-slate-400 { color: #475569 !important; }
-        .app-body-light .text-gold { color: #b45309 !important; } 
-        .app-body-light .text-emerald-400, .app-body-light .text-emerald-500 { color: #059669 !important; } 
-        .app-body-light .text-cyan-400, .app-body-light .text-cyan-300 { color: #0284c7 !important; } 
-        .app-body-light .text-red-400, .app-body-light .text-red-500 { color: #dc2626 !important; } 
-        .app-body-light .text-lime-500, .app-body-light .text-lime-400 { color: #4d7c0f !important; } 
-        .app-body-light .text-lime-600\/70 { color: rgba(77, 124, 15, 0.8) !important; } 
+        .app-body-light .text-slate-200:not(.force-dark-bg):not(.force-dark-bg *), 
+        .app-body-light .text-slate-300:not(.force-dark-bg):not(.force-dark-bg *) { color: #334155 !important; }
         
-        /* Ajustes Estruturais Light Mode - Fundo dos Cards */
+        .app-body-light .text-slate-400:not(.force-dark-bg):not(.force-dark-bg *) { color: #475569 !important; }
+        .app-body-light .text-gold:not(.force-dark-bg):not(.force-dark-bg *) { color: #b45309 !important; } 
+        .app-body-light .text-emerald-400:not(.force-dark-bg):not(.force-dark-bg *), 
+        .app-body-light .text-emerald-500:not(.force-dark-bg):not(.force-dark-bg *) { color: #059669 !important; } 
+        .app-body-light .text-cyan-400:not(.force-dark-bg):not(.force-dark-bg *), 
+        .app-body-light .text-cyan-300:not(.force-dark-bg):not(.force-dark-bg *) { color: #0284c7 !important; } 
+        .app-body-light .text-red-400:not(.force-dark-bg):not(.force-dark-bg *), 
+        .app-body-light .text-red-500:not(.force-dark-bg):not(.force-dark-bg *) { color: #dc2626 !important; } 
+        .app-body-light .text-amber-400:not(.force-dark-bg):not(.force-dark-bg *), 
+        .app-body-light .text-amber-500:not(.force-dark-bg):not(.force-dark-bg *) { color: #d97706 !important; }
+        
+        /* Ajustes Estruturais Light Mode */
         .app-body-light .bg-black\/20, .app-body-light .bg-black\/30, .app-body-light .bg-black\/40 { background-color: #f1f5f9 !important; border-color: #cbd5e1 !important; }
         .app-body-light .bg-cyan-950\/20 { background-color: #f0f9ff !important; border-color: #bae6fd !important; }
         .app-body-light .bg-emerald-500\/10 { background-color: #ecfdf5 !important; border-color: #a7f3d0 !important; }
@@ -52,9 +57,9 @@
         .app-body-light .border-white\/5, .app-body-light .border-white\/10 { border-color: #e2e8f0 !important; }
         .app-body-light header { background-color: #ffffff !important; border-bottom-color: #e2e8f0 !important; }
         
-        /* Ajuste de Contraste para KPIs e Funil no Light Mode */
-        .app-body-light .kpi-card { background-color: #ffffff !important; border-color: #cbd5e1 !important; box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1) !important; }
-        .app-body-light .kpi-card.active { background-color: #f8fafc !important; border-color: #94a3b8 !important; }
+        /* Mantém o card de Receita Bruta Verde no modo claro */
+        .app-body-light .bg-emerald-600 { background-color: #059669 !important; }
+        .app-body-light .bg-emerald-700 { background-color: #047857 !important; }
         
         .modern-input { width: 100%; padding: 14px 16px; border-radius: 12px; border: 1px solid rgba(148, 163, 184, 0.2); background: rgba(0,0,0,0.5); color: inherit; outline: none; transition: all 0.2s; font-size: 16px; }
         .app-body-light .modern-input { background: #fff !important; border: 1px solid #cbd5e1 !important; color: #0f172a !important; }
@@ -106,15 +111,20 @@
             .glass { background: #fff !important; border: 1px solid #cbd5e1 !important; box-shadow: none !important; filter: none !important; backdrop-filter: none !important; page-break-inside: avoid; }
             .text-white, .text-slate-200, .text-slate-300, .text-slate-400, .force-white-text { color: #0f172a !important; }
             .text-gold { color: #b45309 !important; font-weight: 900 !important; } 
+            
+            /* Força fundos corretos na impressão */
             .bg-slate-900, .bg-slate-800, .bg-black\/40 { background: #f8fafc !important; border-color: #cbd5e1 !important; color: #0f172a !important; }
+            .bg-emerald-600 { background: #059669 !important; color: #ffffff !important; }
+            .bg-emerald-600 .text-white { color: #ffffff !important; }
+            
             canvas { max-width: 100% !important; max-height: 250px !important; page-break-inside: avoid; }
             .overflow-x-auto { overflow: visible !important; } 
             tr { page-break-inside: avoid !important; }
             #report-output .grid { display: grid !important; }
-            body.printing-kpi .full-report-only { display: none !important; }
             
-            /* Força a cor branca nos badges do funil durante a impressão para ficarem legíveis */
-            .print-force-white { color: #ffffff !important; }
+            /* Impressão Direcionada Inteligente (Oculta cards se for imprimir visão) */
+            body.printing-kpi .hide-on-kpi-print { display: none !important; }
+            body.printing-kpi .full-report-only { display: none !important; }
         }
 
         .flag-btn { border: 1px solid rgba(15,23,42,0.12); border-radius: 14px; padding: 10px; transition: .2s; background: #fff; }
@@ -469,18 +479,18 @@
         if (type === 'confirm') {
             iconContainer.innerHTML = '<i data-lucide="help-circle" class="w-12 h-12 text-gold"></i>';
             btnContainer.innerHTML = `
-                <button onclick="window.closeCustomModal()" class="flex-1 px-4 py-3 bg-slate-700 text-white rounded-xl font-bold hover:bg-slate-600 transition-colors text-xs uppercase tracking-widest shadow-lg">Cancelar</button>
-                <button onclick="window.currentConfirmCallback()" class="flex-1 px-4 py-3 bg-red-600 text-white font-black rounded-xl hover:bg-red-500 transition-colors text-xs uppercase tracking-widest shadow-lg shadow-red-500/20">Confirmar</button>
+                <button onclick="window.closeCustomModal()" class="flex-1 px-4 py-3 bg-slate-700 text-white force-white-text rounded-xl font-bold hover:bg-slate-600 transition-colors text-xs uppercase tracking-widest shadow-lg">Cancelar</button>
+                <button onclick="window.currentConfirmCallback()" class="flex-1 px-4 py-3 bg-red-600 text-white force-white-text font-black rounded-xl hover:bg-red-500 transition-colors text-xs uppercase tracking-widest shadow-lg shadow-red-500/20">Confirmar</button>
             `;
         } else if (type === 'error') {
             iconContainer.innerHTML = '<i data-lucide="alert-circle" class="w-12 h-12 text-red-500"></i>';
             btnContainer.innerHTML = `
-                <button onclick="window.closeCustomModal()" class="w-full px-6 py-3 bg-slate-800 text-white font-black rounded-xl hover:bg-slate-700 transition-colors text-xs uppercase tracking-widest shadow-lg">OK</button>
+                <button onclick="window.closeCustomModal()" class="w-full px-6 py-3 bg-slate-800 text-white force-white-text font-black rounded-xl hover:bg-slate-700 transition-colors text-xs uppercase tracking-widest shadow-lg">OK</button>
             `;
         } else {
             iconContainer.innerHTML = '<i data-lucide="info" class="w-12 h-12 text-cyan-400"></i>';
             btnContainer.innerHTML = `
-                <button onclick="window.closeCustomModal()" class="w-full px-6 py-3 bg-cyan-600 text-white font-black rounded-xl hover:bg-cyan-500 transition-colors text-xs uppercase tracking-widest shadow-lg shadow-cyan-500/20">Entendido</button>
+                <button onclick="window.closeCustomModal()" class="w-full px-6 py-3 bg-cyan-600 text-white force-white-text font-black rounded-xl hover:bg-cyan-500 transition-colors text-xs uppercase tracking-widest shadow-lg shadow-cyan-500/20">Entendido</button>
             `;
         }
         document.getElementById('custom-modal').classList.add('active');
@@ -614,7 +624,6 @@
         }
     }
 
-    // --- NOVA LÓGICA DE FILTROS GLOBAIS DE EMPRESA ---
     window.selectUnit = (unit) => {
         state.company = unit;
         
@@ -955,7 +964,7 @@
             if (!state.activeModule) {
                 grid.innerHTML += `
                     <div class="mb-2 flex justify-between items-center no-print w-full">
-                        <button onclick="window.closeProjectDetails()" class="inline-flex items-center gap-3 text-white hover:text-gold transition-all font-black text-xs sm:text-sm uppercase tracking-widest px-6 py-4 bg-slate-800 rounded-2xl border border-white/10 hover:bg-slate-700 hover:scale-105 shadow-xl w-full sm:w-auto justify-center">
+                        <button onclick="window.closeProjectDetails()" class="inline-flex items-center gap-3 text-white hover:text-gold transition-all font-black text-xs sm:text-sm uppercase tracking-widest px-6 py-4 bg-slate-800 rounded-2xl border border-white/10 hover:bg-slate-700 hover:scale-105 shadow-xl w-full sm:w-auto justify-center force-white-text">
                             <i data-lucide="arrow-left" class="w-5 h-5"></i> Voltar aos Projetos
                         </button>
                     </div>
@@ -1015,88 +1024,6 @@
                 `;
             }
 
-            const cardClickEvent = isFocused ? '' : `onclick="window.openProjectDetails('${p.id}')"`;
-            const cardHoverClasses = isFocused ? '' : 'project-card clickable cursor-pointer';
-
-            let cardHTML = `<div class="glass p-6 md:p-8 rounded-[40px] border-l-[8px] relative shadow-2xl flex flex-col h-full print:border print:border-slate-300 print:shadow-none print:break-inside-avoid ${cardHoverClasses}" style="border-left-color: ${p.status === 'Finalizado' ? '#10b981' : '#f59e0b'}" ${cardClickEvent}>
-                
-                <div class="flex justify-between items-start mb-6">
-                    <span class="px-4 py-2 bg-white/5 border border-white/10 rounded-xl text-[10px] font-black uppercase tracking-widest text-slate-300 shadow-sm print:bg-slate-100 print:text-slate-800">${p.empresa || 'Sem Unidade'} ${p.archived ? '<span class="text-indigo-400 ml-1">(ARQUIVADA)</span>' : ''}</span>
-                    <div class="flex items-center gap-3 bg-black/20 p-2 px-4 rounded-full border border-white/5 print:hidden">
-                        <span class="status-badge ${f.statusColor}" title="Status Financeiro"></span>
-                        ${actionButtons}
-                    </div>
-                </div>
-
-                <div class="text-left mb-8"><h4 class="font-black text-3xl uppercase tracking-tight text-white force-white-text leading-none print:text-black">${p.cliente || 'Sem Nome'}</h4></div>
-
-                <div class="grid grid-cols-2 gap-y-6 gap-x-4 p-6 bg-black/20 rounded-[24px] border border-white/5 mb-10 text-left shadow-inner print:bg-transparent print:border-slate-200">
-                    <div><p class="text-xs font-black text-slate-500 uppercase tracking-widest mb-1.5">Vendedor</p><p class="text-sm font-bold text-slate-200 truncate print:text-black" title="${p.vendedor}">${p.vendedor?.split('@')[0] || '--'}</p></div>
-                    <div><p class="text-xs font-black text-slate-500 uppercase tracking-widest mb-1.5">Status da Obra</p><p class="text-sm font-black text-gold uppercase print:text-amber-700">${p.status || '✅ Aprovado'}</p></div>
-                    <div><p class="text-xs font-black text-slate-500 uppercase tracking-widest mb-1.5">Proposta / Invoice</p><p class="text-sm font-bold text-slate-200 print:text-black">${p.numeroProposta || '---'} <span class="text-slate-600 font-normal mx-1">|</span> ${p.numeroInvoice || '---'}</p></div>
-                    <div><p class="text-xs font-black text-slate-500 uppercase tracking-widest mb-1.5">Pagamento • % Comissão</p><p class="text-sm font-bold text-slate-200 print:text-black">${p.metodo || '--'} <span class="text-slate-600 font-normal mx-1">•</span> ${p.percComissao || 0}%</p></div>
-                </div>
-
-                <div class="mt-auto"></div>
-
-                <div class="space-y-4 mb-10 text-left">
-                    <div class="flex justify-between text-xs font-black uppercase text-slate-400 print:text-slate-800"><span>Timeline</span><span style="color: ${colorHex}">${prog}%</span></div>
-                    <div class="progress-track print:bg-slate-200"><div class="progress-bar-fill print:!bg-black" style="width: ${prog}%; background-color: ${colorHex};"></div></div>
-                    <div class="flex justify-between text-xs font-extrabold uppercase mt-2">
-                        <span class="print:text-black">${p.dataInicio ? new Date(p.dataInicio + 'T12:00:00').toLocaleDateString() : '-'}</span>
-                        <span class="${n > e && p.status !== 'Finalizado' ? 'text-red-500' : 'text-gold'} print:!text-black">${n > e && p.status !== 'Finalizado' ? 'ATRASADA' : (prog === 100 ? 'CONCLUÍDA' : (Number.isFinite(e) ? Math.ceil((e - n) / (1000 * 3600 * 24)) : 0) + ' DIAS RESTANTES')}</span>
-                    </div>
-                </div>
-
-                <div class="bg-gradient-to-br from-black/50 to-transparent p-6 rounded-[24px] border border-white/5 shadow-inner print:bg-transparent print:border-slate-300">
-                    <p class="text-xs font-black text-slate-500 uppercase mb-2 text-center tracking-widest">Valor Contrato Bruto</p>
-                    <p class="text-4xl font-black text-white force-white-text text-center tracking-tight print:text-black">${formatCurr(p.valorTotal)}</p>
-                </div>
-
-                <div class="flex justify-between gap-4 mt-6 no-print">
-                    <div class="flex-1 rounded-2xl p-4 text-center border ${clientBorderColor} shadow-inner transition-colors">
-                        <p class="text-[10px] font-black uppercase text-slate-400 mb-1.5 tracking-widest">Cliente</p>
-                        <p class="text-sm font-black ${clientPaidColor}">${clientPaidText}</p>
-                    </div>
-                    <div class="flex-1 rounded-2xl p-4 text-center border ${sellerBorderColor} shadow-inner transition-colors">
-                        <p class="text-[10px] font-black uppercase text-slate-400 mb-1.5 tracking-widest">Comissão</p>
-                        <p class="text-sm font-black ${sellerPaidColor}">${sellerPaidText}</p>
-                    </div>
-                </div>
-            `;
-
-            if (!isFocused) {
-                cardHTML += `
-                    <div class="mt-8 text-center text-xs text-slate-500 font-bold uppercase tracking-widest no-print opacity-60 group-hover:opacity-100 flex items-center justify-center gap-2 transition-opacity">
-                        CLIQUE NO CARD PARA ABRIR <i data-lucide="chevron-right" class="w-4 h-4"></i>
-                    </div>
-                </div>`; 
-            } else {
-                if (!state.activeModule) {
-                    const gridCols = canViewCosts ? 'sm:grid-cols-2' : 'grid-cols-1';
-                    cardHTML += `
-                        <div class="grid grid-cols-1 ${gridCols} gap-6 mt-10 pt-8 border-t border-white/10 no-print animate-fade-in">
-                            <button onclick="event.stopPropagation(); window.openProjectModule('commissions')" class="py-10 px-4 bg-slate-900 rounded-[32px] border border-gold/20 hover:border-gold/60 hover:shadow-[0_0_40px_-5px_rgba(251,191,36,0.3)] transition-all flex flex-col items-center justify-center gap-4 group relative overflow-hidden force-dark-bg">
-                                <div class="absolute inset-0 bg-gold/5 transform scale-0 group-hover:scale-100 transition-transform rounded-[32px] duration-500 origin-center"></div>
-                                <i data-lucide="wallet" class="w-12 h-12 text-gold group-hover:scale-110 group-hover:-translate-y-2 transition-all relative z-10"></i>
-                                <span class="text-sm sm:text-base font-black uppercase text-gold tracking-[0.15em] relative z-10 text-center">Comissões e Finanças</span>
-                            </button>
-                            ${canViewCosts ? `
-                            <button onclick="event.stopPropagation(); window.openProjectModule('costs')" class="py-10 px-4 bg-slate-900 rounded-[32px] border border-cyan-500/20 hover:border-cyan-500/60 hover:shadow-[0_0_40px_-5px_rgba(34,211,238,0.3)] transition-all flex flex-col items-center justify-center gap-4 group relative overflow-hidden force-dark-bg">
-                                <div class="absolute inset-0 bg-cyan-500/5 transform scale-0 group-hover:scale-100 transition-transform rounded-[32px] duration-500 origin-center"></div>
-                                <i data-lucide="calculator" class="w-12 h-12 text-cyan-400 group-hover:scale-110 group-hover:-translate-y-2 transition-all relative z-10"></i>
-                                <span class="text-sm sm:text-base font-black uppercase text-cyan-400 tracking-[0.15em] relative z-10 text-center">Gestão de Custos</span>
-                            </button>
-                            ` : ''}
-                        </div>
-                    </div>`; 
-                } else {
-                    cardHTML += `</div>`; 
-                }
-            }
-            
-            grid.innerHTML += cardHTML;
-
             // ==========================================
             // NÍVEL 3: TELA DE MÓDULO ABERTA
             // ==========================================
@@ -1120,7 +1047,7 @@
                                     <p class="text-xs sm:text-sm font-black text-emerald-400 uppercase tracking-widest print:text-emerald-800">Recebimentos do Cliente</p>
                                     <div class="flex items-center gap-4">
                                         <span class="text-xs sm:text-sm font-bold text-emerald-500 print:text-emerald-800">${formatCurr(f.totalRecebido)} / ${formatCurr(p.valorTotal)}</span>
-                                        ${isAdmin ? `<button onclick="openEditRecModal('${p.id}')" class="text-sm font-bold text-white force-white-text hover:text-emerald-200 transition-colors no-print p-2 bg-emerald-600 rounded-lg shadow-md"><i data-lucide="edit-3" class="w-5 h-5"></i></button>` : ''}
+                                        ${isAdmin ? `<button onclick="window.openEditRecModal('${p.id}')" class="text-sm font-bold text-white force-white-text hover:text-emerald-200 transition-colors no-print p-2 bg-emerald-600 rounded-lg shadow-md"><i data-lucide="edit-3" class="w-5 h-5"></i></button>` : ''}
                                     </div>
                                 </div>
                                 <div class="max-h-60 overflow-y-auto scrollbar-hide px-2 print:max-h-none">
@@ -1138,7 +1065,7 @@
                             <div class="space-y-4 pt-8 border-t border-white/10 print:border-slate-200">
                                 <div class="flex justify-between items-center bg-gold/10 p-4 px-5 rounded-2xl border border-gold/20 print:bg-amber-50 print:border-amber-200">
                                     <p class="text-xs sm:text-sm font-black text-gold uppercase tracking-widest print:text-amber-800">Pagamentos ao Vendedor</p>
-                                    ${isAdmin ? `<button onclick="openEditPaymentModal('${p.id}')" class="text-sm font-bold text-white force-white-text hover:text-gold transition-colors no-print p-2 bg-slate-800 rounded-lg shadow-md border border-gold/30"><i data-lucide="edit-3" class="w-5 h-5"></i></button>` : ''}
+                                    ${isAdmin ? `<button onclick="window.openEditPaymentModal('${p.id}')" class="text-sm font-bold text-white force-white-text hover:text-gold transition-colors no-print p-2 bg-slate-800 rounded-lg shadow-md border border-gold/30"><i data-lucide="edit-3" class="w-5 h-5"></i></button>` : ''}
                                 </div>
                                 <div class="max-h-60 overflow-y-auto scrollbar-hide px-2 print:max-h-none">
                                     ${(p.pagamentosEfetuados || []).map(pay => `<div class="flex justify-between items-center text-sm sm:text-base py-4 border-b border-white/5 last:border-0 print:border-slate-200 hover:bg-white/5 rounded px-2"><span class="text-slate-300 print:text-black">${pay.data ? new Date(pay.data + 'T12:00:00').toLocaleDateString() : '-'}</span><span class="font-black text-gold print:text-amber-700">- ${formatCurr(pay.valor)}</span></div>`).join('') || '<p class="text-sm italic text-slate-600 text-center py-6">Nenhum pagamento efetuado.</p>'}
@@ -1175,21 +1102,21 @@
                     moduleContent = `
                         <!-- KPIs -->
                         <div class="grid grid-cols-2 print:grid-cols-4 sm:grid-cols-4 gap-4 sm:gap-6 mb-10 print:mb-6">
-                            <div class="bg-black/40 p-5 rounded-[24px] border border-white/5 shadow-inner print:bg-transparent print:border-slate-300 print:p-3 print:rounded-xl">
-                                <p class="text-[10px] font-black uppercase text-slate-500 mb-2 tracking-widest print:text-slate-600 print:text-[8px]">Orçamento (Budget)</p>
+                            <div class="bg-black/40 p-5 rounded-[24px] border border-white/5 shadow-inner print:bg-transparent print:border-slate-300 print:p-3 print:rounded-xl force-dark-bg">
+                                <p class="text-[10px] font-black uppercase text-slate-400 mb-2 tracking-widest print:text-slate-600 print:text-[8px]">Orçamento (Budget)</p>
                                 <p class="text-xl sm:text-2xl font-black text-white force-white-text print:text-black print:text-base truncate">${formatCurr(f.orcamento)}</p>
                             </div>
-                            <div class="bg-black/40 p-5 rounded-[24px] border border-white/5 shadow-inner print:bg-transparent print:border-slate-300 print:p-3 print:rounded-xl">
-                                <p class="text-[10px] font-black uppercase text-slate-500 mb-2 tracking-widest print:text-slate-600 print:text-[8px]">Despesas Totais</p>
-                                <p class="text-xl sm:text-2xl font-black ${budgetColor} print:!text-black print:text-base truncate">${formatCurr(f.totalDespesas)}</p>
+                            <div class="bg-black/40 p-5 rounded-[24px] border border-white/5 shadow-inner print:bg-transparent print:border-slate-300 print:p-3 print:rounded-xl force-dark-bg">
+                                <p class="text-[10px] font-black uppercase text-slate-400 mb-2 tracking-widest print:text-slate-600 print:text-[8px]">Despesas Totais</p>
+                                <p class="text-xl sm:text-2xl font-black text-red-400 print:!text-black print:text-base truncate">${formatCurr(f.totalDespesas)}</p>
                             </div>
-                            <div class="bg-black/40 p-5 rounded-[24px] border border-white/5 shadow-inner print:bg-transparent print:border-slate-300 print:p-3 print:rounded-xl">
-                                <p class="text-[10px] font-black uppercase text-slate-500 mb-2 tracking-widest print:text-slate-600 print:text-[8px]">Lucro Real</p>
-                                <p class="text-xl sm:text-2xl font-black ${profitColor} print:text-black print:text-base truncate">${formatCurr(f.lucroBruto)}</p>
+                            <div class="bg-black/40 p-5 rounded-[24px] border border-white/5 shadow-inner print:bg-transparent print:border-slate-300 print:p-3 print:rounded-xl force-dark-bg">
+                                <p class="text-[10px] font-black uppercase text-slate-400 mb-2 tracking-widest print:text-slate-600 print:text-[8px]">Lucro Real</p>
+                                <p class="text-xl sm:text-2xl font-black text-cyan-400 print:text-black print:text-base truncate">${formatCurr(f.lucroBruto)}</p>
                             </div>
-                            <div class="bg-black/40 p-5 rounded-[24px] border border-white/5 shadow-inner print:bg-transparent print:border-slate-300 print:p-3 print:rounded-xl">
-                                <p class="text-[10px] font-black uppercase text-slate-500 mb-2 tracking-widest print:text-slate-600 print:text-[8px]">Margem</p>
-                                <p class="text-xl sm:text-2xl font-black ${marginColor} print:text-black print:text-base truncate">${f.margemLucro.toFixed(1)}%</p>
+                            <div class="bg-black/40 p-5 rounded-[24px] border border-white/5 shadow-inner print:bg-transparent print:border-slate-300 print:p-3 print:rounded-xl force-dark-bg">
+                                <p class="text-[10px] font-black uppercase text-slate-400 mb-2 tracking-widest print:text-slate-600 print:text-[8px]">Margem</p>
+                                <p class="text-xl sm:text-2xl font-black text-indigo-400 print:text-black print:text-base truncate">${f.margemLucro.toFixed(1)}%</p>
                             </div>
                         </div>
 
@@ -1264,6 +1191,88 @@
 
                 return; 
             }
+
+            const cardClickEvent = isFocused ? '' : `onclick="window.openProjectDetails('${p.id}')"`;
+            const cardHoverClasses = isFocused ? '' : 'project-card clickable cursor-pointer';
+
+            let cardHTML = `<div class="glass p-6 md:p-8 rounded-[40px] border-l-[8px] relative shadow-2xl flex flex-col h-full print:border print:border-slate-300 print:shadow-none print:break-inside-avoid ${cardHoverClasses}" style="border-left-color: ${p.status === 'Finalizado' ? '#10b981' : '#f59e0b'}" ${cardClickEvent}>
+                
+                <div class="flex justify-between items-start mb-6">
+                    <span class="px-4 py-2 bg-white/5 border border-white/10 rounded-xl text-[10px] font-black uppercase tracking-widest text-slate-300 shadow-sm print:bg-slate-100 print:text-slate-800">${p.empresa || 'Sem Unidade'} ${p.archived ? '<span class="text-indigo-400 ml-1">(ARQUIVADA)</span>' : ''}</span>
+                    <div class="flex items-center gap-3 bg-black/20 p-2 px-4 rounded-full border border-white/5 print:hidden">
+                        <span class="status-badge ${f.statusColor}" title="Status Financeiro"></span>
+                        ${actionButtons}
+                    </div>
+                </div>
+
+                <div class="text-left mb-8"><h4 class="font-black text-3xl uppercase tracking-tight text-white force-white-text leading-none print:text-black">${p.cliente || 'Sem Nome'}</h4></div>
+
+                <div class="grid grid-cols-2 gap-y-6 gap-x-4 p-6 bg-black/20 rounded-[24px] border border-white/5 mb-10 text-left shadow-inner print:bg-transparent print:border-slate-200">
+                    <div><p class="text-xs font-black text-slate-500 uppercase tracking-widest mb-1.5">Vendedor</p><p class="text-sm font-bold text-slate-200 truncate print:text-black" title="${p.vendedor}">${p.vendedor?.split('@')[0] || '--'}</p></div>
+                    <div><p class="text-xs font-black text-slate-500 uppercase tracking-widest mb-1.5">Status da Obra</p><p class="text-sm font-black text-gold uppercase print:text-amber-700">${p.status || '✅ Aprovado'}</p></div>
+                    <div><p class="text-xs font-black text-slate-500 uppercase tracking-widest mb-1.5">Proposta / Invoice</p><p class="text-sm font-bold text-slate-200 print:text-black">${p.numeroProposta || '---'} <span class="text-slate-600 font-normal mx-1">|</span> ${p.numeroInvoice || '---'}</p></div>
+                    <div><p class="text-xs font-black text-slate-500 uppercase tracking-widest mb-1.5">Pagamento • % Comissão</p><p class="text-sm font-bold text-slate-200 print:text-black">${p.metodo || '--'} <span class="text-slate-600 font-normal mx-1">•</span> ${p.percComissao || 0}%</p></div>
+                </div>
+
+                <div class="mt-auto"></div>
+
+                <div class="space-y-4 mb-10 text-left">
+                    <div class="flex justify-between text-xs font-black uppercase text-slate-400 print:text-slate-800"><span>Timeline</span><span style="color: ${colorHex}">${prog}%</span></div>
+                    <div class="progress-track print:bg-slate-200"><div class="progress-bar-fill print:!bg-black" style="width: ${prog}%; background-color: ${colorHex};"></div></div>
+                    <div class="flex justify-between text-xs font-extrabold uppercase mt-2">
+                        <span class="print:text-black">${p.dataInicio ? new Date(p.dataInicio + 'T12:00:00').toLocaleDateString() : '-'}</span>
+                        <span class="${n > e && p.status !== 'Finalizado' ? 'text-red-500' : 'text-gold'} print:!text-black">${n > e && p.status !== 'Finalizado' ? 'ATRASADA' : (prog === 100 ? 'CONCLUÍDA' : (Number.isFinite(e) ? Math.ceil((e - n) / (1000 * 3600 * 24)) : 0) + ' DIAS RESTANTES')}</span>
+                    </div>
+                </div>
+
+                <div class="bg-gradient-to-br from-black/50 to-transparent p-6 rounded-[24px] border border-white/5 shadow-inner print:bg-transparent print:border-slate-300">
+                    <p class="text-xs font-black text-slate-500 uppercase mb-2 text-center tracking-widest">Valor Contrato Bruto</p>
+                    <p class="text-4xl font-black text-white force-white-text text-center tracking-tight print:text-black">${formatCurr(p.valorTotal)}</p>
+                </div>
+
+                <div class="flex justify-between gap-4 mt-6 no-print">
+                    <div class="flex-1 rounded-2xl p-4 text-center border ${clientBorderColor} shadow-inner transition-colors">
+                        <p class="text-[10px] font-black uppercase text-slate-400 mb-1.5 tracking-widest">Cliente</p>
+                        <p class="text-sm font-black ${clientPaidColor}">${clientPaidText}</p>
+                    </div>
+                    <div class="flex-1 rounded-2xl p-4 text-center border ${sellerBorderColor} shadow-inner transition-colors">
+                        <p class="text-[10px] font-black uppercase text-slate-400 mb-1.5 tracking-widest">Comissão</p>
+                        <p class="text-sm font-black ${sellerPaidColor}">${sellerPaidText}</p>
+                    </div>
+                </div>
+            `;
+
+            if (!isFocused) {
+                cardHTML += `
+                    <div class="mt-8 text-center text-xs text-slate-500 font-bold uppercase tracking-widest no-print opacity-60 group-hover:opacity-100 flex items-center justify-center gap-2 transition-opacity">
+                        CLIQUE NO CARD PARA ABRIR <i data-lucide="chevron-right" class="w-4 h-4"></i>
+                    </div>
+                </div>`; 
+            } else {
+                if (!state.activeModule) {
+                    const gridCols = canViewCosts ? 'sm:grid-cols-2' : 'grid-cols-1';
+                    cardHTML += `
+                        <div class="grid grid-cols-1 ${gridCols} gap-6 mt-10 pt-8 border-t border-white/10 no-print animate-fade-in">
+                            <button onclick="event.stopPropagation(); window.openProjectModule('commissions')" class="py-10 px-4 bg-slate-900 rounded-[32px] border border-gold/20 hover:border-gold/60 hover:shadow-[0_0_40px_-5px_rgba(251,191,36,0.3)] transition-all flex flex-col items-center justify-center gap-4 group relative overflow-hidden force-dark-bg">
+                                <div class="absolute inset-0 bg-gold/5 transform scale-0 group-hover:scale-100 transition-transform rounded-[32px] duration-500 origin-center"></div>
+                                <i data-lucide="wallet" class="w-12 h-12 text-gold group-hover:scale-110 group-hover:-translate-y-2 transition-all relative z-10"></i>
+                                <span class="text-sm sm:text-base font-black uppercase text-gold tracking-[0.15em] relative z-10 text-center force-white-text">Comissões e Finanças</span>
+                            </button>
+                            ${canViewCosts ? `
+                            <button onclick="event.stopPropagation(); window.openProjectModule('costs')" class="py-10 px-4 bg-slate-900 rounded-[32px] border border-cyan-500/20 hover:border-cyan-500/60 hover:shadow-[0_0_40px_-5px_rgba(34,211,238,0.3)] transition-all flex flex-col items-center justify-center gap-4 group relative overflow-hidden force-dark-bg">
+                                <div class="absolute inset-0 bg-cyan-500/5 transform scale-0 group-hover:scale-100 transition-transform rounded-[32px] duration-500 origin-center"></div>
+                                <i data-lucide="calculator" class="w-12 h-12 text-cyan-400 group-hover:scale-110 group-hover:-translate-y-2 transition-all relative z-10"></i>
+                                <span class="text-sm sm:text-base font-black uppercase text-cyan-400 tracking-[0.15em] relative z-10 text-center force-white-text">Gestão de Custos</span>
+                            </button>
+                            ` : ''}
+                        </div>
+                    </div>`; 
+                } else {
+                    cardHTML += `</div>`; 
+                }
+            }
+            
+            grid.innerHTML += cardHTML;
         });
 
         try { lucide.createIcons(); } catch {}
@@ -1285,14 +1294,14 @@
 
         let tv = 0, tc = 0, tProfit = 0, totalCollected = 0; 
         let statusFunnel = {
-            '✅ Aprovado': { id: 'status_aprovado', count: 0, val: 0, label: 'Aprovados', color: 'text-emerald-500', border: 'border-emerald-500/20', bg: 'bg-emerald-500/10', hoverRing: 'hover:ring-emerald-400', badgeBg: 'bg-emerald-500' },
-            'Aguardando Início': { id: 'status_aguardando', count: 0, val: 0, label: 'Aguardando Início', color: 'text-amber-500', border: 'border-amber-500/20', bg: 'bg-amber-500/10', hoverRing: 'hover:ring-amber-400', badgeBg: 'bg-amber-500' },
-            'Em Execução': { id: 'status_execucao', count: 0, val: 0, label: 'Em Execução', color: 'text-blue-500', border: 'border-blue-500/20', bg: 'bg-blue-500/10', hoverRing: 'hover:ring-blue-400', badgeBg: 'bg-blue-500' },
-            'Finalizado': { id: 'status_finalizado', count: 0, val: 0, label: 'Concluídas', color: 'text-yellow-500', border: 'border-yellow-500/20', bg: 'bg-yellow-500/10', hoverRing: 'hover:ring-yellow-500', badgeBg: 'bg-yellow-500' }
+            '✅ Aprovado': { id: 'status_aprovado', count: 0, val: 0, label: 'Aprovados', color: 'text-emerald-500', border: 'border-emerald-500/20', bg: 'bg-emerald-500/10', hoverRing: 'hover:ring-emerald-400' },
+            'Aguardando Início': { id: 'status_aguardando', count: 0, val: 0, label: 'Aguardando Início', color: 'text-amber-500', border: 'border-amber-500/20', bg: 'bg-amber-500/10', hoverRing: 'hover:ring-amber-400' },
+            'Em Execução': { id: 'status_execucao', count: 0, val: 0, label: 'Em Execução', color: 'text-blue-500', border: 'border-blue-500/20', bg: 'bg-blue-500/10', hoverRing: 'hover:ring-blue-400' },
+            'Finalizado': { id: 'status_finalizado', count: 0, val: 0, label: 'Concluídas', color: 'text-gold', border: 'border-gold/20', bg: 'bg-gold/10', hoverRing: 'hover:ring-gold' }
         };
 
         const currentYear = new Date().getFullYear();
-        const monthNames = state.lang === 'en' ? ['Jan','Fev','Mar','Abr','Mai','Jun','Jul','Ago','Sep','Out','Nov','Dez'] : ['Jan','Fev','Mar','Abr','Mai','Jun','Jul','Ago','Set','Out','Nov','Dez'];
+        const monthNames = state.lang === 'en' ? ['Jan','Fev','Mar','Abr','Mai','Jun','Jul','Aug','Sep','Oct','Nov','Dec'] : ['Jan','Fev','Mar','Abr','Mai','Jun','Jul','Ago','Set','Out','Nov','Dez'];
         const sellerStats = {};
 
         const enrichedProjects = baseFiltered.map(p => {
@@ -1338,9 +1347,9 @@
                 <div onclick="window.setReportKpi('${s.id}')" class="cursor-pointer hover:-translate-y-1 hover:shadow-md transition-all p-4 sm:p-5 rounded-2xl border ${s.border} ${s.bg} flex flex-col justify-between print:bg-transparent print:border-slate-300 shadow-sm group ${isActive ? `ring-2 ring-offset-2 ring-offset-slate-900 ${s.hoverRing.replace('hover:', '')}` : ''}">
                     <div class="flex justify-between items-start mb-3">
                         <p class="text-[9px] sm:text-[10px] font-black uppercase ${s.color} tracking-widest print:text-slate-600 pr-2 leading-tight">${s.label}</p>
-                        <span class="text-[10px] sm:text-xs font-black text-white force-white-text ${s.badgeBg} px-2 py-0.5 rounded-lg shadow-sm print:text-white print:bg-slate-800">${s.count}</span>
+                        <span class="text-[10px] sm:text-xs font-black text-white force-white-text bg-slate-800 px-2 py-0.5 rounded-lg shadow-sm print:text-white print-force-white">${s.count}</span>
                     </div>
-                    <p class="text-base sm:text-lg font-black text-slate-200 tracking-tight print:text-black break-words">${formatCurr(s.val)}</p>
+                    <p class="text-base sm:text-lg font-black text-slate-800 tracking-tight print:text-black break-words">${formatCurr(s.val)}</p>
                 </div>
                 `;
             }).join('');
@@ -1350,30 +1359,30 @@
                     <h3 class="text-lg sm:text-xl font-black uppercase tracking-tighter mb-5 text-slate-800 border-b-2 border-slate-100 pb-3 flex items-center gap-2"><i data-lucide="bar-chart-2" class="w-5 h-5 text-indigo-500"></i> Visão Executiva Institucional</h3>
                     
                     <div class="grid grid-cols-2 md:grid-cols-5 gap-3 sm:gap-4 mb-8">
-                        <div onclick="window.setReportKpi('receita')" class="cursor-pointer hover:-translate-y-1 hover:shadow-xl transition-all ${state.reportActiveKpi === 'receita' ? 'bg-slate-800 ring-2 ring-lime-500' : 'bg-slate-900'} p-3 sm:p-4 rounded-2xl border border-slate-700 border-l-4 border-l-lime-500 shadow-lg print:bg-transparent print:border-slate-300 print:shadow-none print:ring-0 relative group flex flex-col justify-between h-full min-h-[110px]">
-                            <p class="text-[9px] sm:text-[10px] font-black uppercase text-lime-500 mb-1 tracking-widest">Receita Bruta</p>
-                            <p class="text-sm sm:text-base xl:text-lg font-black text-white print:text-black tracking-tighter break-words my-2">${formatCurr(tv)}</p>
-                            <p class="text-[8px] text-lime-600/70 uppercase font-bold tracking-widest mt-auto group-hover:text-lime-500 no-print transition-colors">Ver Obras ➔</p>
+                        <div onclick="window.setReportKpi('receita')" class="cursor-pointer hover:-translate-y-1 hover:shadow-xl transition-all ${state.reportActiveKpi === 'receita' ? 'bg-emerald-700 ring-2 ring-emerald-400' : 'bg-emerald-600'} p-3 sm:p-4 rounded-2xl border border-emerald-500 shadow-lg print:bg-emerald-600 print:border-emerald-500 print:shadow-none print:ring-0 relative group flex flex-col justify-between h-full min-h-[110px] force-dark-bg">
+                            <p class="text-[9px] sm:text-[10px] font-black uppercase text-emerald-100 mb-1 tracking-widest">Receita Bruta</p>
+                            <p class="text-sm sm:text-base xl:text-lg font-black text-white force-white-text print:text-white tracking-tighter break-words my-2">${formatCurr(tv)}</p>
+                            <p class="text-[8px] text-emerald-200 uppercase font-bold tracking-widest mt-auto opacity-80 group-hover:opacity-100 no-print transition-colors">Ver Obras ➔</p>
                         </div>
-                        <div onclick="window.setReportKpi('entradas')" class="cursor-pointer hover:-translate-y-1 hover:shadow-xl transition-all ${state.reportActiveKpi === 'entradas' ? 'bg-slate-800 ring-2 ring-emerald-500' : 'bg-slate-900'} p-3 sm:p-4 rounded-2xl border border-slate-700 border-l-4 border-l-emerald-500 shadow-lg print:bg-transparent print:border-slate-300 print:shadow-none print:ring-0 relative group flex flex-col justify-between h-full min-h-[110px]">
+                        <div onclick="window.setReportKpi('entradas')" class="cursor-pointer hover:-translate-y-1 hover:shadow-xl transition-all ${state.reportActiveKpi === 'entradas' ? 'bg-slate-800 ring-2 ring-emerald-500' : 'bg-slate-900'} p-3 sm:p-4 rounded-2xl border border-slate-700 border-l-4 border-l-emerald-500 shadow-lg print:bg-transparent print:border-slate-300 print:shadow-none print:ring-0 relative group flex flex-col justify-between h-full min-h-[110px] force-dark-bg">
                             <p class="text-[9px] sm:text-[10px] font-black uppercase text-emerald-500 mb-1 tracking-widest">Entradas</p>
-                            <p class="text-sm sm:text-base xl:text-lg font-black text-white print:text-emerald-700 tracking-tighter break-words my-2">${formatCurr(totalCollected)}</p>
-                            <p class="text-[8px] text-emerald-600/70 uppercase font-bold tracking-widest mt-auto group-hover:text-emerald-500 no-print transition-colors">Ver Recebidos ➔</p>
+                            <p class="text-sm sm:text-base xl:text-lg font-black text-white force-white-text print:text-emerald-700 tracking-tighter break-words my-2">${formatCurr(totalCollected)}</p>
+                            <p class="text-[8px] text-emerald-600/50 uppercase font-bold tracking-widest mt-auto group-hover:text-emerald-400 no-print transition-colors">Ver Recebidos ➔</p>
                         </div>
-                        <div onclick="window.setReportKpi('fluxo')" class="cursor-pointer hover:-translate-y-1 hover:shadow-xl transition-all ${state.reportActiveKpi === 'fluxo' ? 'bg-slate-800 ring-2 ring-amber-500' : 'bg-slate-900'} p-3 sm:p-4 rounded-2xl border border-slate-700 border-l-4 border-l-amber-500 shadow-lg print:bg-transparent print:border-slate-300 print:shadow-none print:ring-0 relative group flex flex-col justify-between h-full min-h-[110px]">
+                        <div onclick="window.setReportKpi('fluxo')" class="cursor-pointer hover:-translate-y-1 hover:shadow-xl transition-all ${state.reportActiveKpi === 'fluxo' ? 'bg-slate-800 ring-2 ring-amber-500' : 'bg-slate-900'} p-3 sm:p-4 rounded-2xl border border-slate-700 border-l-4 border-l-amber-500 shadow-lg print:bg-transparent print:border-slate-300 print:shadow-none print:ring-0 relative group flex flex-col justify-between h-full min-h-[110px] force-dark-bg">
                             <p class="text-[9px] sm:text-[10px] font-black uppercase text-amber-500 mb-1 tracking-widest">A Receber</p>
-                            <p class="text-sm sm:text-base xl:text-lg font-black text-white print:text-amber-700 tracking-tighter break-words my-2">${formatCurr(totalOutstanding)}</p>
-                            <p class="text-[8px] text-amber-600/70 uppercase font-bold tracking-widest mt-auto group-hover:text-amber-500 no-print transition-colors">Ver Pendentes ➔</p>
+                            <p class="text-sm sm:text-base xl:text-lg font-black text-white force-white-text print:text-amber-700 tracking-tighter break-words my-2">${formatCurr(totalOutstanding)}</p>
+                            <p class="text-[8px] text-amber-600/50 uppercase font-bold tracking-widest mt-auto group-hover:text-amber-400 no-print transition-colors">Ver Pendentes ➔</p>
                         </div>
-                        <div onclick="window.setReportKpi('lucro')" class="cursor-pointer hover:-translate-y-1 hover:shadow-xl transition-all ${state.reportActiveKpi === 'lucro' ? 'bg-slate-800 ring-2 ring-cyan-500' : 'bg-slate-900'} p-3 sm:p-4 rounded-2xl border border-slate-700 border-l-4 border-l-cyan-500 shadow-lg print:bg-transparent print:border-slate-300 print:shadow-none print:ring-0 relative group flex flex-col justify-between h-full min-h-[110px]">
+                        <div onclick="window.setReportKpi('lucro')" class="cursor-pointer hover:-translate-y-1 hover:shadow-xl transition-all ${state.reportActiveKpi === 'lucro' ? 'bg-slate-800 ring-2 ring-cyan-500' : 'bg-slate-900'} p-3 sm:p-4 rounded-2xl border border-slate-700 border-l-4 border-l-cyan-500 shadow-lg print:bg-transparent print:border-slate-300 print:shadow-none print:ring-0 relative group flex flex-col justify-between h-full min-h-[110px] force-dark-bg">
                             <p class="text-[9px] sm:text-[10px] font-black uppercase text-cyan-500 mb-1 tracking-widest">Lucro Estimado</p>
-                            <p class="text-sm sm:text-base xl:text-lg font-black text-white print:text-cyan-700 tracking-tighter break-words my-2">${formatCurr(tProfit)}</p>
-                            <p class="text-[8px] text-cyan-600/70 uppercase font-bold tracking-widest mt-auto group-hover:text-cyan-500 no-print transition-colors">Ver Detalhes ➔</p>
+                            <p class="text-sm sm:text-base xl:text-lg font-black text-white force-white-text print:text-cyan-700 tracking-tighter break-words my-2">${formatCurr(tProfit)}</p>
+                            <p class="text-[8px] text-cyan-600/50 uppercase font-bold tracking-widest mt-auto group-hover:text-cyan-500 no-print transition-colors">Ver Detalhes ➔</p>
                         </div>
-                        <div onclick="window.setReportKpi('overview')" class="cursor-pointer hover:-translate-y-1 hover:shadow-xl transition-all ${state.reportActiveKpi === 'overview' ? 'bg-slate-800 ring-2 ring-indigo-500' : 'bg-slate-900'} p-3 sm:p-4 rounded-2xl border border-slate-700 border-l-4 border-l-indigo-500 shadow-lg print:bg-transparent print:border-slate-300 print:shadow-none flex flex-col justify-between h-full min-h-[110px] group">
+                        <div onclick="window.setReportKpi('overview')" class="cursor-pointer hover:-translate-y-1 hover:shadow-xl transition-all ${state.reportActiveKpi === 'overview' ? 'bg-slate-800 ring-2 ring-indigo-500' : 'bg-slate-900'} p-3 sm:p-4 rounded-2xl border border-slate-700 border-l-4 border-l-indigo-500 shadow-lg print:bg-transparent print:border-slate-300 print:shadow-none flex flex-col justify-between h-full min-h-[110px] group force-dark-bg">
                             <p class="text-[9px] sm:text-[10px] font-black uppercase text-indigo-400 mb-1 tracking-widest">Margem Global</p>
-                            <p class="text-sm sm:text-base xl:text-lg font-black ${avgMargin >= 0 ? 'text-white' : 'text-red-400'} print:text-indigo-700 tracking-tighter break-words my-2">${avgMargin.toFixed(1)}%</p>
-                            <p class="text-[8px] text-indigo-400/70 uppercase font-bold tracking-widest mt-auto group-hover:text-indigo-400 no-print transition-colors">Ver Resumo ➔</p>
+                            <p class="text-sm sm:text-base xl:text-lg font-black ${avgMargin >= 0 ? 'text-white force-white-text' : 'text-red-400'} print:text-indigo-700 tracking-tighter break-words my-2">${avgMargin.toFixed(1)}%</p>
+                            <p class="text-[8px] text-indigo-400/50 uppercase font-bold tracking-widest mt-auto group-hover:text-indigo-400 no-print transition-colors">Ver Resumo ➔</p>
                         </div>
                     </div>
 
