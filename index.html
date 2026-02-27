@@ -405,8 +405,14 @@
             </div>
         </div>
 
-        <!-- RELATÓRIO EXECUTIVO (MUDANÇA AQUI PARA O FUNDO ESCURO NO DARK MODE E BRANCO NO LIGHT MODE) -->
         <div id="view-reports" class="hidden space-y-8 max-w-7xl mx-auto text-left animate-fade-in print:block">
+            <!-- Os botões de filtro da visualização de relatórios devolvidos ao topo -->
+            <div class="flex justify-center gap-3 mb-8 no-print" id="report-unit-filters">
+                <button onclick="window.selectUnit('Smart Home')" id="r-unit-smart" class="unit-pill">SMART HOME</button>
+                <button onclick="window.selectUnit('HVAC')" id="r-unit-hvac" class="unit-pill">HVAC</button>
+                <button onclick="window.selectUnit('Ambas')" id="r-unit-all" class="unit-pill active">AMBAS</button>
+            </div>
+            
             <div id="report-output"></div>
         </div>
     </main>
