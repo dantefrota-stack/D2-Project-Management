@@ -30,15 +30,15 @@
         .app-body-light { background-color: #f8fafc; color: #0f172a; }
         .app-body-light .glass { background: #ffffff !important; border-color: #e2e8f0 !important; color: #0f172a; box-shadow: 0 10px 30px -10px rgba(0,0,0,0.1) !important;}
         
-        /* --- PROTEÇÃO INTELIGENTE DE CONTRASTE --- 
-           Assegura que elementos escuros preservem a letra clara mesmo no Light Mode */
+        /* --- PROTEÇÃO INTELIGENTE DE CONTRASTE --- */
         .app-body-light .text-white:not(button *):not(button):not(.status-badge):not(.force-white-text):not(.force-dark-bg):not(.force-dark-bg *) { color: #0f172a !important; }
         .force-white-text { color: #ffffff !important; }
         
+        /* Conversões de texto para o Light Mode */
         .app-body-light .text-slate-200:not(.force-dark-bg):not(.force-dark-bg *), 
         .app-body-light .text-slate-300:not(.force-dark-bg):not(.force-dark-bg *) { color: #334155 !important; }
-        
         .app-body-light .text-slate-400:not(.force-dark-bg):not(.force-dark-bg *) { color: #475569 !important; }
+        .app-body-light .text-slate-500:not(.force-dark-bg):not(.force-dark-bg *) { color: #64748b !important; }
         .app-body-light .text-gold:not(.force-dark-bg):not(.force-dark-bg *) { color: #b45309 !important; } 
         .app-body-light .text-emerald-400:not(.force-dark-bg):not(.force-dark-bg *), 
         .app-body-light .text-emerald-500:not(.force-dark-bg):not(.force-dark-bg *) { color: #059669 !important; } 
@@ -48,18 +48,23 @@
         .app-body-light .text-red-500:not(.force-dark-bg):not(.force-dark-bg *) { color: #dc2626 !important; } 
         .app-body-light .text-amber-400:not(.force-dark-bg):not(.force-dark-bg *), 
         .app-body-light .text-amber-500:not(.force-dark-bg):not(.force-dark-bg *) { color: #d97706 !important; }
+        .app-body-light .text-indigo-400:not(.force-dark-bg):not(.force-dark-bg *), 
+        .app-body-light .text-indigo-500:not(.force-dark-bg):not(.force-dark-bg *) { color: #4f46e5 !important; }
+        .app-body-light .text-lime-500, .app-body-light .text-lime-400 { color: #4d7c0f !important; } 
+        .app-body-light .text-lime-600\/70 { color: rgba(77, 124, 15, 0.8) !important; } 
         
-        /* Ajustes Estruturais Light Mode */
+        /* Ajustes Estruturais Light Mode - Fundo dos Cards e Relatórios */
         .app-body-light .bg-black\/20, .app-body-light .bg-black\/30, .app-body-light .bg-black\/40 { background-color: #f1f5f9 !important; border-color: #cbd5e1 !important; }
+        .app-body-light .bg-white\/5 { background-color: #ffffff !important; border-color: #e2e8f0 !important; }
+        .app-body-light .hover\:bg-white\/5:hover { background-color: #f8fafc !important; }
         .app-body-light .bg-cyan-950\/20 { background-color: #f0f9ff !important; border-color: #bae6fd !important; }
         .app-body-light .bg-emerald-500\/10 { background-color: #ecfdf5 !important; border-color: #a7f3d0 !important; }
         .app-body-light .bg-gold\/10 { background-color: #fffbeb !important; border-color: #fde68a !important; }
         .app-body-light .border-white\/5, .app-body-light .border-white\/10 { border-color: #e2e8f0 !important; }
         .app-body-light header { background-color: #ffffff !important; border-bottom-color: #e2e8f0 !important; }
         
-        /* Mantém o card de Receita Bruta Verde no modo claro */
-        .app-body-light .bg-emerald-600 { background-color: #059669 !important; }
-        .app-body-light .bg-emerald-700 { background-color: #047857 !important; }
+        .app-body-light .kpi-card { background-color: #ffffff !important; border-color: #cbd5e1 !important; box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1) !important; }
+        .app-body-light .kpi-card.active { background-color: #f8fafc !important; border-color: #94a3b8 !important; }
         
         .modern-input { width: 100%; padding: 14px 16px; border-radius: 12px; border: 1px solid rgba(148, 163, 184, 0.2); background: rgba(0,0,0,0.5); color: inherit; outline: none; transition: all 0.2s; font-size: 16px; }
         .app-body-light .modern-input { background: #fff !important; border: 1px solid #cbd5e1 !important; color: #0f172a !important; }
@@ -99,7 +104,6 @@
         @keyframes fadeIn { from { opacity: 0; transform: translateY(15px); } to { opacity: 1; transform: translateY(0); } }
         .animate-fade-in { animation: fadeIn 0.4s cubic-bezier(0.16, 1, 0.3, 1) forwards; }
         
-        /* Interação Global do Card */
         .project-card { transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1); cursor: pointer; }
         .project-card:hover { transform: translateY(-4px); box-shadow: 0 20px 40px -10px rgba(0,0,0,0.5); border-color: rgba(251, 191, 36, 0.3); }
 
@@ -111,9 +115,8 @@
             .glass { background: #fff !important; border: 1px solid #cbd5e1 !important; box-shadow: none !important; filter: none !important; backdrop-filter: none !important; page-break-inside: avoid; }
             .text-white, .text-slate-200, .text-slate-300, .text-slate-400, .force-white-text { color: #0f172a !important; }
             .text-gold { color: #b45309 !important; font-weight: 900 !important; } 
-            
-            /* Força fundos corretos na impressão */
-            .bg-slate-900, .bg-slate-800, .bg-black\/40 { background: #f8fafc !important; border-color: #cbd5e1 !important; color: #0f172a !important; }
+            .kpi-value { color: #0f172a !important; } 
+            .bg-slate-900, .bg-slate-800, .bg-black\/40, .bg-black\/20 { background: #f8fafc !important; border-color: #cbd5e1 !important; color: #0f172a !important; }
             .bg-emerald-600 { background: #059669 !important; color: #ffffff !important; }
             .bg-emerald-600 .text-white { color: #ffffff !important; }
             
@@ -125,6 +128,9 @@
             /* Impressão Direcionada Inteligente (Oculta cards se for imprimir visão) */
             body.printing-kpi .hide-on-kpi-print { display: none !important; }
             body.printing-kpi .full-report-only { display: none !important; }
+            
+            /* Força a cor branca nos badges do funil durante a impressão para ficarem legíveis */
+            .print-force-white { color: #ffffff !important; }
         }
 
         .flag-btn { border: 1px solid rgba(15,23,42,0.12); border-radius: 14px; padding: 10px; transition: .2s; background: #fff; }
@@ -399,6 +405,7 @@
             </div>
         </div>
 
+        <!-- RELATÓRIO EXECUTIVO (MUDANÇA AQUI PARA O FUNDO ESCURO NO DARK MODE E BRANCO NO LIGHT MODE) -->
         <div id="view-reports" class="hidden space-y-8 max-w-7xl mx-auto text-left animate-fade-in print:block">
             <div id="report-output"></div>
         </div>
@@ -631,10 +638,6 @@
         const mapProj = { 'Smart Home': 'unit-smart', 'HVAC': 'unit-hvac', 'Ambas': 'unit-all' };
         if (document.getElementById(mapProj[unit])) document.getElementById(mapProj[unit]).classList.add('active');
         
-        document.querySelectorAll('#report-unit-filters .unit-pill').forEach(b => b.classList.remove('active'));
-        const mapRep = { 'Smart Home': 'r-unit-smart', 'HVAC': 'r-unit-hvac', 'Ambas': 'r-unit-all' };
-        if (document.getElementById(mapRep[unit])) document.getElementById(mapRep[unit]).classList.add('active');
-        
         state.reportActiveKpi = 'receita'; 
         
         window.renderProjects();
@@ -703,9 +706,9 @@
             if (budget === 0 && totalExpenses === 0) {
                 labels = ['Sem Orçamento']; dataArr = [1]; bgColors = ['#334155'];
             } else if (overspent > 0) {
-                labels = ['Orçamento Usado', 'Estouro (Overbudget)']; dataArr = [budget, overspent]; bgColors = ['#0891b2', '#dc2626']; /* Cyan escuro e Vermelho */
+                labels = ['Orçamento Usado', 'Estouro (Overbudget)']; dataArr = [budget, overspent]; bgColors = ['#0891b2', '#dc2626'];
             } else {
-                labels = ['Gasto', 'Restante']; dataArr = [totalExpenses, remaining]; bgColors = ['#0891b2', '#059669']; /* Cyan escuro e Emerald escuro */
+                labels = ['Gasto', 'Restante']; dataArr = [totalExpenses, remaining]; bgColors = ['#0891b2', '#059669'];
             }
 
             window.d2Charts[`budget-${pId}`] = new Chart(ctxBudget, {
@@ -727,7 +730,6 @@
         }
     }
 
-    // --- PAGAMENTOS E RECEBIMENTOS ---
     window.openEditPaymentModal = (projectId) => {
         const p = state.projects.find(x => x.id === projectId);
         if (!p) return;
@@ -791,21 +793,19 @@
     };
 
     window.closeProjectModule = () => {
-        state.activeModule = null; // Volta para os Botões Gigantes
+        state.activeModule = null; 
         window.renderProjects();
         window.scrollTo({ top: 0, behavior: 'smooth' });
     };
 
     window.printReport = () => { window.print(); };
 
-    // --- IMPRESSÃO DIRECIONADA DE KPI ---
     window.printKpiReport = () => {
         document.body.classList.add('printing-kpi');
         window.print();
         setTimeout(() => document.body.classList.remove('printing-kpi'), 500);
     };
 
-    // --- CONTROLE DE KPIs NO RELATÓRIO (DRILL DOWN) ---
     window.setReportKpi = (kpiName) => {
         state.reportActiveKpi = kpiName;
         window.renderReport();
@@ -874,7 +874,7 @@
 
         if (v === 'logs') window.renderLogs();
         if (v === 'projects') { state.focusedProject = null; state.activeModule = null; window.renderProjects(); }
-        if (v === 'reports') { state.reportActiveKpi = 'receita'; window.renderReport(); } // Sempre abre na Receita Bruta
+        if (v === 'reports') { state.reportActiveKpi = 'receita'; window.renderReport(); }
         try { lucide.createIcons(); } catch {}
     };
 
@@ -946,9 +946,6 @@
             return matchCompany && matchUser && matchArchive;
         });
 
-        // ==========================================
-        // CONTROLE DO MODO FOCO (ESCONDER TOPO)
-        // ==========================================
         if (state.focusedProject) {
             filtersDiv.classList.add('hidden');
             if (mainHeader) mainHeader.style.display = 'none';
@@ -960,7 +957,6 @@
             grid.className = "flex flex-col max-w-4xl mx-auto gap-6 text-left w-full animate-fade-in pb-20 mt-4";
             filtered = state.projects.filter(p => p.id === state.focusedProject); 
             
-            // Botão de Voltar padrão se NENHUM módulo estiver aberto (Nível 2)
             if (!state.activeModule) {
                 grid.innerHTML += `
                     <div class="mb-2 flex justify-between items-center no-print w-full">
@@ -1024,9 +1020,6 @@
                 `;
             }
 
-            // ==========================================
-            // NÍVEL 3: TELA DE MÓDULO ABERTA
-            // ==========================================
             if (isFocused && state.activeModule) {
                 let moduleContent = '';
                 let moduleTitle = '';
@@ -1116,7 +1109,7 @@
                             </div>
                             <div class="bg-black/40 p-5 rounded-[24px] border border-white/5 shadow-inner print:bg-transparent print:border-slate-300 print:p-3 print:rounded-xl force-dark-bg">
                                 <p class="text-[10px] font-black uppercase text-slate-400 mb-2 tracking-widest print:text-slate-600 print:text-[8px]">Margem</p>
-                                <p class="text-xl sm:text-2xl font-black text-indigo-400 print:text-black print:text-base truncate">${f.margemLucro.toFixed(1)}%</p>
+                                <p class="text-xl sm:text-2xl font-black ${marginColor} print:text-black print:text-base truncate">${f.margemLucro.toFixed(1)}%</p>
                             </div>
                         </div>
 
@@ -1294,14 +1287,14 @@
 
         let tv = 0, tc = 0, tProfit = 0, totalCollected = 0; 
         let statusFunnel = {
-            '✅ Aprovado': { id: 'status_aprovado', count: 0, val: 0, label: 'Aprovados', color: 'text-emerald-500', border: 'border-emerald-500/20', bg: 'bg-emerald-500/10', hoverRing: 'hover:ring-emerald-400' },
-            'Aguardando Início': { id: 'status_aguardando', count: 0, val: 0, label: 'Aguardando Início', color: 'text-amber-500', border: 'border-amber-500/20', bg: 'bg-amber-500/10', hoverRing: 'hover:ring-amber-400' },
-            'Em Execução': { id: 'status_execucao', count: 0, val: 0, label: 'Em Execução', color: 'text-blue-500', border: 'border-blue-500/20', bg: 'bg-blue-500/10', hoverRing: 'hover:ring-blue-400' },
-            'Finalizado': { id: 'status_finalizado', count: 0, val: 0, label: 'Concluídas', color: 'text-gold', border: 'border-gold/20', bg: 'bg-gold/10', hoverRing: 'hover:ring-gold' }
+            '✅ Aprovado': { id: 'status_aprovado', count: 0, val: 0, label: 'Aprovados', color: 'text-emerald-500', border: 'border-emerald-500/20', bg: 'bg-emerald-500/10', hoverRing: 'hover:ring-emerald-400', badgeBg: 'bg-emerald-500' },
+            'Aguardando Início': { id: 'status_aguardando', count: 0, val: 0, label: 'Aguardando Início', color: 'text-amber-500', border: 'border-amber-500/20', bg: 'bg-amber-500/10', hoverRing: 'hover:ring-amber-400', badgeBg: 'bg-amber-500' },
+            'Em Execução': { id: 'status_execucao', count: 0, val: 0, label: 'Em Execução', color: 'text-blue-500', border: 'border-blue-500/20', bg: 'bg-blue-500/10', hoverRing: 'hover:ring-blue-400', badgeBg: 'bg-blue-500' },
+            'Finalizado': { id: 'status_finalizado', count: 0, val: 0, label: 'Concluídas', color: 'text-gold', border: 'border-gold/20', bg: 'bg-gold/10', hoverRing: 'hover:ring-gold', badgeBg: 'bg-amber-500' }
         };
 
         const currentYear = new Date().getFullYear();
-        const monthNames = state.lang === 'en' ? ['Jan','Fev','Mar','Abr','Mai','Jun','Jul','Aug','Sep','Oct','Nov','Dec'] : ['Jan','Fev','Mar','Abr','Mai','Jun','Jul','Ago','Set','Out','Nov','Dez'];
+        const monthNames = state.lang === 'en' ? ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'] : ['Jan','Fev','Mar','Abr','Mai','Jun','Jul','Ago','Set','Out','Nov','Dez'];
         const sellerStats = {};
 
         const enrichedProjects = baseFiltered.map(p => {
@@ -1344,12 +1337,12 @@
                 const s = statusFunnel[k];
                 const isActive = state.reportActiveKpi === s.id;
                 return `
-                <div onclick="window.setReportKpi('${s.id}')" class="cursor-pointer hover:-translate-y-1 hover:shadow-md transition-all p-4 sm:p-5 rounded-2xl border ${s.border} ${s.bg} flex flex-col justify-between print:bg-transparent print:border-slate-300 shadow-sm group ${isActive ? `ring-2 ring-offset-2 ring-offset-slate-900 ${s.hoverRing.replace('hover:', '')}` : ''}">
+                <div onclick="window.setReportKpi('${s.id}')" class="cursor-pointer hover:-translate-y-1 hover:shadow-md transition-all p-4 sm:p-5 rounded-2xl border ${s.border} ${s.bg} flex flex-col justify-between print:bg-transparent print:border-slate-300 shadow-sm force-dark-bg group ${isActive ? `ring-2 ring-offset-2 ring-offset-slate-900 ${s.hoverRing.replace('hover:', '')}` : ''}">
                     <div class="flex justify-between items-start mb-3">
                         <p class="text-[9px] sm:text-[10px] font-black uppercase ${s.color} tracking-widest print:text-slate-600 pr-2 leading-tight">${s.label}</p>
                         <span class="text-[10px] sm:text-xs font-black text-white force-white-text bg-slate-800 px-2 py-0.5 rounded-lg shadow-sm print:text-white print-force-white">${s.count}</span>
                     </div>
-                    <p class="text-base sm:text-lg font-black text-slate-800 tracking-tight print:text-black break-words">${formatCurr(s.val)}</p>
+                    <p class="text-base sm:text-lg font-black text-slate-200 tracking-tight print:text-black break-words">${formatCurr(s.val)}</p>
                 </div>
                 `;
             }).join('');
@@ -1494,28 +1487,30 @@
         }
 
         out.innerHTML = `
-            <div class="bg-white text-slate-950 p-6 sm:p-12 rounded-[50px] shadow-2xl border-8 border-slate-50 text-left print:border-none print:shadow-none print:p-0 animate-fade-in">
+            <div class="glass p-6 sm:p-12 rounded-[50px] shadow-2xl border border-white/5 text-left print:bg-white print:border-none print:shadow-none print:p-0 animate-fade-in force-dark-bg">
                 
-                <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center border-b-[8px] border-slate-950 pb-8 mb-8 print:border-b-2 print:border-slate-300 gap-4">
-                    <div class="logo-frame-sm border p-3 rounded-2xl print:border-none print:p-0 bg-slate-50"><img src="logo-D2-Group-preto.png" class="h-10 sm:h-14"></div>
+                <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center border-b-[8px] border-white/10 pb-8 mb-8 print:border-b-2 print:border-slate-300 gap-4">
+                    <div class="logo-frame-sm p-3 rounded-2xl print:border-none print:p-0 bg-white shadow-lg"><img src="logo-D2-Group-preto.png" class="h-10 sm:h-14"></div>
                     <div class="text-left sm:text-right">
-                        <h2 class="text-2xl sm:text-3xl font-black uppercase tracking-tighter text-slate-900">${reportTitle}</h2>
-                        <p class="text-slate-500 font-black uppercase text-xs tracking-widest mt-1">Data: ${new Date().toLocaleDateString()}</p>
+                        <h2 class="text-2xl sm:text-3xl font-black uppercase tracking-tighter text-white force-white-text print:text-slate-900">${reportTitle}</h2>
+                        <p class="text-slate-400 font-black uppercase text-xs tracking-widest mt-1">Data: ${new Date().toLocaleDateString()}</p>
                     </div>
                 </div>
                 
-                ${ceoDashHTML}
+                <div class="bg-white p-6 sm:p-10 rounded-[40px] shadow-inner text-slate-900 print:p-0 print:shadow-none print:bg-transparent">
+                    ${ceoDashHTML}
 
-                <div id="dynamic-report-content">
-                    ${bottomHTML}
+                    <div id="dynamic-report-content">
+                        ${bottomHTML}
+                    </div>
+                    
+                    ${state.reportActiveKpi === 'overview' ? `
+                    <div class="mt-12 pt-8 border-t-4 border-slate-100 flex justify-center no-print">
+                         <button onclick="window.printReport()" class="flex items-center gap-3 text-white force-white-text bg-slate-900 hover:bg-slate-800 transition-all font-black text-sm uppercase tracking-widest px-8 py-4 rounded-2xl shadow-xl hover:-translate-y-1">
+                             <i data-lucide="printer" class="w-5 h-5"></i> Imprimir Relatório Completo
+                         </button>
+                    </div>` : ''}
                 </div>
-                
-                ${state.reportActiveKpi === 'overview' ? `
-                <div class="mt-12 pt-8 border-t-4 border-slate-100 flex justify-center no-print">
-                     <button onclick="window.printReport()" class="flex items-center gap-3 text-white force-white-text bg-slate-900 hover:bg-slate-800 transition-all font-black text-sm uppercase tracking-widest px-8 py-4 rounded-2xl shadow-xl hover:-translate-y-1">
-                         <i data-lucide="printer" class="w-5 h-5"></i> Imprimir Relatório Completo
-                     </button>
-                </div>` : ''}
             </div>`;
         try { lucide.createIcons(); } catch {}
     };
