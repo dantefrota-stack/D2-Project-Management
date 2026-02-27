@@ -28,32 +28,30 @@
         
         /* Interface Interna Clara (Light Mode) */
         .app-body-light { background-color: #f8fafc; color: #0f172a; }
-        .app-body-light .glass { background: #ffffff !important; border-color: #e2e8f0 !important; color: #0f172a; box-shadow: 0 10px 30px -10px rgba(0,0,0,0.1) !important;}
+        .app-body-light .glass { background: #ffffff !important; border-color: #e2e8f0 !important; color: #0f172a !important; box-shadow: 0 10px 30px -10px rgba(0,0,0,0.1) !important;}
         
-        /* --- PROTEÇÃO INTELIGENTE DE CONTRASTE --- */
-        .app-body-light .text-white:not(button *):not(button):not(.status-badge):not(.force-white-text):not(.force-dark-bg):not(.force-dark-bg *) { color: #0f172a !important; }
+        /* --- PROTEÇÃO INTELIGENTE DE CONTRASTE LIGHT MODE --- */
+        .app-body-light .glass .text-white:not(.kpi-card *):not(.force-white-text) { color: #0f172a !important; }
         .force-white-text { color: #ffffff !important; }
         
-        /* Conversões de texto para o Light Mode */
-        .app-body-light .text-slate-200:not(.force-dark-bg):not(.force-dark-bg *), 
-        .app-body-light .text-slate-300:not(.force-dark-bg):not(.force-dark-bg *) { color: #334155 !important; }
-        .app-body-light .text-slate-400:not(.force-dark-bg):not(.force-dark-bg *) { color: #475569 !important; }
-        .app-body-light .text-slate-500:not(.force-dark-bg):not(.force-dark-bg *) { color: #64748b !important; }
-        .app-body-light .text-gold:not(.force-dark-bg):not(.force-dark-bg *) { color: #b45309 !important; } 
-        .app-body-light .text-emerald-400:not(.force-dark-bg):not(.force-dark-bg *), 
-        .app-body-light .text-emerald-500:not(.force-dark-bg):not(.force-dark-bg *) { color: #059669 !important; } 
-        .app-body-light .text-cyan-400:not(.force-dark-bg):not(.force-dark-bg *), 
-        .app-body-light .text-cyan-300:not(.force-dark-bg):not(.force-dark-bg *) { color: #0284c7 !important; } 
-        .app-body-light .text-red-400:not(.force-dark-bg):not(.force-dark-bg *), 
-        .app-body-light .text-red-500:not(.force-dark-bg):not(.force-dark-bg *) { color: #dc2626 !important; } 
-        .app-body-light .text-amber-400:not(.force-dark-bg):not(.force-dark-bg *), 
-        .app-body-light .text-amber-500:not(.force-dark-bg):not(.force-dark-bg *) { color: #d97706 !important; }
-        .app-body-light .text-indigo-400:not(.force-dark-bg):not(.force-dark-bg *), 
-        .app-body-light .text-indigo-500:not(.force-dark-bg):not(.force-dark-bg *) { color: #4f46e5 !important; }
-        .app-body-light .text-lime-500, .app-body-light .text-lime-400 { color: #4d7c0f !important; } 
-        .app-body-light .text-lime-600\/70 { color: rgba(77, 124, 15, 0.8) !important; } 
+        /* Conversões de texto de tabelas e listas para o Light Mode */
+        .app-body-light .glass .text-slate-200:not(.kpi-card *), 
+        .app-body-light .glass .text-slate-300:not(.kpi-card *) { color: #334155 !important; }
+        .app-body-light .glass .text-slate-400:not(.kpi-card *) { color: #475569 !important; }
+        .app-body-light .glass .text-slate-500:not(.kpi-card *) { color: #64748b !important; }
+        .app-body-light .glass .text-gold:not(.kpi-card *) { color: #b45309 !important; } 
+        .app-body-light .glass .text-emerald-400:not(.kpi-card *), 
+        .app-body-light .glass .text-emerald-500:not(.kpi-card *) { color: #059669 !important; } 
+        .app-body-light .glass .text-cyan-400:not(.kpi-card *), 
+        .app-body-light .glass .text-cyan-300:not(.kpi-card *) { color: #0284c7 !important; } 
+        .app-body-light .glass .text-red-400:not(.kpi-card *), 
+        .app-body-light .glass .text-red-500:not(.kpi-card *) { color: #dc2626 !important; } 
+        .app-body-light .glass .text-amber-400:not(.kpi-card *), 
+        .app-body-light .glass .text-amber-500:not(.kpi-card *) { color: #d97706 !important; }
+        .app-body-light .glass .text-indigo-400:not(.kpi-card *), 
+        .app-body-light .glass .text-indigo-500:not(.kpi-card *) { color: #4f46e5 !important; }
         
-        /* Ajustes Estruturais Light Mode - Fundo dos Cards e Relatórios */
+        /* Ajustes Estruturais Light Mode - Fundo dos Cards e Tabelas */
         .app-body-light .bg-black\/20, .app-body-light .bg-black\/30, .app-body-light .bg-black\/40 { background-color: #f1f5f9 !important; border-color: #cbd5e1 !important; }
         .app-body-light .bg-white\/5 { background-color: #ffffff !important; border-color: #e2e8f0 !important; }
         .app-body-light .hover\:bg-white\/5:hover { background-color: #f8fafc !important; }
@@ -63,8 +61,16 @@
         .app-body-light .border-white\/5, .app-body-light .border-white\/10 { border-color: #e2e8f0 !important; }
         .app-body-light header { background-color: #ffffff !important; border-bottom-color: #e2e8f0 !important; }
         
-        .app-body-light .kpi-card { background-color: #ffffff !important; border-color: #cbd5e1 !important; box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1) !important; }
-        .app-body-light .kpi-card.active { background-color: #f8fafc !important; border-color: #94a3b8 !important; }
+        /* Dashboard KPI Cards (Fixos em escuro/verde para máximo contraste) */
+        .kpi-card { background-color: #1e293b !important; border: 1px solid #334155 !important; }
+        .kpi-card.kpi-emerald { background-color: #059669 !important; border-color: #047857 !important; }
+        .kpi-card .kpi-label { color: #94a3b8 !important; }
+        .kpi-card.kpi-emerald .kpi-label { color: #d1fae5 !important; }
+        .kpi-card .text-white { color: #ffffff !important; }
+        
+        /* Valores Numéricos do Funil (Dinâmicos) */
+        .funnel-value { color: #f8fafc; }
+        .app-body-light .funnel-value { color: #0f172a !important; }
         
         .modern-input { width: 100%; padding: 14px 16px; border-radius: 12px; border: 1px solid rgba(148, 163, 184, 0.2); background: rgba(0,0,0,0.5); color: inherit; outline: none; transition: all 0.2s; font-size: 16px; }
         .app-body-light .modern-input { background: #fff !important; border: 1px solid #cbd5e1 !important; color: #0f172a !important; }
@@ -104,7 +110,6 @@
         @keyframes fadeIn { from { opacity: 0; transform: translateY(15px); } to { opacity: 1; transform: translateY(0); } }
         .animate-fade-in { animation: fadeIn 0.4s cubic-bezier(0.16, 1, 0.3, 1) forwards; }
         
-        /* Interação Global do Card */
         .project-card { transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1); cursor: pointer; }
         .project-card:hover { transform: translateY(-4px); box-shadow: 0 20px 40px -10px rgba(0,0,0,0.5); border-color: rgba(251, 191, 36, 0.3); }
 
@@ -116,10 +121,8 @@
             .glass { background: #fff !important; border: 1px solid #cbd5e1 !important; box-shadow: none !important; filter: none !important; backdrop-filter: none !important; page-break-inside: avoid; }
             .text-white, .text-slate-200, .text-slate-300, .text-slate-400, .force-white-text { color: #0f172a !important; }
             .text-gold { color: #b45309 !important; font-weight: 900 !important; } 
-            .bg-slate-900, .bg-slate-800, .bg-black\/40 { background: #f8fafc !important; border-color: #cbd5e1 !important; color: #0f172a !important; }
-            .bg-emerald-600 { background: #059669 !important; color: #ffffff !important; }
-            .bg-emerald-600 .text-white { color: #ffffff !important; }
-            
+            .kpi-card { background-color: #f8fafc !important; border-color: #cbd5e1 !important; }
+            .kpi-card .text-white, .kpi-card .kpi-label { color: #0f172a !important; }
             canvas { max-width: 100% !important; max-height: 250px !important; page-break-inside: avoid; }
             .overflow-x-auto { overflow: visible !important; } 
             tr { page-break-inside: avoid !important; }
@@ -131,6 +134,7 @@
             
             /* Força a cor branca nos badges do funil durante a impressão para ficarem legíveis */
             .print-force-white { color: #ffffff !important; }
+            .funnel-value { color: #0f172a !important; }
         }
 
         .flag-btn { border: 1px solid rgba(15,23,42,0.12); border-radius: 14px; padding: 10px; transition: .2s; background: #fff; }
@@ -406,6 +410,13 @@
         </div>
 
         <div id="view-reports" class="hidden space-y-8 max-w-7xl mx-auto text-left animate-fade-in print:block">
+            <!-- Filtros Superiores Exclusivos do Relatório (Como solicitado pelo CEO) -->
+            <div class="flex justify-center gap-3 mb-8 no-print" id="report-unit-filters">
+                <button onclick="window.selectUnit('Smart Home')" class="unit-pill unit-pill-btn">SMART HOME</button>
+                <button onclick="window.selectUnit('HVAC')" class="unit-pill unit-pill-btn">HVAC</button>
+                <button onclick="window.selectUnit('Ambas')" class="unit-pill unit-pill-btn active" data-i18n="filter_both">AMBAS</button>
+            </div>
+            
             <div id="report-output"></div>
         </div>
     </main>
@@ -824,6 +835,7 @@
         }
     }
 
+    // --- PAGAMENTOS E RECEBIMENTOS ---
     window.openEditPaymentModal = (projectId) => {
         const p = state.projects.find(x => x.id === projectId);
         if (!p) return;
@@ -865,6 +877,7 @@
     window.saveEditedRecs = async () => { if (!state.editingRecs) return; try { await updateDoc(doc(db, 'artifacts', appId, 'public', 'data', 'projects', state.editingRecs.projectId), { recebimentos: state.editingRecs.recs }); window.closeEditRecModal(); } catch (e) { window.showModal(window.t('error'), 'Erro ao salvar: ' + e.message, 'error'); } };
     window.addRecebimento = async (projectId) => { if (!state.user) return; const v = document.getElementById(`rec-val-${projectId}`)?.value; const d = document.getElementById(`rec-date-${projectId}`)?.value; const m = document.getElementById(`rec-met-${projectId}`)?.value; if (!v || !d || !m) { window.showModal(window.t('attention'), 'Preencha data, valor e método.', 'error'); return; } try { await updateDoc(doc(db, 'artifacts', appId, 'public', 'data', 'projects', projectId), { recebimentos: arrayUnion({ valor: parseFloat(v), data: d, metodo: m }) }); logAccess(state.user.email, `Registrou recebimento $${v} na obra ID: ${projectId}`); } catch (e) { console.error(e); } };
 
+    // --- NAVEGAÇÃO INTERNA DO MODO FOCO ---
     window.openProjectDetails = (id) => { 
         state.focusedProject = id; 
         state.activeModule = null; 
@@ -893,12 +906,14 @@
 
     window.printReport = () => { window.print(); };
 
+    // --- IMPRESSÃO DIRECIONADA DE KPI ---
     window.printKpiReport = () => {
         document.body.classList.add('printing-kpi');
         window.print();
         setTimeout(() => document.body.classList.remove('printing-kpi'), 500);
     };
 
+    // --- CONTROLE DE KPIs NO RELATÓRIO (DRILL DOWN) ---
     window.setReportKpi = (kpiName) => {
         state.reportActiveKpi = kpiName;
         window.renderReport();
@@ -1039,6 +1054,9 @@
             return matchCompany && matchUser && matchArchive;
         });
 
+        // ==========================================
+        // CONTROLE DO MODO FOCO (ESCONDER TOPO)
+        // ==========================================
         if (state.focusedProject) {
             filtersDiv.classList.add('hidden');
             if (mainHeader) mainHeader.style.display = 'none';
@@ -1050,6 +1068,7 @@
             grid.className = "flex flex-col max-w-4xl mx-auto gap-6 text-left w-full animate-fade-in pb-20 mt-4";
             filtered = state.projects.filter(p => p.id === state.focusedProject); 
             
+            // Botão de Voltar padrão se NENHUM módulo estiver aberto (Nível 2)
             if (!state.activeModule) {
                 grid.innerHTML += `
                     <div class="mb-2 flex justify-between items-center no-print w-full">
@@ -1432,7 +1451,7 @@
                         <p class="text-[9px] sm:text-[10px] font-black uppercase ${s.color} tracking-widest print:text-slate-600 pr-2 leading-tight">${s.label}</p>
                         <span class="text-[10px] sm:text-xs font-black text-white force-white-text bg-slate-800 px-2 py-0.5 rounded-lg shadow-sm print:text-white print-force-white">${s.count}</span>
                     </div>
-                    <p class="text-base sm:text-lg font-black text-slate-200 tracking-tight print:text-black break-words">${formatCurr(s.val)}</p>
+                    <p class="text-base sm:text-lg font-black text-slate-200 funnel-value tracking-tight print:text-black break-words">${formatCurr(s.val)}</p>
                 </div>
                 `;
             }).join('');
@@ -1442,27 +1461,27 @@
                     <h3 class="text-lg sm:text-xl font-black uppercase tracking-tighter mb-5 text-slate-800 border-b-2 border-slate-100 pb-3 flex items-center gap-2"><i data-lucide="bar-chart-2" class="w-5 h-5 text-indigo-500"></i> ${window.t('exec_vision')}</h3>
                     
                     <div class="grid grid-cols-2 md:grid-cols-5 gap-3 sm:gap-4 mb-8">
-                        <div onclick="window.setReportKpi('receita')" class="cursor-pointer hover:-translate-y-1 hover:shadow-xl transition-all ${state.reportActiveKpi === 'receita' ? 'bg-emerald-700 ring-2 ring-emerald-400' : 'bg-emerald-600'} p-3 sm:p-4 rounded-2xl border border-emerald-500 shadow-lg print:bg-emerald-600 print:border-emerald-500 print:shadow-none print:ring-0 relative group flex flex-col justify-between h-full min-h-[110px] force-dark-bg">
+                        <div onclick="window.setReportKpi('receita')" class="kpi-card cursor-pointer hover:-translate-y-1 hover:shadow-xl transition-all ${state.reportActiveKpi === 'receita' ? 'bg-emerald-700 ring-2 ring-emerald-400' : 'bg-emerald-600'} p-3 sm:p-4 rounded-2xl border border-emerald-500 shadow-lg print:bg-emerald-600 print:border-emerald-500 print:shadow-none print:ring-0 relative group flex flex-col justify-between h-full min-h-[110px] force-dark-bg">
                             <p class="text-[9px] sm:text-[10px] font-black uppercase text-emerald-100 mb-1 tracking-widest">${window.t('gross_revenue')}</p>
                             <p class="text-sm sm:text-base xl:text-lg font-black text-white force-white-text print:text-white tracking-tighter break-words my-2">${formatCurr(tv)}</p>
                             <p class="text-[8px] text-emerald-200 uppercase font-bold tracking-widest mt-auto opacity-80 group-hover:opacity-100 no-print transition-colors">${window.t('see_works')}</p>
                         </div>
-                        <div onclick="window.setReportKpi('entradas')" class="cursor-pointer hover:-translate-y-1 hover:shadow-xl transition-all ${state.reportActiveKpi === 'entradas' ? 'bg-slate-800 ring-2 ring-emerald-500' : 'bg-slate-900'} p-3 sm:p-4 rounded-2xl border border-slate-700 border-l-4 border-l-emerald-500 shadow-lg print:bg-transparent print:border-slate-300 print:shadow-none print:ring-0 relative group flex flex-col justify-between h-full min-h-[110px] force-dark-bg">
+                        <div onclick="window.setReportKpi('entradas')" class="kpi-card cursor-pointer hover:-translate-y-1 hover:shadow-xl transition-all ${state.reportActiveKpi === 'entradas' ? 'bg-slate-800 ring-2 ring-emerald-500' : 'bg-slate-900'} p-3 sm:p-4 rounded-2xl border border-slate-700 border-l-4 border-l-emerald-500 shadow-lg print:bg-transparent print:border-slate-300 print:shadow-none print:ring-0 relative group flex flex-col justify-between h-full min-h-[110px] force-dark-bg">
                             <p class="text-[9px] sm:text-[10px] font-black uppercase text-emerald-500 mb-1 tracking-widest">${window.t('entries')}</p>
                             <p class="text-sm sm:text-base xl:text-lg font-black text-white force-white-text print:text-emerald-700 tracking-tighter break-words my-2">${formatCurr(totalCollected)}</p>
                             <p class="text-[8px] text-emerald-600/50 uppercase font-bold tracking-widest mt-auto group-hover:text-emerald-400 no-print transition-colors">${window.t('see_received')}</p>
                         </div>
-                        <div onclick="window.setReportKpi('fluxo')" class="cursor-pointer hover:-translate-y-1 hover:shadow-xl transition-all ${state.reportActiveKpi === 'fluxo' ? 'bg-slate-800 ring-2 ring-amber-500' : 'bg-slate-900'} p-3 sm:p-4 rounded-2xl border border-slate-700 border-l-4 border-l-amber-500 shadow-lg print:bg-transparent print:border-slate-300 print:shadow-none print:ring-0 relative group flex flex-col justify-between h-full min-h-[110px] force-dark-bg">
+                        <div onclick="window.setReportKpi('fluxo')" class="kpi-card cursor-pointer hover:-translate-y-1 hover:shadow-xl transition-all ${state.reportActiveKpi === 'fluxo' ? 'bg-slate-800 ring-2 ring-amber-500' : 'bg-slate-900'} p-3 sm:p-4 rounded-2xl border border-slate-700 border-l-4 border-l-amber-500 shadow-lg print:bg-transparent print:border-slate-300 print:shadow-none print:ring-0 relative group flex flex-col justify-between h-full min-h-[110px] force-dark-bg">
                             <p class="text-[9px] sm:text-[10px] font-black uppercase text-amber-500 mb-1 tracking-widest">${window.t('to_receive')}</p>
                             <p class="text-sm sm:text-base xl:text-lg font-black text-white force-white-text print:text-amber-700 tracking-tighter break-words my-2">${formatCurr(totalOutstanding)}</p>
                             <p class="text-[8px] text-amber-600/50 uppercase font-bold tracking-widest mt-auto group-hover:text-amber-400 no-print transition-colors">${window.t('see_pending')}</p>
                         </div>
-                        <div onclick="window.setReportKpi('lucro')" class="cursor-pointer hover:-translate-y-1 hover:shadow-xl transition-all ${state.reportActiveKpi === 'lucro' ? 'bg-slate-800 ring-2 ring-cyan-500' : 'bg-slate-900'} p-3 sm:p-4 rounded-2xl border border-slate-700 border-l-4 border-l-cyan-500 shadow-lg print:bg-transparent print:border-slate-300 print:shadow-none print:ring-0 relative group flex flex-col justify-between h-full min-h-[110px] force-dark-bg">
+                        <div onclick="window.setReportKpi('lucro')" class="kpi-card cursor-pointer hover:-translate-y-1 hover:shadow-xl transition-all ${state.reportActiveKpi === 'lucro' ? 'bg-slate-800 ring-2 ring-cyan-500' : 'bg-slate-900'} p-3 sm:p-4 rounded-2xl border border-slate-700 border-l-4 border-l-cyan-500 shadow-lg print:bg-transparent print:border-slate-300 print:shadow-none print:ring-0 relative group flex flex-col justify-between h-full min-h-[110px] force-dark-bg">
                             <p class="text-[9px] sm:text-[10px] font-black uppercase text-cyan-500 mb-1 tracking-widest">${window.t('est_profit')}</p>
                             <p class="text-sm sm:text-base xl:text-lg font-black text-white force-white-text print:text-cyan-700 tracking-tighter break-words my-2">${formatCurr(tProfit)}</p>
                             <p class="text-[8px] text-cyan-600/50 uppercase font-bold tracking-widest mt-auto group-hover:text-cyan-500 no-print transition-colors">${window.t('see_details')}</p>
                         </div>
-                        <div onclick="window.setReportKpi('overview')" class="cursor-pointer hover:-translate-y-1 hover:shadow-xl transition-all ${state.reportActiveKpi === 'overview' ? 'bg-slate-800 ring-2 ring-indigo-500' : 'bg-slate-900'} p-3 sm:p-4 rounded-2xl border border-slate-700 border-l-4 border-l-indigo-500 shadow-lg print:bg-transparent print:border-slate-300 print:shadow-none flex flex-col justify-between h-full min-h-[110px] group force-dark-bg">
+                        <div onclick="window.setReportKpi('overview')" class="kpi-card cursor-pointer hover:-translate-y-1 hover:shadow-xl transition-all ${state.reportActiveKpi === 'overview' ? 'bg-slate-800 ring-2 ring-indigo-500' : 'bg-slate-900'} p-3 sm:p-4 rounded-2xl border border-slate-700 border-l-4 border-l-indigo-500 shadow-lg print:bg-transparent print:border-slate-300 print:shadow-none flex flex-col justify-between h-full min-h-[110px] group force-dark-bg">
                             <p class="text-[9px] sm:text-[10px] font-black uppercase text-indigo-400 mb-1 tracking-widest">${window.t('global_margin')}</p>
                             <p class="text-sm sm:text-base xl:text-lg font-black ${avgMargin >= 0 ? 'text-white force-white-text' : 'text-red-400'} print:text-indigo-700 tracking-tighter break-words my-2">${avgMargin.toFixed(1)}%</p>
                             <p class="text-[8px] text-indigo-400/50 uppercase font-bold tracking-widest mt-auto group-hover:text-indigo-400 no-print transition-colors">${window.t('see_summary')}</p>
@@ -1484,7 +1503,7 @@
             let summaryRows = Object.keys(sellerStats).sort().map(vend => {
                 const stats = sellerStats[vend];
                 let monthsHtml = stats.months.map(mVal => `<td class="p-2 sm:p-3 text-right ${mVal > 0 ? 'text-amber-600 font-bold' : 'text-slate-400'}">${formatCurr(mVal)}</td>`).join('');
-                return `<tr class="border-b border-slate-100 text-[9px] sm:text-[10px] text-slate-800 hover:bg-slate-50 transition-colors"><td class="p-2 sm:p-3 font-black uppercase whitespace-nowrap">${vend.split('@')[0]}</td>${monthsHtml}<td class="p-2 sm:p-3 text-right font-black text-emerald-600 bg-slate-50">${formatCurr(stats.total)}</td></tr>`;
+                return `<tr class="border-b border-white/5 hover:bg-white/5 transition-colors"><td class="p-2 sm:p-3 font-black uppercase whitespace-nowrap">${vend.split('@')[0]}</td>${monthsHtml}<td class="p-2 sm:p-3 text-right font-black text-emerald-500 bg-black/30">${formatCurr(stats.total)}</td></tr>`;
             }).join('');
             let summaryHeaderMonths = monthNames.map(m => `<th class="p-2 sm:p-3 text-right">${m}</th>`).join('');
 
@@ -1492,10 +1511,10 @@
                 const coProjects = enrichedProjects.filter(({p}) => p.empresa === companyName);
                 if (coProjects.length === 0) return '';
                 const tableRows = coProjects.map(({p, f}) => {
-                    const profitCol = canViewCosts ? `<td class="p-3 sm:p-4 text-right font-black ${f.lucroBruto >= 0 ? 'text-cyan-600' : 'text-red-500'}">${formatCurr(f.lucroBruto)}</td><td class="p-3 sm:p-4 text-right font-black ${f.margemLucro >= 0 ? 'text-indigo-500' : 'text-red-500'}">${f.margemLucro.toFixed(1)}%</td>` : '';
-                    return `<tr class="border-b border-slate-100 text-[10px] sm:text-xs text-left text-slate-800 hover:bg-slate-50 transition-colors"><td class="p-3 sm:p-4 font-bold text-[9px] sm:text-[10px] text-slate-500">${p.numeroProposta || '-'} / ${p.numeroInvoice || '-'}</td><td class="p-3 sm:p-4 font-black uppercase"><div class="flex flex-col"><span>${p.cliente || ''}</span><span class="text-[8px] sm:text-[9px] font-bold text-slate-400 mt-0.5">${tStatus(p.status)}</span></div></td><td class="p-3 sm:p-4 font-bold text-slate-600">${p.vendedor?.split('@')[0] || ''}</td><td class="p-3 sm:p-4 text-right">${formatCurr(p.valorTotal)}</td><td class="p-3 sm:p-4 text-right font-black text-emerald-600">${formatCurr(f.totalRecebido)}</td><td class="p-3 sm:p-4 text-right font-black text-amber-600">${formatCurr(f.commLiberada)}</td>${profitCol}</tr>`;
+                    const profitCol = canViewCosts ? `<td class="p-3 sm:p-4 text-right font-black ${f.lucroBruto >= 0 ? 'text-cyan-500' : 'text-red-500'}">${formatCurr(f.lucroBruto)}</td><td class="p-3 sm:p-4 text-right font-black ${f.margemLucro >= 0 ? 'text-indigo-400' : 'text-red-500'}">${f.margemLucro.toFixed(1)}%</td>` : '';
+                    return `<tr class="border-b border-white/5 text-[10px] sm:text-xs text-left text-slate-200 hover:bg-white/5 transition-colors"><td class="p-3 sm:p-4 font-bold text-[9px] sm:text-[10px] text-slate-400">${p.numeroProposta || '-'} / ${p.numeroInvoice || '-'}</td><td class="p-3 sm:p-4 font-black uppercase text-white"><div class="flex flex-col"><span>${p.cliente || ''}</span><span class="text-[8px] sm:text-[9px] font-bold text-slate-500 mt-0.5">${tStatus(p.status)}</span></div></td><td class="p-3 sm:p-4 font-bold text-slate-300">${p.vendedor?.split('@')[0] || ''}</td><td class="p-3 sm:p-4 text-right">${formatCurr(p.valorTotal)}</td><td class="p-3 sm:p-4 text-right font-black text-emerald-400">${formatCurr(f.totalRecebido)}</td><td class="p-3 sm:p-4 text-right font-black text-amber-500">${formatCurr(f.commLiberada)}</td>${profitCol}</tr>`;
                 }).join('');
-                return `<div class="mb-10"><h4 class="text-sm font-black text-slate-700 bg-slate-100 inline-block px-4 py-2 rounded-t-xl uppercase tracking-widest border border-b-0 border-slate-200">${companyName}</h4><div class="overflow-x-auto print:overflow-visible border border-slate-200 rounded-xl rounded-tl-none print:border-none shadow-sm"><table class="w-full"><thead class="bg-slate-50 border-b border-slate-200 print:bg-transparent"><tr class="font-black uppercase text-[8px] sm:text-[9px] text-slate-500 text-left tracking-widest"><th class="p-3 sm:p-4">${window.t('prop_inv')}</th><th class="p-3 sm:p-4">${window.t('f_client')}</th><th class="p-3 sm:p-4">${window.t('f_seller')}</th><th class="p-3 sm:p-4 text-right">${window.t('f_gross')}</th><th class="p-3 sm:p-4 text-right bg-emerald-50 text-emerald-700 print:bg-transparent">Recebido</th><th class="p-3 sm:p-4 text-right bg-amber-50 text-amber-700 print:bg-transparent">${window.t('comm_released')}</th>${canViewCosts ? `<th class="p-3 sm:p-4 text-right bg-cyan-50 text-cyan-700 print:bg-transparent">${window.t('real_profit')}</th><th class="p-3 sm:p-4 text-right bg-indigo-50 text-indigo-700 print:bg-transparent">${window.t('margin')}</th>` : ''}</tr></thead><tbody>${tableRows}</tbody></table></div></div>`;
+                return `<div class="mb-10"><h4 class="text-sm font-black text-slate-300 bg-black/40 inline-block px-4 py-2 rounded-t-xl uppercase tracking-widest border border-b-0 border-white/5">${companyName}</h4><div class="overflow-x-auto print:overflow-visible border border-white/5 rounded-xl rounded-tl-none print:border-none shadow-sm"><table class="w-full"><thead class="bg-black/20 border-b border-white/5 print:bg-transparent"><tr class="font-black uppercase text-[8px] sm:text-[9px] text-slate-500 text-left tracking-widest"><th class="p-3 sm:p-4">${window.t('prop_inv')}</th><th class="p-3 sm:p-4">${window.t('f_client')}</th><th class="p-3 sm:p-4">${window.t('f_seller')}</th><th class="p-3 sm:p-4 text-right">${window.t('f_gross')}</th><th class="p-3 sm:p-4 text-right bg-emerald-500/10 text-emerald-400 print:bg-transparent">Recebido</th><th class="p-3 sm:p-4 text-right bg-amber-500/10 text-amber-400 print:bg-transparent">${window.t('comm_released')}</th>${canViewCosts ? `<th class="p-3 sm:p-4 text-right bg-cyan-950/20 text-cyan-400 print:bg-transparent">${window.t('real_profit')}</th><th class="p-3 sm:p-4 text-right bg-indigo-900/20 text-indigo-400 print:bg-transparent">${window.t('margin')}</th>` : ''}</tr></thead><tbody>${tableRows}</tbody></table></div></div>`;
             };
 
             let detailedTablesHTML = '';
@@ -1505,23 +1524,23 @@
             } else {
                 detailedTablesHTML += buildGroupedTable(state.company === 'Smart Home' ? 'D2 Smart Home' : 'D2 HVAC Solutions');
             }
-            if(!detailedTablesHTML) detailedTablesHTML = `<p class="p-6 text-center text-slate-400 text-xs italic">${window.t('no_active_works')}</p>`;
+            if(!detailedTablesHTML) detailedTablesHTML = `<p class="p-6 text-center text-slate-500 text-xs italic">${window.t('no_active_works')}</p>`;
 
             bottomHTML = `
                 <div class="full-report-only animate-fade-in mt-14">
                     <div class="mb-14 print:mb-8">
-                        <div class="flex justify-between items-center mb-5 border-b-2 border-slate-100 pb-3">
-                            <h3 class="text-base sm:text-lg font-black uppercase tracking-tighter text-slate-800 flex items-center gap-2"><i data-lucide="users" class="w-5 h-5 text-amber-500"></i> ${window.t('comm_paid_month')} (${currentYear})</h3>
+                        <div class="flex justify-between items-center mb-5 border-b-2 border-white/5 pb-3">
+                            <h3 class="text-base sm:text-lg font-black uppercase tracking-tighter text-slate-200 flex items-center gap-2"><i data-lucide="users" class="w-5 h-5 text-amber-500"></i> ${window.t('comm_paid_month')} (${currentYear})</h3>
                         </div>
-                        <div class="overflow-x-auto print:overflow-visible border border-slate-200 rounded-2xl print:border-none shadow-sm">
+                        <div class="overflow-x-auto print:overflow-visible border border-white/5 rounded-2xl print:border-none shadow-sm">
                             <table class="w-full">
-                                <thead class="bg-slate-100 border-b border-slate-200 print:bg-transparent"><tr class="font-black uppercase text-[8px] sm:text-[9px] text-slate-500 text-left tracking-widest"><th class="p-3 sm:p-4">${window.t('f_seller')}</th>${summaryHeaderMonths}<th class="p-3 sm:p-4 text-right bg-slate-200 print:bg-transparent text-slate-700">${window.t('total_year')}</th></tr></thead>
-                                <tbody>${summaryRows || `<tr><td colspan="14" class="p-6 text-center text-slate-400 text-xs italic">${window.t('no_data_year')}</td></tr>`}</tbody>
+                                <thead class="bg-black/20 border-b border-white/5 print:bg-transparent"><tr class="font-black uppercase text-[8px] sm:text-[9px] text-slate-500 text-left tracking-widest"><th class="p-3 sm:p-4">${window.t('f_seller')}</th>${summaryHeaderMonths}<th class="p-3 sm:p-4 text-right bg-black/40 print:bg-transparent text-slate-300">${window.t('total_year')}</th></tr></thead>
+                                <tbody>${summaryRows || `<tr><td colspan="14" class="p-6 text-center text-slate-500 text-xs italic">${window.t('no_data_year')}</td></tr>`}</tbody>
                             </table>
                         </div>
                     </div>
                     <div class="mb-8">
-                        <h3 class="text-base sm:text-lg font-black uppercase tracking-tighter mb-5 text-slate-800 border-b-2 border-slate-100 pb-3 flex items-center gap-2"><i data-lucide="list-checks" class="w-5 h-5 text-emerald-500"></i> ${window.t('detailed_struct')}</h3>
+                        <h3 class="text-base sm:text-lg font-black uppercase tracking-tighter mb-5 text-slate-200 border-b-2 border-white/5 pb-3 flex items-center gap-2"><i data-lucide="list-checks" class="w-5 h-5 text-emerald-500"></i> ${window.t('detailed_struct')}</h3>
                         ${detailedTablesHTML}
                     </div>
                 </div>
@@ -1532,20 +1551,20 @@
             
             if (state.reportActiveKpi === 'receita') {
                 kpiTitle = `Detalhamento: ${window.t('gross_revenue')}`;
-                sRows = enrichedProjects.map(({p}) => `<tr class="border-b border-slate-100 text-[10px] sm:text-xs text-left text-slate-800 hover:bg-slate-50 transition-colors"><td class="p-3 sm:p-4 font-bold text-slate-500">${p.numeroProposta || '-'} / ${p.numeroInvoice || '-'}</td><td class="p-3 sm:p-4 font-black uppercase"><div class="flex flex-col"><span>${p.cliente || ''}</span><span class="text-[8px] sm:text-[9px] font-bold text-slate-400 mt-0.5">${tStatus(p.status)}</span></div></td><td class="p-3 sm:p-4 font-bold text-slate-600">${p.vendedor?.split('@')[0] || ''}</td><td class="p-3 sm:p-4 text-right font-black text-slate-800 text-sm">${formatCurr(p.valorTotal)}</td></tr>`).join('');
-                specificTableHTML = `<table class="w-full"><thead class="bg-slate-100 border-b border-slate-200 print:bg-transparent"><tr class="font-black uppercase text-[8px] sm:text-[9px] text-slate-500 text-left tracking-widest"><th class="p-3 sm:p-4">${window.t('prop_inv')}</th><th class="p-3 sm:p-4">${window.t('f_client')}</th><th class="p-3 sm:p-4">${window.t('f_seller')}</th><th class="p-3 sm:p-4 text-right">${window.t('f_gross')}</th></tr></thead><tbody>${sRows || `<tr><td colspan="4" class="p-6 text-center text-slate-400 text-xs italic">${window.t('no_active_works')}</td></tr>`}</tbody></table>`;
+                sRows = enrichedProjects.map(({p}) => `<tr class="border-b border-white/5 text-[10px] sm:text-xs text-left text-slate-200 hover:bg-white/5 transition-colors"><td class="p-3 sm:p-4 font-bold text-slate-400">${p.numeroProposta || '-'} / ${p.numeroInvoice || '-'}</td><td class="p-3 sm:p-4 font-black uppercase text-white"><div class="flex flex-col"><span>${p.cliente || ''}</span><span class="text-[8px] sm:text-[9px] font-bold text-slate-500 mt-0.5">${tStatus(p.status)}</span></div></td><td class="p-3 sm:p-4 font-bold text-slate-300">${p.vendedor?.split('@')[0] || ''}</td><td class="p-3 sm:p-4 text-right font-black text-slate-100 text-sm">${formatCurr(p.valorTotal)}</td></tr>`).join('');
+                specificTableHTML = `<table class="w-full"><thead class="bg-black/20 border-b border-white/5 print:bg-transparent"><tr class="font-black uppercase text-[8px] sm:text-[9px] text-slate-500 text-left tracking-widest"><th class="p-3 sm:p-4">${window.t('prop_inv')}</th><th class="p-3 sm:p-4">${window.t('f_client')}</th><th class="p-3 sm:p-4">${window.t('f_seller')}</th><th class="p-3 sm:p-4 text-right">${window.t('f_gross')}</th></tr></thead><tbody>${sRows || `<tr><td colspan="4" class="p-6 text-center text-slate-500 text-xs italic">${window.t('no_active_works')}</td></tr>`}</tbody></table>`;
             } else if (state.reportActiveKpi === 'entradas') {
                 kpiTitle = `Detalhamento: ${window.t('entries')}`;
-                sRows = enrichedProjects.filter(({f}) => f.totalRecebido > 0).map(({p, f}) => `<tr class="border-b border-slate-100 text-[10px] sm:text-xs text-left text-slate-800 hover:bg-slate-50 transition-colors"><td class="p-3 sm:p-4 font-bold text-slate-500">${p.numeroProposta || '-'} / ${p.numeroInvoice || '-'}</td><td class="p-3 sm:p-4 font-black uppercase"><div class="flex flex-col"><span>${p.cliente || ''}</span><span class="text-[8px] sm:text-[9px] font-bold text-slate-400 mt-0.5">${tStatus(p.status)}</span></div></td><td class="p-3 sm:p-4 font-bold text-slate-600">${p.vendedor?.split('@')[0] || ''}</td><td class="p-3 sm:p-4 text-right text-slate-500">${formatCurr(p.valorTotal)}</td><td class="p-3 sm:p-4 text-right font-black text-emerald-600 text-sm">${formatCurr(f.totalRecebido)}</td></tr>`).join('');
-                specificTableHTML = `<table class="w-full"><thead class="bg-slate-100 border-b border-slate-200 print:bg-transparent"><tr class="font-black uppercase text-[8px] sm:text-[9px] text-slate-500 text-left tracking-widest"><th class="p-3 sm:p-4">${window.t('prop_inv')}</th><th class="p-3 sm:p-4">${window.t('f_client')}</th><th class="p-3 sm:p-4">${window.t('f_seller')}</th><th class="p-3 sm:p-4 text-right">${window.t('f_gross')}</th><th class="p-3 sm:p-4 text-right">Total Recebido</th></tr></thead><tbody>${sRows || `<tr><td colspan="5" class="p-6 text-center text-slate-400 text-xs italic">Nenhum recebimento encontrado.</td></tr>`}</tbody></table>`;
+                sRows = enrichedProjects.filter(({f}) => f.totalRecebido > 0).map(({p, f}) => `<tr class="border-b border-white/5 text-[10px] sm:text-xs text-left text-slate-200 hover:bg-white/5 transition-colors"><td class="p-3 sm:p-4 font-bold text-slate-400">${p.numeroProposta || '-'} / ${p.numeroInvoice || '-'}</td><td class="p-3 sm:p-4 font-black uppercase text-white"><div class="flex flex-col"><span>${p.cliente || ''}</span><span class="text-[8px] sm:text-[9px] font-bold text-slate-500 mt-0.5">${tStatus(p.status)}</span></div></td><td class="p-3 sm:p-4 font-bold text-slate-300">${p.vendedor?.split('@')[0] || ''}</td><td class="p-3 sm:p-4 text-right text-slate-400">${formatCurr(p.valorTotal)}</td><td class="p-3 sm:p-4 text-right font-black text-emerald-400 text-sm">${formatCurr(f.totalRecebido)}</td></tr>`).join('');
+                specificTableHTML = `<table class="w-full"><thead class="bg-black/20 border-b border-white/5 print:bg-transparent"><tr class="font-black uppercase text-[8px] sm:text-[9px] text-slate-500 text-left tracking-widest"><th class="p-3 sm:p-4">${window.t('prop_inv')}</th><th class="p-3 sm:p-4">${window.t('f_client')}</th><th class="p-3 sm:p-4">${window.t('f_seller')}</th><th class="p-3 sm:p-4 text-right">${window.t('f_gross')}</th><th class="p-3 sm:p-4 text-right">Total Recebido</th></tr></thead><tbody>${sRows || `<tr><td colspan="5" class="p-6 text-center text-slate-500 text-xs italic">Nenhum recebimento encontrado.</td></tr>`}</tbody></table>`;
             } else if (state.reportActiveKpi === 'fluxo') {
                 kpiTitle = `Detalhamento: ${window.t('to_receive')}`;
-                sRows = enrichedProjects.filter(({p, f}) => (p.valorTotal - f.totalRecebido) > 0).map(({p, f}) => `<tr class="border-b border-slate-100 text-[10px] sm:text-xs text-left text-slate-800 hover:bg-slate-50 transition-colors"><td class="p-3 sm:p-4 font-bold text-slate-500">${p.numeroProposta || '-'} / ${p.numeroInvoice || '-'}</td><td class="p-3 sm:p-4 font-black uppercase"><div class="flex flex-col"><span>${p.cliente || ''}</span><span class="text-[8px] sm:text-[9px] font-bold text-slate-400 mt-0.5">${tStatus(p.status)}</span></div></td><td class="p-3 sm:p-4 font-bold text-slate-600">${p.vendedor?.split('@')[0] || ''}</td><td class="p-3 sm:p-4 text-right text-slate-500">${formatCurr(p.valorTotal)}</td><td class="p-3 sm:p-4 text-right text-emerald-600">${formatCurr(f.totalRecebido)}</td><td class="p-3 sm:p-4 text-right font-black text-amber-500 text-sm">${formatCurr(p.valorTotal - f.totalRecebido)}</td></tr>`).join('');
-                specificTableHTML = `<table class="w-full"><thead class="bg-slate-100 border-b border-slate-200 print:bg-transparent"><tr class="font-black uppercase text-[8px] sm:text-[9px] text-slate-500 text-left tracking-widest"><th class="p-3 sm:p-4">${window.t('prop_inv')}</th><th class="p-3 sm:p-4">${window.t('f_client')}</th><th class="p-3 sm:p-4">${window.t('f_seller')}</th><th class="p-3 sm:p-4 text-right">${window.t('f_gross')}</th><th class="p-3 sm:p-4 text-right">Recebido</th><th class="p-3 sm:p-4 text-right">${window.t('missing_receive')}</th></tr></thead><tbody>${sRows || `<tr><td colspan="6" class="p-6 text-center text-slate-400 text-xs italic">Nenhum saldo pendente.</td></tr>`}</tbody></table>`;
+                sRows = enrichedProjects.filter(({p, f}) => (p.valorTotal - f.totalRecebido) > 0).map(({p, f}) => `<tr class="border-b border-white/5 text-[10px] sm:text-xs text-left text-slate-200 hover:bg-white/5 transition-colors"><td class="p-3 sm:p-4 font-bold text-slate-400">${p.numeroProposta || '-'} / ${p.numeroInvoice || '-'}</td><td class="p-3 sm:p-4 font-black uppercase text-white"><div class="flex flex-col"><span>${p.cliente || ''}</span><span class="text-[8px] sm:text-[9px] font-bold text-slate-500 mt-0.5">${tStatus(p.status)}</span></div></td><td class="p-3 sm:p-4 font-bold text-slate-300">${p.vendedor?.split('@')[0] || ''}</td><td class="p-3 sm:p-4 text-right text-slate-400">${formatCurr(p.valorTotal)}</td><td class="p-3 sm:p-4 text-right text-emerald-400">${formatCurr(f.totalRecebido)}</td><td class="p-3 sm:p-4 text-right font-black text-amber-500 text-sm">${formatCurr(p.valorTotal - f.totalRecebido)}</td></tr>`).join('');
+                specificTableHTML = `<table class="w-full"><thead class="bg-black/20 border-b border-white/5 print:bg-transparent"><tr class="font-black uppercase text-[8px] sm:text-[9px] text-slate-500 text-left tracking-widest"><th class="p-3 sm:p-4">${window.t('prop_inv')}</th><th class="p-3 sm:p-4">${window.t('f_client')}</th><th class="p-3 sm:p-4">${window.t('f_seller')}</th><th class="p-3 sm:p-4 text-right">${window.t('f_gross')}</th><th class="p-3 sm:p-4 text-right">Recebido</th><th class="p-3 sm:p-4 text-right">${window.t('missing_receive')}</th></tr></thead><tbody>${sRows || `<tr><td colspan="6" class="p-6 text-center text-slate-500 text-xs italic">Nenhum saldo pendente.</td></tr>`}</tbody></table>`;
             } else if (state.reportActiveKpi === 'lucro') {
                 kpiTitle = `Detalhamento: ${window.t('est_profit')} e ${window.t('margin')}`;
-                sRows = enrichedProjects.map(({p, f}) => `<tr class="border-b border-slate-100 text-[10px] sm:text-xs text-left text-slate-800 hover:bg-slate-50 transition-colors"><td class="p-3 sm:p-4 font-bold text-slate-500">${p.numeroProposta || '-'} / ${p.numeroInvoice || '-'}</td><td class="p-3 sm:p-4 font-black uppercase"><div class="flex flex-col"><span>${p.cliente || ''}</span><span class="text-[8px] sm:text-[9px] font-bold text-slate-400 mt-0.5">${tStatus(p.status)}</span></div></td><td class="p-3 sm:p-4 text-right text-slate-500">${formatCurr(p.valorTotal)}</td><td class="p-3 sm:p-4 text-right text-red-500">${formatCurr(f.totalDespesas)}</td><td class="p-3 sm:p-4 text-right font-black ${f.lucroBruto >= 0 ? 'text-cyan-600' : 'text-red-600'} text-sm">${formatCurr(f.lucroBruto)}</td><td class="p-3 sm:p-4 text-right font-black ${f.margemLucro >= 0 ? 'text-indigo-500' : 'text-red-500'} text-sm">${f.margemLucro.toFixed(1)}%</td></tr>`).join('');
-                specificTableHTML = `<table class="w-full"><thead class="bg-slate-100 border-b border-slate-200 print:bg-transparent"><tr class="font-black uppercase text-[8px] sm:text-[9px] text-slate-500 text-left tracking-widest"><th class="p-3 sm:p-4">${window.t('prop_inv')}</th><th class="p-3 sm:p-4">${window.t('f_client')}</th><th class="p-3 sm:p-4 text-right">${window.t('f_gross')}</th><th class="p-3 sm:p-4 text-right">${window.t('total_expenses')}</th><th class="p-3 sm:p-4 text-right">${window.t('real_profit')}</th><th class="p-3 sm:p-4 text-right">${window.t('margin')} %</th></tr></thead><tbody>${sRows || `<tr><td colspan="6" class="p-6 text-center text-slate-400 text-xs italic">${window.t('no_active_works')}</td></tr>`}</tbody></table>`;
+                sRows = enrichedProjects.map(({p, f}) => `<tr class="border-b border-white/5 text-[10px] sm:text-xs text-left text-slate-200 hover:bg-white/5 transition-colors"><td class="p-3 sm:p-4 font-bold text-slate-400">${p.numeroProposta || '-'} / ${p.numeroInvoice || '-'}</td><td class="p-3 sm:p-4 font-black uppercase text-white"><div class="flex flex-col"><span>${p.cliente || ''}</span><span class="text-[8px] sm:text-[9px] font-bold text-slate-500 mt-0.5">${tStatus(p.status)}</span></div></td><td class="p-3 sm:p-4 text-right text-slate-400">${formatCurr(p.valorTotal)}</td><td class="p-3 sm:p-4 text-right text-red-400">${formatCurr(f.totalDespesas)}</td><td class="p-3 sm:p-4 text-right font-black ${f.lucroBruto >= 0 ? 'text-cyan-400' : 'text-red-500'} text-sm">${formatCurr(f.lucroBruto)}</td><td class="p-3 sm:p-4 text-right font-black ${f.margemLucro >= 0 ? 'text-indigo-400' : 'text-red-500'} text-sm">${f.margemLucro.toFixed(1)}%</td></tr>`).join('');
+                specificTableHTML = `<table class="w-full"><thead class="bg-black/20 border-b border-white/5 print:bg-transparent"><tr class="font-black uppercase text-[8px] sm:text-[9px] text-slate-500 text-left tracking-widest"><th class="p-3 sm:p-4">${window.t('prop_inv')}</th><th class="p-3 sm:p-4">${window.t('f_client')}</th><th class="p-3 sm:p-4 text-right">${window.t('f_gross')}</th><th class="p-3 sm:p-4 text-right">${window.t('total_expenses')}</th><th class="p-3 sm:p-4 text-right">${window.t('real_profit')}</th><th class="p-3 sm:p-4 text-right">${window.t('margin')} %</th></tr></thead><tbody>${sRows || `<tr><td colspan="6" class="p-6 text-center text-slate-500 text-xs italic">${window.t('no_active_works')}</td></tr>`}</tbody></table>`;
             } else if (state.reportActiveKpi.startsWith('status_')) {
                 const targetStatusMap = {
                     'status_aprovado': '✅ Aprovado',
@@ -1555,21 +1574,21 @@
                 };
                 const targetStatus = targetStatusMap[state.reportActiveKpi];
                 kpiTitle = `Funil: ${tStatus(targetStatus).replace('✅ ', '')}`;
-                sRows = enrichedProjects.filter(({p}) => p.status === targetStatus).map(({p, f}) => `<tr class="border-b border-slate-100 text-[10px] sm:text-xs text-left text-slate-800 hover:bg-slate-50 transition-colors"><td class="p-3 sm:p-4 font-bold text-slate-500">${p.numeroProposta || '-'} / ${p.numeroInvoice || '-'}</td><td class="p-3 sm:p-4 font-black uppercase"><div class="flex flex-col"><span>${p.cliente || ''}</span><span class="text-[8px] sm:text-[9px] font-bold text-slate-400 mt-0.5">${tStatus(p.status)}</span></div></td><td class="p-3 sm:p-4 font-bold text-slate-600">${p.vendedor?.split('@')[0] || ''}</td><td class="p-3 sm:p-4 text-right font-black text-slate-800 text-sm">${formatCurr(p.valorTotal)}</td></tr>`).join('');
-                specificTableHTML = `<table class="w-full"><thead class="bg-slate-100 border-b border-slate-200 print:bg-transparent"><tr class="font-black uppercase text-[8px] sm:text-[9px] text-slate-500 text-left tracking-widest"><th class="p-3 sm:p-4">${window.t('prop_inv')}</th><th class="p-3 sm:p-4">${window.t('f_client')}</th><th class="p-3 sm:p-4">${window.t('f_seller')}</th><th class="p-3 sm:p-4 text-right">${window.t('f_gross')}</th></tr></thead><tbody>${sRows || `<tr><td colspan="4" class="p-6 text-center text-slate-400 text-xs italic">Nenhuma obra nesta etapa.</td></tr>`}</tbody></table>`;
+                sRows = enrichedProjects.filter(({p}) => p.status === targetStatus).map(({p, f}) => `<tr class="border-b border-white/5 text-[10px] sm:text-xs text-left text-slate-200 hover:bg-white/5 transition-colors"><td class="p-3 sm:p-4 font-bold text-slate-400">${p.numeroProposta || '-'} / ${p.numeroInvoice || '-'}</td><td class="p-3 sm:p-4 font-black uppercase text-white"><div class="flex flex-col"><span>${p.cliente || ''}</span><span class="text-[8px] sm:text-[9px] font-bold text-slate-500 mt-0.5">${tStatus(p.status)}</span></div></td><td class="p-3 sm:p-4 font-bold text-slate-300">${p.vendedor?.split('@')[0] || ''}</td><td class="p-3 sm:p-4 text-right font-black text-slate-100 text-sm">${formatCurr(p.valorTotal)}</td></tr>`).join('');
+                specificTableHTML = `<table class="w-full"><thead class="bg-black/20 border-b border-white/5 print:bg-transparent"><tr class="font-black uppercase text-[8px] sm:text-[9px] text-slate-500 text-left tracking-widest"><th class="p-3 sm:p-4">${window.t('prop_inv')}</th><th class="p-3 sm:p-4">${window.t('f_client')}</th><th class="p-3 sm:p-4">${window.t('f_seller')}</th><th class="p-3 sm:p-4 text-right">${window.t('f_gross')}</th></tr></thead><tbody>${sRows || `<tr><td colspan="4" class="p-6 text-center text-slate-500 text-xs italic">Nenhuma obra nesta etapa.</td></tr>`}</tbody></table>`;
             }
 
             bottomHTML = `
                 <div class="mt-8 mb-10 animate-fade-in">
-                    <div class="flex justify-between items-center mb-5 border-b-2 border-slate-100 pb-3">
-                        <h3 class="text-base sm:text-lg font-black uppercase tracking-tighter text-indigo-600 flex items-center gap-2">
+                    <div class="flex justify-between items-center mb-5 border-b-2 border-white/5 pb-3">
+                        <h3 class="text-base sm:text-lg font-black uppercase tracking-tighter text-indigo-400 flex items-center gap-2">
                             <i data-lucide="layout-list" class="w-5 h-5"></i> ${kpiTitle}
                         </h3>
-                        <button onclick="window.printKpiReport()" class="hidden sm:inline-flex items-center gap-2 text-white force-white-text bg-slate-800 hover:bg-slate-700 transition-all font-black text-[10px] uppercase tracking-widest px-4 py-2 rounded-xl shadow-md no-print">
+                        <button onclick="window.printKpiReport()" class="hidden sm:inline-flex items-center gap-2 text-slate-800 bg-white hover:bg-slate-200 transition-all font-black text-[10px] uppercase tracking-widest px-4 py-2 rounded-xl shadow-md no-print force-dark-bg">
                             <i data-lucide="printer" class="w-3.5 h-3.5"></i> ${window.t('print_view')}
                         </button>
                     </div>
-                    <div class="overflow-x-auto print:overflow-visible border border-slate-200 rounded-2xl print:border-none shadow-sm">
+                    <div class="overflow-x-auto print:overflow-visible border border-white/5 rounded-2xl print:border-none shadow-sm">
                         ${specificTableHTML}
                     </div>
                 </div>
@@ -1587,7 +1606,7 @@
                     </div>
                 </div>
                 
-                <div class="bg-white p-6 sm:p-10 rounded-[40px] shadow-inner text-slate-900 print:p-0 print:shadow-none print:bg-transparent">
+                <div class="bg-black/20 p-6 sm:p-10 rounded-[40px] shadow-inner text-slate-200 print:p-0 print:shadow-none print:bg-transparent">
                     ${ceoDashHTML}
 
                     <div id="dynamic-report-content">
@@ -1595,8 +1614,8 @@
                     </div>
                     
                     ${state.reportActiveKpi === 'overview' ? `
-                    <div class="mt-12 pt-8 border-t-4 border-slate-100 flex justify-center no-print">
-                         <button onclick="window.printReport()" class="flex items-center gap-3 text-white force-white-text bg-slate-900 hover:bg-slate-800 transition-all font-black text-sm uppercase tracking-widest px-8 py-4 rounded-2xl shadow-xl hover:-translate-y-1">
+                    <div class="mt-12 pt-8 border-t-4 border-white/10 flex justify-center no-print">
+                         <button onclick="window.printReport()" class="flex items-center gap-3 text-white force-white-text bg-slate-800 hover:bg-slate-700 transition-all font-black text-sm uppercase tracking-widest px-8 py-4 rounded-2xl shadow-xl hover:-translate-y-1">
                              <i data-lucide="printer" class="w-5 h-5"></i> ${window.t('print_full_rep')}
                          </button>
                     </div>` : ''}
@@ -1705,7 +1724,7 @@
                 if (!id) { await addDoc(collection(db, 'artifacts', appId, 'public', 'data', 'user_credentials'), { email: mail, password: pass, role: role, viewAll: viewAll, viewCosts: viewCosts, updatedAt: serverTimestamp() }); logAccess(state.user.email, `Adicionou usuário: ${mail}`); } 
                 else { await updateDoc(doc(db, 'artifacts', appId, 'public', 'data', 'user_credentials', id), { email: mail, password: pass, role: role, viewAll: viewAll, viewCosts: viewCosts, updatedAt: serverTimestamp() }); logAccess(state.user.email, `Atualizou usuário: ${mail}`); }
                 e.target.reset(); document.getElementById('t-id').value = ''; document.getElementById('t-viewall').checked = false; document.getElementById('t-viewcosts').checked = false;
-            } catch (err) { window.showModal(window.t('error'), 'Erro ao salvar usuário: ' + err.message, 'error'); }
+            } catch (err) { window.showModal('Erro', 'Erro ao salvar usuário: ' + err.message, 'error'); }
         };
     });
 </script>
