@@ -149,6 +149,7 @@
             
             /* Força a cor branca nos badges do funil durante a impressão */
             .print-force-white { color: #ffffff !important; }
+            .funnel-value { color: #0f172a !important; }
         }
 
         .flag-btn { border: 1px solid rgba(15,23,42,0.12); border-radius: 14px; padding: 10px; transition: .2s; background: #fff; }
@@ -216,11 +217,11 @@
 <!-- Modal de Edição de Recebimentos -->
 <div id="edit-rec-modal" class="modal-overlay">
     <div class="modal-content animate-fade-in">
-        <h3 class="text-2xl font-black text-emerald-500 mb-6" data-i18n="client_receipts">Editar Recebimentos (Cliente)</h3>
+        <h3 class="text-2xl font-black text-emerald-500 mb-6" data-i18n="modal_rec_title">Gerenciar Recebimentos (Cliente)</h3>
         <div id="rec-edit-list" class="space-y-4 mb-6"></div>
-        <div class="flex justify-end gap-4">
+        <div class="flex justify-end gap-4 mt-8 pt-6 border-t border-white/10">
             <button onclick="window.closeEditRecModal()" class="px-6 py-3 bg-slate-700 text-white rounded-xl font-bold hover:bg-slate-600 transition-colors" data-i18n="cancel">Cancelar</button>
-            <button onclick="window.saveEditedRecs()" class="px-8 py-3 bg-emerald-600 text-white font-black rounded-xl hover:bg-emerald-500 transition-colors shadow-lg" data-i18n="btn_save">Salvar Alterações</button>
+            <button onclick="window.saveEditedRecs()" class="px-8 py-3 bg-emerald-600 text-white font-black rounded-xl hover:bg-emerald-500 transition-colors shadow-lg" data-i18n="btn_save_changes">Salvar Alterações</button>
         </div>
     </div>
 </div>
@@ -228,11 +229,11 @@
 <!-- Modal de Edição de Pagamentos -->
 <div id="edit-payment-modal" class="modal-overlay">
     <div class="modal-content animate-fade-in">
-        <h3 class="text-2xl font-black text-gold mb-6" data-i18n="seller_payments">Editar Pagamentos (Vendedor)</h3>
+        <h3 class="text-2xl font-black text-gold mb-6" data-i18n="modal_pay_title">Gerenciar Pagamentos (Vendedor)</h3>
         <div id="payment-edit-list" class="space-y-4 mb-6"></div>
-        <div class="flex justify-end gap-4">
+        <div class="flex justify-end gap-4 mt-8 pt-6 border-t border-white/10">
             <button onclick="window.closeEditPaymentModal()" class="px-6 py-3 bg-slate-700 text-white rounded-xl font-bold hover:bg-slate-600 transition-colors" data-i18n="cancel">Cancelar</button>
-            <button onclick="window.saveEditedPayments()" class="px-8 py-3 bg-slate-800 text-white force-white-text border border-gold/30 font-black rounded-xl hover:bg-slate-700 transition-colors shadow-lg" data-i18n="btn_save">Salvar Alterações</button>
+            <button onclick="window.saveEditedPayments()" class="px-8 py-3 bg-slate-800 text-white force-white-text border border-gold/30 font-black rounded-xl hover:bg-slate-700 transition-colors shadow-lg" data-i18n="btn_save_changes">Salvar Alterações</button>
         </div>
     </div>
 </div>
@@ -263,7 +264,7 @@
         <!-- NAVEGAÇÃO PRINCIPAL -->
         <nav id="main-nav" class="no-print flex gap-10 mb-6 border-b border-white/5 overflow-x-auto justify-center sm:justify-start scrollbar-hide">
             <button onclick="window.showView('projects')" class="tab-btn pb-4 font-black uppercase tracking-[0.2em] tab-active hidden" id="tab-projects" data-i18n="nav_proj">Projetos</button>
-            <button onclick="window.cancelEdit(); window.showView('new')" class="tab-btn pb-4 font-black uppercase tracking-[0.2em] hidden" id="tab-new" data-i18n="nav_new">Nova Obra</button>
+            <button onclick="window.cancelEdit(); window.showView('new')" class="tab-btn pb-4 font-black uppercase tracking-[0.2em] editor-only hidden" id="tab-new" data-i18n="nav_new">Nova Obra</button>
             <button onclick="window.showView('reports')" class="tab-btn pb-4 font-black uppercase tracking-[0.2em] hidden" id="tab-reports" data-i18n="nav_rep">Relatórios</button>
             
             <button onclick="window.showView('users')" class="tab-btn pb-4 font-black uppercase tracking-[0.2em] hidden text-gold" id="tab-users" data-i18n="nav_users">Equipe</button>
@@ -519,7 +520,8 @@
             modal_del_rec_msg: "Deseja remover este recebimento?",
             modal_del_team_title: "Remover Acesso", modal_del_team_msg: "Deseja realmente remover o acesso deste membro?",
             modal_del_proj_title: "Excluir Obra", modal_del_proj_msg: "Tem certeza que deseja excluir esta obra permanentemente?",
-            modal_access_denied: "Acesso Negado", modal_access_denied_msg: "Para apagar um projeto, por favor solicite ao administrador."
+            modal_access_denied: "Acesso Negado", modal_access_denied_msg: "Para apagar um projeto, por favor solicite ao administrador.",
+            modal_rec_title: "Gerenciar Recebimentos (Cliente)", modal_pay_title: "Gerenciar Pagamentos (Vendedor)", btn_manage: "Gerir", btn_save_changes: "Salvar Alterações"
         },
         en: {
             admin_panel: "Corporate Management", nav_proj: "Projects", nav_new: "New Entry", nav_rep: "Reports", nav_users: "Team",
@@ -557,7 +559,8 @@
             modal_del_rec_msg: "Do you want to remove this receipt?",
             modal_del_team_title: "Remove Access", modal_del_team_msg: "Do you really want to remove this member's access?",
             modal_del_proj_title: "Delete Project", modal_del_proj_msg: "Are you sure you want to permanently delete this project?",
-            modal_access_denied: "Access Denied", modal_access_denied_msg: "To delete a project, please ask an administrator."
+            modal_access_denied: "Access Denied", modal_access_denied_msg: "To delete a project, please ask an administrator.",
+            modal_rec_title: "Manage Client Receipts", modal_pay_title: "Manage Seller Payments", btn_manage: "Manage", btn_save_changes: "Save Changes"
         }
     };
     
@@ -781,7 +784,7 @@
         }
     }
 
-    // --- NOVA LÓGICA DE FILTROS GLOBAIS DE EMPRESA ---
+    // --- LÓGICA DE FILTROS GLOBAIS DE EMPRESA ---
     window.selectUnit = (unit) => {
         state.company = unit;
         
@@ -884,7 +887,7 @@
         }
     }
 
-    // --- PAGAMENTOS E RECEBIMENTOS ---
+    // --- PAGAMENTOS E RECEBIMENTOS (SISTEMA UNIFICADO NO MODAL) ---
     window.openEditPaymentModal = (projectId) => {
         const p = state.projects.find(x => x.id === projectId);
         if (!p) return;
@@ -906,7 +909,6 @@
     };
     window.addNewPaymentToEdit = () => { if (!state.editingPayments) return; state.editingPayments.payments.push({ data: new Date().toISOString().split('T')[0], valor: 0 }); window.renderPaymentEditList(); };
     window.saveEditedPayments = async () => { if (!state.editingPayments) return; try { await updateDoc(doc(db, 'artifacts', appId, 'public', 'data', 'projects', state.editingPayments.projectId), { pagamentosEfetuados: state.editingPayments.payments }); window.closeEditPaymentModal(); } catch (e) { window.showModal(window.t('error'), 'Erro ao salvar pagamentos: ' + e.message, 'error'); } };
-    window.addPayment = async (projectId) => { if (!state.userPerms.fin) return; const v = document.getElementById(`pay-val-${projectId}`)?.value; const d = document.getElementById(`pay-date-${projectId}`)?.value; if (!v || !d) { window.showModal(window.t('attention'), 'Preencha data e valor.', 'error'); return; } try { await updateDoc(doc(db, 'artifacts', appId, 'public', 'data', 'projects', projectId), { pagamentosEfetuados: arrayUnion({ valor: parseFloat(v), data: d }) }); logAccess(state.user.email, `Pagou vendedor $${v} na obra ID: ${projectId}`); } catch (e) { console.error(e); } };
 
     window.openEditRecModal = (projectId) => { const p = state.projects.find(x => x.id === projectId); if (!p) return; state.editingRecs = { projectId, recs: [...(p.recebimentos || [])] }; window.renderRecEditList(); document.getElementById('edit-rec-modal').classList.add('active'); };
     window.closeEditRecModal = () => { state.editingRecs = null; document.getElementById('edit-rec-modal').classList.remove('active'); };
@@ -924,7 +926,6 @@
     };
     window.addNewRecToEdit = () => { if (!state.editingRecs) return; state.editingRecs.recs.push({ data: new Date().toISOString().split('T')[0], valor: 0, metodo: 'Zelle' }); window.renderRecEditList(); };
     window.saveEditedRecs = async () => { if (!state.editingRecs) return; try { await updateDoc(doc(db, 'artifacts', appId, 'public', 'data', 'projects', state.editingRecs.projectId), { recebimentos: state.editingRecs.recs }); window.closeEditRecModal(); } catch (e) { window.showModal(window.t('error'), 'Erro ao salvar: ' + e.message, 'error'); } };
-    window.addRecebimento = async (projectId) => { if (!state.userPerms.fin) return; const v = document.getElementById(`rec-val-${projectId}`)?.value; const d = document.getElementById(`rec-date-${projectId}`)?.value; const m = document.getElementById(`rec-met-${projectId}`)?.value; if (!v || !d || !m) { window.showModal(window.t('attention'), 'Preencha data, valor e método.', 'error'); return; } try { await updateDoc(doc(db, 'artifacts', appId, 'public', 'data', 'projects', projectId), { recebimentos: arrayUnion({ valor: parseFloat(v), data: d, metodo: m }) }); logAccess(state.user.email, `Registrou recebimento $${v} na obra ID: ${projectId}`); } catch (e) { console.error(e); } };
 
     // --- NAVEGAÇÃO INTERNA DO MODO FOCO ---
     window.openProjectDetails = (id) => { 
@@ -1049,7 +1050,7 @@
 
         if (v === 'logs') window.renderLogs();
         if (v === 'projects') { state.focusedProject = null; state.activeModule = null; window.renderProjects(); }
-        if (v === 'reports') { state.reportActiveKpi = 'receita'; window.renderReport(); }
+        if (v === 'reports') { state.reportActiveKpi = 'receita'; window.renderReport(); } 
         try { lucide.createIcons(); } catch {}
     };
 
@@ -1134,7 +1135,7 @@
             if (!state.activeModule) {
                 grid.innerHTML += `
                     <div class="mb-2 flex justify-between items-center no-print w-full">
-                        <button onclick="window.closeProjectDetails()" class="inline-flex items-center gap-3 text-white force-white-text hover:text-gold transition-all font-black text-xs sm:text-sm uppercase tracking-widest px-6 py-4 bg-slate-800 rounded-2xl border border-white/10 hover:bg-slate-700 hover:scale-105 shadow-xl w-full sm:w-auto justify-center force-dark-bg">
+                        <button onclick="window.closeProjectDetails()" class="inline-flex items-center gap-3 text-white hover:text-gold transition-all font-black text-xs sm:text-sm uppercase tracking-widest px-6 py-4 bg-slate-800 rounded-2xl border border-white/10 hover:bg-slate-700 hover:scale-105 shadow-xl w-full sm:w-auto justify-center force-white-text">
                             <i data-lucide="arrow-left" class="w-5 h-5"></i> ${window.t('back')}
                         </button>
                     </div>
@@ -1190,7 +1191,7 @@
                 <div class="w-px h-4 bg-white/10 mx-2"></div>
                 <button onclick="event.stopPropagation(); window.toggleArchive('${p.id}', ${!!p.archived})" class="p-1 hover:scale-110 transition-transform no-print"><i data-lucide="${archiveIcon}" class="w-5 h-5 ${archiveColor}"></i></button>
                 <button onclick="event.stopPropagation(); window.editP('${p.id}')" class="p-1 hover:scale-110 transition-transform no-print"><i data-lucide="edit-3" class="w-5 h-5 text-slate-400 hover:text-white"></i></button>
-                <button onclick="event.stopPropagation(); window.deleteP('${p.id}')" class="p-1 hover:scale-110 transition-transform no-print"><i data-lucide="trash-2" class="w-5 h-5 text-red-500/70 hover:text-red-400"></i></button>
+                <button onclick="event.stopPropagation(); window.deleteP('${p.id}')" class="p-1 hover:scale-110 transition-transform no-print ${state.isSuperAdmin ? '' : 'hidden'}"><i data-lucide="trash-2" class="w-5 h-5 text-red-500/70 hover:text-red-400"></i></button>
             `;
 
             if (isFocused && state.activeModule) {
@@ -1213,35 +1214,22 @@
                                     <p class="text-xs sm:text-sm font-black text-emerald-400 uppercase tracking-widest print:text-emerald-800">${window.t('client_receipts')}</p>
                                     <div class="flex items-center gap-4">
                                         <span class="text-xs sm:text-sm font-bold text-emerald-500 print:text-emerald-800">${formatCurr(f.totalRecebido)} / ${formatCurr(p.valorTotal)}</span>
-                                        ${state.userPerms.fin ? `<button onclick="window.openEditRecModal('${p.id}')" class="text-sm font-bold text-white force-white-text hover:text-emerald-200 transition-colors no-print p-2 bg-emerald-600 rounded-lg shadow-md force-dark-bg"><i data-lucide="edit-3" class="w-5 h-5"></i></button>` : ''}
+                                        ${state.userPerms.fin ? `<button onclick="window.openEditRecModal('${p.id}')" class="flex items-center gap-2 text-[10px] font-black text-white force-white-text hover:text-emerald-200 transition-colors no-print px-4 py-2 bg-emerald-600 rounded-xl shadow-md force-dark-bg uppercase tracking-widest"><i data-lucide="settings-2" class="w-4 h-4"></i> ${window.t('btn_manage')}</button>` : ''}
                                     </div>
                                 </div>
                                 <div class="max-h-60 overflow-y-auto scrollbar-hide px-2 print:max-h-none">
                                     ${(p.recebimentos || []).map(r => `<div class="flex justify-between items-center text-sm sm:text-base py-4 border-b border-white/5 last:border-0 print:border-slate-200 hover:bg-white/5 rounded px-2"><span class="text-slate-300 print:text-black">${r.data ? new Date(r.data + 'T12:00:00').toLocaleDateString(state.lang === 'pt' ? 'pt-BR' : 'en-US') : '-'} <span class="text-[10px] font-black text-slate-500 ml-2 uppercase bg-black/30 px-2 py-1 rounded print:bg-slate-200 print:text-slate-800">${r.metodo}</span></span><span class="font-black text-emerald-400 print:text-emerald-700">+ ${formatCurr(r.valor)}</span></div>`).join('') || `<p class="text-sm italic text-slate-600 text-center py-6">${window.t('no_receipts')}</p>`}
                                 </div>
-                                ${state.userPerms.fin ? `
-                                <div class="grid grid-cols-1 sm:grid-cols-12 gap-4 mt-6 no-print bg-black/20 p-5 rounded-2xl border border-white/5">
-                                    <input type="date" id="rec-date-${p.id}" class="modern-input relative !text-sm sm:col-span-4" onclick="event.stopPropagation();">
-                                    <input type="number" id="rec-val-${p.id}" placeholder="$ Valor" class="modern-input !text-sm sm:col-span-4" onclick="event.stopPropagation();">
-                                    <select id="rec-met-${p.id}" class="modern-input !text-sm sm:col-span-4 !pr-8" onclick="event.stopPropagation();"><option value="Zelle">Zelle</option><option value="Wire Transfer">Wire Transfer</option><option value="Dinheiro">Dinheiro (Cash)</option><option value="CC">Cartão de Crédito (CC)</option></select>
-                                    <button onclick="window.addRecebimento('${p.id}')" class="sm:col-span-12 w-full bg-emerald-600 hover:bg-emerald-500 text-white force-white-text py-4 rounded-xl font-black text-xs uppercase tracking-widest transition-colors shadow-lg flex items-center justify-center gap-2 force-dark-bg"><i data-lucide="arrow-down-to-line" class="w-5 h-5"></i> ${window.t('save_client_pay')}</button>
-                                </div>` : ''}
                             </div>
 
                             <div class="space-y-4 pt-8 border-t border-white/10 print:border-slate-200">
                                 <div class="flex justify-between items-center bg-gold/10 p-4 px-5 rounded-2xl border border-gold/20 print:bg-amber-50 print:border-amber-200">
                                     <p class="text-xs sm:text-sm font-black text-gold uppercase tracking-widest print:text-amber-800">${window.t('seller_payments')}</p>
-                                    ${state.userPerms.fin ? `<button onclick="window.openEditPaymentModal('${p.id}')" class="text-sm font-bold text-white force-white-text hover:text-gold transition-colors no-print p-2 bg-slate-800 rounded-lg shadow-md border border-gold/30 force-dark-bg"><i data-lucide="edit-3" class="w-5 h-5"></i></button>` : ''}
+                                    ${state.userPerms.fin ? `<button onclick="window.openEditPaymentModal('${p.id}')" class="flex items-center gap-2 text-[10px] font-black text-white force-white-text hover:text-gold transition-colors no-print px-4 py-2 bg-slate-800 rounded-xl shadow-md border border-gold/30 force-dark-bg uppercase tracking-widest"><i data-lucide="settings-2" class="w-4 h-4"></i> ${window.t('btn_manage')}</button>` : ''}
                                 </div>
                                 <div class="max-h-60 overflow-y-auto scrollbar-hide px-2 print:max-h-none">
                                     ${(p.pagamentosEfetuados || []).map(pay => `<div class="flex justify-between items-center text-sm sm:text-base py-4 border-b border-white/5 last:border-0 print:border-slate-200 hover:bg-white/5 rounded px-2"><span class="text-slate-300 print:text-black">${pay.data ? new Date(pay.data + 'T12:00:00').toLocaleDateString(state.lang === 'pt' ? 'pt-BR' : 'en-US') : '-'}</span><span class="font-black text-gold print:text-amber-700">- ${formatCurr(pay.valor)}</span></div>`).join('') || `<p class="text-sm italic text-slate-600 text-center py-6">${window.t('no_payments')}</p>`}
                                 </div>
-                                ${state.userPerms.fin ? `
-                                <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 mt-6 no-print bg-black/20 p-5 rounded-2xl border border-white/5">
-                                    <input type="date" id="pay-date-${p.id}" class="modern-input relative !text-sm" onclick="event.stopPropagation();">
-                                    <input type="number" id="pay-val-${p.id}" placeholder="$ Valor" class="modern-input !text-sm" onclick="event.stopPropagation();">
-                                    <button onclick="window.addPayment('${p.id}')" class="sm:col-span-2 w-full bg-slate-800 hover:bg-slate-700 border border-gold/30 text-white force-white-text py-4 rounded-xl font-black text-xs uppercase tracking-widest transition-colors shadow-lg flex items-center justify-center gap-2 force-dark-bg"><i data-lucide="arrow-up-from-line" class="w-5 h-5"></i> ${window.t('make_seller_pay')}</button>
-                                </div>` : ''}
                             </div>
                         </div>
                     `;
@@ -1579,7 +1567,7 @@
                     const profitCol = canViewCosts ? `<td class="p-3 sm:p-4 text-right font-black ${f.lucroBruto >= 0 ? 'text-cyan-400 print:text-cyan-600' : 'text-red-400 print:text-red-500'}">${formatCurr(f.lucroBruto)}</td><td class="p-3 sm:p-4 text-right font-black ${f.margemLucro >= 0 ? 'text-indigo-400 print:text-indigo-600' : 'text-red-400 print:text-red-500'}">${f.margemLucro.toFixed(1)}%</td>` : '';
                     return `<tr class="border-b border-white/5 text-[10px] sm:text-xs text-left text-slate-300 print:text-slate-800 hover:bg-white/5 transition-colors print:border-slate-100"><td class="p-3 sm:p-4 font-bold text-[9px] sm:text-[10px] text-slate-400 print:text-slate-500">${p.numeroProposta || '-'} / ${p.numeroInvoice || '-'}</td><td class="p-3 sm:p-4 font-black uppercase text-white print:text-black"><div class="flex flex-col"><span>${p.cliente || ''}</span><span class="text-[8px] sm:text-[9px] font-bold text-slate-500 print:text-slate-400 mt-0.5">${tStatus(p.status)}</span></div></td><td class="p-3 sm:p-4 font-bold text-slate-300 print:text-slate-600">${p.vendedor?.split('@')[0] || ''}</td><td class="p-3 sm:p-4 text-right">${formatCurr(p.valorTotal)}</td><td class="p-3 sm:p-4 text-right font-black text-emerald-400 print:text-emerald-600">${formatCurr(f.totalRecebido)}</td><td class="p-3 sm:p-4 text-right font-black text-amber-400 print:text-amber-600">${formatCurr(f.commLiberada)}</td>${profitCol}</tr>`;
                 }).join('');
-                return `<div class="mb-10"><h4 class="text-sm font-black text-slate-200 print:text-slate-700 bg-black/40 print:bg-slate-100 inline-block px-4 py-2 rounded-t-xl uppercase tracking-widest border border-b-0 border-white/5 print:border-slate-200">${companyName}</h4><div class="overflow-x-auto print:overflow-visible border border-white/5 print:border-slate-200 rounded-xl rounded-tl-none print:border-none shadow-sm"><table class="w-full"><thead class="bg-black/20 print:bg-slate-50 border-b border-white/5 print:border-slate-200 print:bg-transparent"><tr class="font-black uppercase text-[8px] sm:text-[9px] text-slate-400 print:text-slate-500 text-left tracking-widest"><th class="p-3 sm:p-4">${window.t('prop_inv')}</th><th class="p-3 sm:p-4">${window.t('f_client')}</th><th class="p-3 sm:p-4">${window.t('f_seller')}</th><th class="p-3 sm:p-4 text-right">${window.t('f_gross')}</th><th class="p-3 sm:p-4 text-right bg-emerald-500/10 print:bg-emerald-50 text-emerald-400 print:text-emerald-700 print:bg-transparent">Recebido</th><th class="p-3 sm:p-4 text-right bg-amber-500/10 print:bg-amber-50 text-amber-400 print:text-amber-700 print:bg-transparent">${window.t('comm_released')}</th>${canViewCosts ? `<th class="p-3 sm:p-4 text-right bg-cyan-900/20 print:bg-cyan-50 text-cyan-400 print:text-cyan-700 print:bg-transparent">${window.t('real_profit')}</th><th class="p-3 sm:p-4 text-right bg-indigo-900/20 print:bg-indigo-50 text-indigo-400 print:text-indigo-700 print:bg-transparent">${window.t('margin')}</th>` : ''}</tr></thead><tbody>${tableRows}</tbody></table></div></div>`;
+                return `<div class="mb-10"><h4 class="text-sm font-black text-slate-200 print:text-slate-700 bg-black/40 print:bg-slate-100 inline-block px-4 py-2 rounded-t-xl uppercase tracking-widest border border-b-0 border-white/5 print:border-slate-200">${companyName}</h4><div class="overflow-x-auto print:overflow-visible border border-white/5 print:border-slate-200 rounded-xl rounded-tl-none print:border-none shadow-sm"><table class="w-full"><thead class="bg-black/20 print:bg-slate-50 border-b border-white/5 print:border-slate-200 print:bg-transparent"><tr class="font-black uppercase text-[8px] sm:text-[9px] text-slate-400 print:text-slate-500 text-left tracking-widest"><th class="p-3 sm:p-4">${window.t('prop_inv')}</th><th class="p-3 sm:p-4">${window.t('f_client')}</th><th class="p-3 sm:p-4">${window.t('f_seller')}</th><th class="p-3 sm:p-4 text-right">${window.t('f_gross')}</th><th class="p-3 sm:p-4 text-right bg-emerald-500/10 print:bg-emerald-50 text-emerald-400 print:text-emerald-700 print:bg-transparent">Recebido</th><th class="p-3 sm:p-4 text-right bg-amber-500/10 print:bg-amber-50 text-amber-400 print:text-amber-700 print:bg-transparent">${window.t('comm_released')}</th>${canViewCosts ? `<th class="p-3 sm:p-4 text-right bg-cyan-950/20 print:bg-cyan-50 text-cyan-400 print:text-cyan-700 print:bg-transparent">${window.t('real_profit')}</th><th class="p-3 sm:p-4 text-right bg-indigo-900/20 print:bg-indigo-50 text-indigo-400 print:text-indigo-700 print:bg-transparent">${window.t('margin')}</th>` : ''}</tr></thead><tbody>${tableRows}</tbody></table></div></div>`;
             };
 
             let detailedTablesHTML = '';
@@ -1589,7 +1577,7 @@
             } else {
                 detailedTablesHTML += buildGroupedTable(state.company === 'Smart Home' ? 'D2 Smart Home' : 'D2 HVAC Solutions');
             }
-            if(!detailedTablesHTML) detailedTablesHTML = `<p class="p-6 text-center text-slate-500 text-xs italic">${window.t('no_active_works')}</p>`;
+            if(!detailedTablesHTML) detailedTablesHTML = `<p class="p-6 text-center text-slate-400 text-xs italic">${window.t('no_active_works')}</p>`;
 
             bottomHTML = `
                 <div class="full-report-only animate-fade-in mt-14">
@@ -1660,24 +1648,17 @@
             `;
         }
 
-        let companyFiltersHTML = '';
-        if (state.userPerms.smart && state.userPerms.hvac) {
-            companyFiltersHTML = `
-                <div class="flex gap-2 sm:gap-3 mt-4 sm:mt-0 no-print flex-wrap">
-                    <button onclick="window.selectUnit('Smart Home')" class="unit-pill unit-pill-btn ${state.company === 'Smart Home' ? 'active':''}">SMART HOME</button>
-                    <button onclick="window.selectUnit('HVAC')" class="unit-pill unit-pill-btn ${state.company === 'HVAC' ? 'active':''}">HVAC</button>
-                    <button onclick="window.selectUnit('Ambas')" class="unit-pill unit-pill-btn ${state.company === 'Ambas' ? 'active':''}" data-i18n="filter_both">${window.t('filter_both')}</button>
-                </div>
-            `;
-        }
-
         out.innerHTML = `
             <div class="glass p-6 sm:p-12 rounded-[50px] shadow-2xl border border-white/5 text-left print:bg-white print:border-none print:shadow-none print:p-0 animate-fade-in force-dark-bg">
                 
                 <div class="flex flex-col md:flex-row justify-between items-start md:items-center border-b-[8px] border-white/10 pb-8 mb-8 print:border-b-2 print:border-slate-300 gap-4">
                     <div class="flex flex-col sm:flex-row items-start sm:items-center gap-4 sm:gap-6">
                         <div class="logo-frame-sm p-3 rounded-2xl print:border-none print:p-0 bg-white shadow-lg"><img src="logo-D2-Group-preto.png" class="h-10 sm:h-14"></div>
-                        ${companyFiltersHTML}
+                        <div class="flex gap-2 sm:gap-3 no-print flex-wrap">
+                            ${state.userPerms.smart ? `<button onclick="window.selectUnit('Smart Home')" class="unit-pill unit-pill-btn ${state.company === 'Smart Home' ? 'active':''} force-dark-bg">SMART HOME</button>` : ''}
+                            ${state.userPerms.hvac ? `<button onclick="window.selectUnit('HVAC')" class="unit-pill unit-pill-btn ${state.company === 'HVAC' ? 'active':''} force-dark-bg">HVAC</button>` : ''}
+                            ${(state.userPerms.smart && state.userPerms.hvac) ? `<button onclick="window.selectUnit('Ambas')" class="unit-pill unit-pill-btn ${state.company === 'Ambas' ? 'active':''} force-dark-bg" data-i18n="filter_both">${window.t('filter_both')}</button>` : ''}
+                        </div>
                     </div>
                     <div class="text-left md:text-right w-full md:w-auto mt-4 md:mt-0">
                         <h2 class="text-2xl sm:text-3xl font-black uppercase tracking-tighter text-white force-white-text print:text-slate-900">${reportTitle}</h2>
@@ -1745,9 +1726,9 @@
                     tab_new: myProfile.p_tab_new === true, 
                     tab_rep: myProfile.p_tab_rep === true,
                     fin: myProfile.p_fin === true,
-                    costs: myProfile.p_costs === true || myProfile.viewCosts === true, // Mantém compatibilidade com perfil antigo
-                    smart: myProfile.p_smart !== false, // Default true
-                    hvac: myProfile.p_hvac !== false,   // Default true
+                    costs: myProfile.p_costs === true || myProfile.viewCosts === true, 
+                    smart: myProfile.p_smart !== false, 
+                    hvac: myProfile.p_hvac !== false,   
                     global: myProfile.p_global === true || myProfile.viewAll === true 
                 };
             }
