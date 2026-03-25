@@ -273,13 +273,16 @@
 
         <div id="view-projects" class="w-full hidden">
             <!-- Filtros Superiores do Painel de Projetos -->
-            <div id="projects-filters" class="flex flex-col sm:flex-row justify-between items-center mb-8 gap-4 no-print">
-                <div class="flex gap-3" id="dynamic-unit-pills-proj">
+            <div id="projects-filters" class="flex flex-col xl:flex-row justify-between items-start xl:items-center mb-8 gap-4 no-print">
+                <div class="flex gap-3 flex-wrap" id="dynamic-unit-pills-proj">
                     <!-- Injetado dinamicamente via applyPermissions -->
                 </div>
-                <div class="flex gap-2">
-                    <button onclick="window.setArchiveFilter(false)" id="filter-active" class="filter-pill active" data-i18n="filter_active">ATIVAS</button>
-                    <button onclick="window.setArchiveFilter(true)" id="filter-archived" class="filter-pill" data-i18n="filter_archived">ARQUIVADAS <i data-lucide="archive" class="inline w-3 h-3 ml-1 mb-0.5"></i></button>
+                <div class="flex flex-col sm:flex-row gap-3 items-stretch sm:items-end w-full xl:w-auto xl:justify-end">
+                    <div id="seller-filter-box" class="hidden w-full sm:w-[280px]"></div>
+                    <div class="flex gap-2 self-start sm:self-auto">
+                        <button onclick="window.setArchiveFilter(false)" id="filter-active" class="filter-pill active" data-i18n="filter_active">ATIVAS</button>
+                        <button onclick="window.setArchiveFilter(true)" id="filter-archived" class="filter-pill" data-i18n="filter_archived">ARQUIVADAS <i data-lucide="archive" class="inline w-3 h-3 ml-1 mb-0.5"></i></button>
+                    </div>
                 </div>
             </div>
             
@@ -447,7 +450,7 @@
 <script type="module">
     import { initializeApp, deleteApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
     import { getAuth, signInWithEmailAndPassword, createUserWithEmailAndPassword, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
-    import { getFirestore, collection, doc, updateDoc, addDoc, deleteDoc, onSnapshot, serverTimestamp, arrayUnion } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
+    import { getFirestore, collection, doc, updateDoc, addDoc, deleteDoc, onSnapshot, serverTimestamp, arrayUnion, getDocs, writeBatch } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
 
     const firebaseConfig = {
         apiKey: "AIzaSyDrLfIOuBwZblwKPuxBRK3R4fQpjQQbnDE",
@@ -468,9 +471,9 @@
         user: null, 
         isSuperAdmin: false,
         userPerms: { tab_proj: true, tab_new: false, tab_rep: false, fin: false, costs: false, smart: true, hvac: false, global: false },
-        projects: [], team: [], company: 'Ambas', lang: 'pt', theme: 'dark', 
+        projects: [], team: [], logs: [], company: 'Ambas', lang: 'pt', theme: 'dark', 
         editingPayments: null, editingRecs: null, focusedProject: null, activeModule: null, showArchived: false,
-        reportActiveKpi: 'receita' 
+        reportActiveKpi: 'receita', projectSellerFilter: 'all' 
     };
 
     window.d2Charts = {};
@@ -487,6 +490,7 @@
             admin_panel: "Gestão Corporativa", nav_proj: "Projetos", nav_new: "Nova Obra", nav_rep: "Relatórios", nav_users: "Equipe",
             form_new_title: "Registrar Obra", team_title: "Gestão de Equipe", btn_team: "Salvar e Autorizar Acesso",
             filter_both: "AMBAS", filter_active: "ATIVAS", filter_archived: "ARQUIVADAS",
+            project_filter_seller: "Filtro por Vendedor", project_filter_all_sellers: "Todos os vendedores", logs_empty: "Nenhum log registrado",
             lbl_email: "E-mail Corporativo", lbl_pass: "Senha de Acesso", btn_login: "Acessar Sistema",
             f_prop: "Nº Proposta", f_inv: "Nº Invoice", f_unit: "Unidade Responsável", f_client: "Cliente", f_seller: "Vendedor",
             f_gross: "Valor Contrato Bruto", f_budget: "Orçamento Custo (Budget)", f_comm_perc: "% Comissão",
@@ -527,6 +531,7 @@
             admin_panel: "Corporate Management", nav_proj: "Projects", nav_new: "New Entry", nav_rep: "Reports", nav_users: "Team",
             form_new_title: "Register Project", team_title: "Team Management", btn_team: "Authorize Access",
             filter_both: "BOTH", filter_active: "ACTIVE", filter_archived: "ARCHIVED",
+            project_filter_seller: "Seller Filter", project_filter_all_sellers: "All sellers", logs_empty: "No logs recorded",
             lbl_email: "Corporate Email", lbl_pass: "Password", btn_login: "Access System",
             f_prop: "Proposal No.", f_inv: "Invoice No.", f_unit: "Responsible Unit", f_client: "Client", f_seller: "Seller",
             f_gross: "Gross Contract Value", f_budget: "Cost Budget", f_comm_perc: "% Commission",
@@ -584,6 +589,8 @@
                 else el.innerText = translations[l][key];
             }
         });
+        window.renderProjectSellerFilter();
+        window.renderLogs();
         if(state.projects.length > 0) {
             window.renderProjects(); 
             window.renderReport(); 
@@ -652,34 +659,81 @@
         document.getElementById('login-hint-msg')?.classList.add('hidden');
     }
 
-    function logAccess(userEmail, action) {
-        if (!state.isSuperAdmin) return;
-        const logs = JSON.parse(localStorage.getItem('access_logs') || '[]');
-        logs.unshift({ timestamp: new Date().toISOString(), user: userEmail, action });
-        if (logs.length > 500) logs.splice(500);
-        localStorage.setItem('access_logs', JSON.stringify(logs));
-        window.renderLogs();
+    const auditLogsRef = () => collection(db, 'artifacts', appId, 'public', 'data', 'audit_logs');
+
+    function getLogDate(log) {
+        if (log?.timestampIso) return new Date(log.timestampIso);
+        if (log?.timestamp) return new Date(log.timestamp);
+        if (log?.createdAt?.toDate) return log.createdAt.toDate();
+        return new Date(0);
+    }
+
+    function getMergedLogs() {
+        const legacyLogs = state.isSuperAdmin ? JSON.parse(localStorage.getItem('access_logs') || '[]') : [];
+        const merged = [...state.logs, ...legacyLogs];
+        const map = new Map();
+
+        merged.forEach(log => {
+            const dateObj = getLogDate(log);
+            const dateIso = Number.isNaN(dateObj.getTime()) ? '' : dateObj.toISOString();
+            const key = `${dateIso}|${log.user || ''}|${log.action || ''}`;
+            if (!map.has(key)) {
+                map.set(key, { ...log, _renderDate: dateObj });
+            }
+        });
+
+        return Array.from(map.values()).sort((a, b) => b._renderDate - a._renderDate);
+    }
+
+    async function logAccess(userEmail, action) {
+        if (!auth.currentUser || !userEmail || !action) return;
+        try {
+            await addDoc(auditLogsRef(), {
+                user: userEmail,
+                action,
+                timestampIso: new Date().toISOString(),
+                createdAt: serverTimestamp()
+            });
+        } catch (err) {
+            console.error('Erro ao registrar log:', err);
+        }
+    }
+
+    async function deleteLogsInBatches() {
+        const snapshot = await getDocs(auditLogsRef());
+        if (snapshot.empty) return;
+        const docs = snapshot.docs;
+        for (let i = 0; i < docs.length; i += 450) {
+            const batch = writeBatch(db);
+            docs.slice(i, i + 450).forEach(item => batch.delete(item.ref));
+            await batch.commit();
+        }
     }
 
     window.clearLogs = () => {
-        if(!state.isSuperAdmin) return;
-        if(confirm("Tem certeza que deseja limpar todo o histórico?")) {
+        if (!state.isSuperAdmin) return;
+        window.showModal(window.t('attention'), 'Tem certeza que deseja limpar todo o histórico?', 'confirm', async () => {
+            await deleteLogsInBatches();
+            state.logs = [];
             localStorage.removeItem('access_logs');
             window.renderLogs();
-        }
+        });
     }
 
     window.renderLogs = () => {
         const tbody = document.getElementById('logs-body');
         if (!tbody || !state.isSuperAdmin) return;
-        const logs = JSON.parse(localStorage.getItem('access_logs') || '[]');
-        tbody.innerHTML = logs.map(log => `
+        const logs = getMergedLogs();
+        tbody.innerHTML = logs.map(log => {
+            const logDate = log._renderDate || getLogDate(log);
+            const renderedDate = Number.isNaN(logDate.getTime()) ? '-' : logDate.toLocaleString(state.lang === 'pt' ? 'pt-BR' : 'en-US');
+            return `
             <tr class="border-b border-white/5 hover:bg-white/5">
-                <td class="py-4 px-4 text-sm whitespace-nowrap">${new Date(log.timestamp).toLocaleString(state.lang === 'pt' ? 'pt-BR' : 'en-US')}</td>
-                <td class="py-4 px-4 text-sm font-bold text-gold">${log.user}</td>
-                <td class="py-4 px-4 text-sm text-slate-300">${log.action}</td>
+                <td class="py-4 px-4 text-sm whitespace-nowrap">${renderedDate}</td>
+                <td class="py-4 px-4 text-sm font-bold text-gold">${log.user || '-'}</td>
+                <td class="py-4 px-4 text-sm text-slate-300">${log.action || '-'}</td>
             </tr>
-        `).join('') || `<tr><td colspan="3" class="py-10 text-center text-slate-500">Nenhum log registrado</td></tr>`;
+        `}).join('') || `<tr><td colspan="3" class="py-10 text-center text-slate-500">${window.t('logs_empty')}</td></tr>`;
     };
 
     function applyThemeConfig() {
@@ -745,6 +799,7 @@
         };
         
         renderCompanyPills('dynamic-unit-pills-proj');
+        window.renderProjectSellerFilter();
 
         if(state.company === 'Ambas' && (!p.smart || !p.hvac)) {
             if(p.smart) state.company = 'Smart Home';
@@ -783,6 +838,44 @@
             select.value = state.user.email;
         }
     }
+
+    window.renderProjectSellerFilter = () => {
+        const box = document.getElementById('seller-filter-box');
+        if (!box) return;
+
+        if (!state.isSuperAdmin) {
+            box.classList.add('hidden');
+            box.innerHTML = '';
+            state.projectSellerFilter = 'all';
+            return;
+        }
+
+        const sellers = [...new Set(state.projects.map(p => p.vendedor).filter(Boolean))].sort((a, b) => a.localeCompare(b));
+        if (state.projectSellerFilter !== 'all' && !sellers.includes(state.projectSellerFilter)) {
+            state.projectSellerFilter = 'all';
+        }
+
+        const options = [`<option value="all">${window.t('project_filter_all_sellers')}</option>`]
+            .concat(sellers.map(email => `<option value="${email}">${email}</option>`))
+            .join('');
+
+        box.classList.remove('hidden');
+        box.innerHTML = `
+            <label class="block text-[10px] font-black uppercase text-slate-500 tracking-widest mb-2 ml-1">${window.t('project_filter_seller')}</label>
+            <select id="project-seller-filter" class="modern-input !pr-10 !py-3" onchange="window.setProjectSellerFilter(this.value)">${options}</select>
+        `;
+
+        const select = document.getElementById('project-seller-filter');
+        if (select) select.value = state.projectSellerFilter || 'all';
+    };
+
+    window.setProjectSellerFilter = (seller) => {
+        state.projectSellerFilter = seller || 'all';
+        state.focusedProject = null;
+        state.activeModule = null;
+        window.renderProjectSellerFilter();
+        window.renderProjects();
+    };
 
     // --- LÓGICA DE FILTROS GLOBAIS DE EMPRESA ---
     window.selectUnit = (unit) => {
@@ -1116,9 +1209,10 @@
             const matchCompany = (p.empresa === 'Smart Home' && state.userPerms.smart) || (p.empresa === 'HVAC' && state.userPerms.hvac);
             const matchSelectedTab = state.company === 'Ambas' || p.empresa === state.company;
             const matchUser = canViewAll || p.vendedor === state.user.email; 
+            const matchSellerFilter = !state.isSuperAdmin || state.projectSellerFilter === 'all' || p.vendedor === state.projectSellerFilter;
             const isArchived = p.archived === true;
             const matchArchive = isArchived === state.showArchived;
-            return matchCompany && matchSelectedTab && matchUser && matchArchive;
+            return matchCompany && matchSelectedTab && matchUser && matchSellerFilter && matchArchive;
         });
 
         if (state.focusedProject) {
@@ -1706,8 +1800,18 @@
         const projectsRef = collection(db, 'artifacts', appId, 'public', 'data', 'projects');
         onSnapshot(projectsRef, snap => {
             state.projects = snap.docs.map(d => ({ id: d.id, ...d.data() }));
+            window.renderProjectSellerFilter();
             window.renderProjects(); window.renderReport();
         }, err => console.error(err));
+
+        if (state.isSuperAdmin) {
+            onSnapshot(auditLogsRef(), snap => {
+                state.logs = snap.docs.map(d => ({ id: d.id, ...d.data() }));
+                window.renderLogs();
+            }, err => console.error(err));
+        } else {
+            state.logs = [];
+        }
 
         onSnapshot(collection(db, 'artifacts', appId, 'public', 'data', 'user_credentials'), snap => {
             if (!auth.currentUser) return; 
