@@ -334,12 +334,12 @@
                 <input type="hidden" id="edit-id">
 
                 <div class="col-span-2 md:col-span-1 space-y-2">
-                    <label class="text-xs font-black uppercase text-slate-500 ml-1 tracking-widest" data-i18n="f_prop">Nº Proposta</label>
-                    <input type="text" id="f-proposta" class="modern-input" placeholder="Ex: PROP-2026-001">
-                </div>
-                <div class="col-span-2 md:col-span-1 space-y-2">
                     <label class="text-xs font-black uppercase text-slate-500 ml-1 tracking-widest" data-i18n="f_inv">Nº Invoice</label>
                     <input type="text" id="f-invoice" class="modern-input" placeholder="Ex: INV-2026-001">
+                </div>
+                <div class="col-span-2 md:col-span-1 space-y-2">
+                    <label class="text-xs font-black uppercase text-slate-500 ml-1 tracking-widest" data-i18n="f_prop">Nº Proposta</label>
+                    <input type="text" id="f-proposta" class="modern-input" placeholder="Ex: PROP-2026-001">
                 </div>
 
                 <div class="col-span-2 space-y-2">
@@ -570,7 +570,7 @@
             rec_summary_gross: "Recebido bruto", rec_summary_fees: "Taxas de cartão 3%", rec_summary_net: "Base líquida elegível", rec_summary_release: "Comissão liberada",
             rec_method_actual: "Forma real recebida", rec_method_locked: "Recebimento já registrado. Para corrigir, exclua e crie uma nova entrada.", rec_method_card_note: "Cartão deduz 3% automaticamente da base de comissão.",
             rec_line_gross: "Bruto", rec_line_fee: "Taxa", rec_line_net: "Líquido base", rec_add_new: "Adicionar Novo Recebimento", rec_save_block: "Preencha data, valor e forma de pagamento em todas as novas entradas antes de salvar.",
-            payment_summary_card_fees: "Taxas cartão (cliente)", payment_summary_net_basis: "Base líquida recebida", payment_summary_received: "Recebido do cliente", pay_pending_badge: "Pagamento pendente", timeline_due_soon: "Prazo próximo"
+            payment_summary_card_fees: "Taxas cartão (cliente)", payment_summary_net_basis: "Base líquida recebida", payment_summary_received: "Recebido do cliente", pay_pending_badge: "Pagamento pendente", timeline_due_soon: "Prazo próximo", invoice_label: "Invoice", proposal_label: "Proposta"
         },
         en: {
             admin_panel: "Corporate Management", nav_proj: "Projects", nav_new: "New Entry", nav_rep: "Reports", nav_users: "Team",
@@ -618,7 +618,7 @@
             rec_summary_gross: "Gross received", rec_summary_fees: "Card fees 3%", rec_summary_net: "Eligible net basis", rec_summary_release: "Commission released",
             rec_method_actual: "Actual received method", rec_method_locked: "Receipt already recorded. To correct it, delete it and create a new entry.", rec_method_card_note: "Card payments automatically deduct 3% from the commission basis.",
             rec_line_gross: "Gross", rec_line_fee: "Fee", rec_line_net: "Net basis", rec_add_new: "Add New Receipt", rec_save_block: "Fill in date, amount, and payment method on all new entries before saving.",
-            payment_summary_card_fees: "Client card fees", payment_summary_net_basis: "Net received basis", payment_summary_received: "Client received", pay_pending_badge: "Payment pending", timeline_due_soon: "Due soon"
+            payment_summary_card_fees: "Client card fees", payment_summary_net_basis: "Net received basis", payment_summary_received: "Client received", pay_pending_badge: "Payment pending", timeline_due_soon: "Due soon", invoice_label: "Invoice", proposal_label: "Proposal"
         }
     };
     
@@ -1068,20 +1068,20 @@
         const invoice = String(project?.numeroInvoice || '').trim();
         const proposal = String(project?.numeroProposta || '').trim();
         if (!invoice && !proposal) return '';
-        const wrapperClass = compact ? 'flex flex-wrap gap-2 mt-3' : 'grid grid-cols-1 sm:grid-cols-2 gap-3 mb-6';
+        const wrapperClass = compact ? 'flex flex-wrap gap-3 mt-3' : 'grid grid-cols-1 sm:grid-cols-2 gap-3 mb-6';
         const cardClass = compact
-            ? 'inline-flex items-center gap-2 rounded-xl border border-white/10 bg-white/5 px-3 py-2'
+            ? 'min-w-[148px] rounded-2xl border border-white/10 bg-white/5 px-3.5 py-3'
             : 'rounded-2xl border border-white/10 bg-white/5 px-4 py-3';
         const labelClass = compact
-            ? 'text-[9px] font-black uppercase tracking-widest text-slate-500 whitespace-nowrap'
-            : 'text-[10px] font-black uppercase tracking-widest text-slate-500 mb-1';
+            ? 'text-[9px] font-black uppercase tracking-[0.22em] text-slate-500 mb-1.5 block'
+            : 'text-[10px] font-black uppercase tracking-widest text-slate-500 mb-1 block';
         const valueClass = compact
-            ? 'text-xs font-black text-slate-100 whitespace-nowrap'
-            : 'text-sm font-black text-slate-100';
+            ? 'text-sm font-black text-slate-100 block break-all'
+            : 'text-sm font-black text-slate-100 block break-all';
         return `
             <div class="${wrapperClass}">
-                ${invoice ? `<div class="${cardClass}"><span class="${labelClass}">${window.t('doc_invoice')}</span><span class="${valueClass}">${escapeInlineHtml(invoice)}</span></div>` : ''}
-                ${proposal ? `<div class="${cardClass}"><span class="${labelClass}">${window.t('doc_proposal')}</span><span class="${valueClass}">${escapeInlineHtml(proposal)}</span></div>` : ''}
+                ${invoice ? `<div class="${cardClass}"><span class="${labelClass}">${window.t('invoice_label')}</span><span class="${valueClass}">${escapeInlineHtml(invoice)}</span></div>` : ''}
+                ${proposal ? `<div class="${cardClass}"><span class="${labelClass}">${window.t('proposal_label')}</span><span class="${valueClass}">${escapeInlineHtml(proposal)}</span></div>` : ''}
             </div>
         `;
     }
@@ -2027,9 +2027,8 @@
                     const gridCols = canViewCosts ? 'sm:grid-cols-2' : 'grid-cols-1';
                     cardHTML += `
                         <div class="grid grid-cols-1 ${gridCols} gap-6 mt-10 pt-8 border-t border-white/10 no-print animate-fade-in">
-                            <button onclick="event.stopPropagation(); window.openProjectModule('commissions')" class="py-10 px-4 bg-slate-900 rounded-[32px] border border-gold/20 hover:border-gold/60 hover:shadow-[0_0_40px_-5px_rgba(251,191,36,0.3)] transition-all flex flex-col items-center justify-center gap-4 group relative overflow-hidden force-dark-bg ${sellerPaymentAlert.hasPending ? 'balance-due-pulse border-gold/40' : ''}">
+                            <button onclick="event.stopPropagation(); window.openProjectModule('commissions')" class="py-10 px-4 bg-slate-900 rounded-[32px] border border-gold/20 hover:border-gold/60 hover:shadow-[0_0_40px_-5px_rgba(251,191,36,0.3)] transition-all flex flex-col items-center justify-center gap-4 group relative overflow-hidden force-dark-bg">
                                 <div class="absolute inset-0 bg-gold/5 transform scale-0 group-hover:scale-100 transition-transform rounded-[32px] duration-500 origin-center"></div>
-                                ${sellerPaymentAlert.hasPending ? `<div class="absolute top-4 right-4 z-20">${sellerPendingBadge}</div>` : ''}
                                 <i data-lucide="wallet" class="w-12 h-12 text-gold group-hover:scale-110 group-hover:-translate-y-2 transition-all relative z-10"></i>
                                 <span class="text-sm sm:text-base font-black uppercase text-gold tracking-[0.15em] relative z-10 text-center force-white-text">${window.t('comm_finances')}</span>
                             </button>
