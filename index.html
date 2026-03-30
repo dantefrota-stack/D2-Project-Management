@@ -516,6 +516,13 @@
     window.d2Charts = {};
 
     const formatCurr = (v) => new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD', minimumFractionDigits: 2 }).format(Number(v || 0));
+    const getSnapshotValueClass = (value, isSmallVariant = false) => {
+        const formatted = formatCurr(value);
+        const len = formatted.length;
+        if (len >= 12) return isSmallVariant ? 'text-[0.9rem] sm:text-[1rem]' : 'text-[0.96rem] sm:text-[1.08rem]';
+        if (len >= 10) return isSmallVariant ? 'text-[0.96rem] sm:text-[1.06rem]' : 'text-[1.02rem] sm:text-[1.14rem]';
+        return isSmallVariant ? 'text-[1.02rem] sm:text-[1.14rem]' : 'text-[1.08rem] sm:text-[1.22rem]';
+    };
 
     window.togglePassword = (inputId, btnId) => {
         const el = document.getElementById(inputId); const btn = document.getElementById(btnId);
@@ -2098,11 +2105,11 @@
                         <div class="grid grid-cols-1 gap-2.5 mt-auto">
                             <div class="rounded-2xl border border-white/5 bg-black/25 px-3.5 py-3">
                                 <p class="text-[9px] font-black uppercase tracking-[0.16em] text-slate-500 leading-none mb-2">${window.t('client_received_compact')}</p>
-                                <p class="text-[1.18rem] sm:text-[1.35rem] font-black text-slate-50 leading-tight tracking-tight break-words">${formatCurr(f.totalRecebido)}</p>
+                                <p class="${getSnapshotValueClass(f.totalRecebido)} font-black text-slate-50 leading-tight tracking-tight whitespace-nowrap">${formatCurr(f.totalRecebido)}</p>
                             </div>
                             <div class="rounded-2xl border border-white/5 bg-black/25 px-3.5 py-3">
                                 <p class="text-[9px] font-black uppercase tracking-[0.16em] text-slate-500 leading-none mb-2">${window.t('client_balance_compact')}</p>
-                                <p class="text-[1.18rem] sm:text-[1.35rem] font-black ${commissionProgress.clientOutstanding > 0.009 ? 'text-amber-300' : 'text-emerald-400'} leading-tight tracking-tight break-words">${formatCurr(commissionProgress.clientOutstanding)}</p>
+                                <p class="${getSnapshotValueClass(commissionProgress.clientOutstanding)} font-black ${commissionProgress.clientOutstanding > 0.009 ? 'text-amber-300' : 'text-emerald-400'} leading-tight tracking-tight whitespace-nowrap">${formatCurr(commissionProgress.clientOutstanding)}</p>
                             </div>
                         </div>
                     </div>
@@ -2117,13 +2124,13 @@
                         <div class="grid grid-cols-1 gap-2.5 mt-auto">
                             <div class="rounded-2xl border border-white/5 bg-black/25 px-3.5 py-3">
                                 <p class="text-[9px] font-black uppercase tracking-[0.16em] text-slate-500 leading-none mb-2">${window.t('commission_paid_compact')}</p>
-                                <p class="text-[1.18rem] sm:text-[1.35rem] font-black text-slate-50 leading-tight tracking-tight break-words">${formatCurr(commissionProgress.paid)}</p>
+                                <p class="${getSnapshotValueClass(commissionProgress.paid)} font-black text-slate-50 leading-tight tracking-tight whitespace-nowrap">${formatCurr(commissionProgress.paid)}</p>
                             </div>
                             <div class="rounded-2xl border border-white/5 bg-black/25 px-3.5 py-3">
                                 <p class="text-[9px] font-black uppercase tracking-[0.16em] text-slate-500 leading-none mb-2">${window.t('commission_remaining_compact')}</p>
-                                <p class="text-[1.18rem] sm:text-[1.35rem] font-black ${commissionProgress.remainingToPayTotal > 0.009 ? 'text-amber-300' : 'text-emerald-400'} leading-tight tracking-tight break-words">${formatCurr(commissionProgress.remainingToPayTotal)}</p>
+                                <p class="${getSnapshotValueClass(commissionProgress.remainingToPayTotal)} font-black ${commissionProgress.remainingToPayTotal > 0.009 ? 'text-amber-300' : 'text-emerald-400'} leading-tight tracking-tight whitespace-nowrap">${formatCurr(commissionProgress.remainingToPayTotal)}</p>
                             </div>
-                            ${commissionProgress.currentDue > 0.009 ? `<div class="rounded-2xl border border-gold/25 bg-gold/10 px-3.5 py-3"><p class="text-[9px] font-black uppercase tracking-[0.16em] text-gold/80 leading-none mb-2">${window.t('commission_due_now_compact')}</p><p class="text-[1.08rem] sm:text-[1.2rem] font-black text-gold leading-tight tracking-tight break-words">${formatCurr(commissionProgress.currentDue)}</p></div>` : ''}
+                            ${commissionProgress.currentDue > 0.009 ? `<div class="rounded-2xl border border-gold/25 bg-gold/10 px-3.5 py-3"><p class="text-[9px] font-black uppercase tracking-[0.16em] text-gold/80 leading-none mb-2">${window.t('commission_due_now_compact')}</p><p class="${getSnapshotValueClass(commissionProgress.currentDue, true)} font-black text-gold leading-tight tracking-tight whitespace-nowrap">${formatCurr(commissionProgress.currentDue)}</p></div>` : ''}
                         </div>
                     </div>
                 </div>
