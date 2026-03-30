@@ -216,8 +216,9 @@
 
 <!-- Modal de Edição de Recebimentos -->
 <div id="edit-rec-modal" class="modal-overlay">
-    <div class="modal-content animate-fade-in">
+    <div class="modal-content animate-fade-in max-w-4xl">
         <h3 class="text-2xl font-black text-emerald-500 mb-6" data-i18n="modal_rec_title">Gerenciar Recebimentos (Cliente)</h3>
+        <div id="rec-edit-summary" class="mb-6"></div>
         <div id="rec-edit-list" class="space-y-4 mb-6"></div>
         <div class="flex justify-end gap-4 mt-8 pt-6 border-t border-white/10">
             <button onclick="window.closeEditRecModal()" class="px-6 py-3 bg-slate-700 text-white rounded-xl font-bold hover:bg-slate-600 transition-colors" data-i18n="cancel">Cancelar</button>
@@ -228,12 +229,27 @@
 
 <!-- Modal de Edição de Pagamentos -->
 <div id="edit-payment-modal" class="modal-overlay">
-    <div class="modal-content animate-fade-in">
-        <h3 class="text-2xl font-black text-gold mb-6" data-i18n="modal_pay_title">Gerenciar Pagamentos (Vendedor)</h3>
-        <div id="payment-edit-list" class="space-y-4 mb-6"></div>
-        <div class="flex justify-end gap-4 mt-8 pt-6 border-t border-white/10">
-            <button onclick="window.closeEditPaymentModal()" class="px-6 py-3 bg-slate-700 text-white rounded-xl font-bold hover:bg-slate-600 transition-colors" data-i18n="cancel">Cancelar</button>
-            <button onclick="window.saveEditedPayments()" class="px-8 py-3 bg-slate-800 text-white force-white-text border border-gold/30 font-black rounded-xl hover:bg-slate-700 transition-colors shadow-lg" data-i18n="btn_save_changes">Salvar Alterações</button>
+    <div class="modal-content animate-fade-in max-w-3xl !p-0 overflow-hidden">
+        <div class="px-8 pt-8 pb-6 border-b border-white/10 bg-gradient-to-r from-slate-900 via-slate-900 to-black/90">
+            <div class="flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between">
+                <div>
+                    <p class="text-[10px] font-black uppercase tracking-[0.28em] text-slate-500 mb-2">Resumo Financeiro</p>
+                    <h3 class="text-2xl font-black text-gold" data-i18n="modal_pay_title">Gerenciar Pagamentos (Vendedor)</h3>
+                    <p class="text-sm text-slate-400 mt-2">Confira o saldo exato antes de salvar qualquer ajuste.</p>
+                </div>
+                <div class="inline-flex items-center gap-2 self-start rounded-2xl border border-gold/20 bg-gold/10 px-4 py-3 text-gold text-[11px] font-black uppercase tracking-widest">
+                    <i data-lucide="shield-check" class="w-4 h-4"></i>
+                    Controle preciso
+                </div>
+            </div>
+        </div>
+        <div class="px-8 py-7">
+            <div id="payment-edit-summary" class="mb-6"></div>
+            <div id="payment-edit-list" class="space-y-4 mb-6"></div>
+            <div class="flex justify-end gap-4 mt-8 pt-6 border-t border-white/10">
+                <button onclick="window.closeEditPaymentModal()" class="px-6 py-3 bg-slate-700 text-white rounded-xl font-bold hover:bg-slate-600 transition-colors" data-i18n="cancel">Cancelar</button>
+                <button onclick="window.saveEditedPayments()" class="px-8 py-3 bg-slate-800 text-white force-white-text border border-gold/30 font-black rounded-xl hover:bg-slate-700 transition-colors shadow-lg" data-i18n="btn_save_changes">Salvar Alterações</button>
+            </div>
         </div>
     </div>
 </div>
@@ -525,7 +541,15 @@
             modal_del_team_title: "Remover Acesso", modal_del_team_msg: "Deseja realmente remover o acesso deste membro?",
             modal_del_proj_title: "Excluir Obra", modal_del_proj_msg: "Tem certeza que deseja excluir esta obra permanentemente?",
             modal_access_denied: "Acesso Negado", modal_access_denied_msg: "Para apagar um projeto, por favor solicite ao administrador.",
-            modal_rec_title: "Gerenciar Recebimentos (Cliente)", modal_pay_title: "Gerenciar Pagamentos (Vendedor)", btn_manage: "Gerir", btn_save_changes: "Salvar Alterações"
+            modal_rec_title: "Gerenciar Recebimentos (Cliente)", modal_pay_title: "Gerenciar Pagamentos (Vendedor)", btn_manage: "Gerir", btn_save_changes: "Salvar Alterações",
+            pay_exact_due: "Saldo exato a pagar", pay_no_due_title: "Comissão quitada", pay_no_due_msg: "Não há comissão pendente para este vendedor. O valor elegível já foi totalmente pago.",
+            pay_no_release_title: "Sem comissão liberada", pay_no_release_msg: "Ainda não há comissão liberada para pagamento neste projeto.", pay_edit_note: "Edite ou remova lançamentos apenas se precisar corrigir um pagamento existente.",
+            pay_overpaid_title: "Pagamento acima do liberado", pay_overpaid_msg: "Os pagamentos lançados estão acima da comissão liberada. Revise os valores antes de salvar.",
+            pay_block_over_title: "Valor acima do permitido", pay_block_over_msg: "O total dos pagamentos não pode exceder a comissão liberada.", pay_add_remaining: "Adicionar pagamento restante", pay_summary_paid: "Pago no gerenciador",
+            rec_summary_gross: "Recebido bruto", rec_summary_fees: "Taxas de cartão 3%", rec_summary_net: "Base líquida elegível", rec_summary_release: "Comissão liberada",
+            rec_method_actual: "Forma real recebida", rec_method_locked: "Recebimento já registrado. Para corrigir, exclua e crie uma nova entrada.", rec_method_card_note: "Cartão deduz 3% automaticamente da base de comissão.",
+            rec_line_gross: "Bruto", rec_line_fee: "Taxa", rec_line_net: "Líquido base", rec_add_new: "Adicionar Novo Recebimento", rec_save_block: "Preencha data, valor e forma de pagamento em todas as novas entradas antes de salvar.",
+            payment_summary_card_fees: "Taxas cartão (cliente)", payment_summary_net_basis: "Base líquida recebida", payment_summary_received: "Recebido do cliente"
         },
         en: {
             admin_panel: "Corporate Management", nav_proj: "Projects", nav_new: "New Entry", nav_rep: "Reports", nav_users: "Team",
@@ -565,7 +589,15 @@
             modal_del_team_title: "Remove Access", modal_del_team_msg: "Do you really want to remove this member's access?",
             modal_del_proj_title: "Delete Project", modal_del_proj_msg: "Are you sure you want to permanently delete this project?",
             modal_access_denied: "Access Denied", modal_access_denied_msg: "To delete a project, please ask an administrator.",
-            modal_rec_title: "Manage Client Receipts", modal_pay_title: "Manage Seller Payments", btn_manage: "Manage", btn_save_changes: "Save Changes"
+            modal_rec_title: "Manage Client Receipts", modal_pay_title: "Manage Seller Payments", btn_manage: "Manage", btn_save_changes: "Save Changes",
+            pay_exact_due: "Exact balance to pay", pay_no_due_title: "Commission settled", pay_no_due_msg: "There is no commission pending for this seller. The eligible amount has already been fully paid.",
+            pay_no_release_title: "No commission released", pay_no_release_msg: "There is no commission released for payment on this project yet.", pay_edit_note: "Edit or remove entries only if you need to correct an existing payment.",
+            pay_overpaid_title: "Payment above released amount", pay_overpaid_msg: "Recorded payments are above the released commission. Review the values before saving.",
+            pay_block_over_title: "Amount above allowed", pay_block_over_msg: "Total payments cannot exceed the released commission.", pay_add_remaining: "Add remaining payment", pay_summary_paid: "Paid in manager",
+            rec_summary_gross: "Gross received", rec_summary_fees: "Card fees 3%", rec_summary_net: "Eligible net basis", rec_summary_release: "Commission released",
+            rec_method_actual: "Actual received method", rec_method_locked: "Receipt already recorded. To correct it, delete it and create a new entry.", rec_method_card_note: "Card payments automatically deduct 3% from the commission basis.",
+            rec_line_gross: "Gross", rec_line_fee: "Fee", rec_line_net: "Net basis", rec_add_new: "Add New Receipt", rec_save_block: "Fill in date, amount, and payment method on all new entries before saving.",
+            payment_summary_card_fees: "Client card fees", payment_summary_net_basis: "Net received basis", payment_summary_received: "Client received"
         }
     };
     
@@ -577,6 +609,29 @@
         if(s === 'Em Execução') return window.t('status_exec');
         if(s === 'Finalizado') return window.t('status_fin');
         return s;
+    };
+
+    const roundMoney = (v) => Math.round(Number(v || 0) * 100) / 100;
+    const normalizeMethod = (method) => String(method || '').trim().toUpperCase();
+    const isCardMethod = (method) => {
+        const m = normalizeMethod(method);
+        return m === 'CC' || m.includes('CART') || m.includes('CARD') || m.includes('CREDIT');
+    };
+    const getReceiptEffectiveMethod = (receipt, project = null) => receipt?.metodo || project?.metodo || 'Zelle';
+    const getReceiptFee = (receipt, project = null) => {
+        const amount = roundMoney(Number(receipt?.valor || 0));
+        return isCardMethod(getReceiptEffectiveMethod(receipt, project)) ? roundMoney(amount * 0.03) : 0;
+    };
+    const getReceiptNet = (receipt, project = null) => roundMoney(Number(receipt?.valor || 0) - getReceiptFee(receipt, project));
+    const getReceiptMethodBadge = (method) => {
+        const m = normalizeMethod(method);
+        if (isCardMethod(m)) return { label: 'CC', pill: 'bg-red-500/10 text-red-300 border-red-500/30', line: 'text-red-300' };
+        if (m === 'ACH') return { label: 'ACH', pill: 'bg-cyan-500/10 text-cyan-300 border-cyan-500/30', line: 'text-cyan-300' };
+        if (m === 'CHECK' || m === 'CHEQUE') return { label: 'CHECK', pill: 'bg-violet-500/10 text-violet-300 border-violet-500/30', line: 'text-violet-300' };
+        if (m.includes('WIRE')) return { label: 'WIRE', pill: 'bg-sky-500/10 text-sky-300 border-sky-500/30', line: 'text-sky-300' };
+        if (m.includes('DINHEIRO') || m.includes('CASH')) return { label: 'CASH', pill: 'bg-amber-500/10 text-amber-300 border-amber-500/30', line: 'text-amber-300' };
+        if (m.includes('ZELLE')) return { label: 'ZELLE', pill: 'bg-emerald-500/10 text-emerald-300 border-emerald-500/30', line: 'text-emerald-300' };
+        return { label: method || '-', pill: 'bg-white/5 text-slate-300 border-white/10', line: 'text-slate-300' };
     };
 
     window.setLang = (l) => { 
@@ -981,44 +1036,395 @@
     }
 
     // --- PAGAMENTOS E RECEBIMENTOS (SISTEMA UNIFICADO NO MODAL) ---
+    function getPaymentDraftSummary(projectId, draftPayments = null) {
+        const p = state.projects.find(x => x.id === projectId);
+        if (!p) return null;
+        const f = getFin(p);
+        const payments = Array.isArray(draftPayments) ? draftPayments : (Array.isArray(p?.pagamentosEfetuados) ? p.pagamentosEfetuados : []);
+        const draftTotalPaid = roundMoney(payments.reduce((a, c) => a + Number(c?.valor || 0), 0));
+        const draftBalance = roundMoney(f.commLiberada - draftTotalPaid);
+        const remainingToPay = roundMoney(Math.max(0, draftBalance));
+        const overpaidAmount = roundMoney(Math.max(0, -draftBalance));
+        return { ...f, draftTotalPaid, draftBalance, remainingToPay, overpaidAmount };
+    }
+
+    function getReceiptDraftSummary(projectId, draftReceipts = null) {
+        const p = state.projects.find(x => x.id === projectId);
+        if (!p) return null;
+        const receipts = Array.isArray(draftReceipts) ? draftReceipts : (Array.isArray(p?.recebimentos) ? p.recebimentos : []);
+        const enrichedProject = { ...p, recebimentos: receipts.map(r => ({ ...r, metodo: getReceiptEffectiveMethod(r, p) })) };
+        const f = getFin(enrichedProject);
+        const grossReceived = roundMoney(receipts.reduce((sum, r) => sum + Number(r?.valor || 0), 0));
+        const cardFees = roundMoney(receipts.reduce((sum, r) => sum + getReceiptFee(r, p), 0));
+        const netEligible = roundMoney(grossReceived - cardFees);
+        return { ...f, grossReceived, cardFees, netEligible, receiptsCount: receipts.length };
+    }
+
     window.openEditPaymentModal = (projectId) => {
         const p = state.projects.find(x => x.id === projectId);
         if (!p) return;
         state.editingPayments = { projectId, payments: [...(p.pagamentosEfetuados || [])] };
-        window.renderPaymentEditList(); document.getElementById('edit-payment-modal').classList.add('active');
+        window.renderPaymentEditList();
+        document.getElementById('edit-payment-modal').classList.add('active');
     };
     window.closeEditPaymentModal = () => { state.editingPayments = null; document.getElementById('edit-payment-modal').classList.remove('active'); };
     window.renderPaymentEditList = () => {
         const container = document.getElementById('payment-edit-list');
+        const summaryEl = document.getElementById('payment-edit-summary');
         if (!container || !state.editingPayments) return;
-        container.innerHTML = state.editingPayments.payments.map((pay, i) => `<div class="flex items-center gap-4 p-4 bg-white/5 rounded-xl border border-white/10"><input type="date" value="${pay.data || ''}" onchange="window.updatePaymentField(${i}, 'data', this.value)" class="modern-input relative text-sm flex-1"><input type="number" step="0.01" value="${(pay.valor ?? 0)}" onchange="window.updatePaymentField(${i}, 'valor', this.value)" class="modern-input text-sm flex-1"><button onclick="window.removePaymentFromEdit(${i})" class="p-4 bg-red-500/20 text-red-400 rounded-lg hover:bg-red-500/30"><i data-lucide="trash-2" class="w-5 h-5"></i></button></div>`).join('') + `<button onclick="window.addNewPaymentToEdit()" class="w-full p-4 mt-2 border-2 border-dashed border-gold/30 rounded-xl text-gold font-bold hover:bg-gold/10 transition-all">+ Adicionar Novo Pagamento</button>`;
+
+        const project = state.projects.find(x => x.id === state.editingPayments.projectId);
+        const summary = getPaymentDraftSummary(state.editingPayments.projectId, state.editingPayments.payments);
+        const receiptSummary = getReceiptDraftSummary(state.editingPayments.projectId);
+        if (!summary || !receiptSummary) return;
+
+        const isPT = state.lang === 'pt';
+        const isSettled = summary.commLiberada > 0 && summary.remainingToPay <= 0.009;
+        const noReleasedCommission = summary.commLiberada <= 0.009;
+        const hasPayments = state.editingPayments.payments.length > 0;
+        const projectName = project?.nomeObra || (isPT ? 'Projeto sem nome' : 'Untitled project');
+        const sellerName = project?.vendedor || '-';
+
+        let statusTitle = '';
+        let statusDesc = '';
+        let statusChipClass = '';
+        let statusDotClass = '';
+        let statusTextClass = '';
+        let nextValueLabel = '';
+        let nextValueDisplay = '';
+        let helperStateText = '';
+
+        if (summary.overpaidAmount > 0.009) {
+            statusTitle = window.t('pay_overpaid_title');
+            statusDesc = window.t('pay_overpaid_msg');
+            statusChipClass = 'border-blue-500/30 bg-blue-500/10';
+            statusDotClass = 'bg-blue-400';
+            statusTextClass = 'text-blue-300';
+            nextValueLabel = isPT ? 'Excesso lançado' : 'Over recorded';
+            nextValueDisplay = '+ ' + formatCurr(summary.overpaidAmount);
+            helperStateText = isPT ? 'Revise os lançamentos abaixo antes de salvar para evitar pagamento indevido.' : 'Review the entries below before saving to avoid an incorrect payment.';
+        } else if (isSettled) {
+            statusTitle = window.t('pay_no_due_title');
+            statusDesc = window.t('pay_no_due_msg');
+            statusChipClass = 'border-emerald-500/30 bg-emerald-500/10';
+            statusDotClass = 'bg-emerald-400';
+            statusTextClass = 'text-emerald-300';
+            nextValueLabel = isPT ? 'Saldo final' : 'Final balance';
+            nextValueDisplay = formatCurr(0);
+            helperStateText = window.t('pay_edit_note');
+        } else if (noReleasedCommission) {
+            statusTitle = window.t('pay_no_release_title');
+            statusDesc = window.t('pay_no_release_msg');
+            statusChipClass = 'border-amber-500/30 bg-amber-500/10';
+            statusDotClass = 'bg-amber-400';
+            statusTextClass = 'text-amber-300';
+            nextValueLabel = isPT ? 'Liberação atual' : 'Current release';
+            nextValueDisplay = formatCurr(summary.commLiberada);
+            helperStateText = isPT ? 'Assim que houver comissão liberada, o valor exato aparecerá aqui para pagamento.' : 'As soon as commission is released, the exact payable amount will appear here.';
+        } else {
+            statusTitle = isPT ? 'Pagamento disponível' : 'Payment available';
+            statusDesc = isPT ? 'Use o saldo exato abaixo para quitar apenas a comissão elegível do vendedor.' : 'Use the exact balance below to settle only the seller's eligible commission.';
+            statusChipClass = 'border-gold/30 bg-gold/10';
+            statusDotClass = 'bg-gold';
+            statusTextClass = 'text-gold';
+            nextValueLabel = isPT ? 'Próximo pagamento' : 'Next payment';
+            nextValueDisplay = formatCurr(summary.remainingToPay);
+            helperStateText = isPT ? 'O sistema usa a comissão liberada como limite e impede salvar valores acima do permitido.' : 'The system uses released commission as the limit and prevents saving amounts above the allowed value.';
+        }
+
+        summaryEl.innerHTML = `
+            <div class="rounded-[28px] border border-white/10 bg-gradient-to-br from-slate-900 via-slate-900 to-black/90 p-5 sm:p-6 shadow-[0_20px_60px_-30px_rgba(0,0,0,0.75)]">
+                <div class="flex flex-col gap-4 xl:flex-row xl:items-start xl:justify-between mb-5">
+                    <div>
+                        <p class="text-[10px] font-black uppercase tracking-[0.28em] text-slate-500 mb-2">${isPT ? 'Resumo executivo do pagamento' : 'Executive payment summary'}</p>
+                        <h4 class="text-xl sm:text-2xl font-black text-white force-white-text leading-tight">${projectName}</h4>
+                        <p class="text-xs text-slate-400 mt-2">${isPT ? 'Vendedor responsável' : 'Responsible seller'}: <span class="text-slate-200 font-bold">${sellerName}</span></p>
+                    </div>
+                    <div class="inline-flex items-center gap-3 self-start rounded-2xl border ${statusChipClass} px-4 py-3 min-w-[220px]">
+                        <div class="w-2.5 h-2.5 rounded-full ${statusDotClass}"></div>
+                        <div>
+                            <p class="text-[10px] font-black uppercase tracking-widest text-slate-500 mb-1">${isPT ? 'Situação atual' : 'Current status'}</p>
+                            <p class="text-sm font-black ${statusTextClass}">${statusTitle}</p>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-3">
+                    <div class="rounded-2xl border border-white/10 bg-white/5 p-4">
+                        <p class="text-[10px] font-black uppercase tracking-widest text-slate-500 mb-1">${window.t('payment_summary_received')}</p>
+                        <p class="text-xl font-black text-slate-100">${formatCurr(receiptSummary.grossReceived)}</p>
+                    </div>
+                    <div class="rounded-2xl border border-red-500/20 bg-red-500/10 p-4">
+                        <p class="text-[10px] font-black uppercase tracking-widest text-red-300/80 mb-1">${window.t('payment_summary_card_fees')}</p>
+                        <p class="text-xl font-black text-red-300">${formatCurr(receiptSummary.cardFees)}</p>
+                    </div>
+                    <div class="rounded-2xl border border-cyan-500/20 bg-cyan-500/10 p-4">
+                        <p class="text-[10px] font-black uppercase tracking-widest text-cyan-300/80 mb-1">${window.t('payment_summary_net_basis')}</p>
+                        <p class="text-xl font-black text-cyan-300">${formatCurr(receiptSummary.netEligible)}</p>
+                    </div>
+                    <div class="rounded-2xl border border-white/10 bg-white/5 p-4">
+                        <p class="text-[10px] font-black uppercase tracking-widest text-slate-500 mb-1">${window.t('comm_projected')}</p>
+                        <p class="text-xl font-black text-slate-100">${formatCurr(summary.commTotalProjetada)}</p>
+                    </div>
+                    <div class="rounded-2xl border border-emerald-500/20 bg-emerald-500/10 p-4">
+                        <p class="text-[10px] font-black uppercase tracking-widest text-emerald-300/80 mb-1">${window.t('comm_released')}</p>
+                        <p class="text-xl font-black text-emerald-400">${formatCurr(summary.commLiberada)}</p>
+                    </div>
+                    <div class="rounded-2xl border border-white/10 bg-white/5 p-4">
+                        <p class="text-[10px] font-black uppercase tracking-widest text-slate-500 mb-1">${window.t('pay_summary_paid')}</p>
+                        <p class="text-xl font-black text-slate-100">${formatCurr(summary.draftTotalPaid)}</p>
+                    </div>
+                    <div class="rounded-2xl border ${summary.overpaidAmount > 0.009 ? 'border-blue-500/30 bg-blue-500/10' : 'border-gold/20 bg-gold/10'} p-4 sm:col-span-2 xl:col-span-3">
+                        <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
+                            <div>
+                                <p class="text-[10px] font-black uppercase tracking-widest ${summary.overpaidAmount > 0.009 ? 'text-blue-300' : 'text-gold'} mb-1">${window.t('pay_exact_due')}</p>
+                                <p class="text-2xl font-black ${summary.overpaidAmount > 0.009 ? 'text-blue-300' : 'text-gold'}">${summary.overpaidAmount > 0.009 ? '+ ' + formatCurr(summary.overpaidAmount) : formatCurr(summary.remainingToPay)}</p>
+                            </div>
+                            <div class="rounded-xl border border-white/10 bg-black/20 px-4 py-3 text-xs text-slate-400 max-w-xl">
+                                ${isPT ? 'A comissão liberada usa os recebimentos reais do cliente. Entradas em cartão deduzem 3% automaticamente da base antes de calcular a comissão do vendedor.' : 'Released commission uses the client's actual receipts. Card entries automatically deduct 3% from the basis before calculating seller commission.'}
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="mt-4 rounded-2xl border ${statusChipClass} px-4 py-4">
+                    <div class="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
+                        <div>
+                            <p class="text-[10px] font-black uppercase tracking-widest text-slate-500 mb-1">${isPT ? 'Leitura recomendada' : 'Recommended reading'}</p>
+                            <p class="text-sm ${statusTextClass}">${statusDesc}</p>
+                        </div>
+                        <div class="rounded-xl border border-white/10 bg-black/20 px-4 py-3 min-w-[170px]">
+                            <p class="text-[10px] font-black uppercase tracking-widest text-slate-500 mb-1">${nextValueLabel}</p>
+                            <p class="text-xl font-black ${statusTextClass}">${nextValueDisplay}</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        `;
+
+        const paymentsHtml = hasPayments
+            ? state.editingPayments.payments.map((pay, i) => `
+                <div class="rounded-2xl border border-white/10 bg-white/5 p-4 shadow-inner">
+                    <div class="grid grid-cols-1 md:grid-cols-[1fr_1fr_auto] gap-4 items-end">
+                        <label class="block">
+                            <span class="text-[10px] font-black uppercase tracking-widest text-slate-500 mb-2 block">${isPT ? 'Data do pagamento' : 'Payment date'}</span>
+                            <input type="date" value="${pay.data || ''}" onchange="window.updatePaymentField(${i}, 'data', this.value)" class="modern-input relative text-sm w-full">
+                        </label>
+                        <label class="block">
+                            <span class="text-[10px] font-black uppercase tracking-widest text-slate-500 mb-2 block">${isPT ? 'Valor lançado' : 'Recorded amount'}</span>
+                            <input type="number" step="0.01" value="${(pay.valor ?? 0)}" onchange="window.updatePaymentField(${i}, 'valor', this.value)" class="modern-input text-sm w-full">
+                        </label>
+                        <button onclick="window.removePaymentFromEdit(${i})" class="h-[52px] px-4 bg-red-500/20 text-red-400 rounded-xl hover:bg-red-500/30 transition-colors flex items-center justify-center">
+                            <i data-lucide="trash-2" class="w-5 h-5"></i>
+                        </button>
+                    </div>
+                </div>
+            `).join('')
+            : `
+                <div class="rounded-2xl border border-dashed border-white/10 bg-black/20 px-5 py-8 text-center">
+                    <p class="text-sm font-black uppercase tracking-widest text-slate-400 mb-2">${window.t('no_payments')}</p>
+                    <p class="text-sm text-slate-500">${isPT ? 'Nenhum pagamento foi lançado ainda no gerenciador deste vendedor.' : 'No payments have been entered in this seller manager yet.'}</p>
+                </div>
+            `;
+
+        const canAddPayment = !noReleasedCommission && summary.remainingToPay > 0.009;
+        const addButton = canAddPayment
+            ? `<button onclick="window.addNewPaymentToEdit()" class="w-full p-4 mt-2 rounded-2xl border border-gold/30 bg-gold/10 text-gold font-black uppercase tracking-widest hover:bg-gold/15 hover:border-gold/50 transition-all shadow-[0_12px_30px_-18px_rgba(251,191,36,0.7)]">+ ${window.t('pay_add_remaining')}</button>`
+            : `<div class="rounded-2xl border border-white/10 bg-white/5 px-5 py-4 text-center text-sm text-slate-400">${isSettled ? (isPT ? 'Nenhum pagamento adicional disponível. Comissão já quitada.' : 'No additional payment available. Commission is already settled.') : noReleasedCommission ? (isPT ? 'Aguardando liberação de comissão para habilitar novos pagamentos.' : 'Waiting for commission release to enable new payments.') : summary.overpaidAmount > 0.009 ? (isPT ? 'Corrija o excesso lançado antes de adicionar um novo pagamento.' : 'Correct the over recorded amount before adding a new payment.') : (isPT ? 'Nenhum novo pagamento sugerido no momento.' : 'No new payment suggested at this time.')}</div>`;
+
+        const helperBox = `
+            <div class="rounded-2xl border border-white/10 bg-black/20 px-4 py-4 text-sm text-slate-400">
+                <p class="font-bold text-slate-300 mb-1">${isPT ? 'Controle automático ativo' : 'Automatic control active'}</p>
+                <p>${helperStateText}</p>
+            </div>
+        `;
+
+        container.innerHTML = paymentsHtml + `<div class="space-y-4 mt-4">${addButton}${helperBox}</div>`;
         try { lucide.createIcons(); } catch {}
     };
-    window.updatePaymentField = (index, field, value) => { if (!state.editingPayments) return; if (field === 'data') state.editingPayments.payments[index].data = value; if (field === 'valor') state.editingPayments.payments[index].valor = parseFloat(value || 0); };
+
+    window.updatePaymentField = (index, field, value) => {
+        if (!state.editingPayments) return;
+        if (field === 'data') state.editingPayments.payments[index].data = value;
+        if (field === 'valor') state.editingPayments.payments[index].valor = roundMoney(value || 0);
+        window.renderPaymentEditList();
+    };
     window.removePaymentFromEdit = (index) => { 
         window.showModal(window.t('modal_del_pay_title'), window.t('modal_del_pay_msg'), 'confirm', () => {
-            state.editingPayments.payments.splice(index, 1); window.renderPaymentEditList(); 
+            state.editingPayments.payments.splice(index, 1);
+            window.renderPaymentEditList(); 
         });
     };
-    window.addNewPaymentToEdit = () => { if (!state.editingPayments) return; state.editingPayments.payments.push({ data: new Date().toISOString().split('T')[0], valor: 0 }); window.renderPaymentEditList(); };
-    window.saveEditedPayments = async () => { if (!state.editingPayments) return; try { await updateDoc(doc(db, 'artifacts', appId, 'public', 'data', 'projects', state.editingPayments.projectId), { pagamentosEfetuados: state.editingPayments.payments }); window.closeEditPaymentModal(); } catch (e) { window.showModal(window.t('error'), 'Erro ao salvar pagamentos: ' + e.message, 'error'); } };
+    window.addNewPaymentToEdit = () => {
+        if (!state.editingPayments) return;
+        const summary = getPaymentDraftSummary(state.editingPayments.projectId, state.editingPayments.payments);
+        if (!summary || summary.commLiberada <= 0.009 || summary.remainingToPay <= 0.009) {
+            window.renderPaymentEditList();
+            return;
+        }
+        state.editingPayments.payments.push({ data: new Date().toISOString().split('T')[0], valor: summary.remainingToPay });
+        window.renderPaymentEditList();
+    };
+    window.saveEditedPayments = async () => {
+        if (!state.editingPayments) return;
+        const summary = getPaymentDraftSummary(state.editingPayments.projectId, state.editingPayments.payments);
+        if (summary && summary.draftTotalPaid > summary.commLiberada + 0.009) {
+            window.showModal(window.t('pay_block_over_title'), window.t('pay_block_over_msg'), 'error');
+            return;
+        }
+        try {
+            await updateDoc(doc(db, 'artifacts', appId, 'public', 'data', 'projects', state.editingPayments.projectId), { pagamentosEfetuados: state.editingPayments.payments });
+            window.closeEditPaymentModal();
+        } catch (e) {
+            window.showModal(window.t('error'), 'Erro ao salvar pagamentos: ' + e.message, 'error');
+        }
+    };
 
-    window.openEditRecModal = (projectId) => { const p = state.projects.find(x => x.id === projectId); if (!p) return; state.editingRecs = { projectId, recs: [...(p.recebimentos || [])] }; window.renderRecEditList(); document.getElementById('edit-rec-modal').classList.add('active'); };
+    window.openEditRecModal = (projectId) => {
+        const p = state.projects.find(x => x.id === projectId);
+        if (!p) return;
+        state.editingRecs = {
+            projectId,
+            recs: (p.recebimentos || []).map(r => ({ ...r, metodo: getReceiptEffectiveMethod(r, p), _isNew: false }))
+        };
+        window.renderRecEditList();
+        document.getElementById('edit-rec-modal').classList.add('active');
+    };
     window.closeEditRecModal = () => { state.editingRecs = null; document.getElementById('edit-rec-modal').classList.remove('active'); };
     window.renderRecEditList = () => {
         const container = document.getElementById('rec-edit-list');
-        if (!container || !state.editingRecs) return;
-        container.innerHTML = state.editingRecs.recs.map((r, i) => `<div class="flex flex-col sm:flex-row items-center gap-3 p-4 bg-white/5 rounded-xl border border-white/10"><input type="date" value="${r.data || ''}" onchange="window.updateRecField(${i}, 'data', this.value)" class="modern-input relative text-sm w-full sm:flex-1"><input type="number" step="0.01" value="${(r.valor ?? 0)}" onchange="window.updateRecField(${i}, 'valor', this.value)" class="modern-input text-sm w-full sm:w-28"><select onchange="window.updateRecField(${i}, 'metodo', this.value)" class="modern-input text-sm w-full sm:w-36 !pr-8"><option value="Zelle" ${r.metodo==='Zelle'?'selected':''}>Zelle</option><option value="Wire Transfer" ${r.metodo==='Wire Transfer'?'selected':''}>Wire</option><option value="Dinheiro" ${r.metodo==='Dinheiro'?'selected':''}>Cash</option><option value="CC" ${r.metodo==='CC'?'selected':''}>Cartão</option></select><button onclick="window.removeRecFromEdit(${i})" class="p-4 w-full sm:w-auto bg-red-500/20 text-red-400 rounded-xl hover:bg-red-500/30 flex justify-center"><i data-lucide="trash-2" class="w-5 h-5"></i></button></div>`).join('') + `<button onclick="window.addNewRecToEdit()" class="w-full p-4 mt-2 border-2 border-dashed border-emerald-500/30 rounded-xl text-emerald-400 font-bold hover:bg-emerald-500/10 transition-all">+ Adicionar Novo Recebimento</button>`;
+        const summaryEl = document.getElementById('rec-edit-summary');
+        if (!container || !summaryEl || !state.editingRecs) return;
+
+        const project = state.projects.find(x => x.id === state.editingRecs.projectId);
+        const summary = getReceiptDraftSummary(state.editingRecs.projectId, state.editingRecs.recs);
+        if (!project || !summary) return;
+
+        const isPT = state.lang === 'pt';
+        const receiptsHtml = state.editingRecs.recs.map((r, i) => {
+            const method = getReceiptEffectiveMethod(r, project);
+            const badge = getReceiptMethodBadge(method);
+            const fee = getReceiptFee(r, project);
+            const net = getReceiptNet(r, project);
+            const locked = !r._isNew;
+            const inputClass = locked ? 'opacity-60 cursor-not-allowed pointer-events-none select-none' : '';
+            const noteText = locked ? window.t('rec_method_locked') : (isCardMethod(method) ? window.t('rec_method_card_note') : (isPT ? 'Recebimento sem desconto de cartão na base de comissão.' : 'Receipt with no card fee deduction on commission basis.'));
+            return `
+                <div class="rounded-[24px] border ${locked ? 'border-white/10 bg-white/5' : 'border-emerald-500/20 bg-emerald-500/5'} p-4 shadow-inner">
+                    <div class="flex flex-col xl:flex-row xl:items-start xl:justify-between gap-4">
+                        <div class="grid grid-cols-1 md:grid-cols-[1fr_160px_180px] gap-4 flex-1">
+                            <label class="block ${inputClass}">
+                                <span class="text-[10px] font-black uppercase tracking-widest text-slate-500 mb-2 block">${isPT ? 'Data do recebimento' : 'Receipt date'}</span>
+                                <input type="date" value="${r.data || ''}" ${locked ? 'disabled' : ''} onchange="window.updateRecField(${i}, 'data', this.value)" class="modern-input relative text-sm w-full ${locked ? '!bg-black/20 !border-white/5' : ''}">
+                            </label>
+                            <label class="block ${inputClass}">
+                                <span class="text-[10px] font-black uppercase tracking-widest text-slate-500 mb-2 block">${isPT ? 'Valor bruto' : 'Gross amount'}</span>
+                                <input type="number" step="0.01" value="${(r.valor ?? 0)}" ${locked ? 'disabled' : ''} onchange="window.updateRecField(${i}, 'valor', this.value)" class="modern-input text-sm w-full ${locked ? '!bg-black/20 !border-white/5' : ''}">
+                            </label>
+                            <label class="block ${inputClass}">
+                                <span class="text-[10px] font-black uppercase tracking-widest text-slate-500 mb-2 block">${window.t('rec_method_actual')}</span>
+                                <select onchange="window.updateRecField(${i}, 'metodo', this.value)" ${locked ? 'disabled' : ''} class="modern-input text-sm w-full !pr-8 ${locked ? '!bg-black/20 !border-white/5' : ''}">
+                                    <option value="Zelle" ${method==='Zelle'?'selected':''}>Zelle</option>
+                                    <option value="Wire Transfer" ${method==='Wire Transfer'?'selected':''}>Wire Transfer</option>
+                                    <option value="ACH" ${method==='ACH'?'selected':''}>ACH</option>
+                                    <option value="Check" ${method==='Check'?'selected':''}>Check</option>
+                                    <option value="Dinheiro" ${method==='Dinheiro'?'selected':''}>Dinheiro (Cash)</option>
+                                    <option value="CC" ${method==='CC'?'selected':''}>Cartão de Crédito (3%)</option>
+                                </select>
+                            </label>
+                        </div>
+                        <div class="xl:w-[240px] rounded-2xl border border-white/10 bg-black/20 p-4">
+                            <div class="flex items-center justify-between gap-3 mb-3">
+                                <span class="inline-flex items-center rounded-xl border px-3 py-1 text-[10px] font-black uppercase tracking-widest ${badge.pill}">${badge.label}</span>
+                                <button onclick="window.removeRecFromEdit(${i})" class="p-3 bg-red-500/20 text-red-400 rounded-xl hover:bg-red-500/30 transition-colors flex items-center justify-center"><i data-lucide="trash-2" class="w-5 h-5"></i></button>
+                            </div>
+                            <div class="space-y-2 text-sm">
+                                <div class="flex justify-between gap-4"><span class="text-slate-500">${window.t('rec_line_gross')}</span><span class="font-black text-slate-200">${formatCurr(r.valor)}</span></div>
+                                <div class="flex justify-between gap-4"><span class="text-slate-500">${window.t('rec_line_fee')}</span><span class="font-black ${fee > 0 ? 'text-red-300' : 'text-slate-300'}">${formatCurr(fee)}</span></div>
+                                <div class="flex justify-between gap-4 border-t border-white/10 pt-2"><span class="text-slate-500">${window.t('rec_line_net')}</span><span class="font-black ${fee > 0 ? 'text-gold' : 'text-emerald-300'}">${formatCurr(net)}</span></div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="mt-4 rounded-2xl border ${locked ? 'border-white/10 bg-black/20' : 'border-emerald-500/20 bg-emerald-500/10'} px-4 py-3 text-sm ${locked ? 'text-slate-400' : 'text-emerald-200'}">${noteText}</div>
+                </div>
+            `;
+        }).join('');
+
+        summaryEl.innerHTML = `
+            <div class="rounded-[28px] border border-white/10 bg-gradient-to-br from-slate-900 via-slate-900 to-black/90 p-5 sm:p-6 shadow-[0_20px_60px_-30px_rgba(0,0,0,0.75)]">
+                <div class="flex flex-col gap-4 xl:flex-row xl:items-start xl:justify-between mb-5">
+                    <div>
+                        <p class="text-[10px] font-black uppercase tracking-[0.28em] text-slate-500 mb-2">${isPT ? 'Recebimentos reais do cliente' : 'Actual client receipts'}</p>
+                        <h4 class="text-xl sm:text-2xl font-black text-white force-white-text leading-tight">${project.nomeObra || (isPT ? 'Projeto sem nome' : 'Untitled project')}</h4>
+                        <p class="text-xs text-slate-400 mt-2">${isPT ? 'Use a forma real de cada parcela para calcular corretamente as deduções de cartão.' : 'Use the real method of each installment to calculate card deductions correctly.'}</p>
+                    </div>
+                    <div class="inline-flex items-center gap-2 self-start rounded-2xl border border-emerald-500/20 bg-emerald-500/10 px-4 py-3 text-emerald-300 text-[11px] font-black uppercase tracking-widest">
+                        <i data-lucide="receipt-text" class="w-4 h-4"></i>
+                        ${summary.receiptsCount} ${isPT ? (summary.receiptsCount === 1 ? 'lançamento' : 'lançamentos') : (summary.receiptsCount === 1 ? 'entry' : 'entries')}
+                    </div>
+                </div>
+                <div class="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-4 gap-3">
+                    <div class="rounded-2xl border border-white/10 bg-white/5 p-4">
+                        <p class="text-[10px] font-black uppercase tracking-widest text-slate-500 mb-1">${window.t('rec_summary_gross')}</p>
+                        <p class="text-xl font-black text-slate-100">${formatCurr(summary.grossReceived)}</p>
+                    </div>
+                    <div class="rounded-2xl border border-red-500/20 bg-red-500/10 p-4">
+                        <p class="text-[10px] font-black uppercase tracking-widest text-red-300/80 mb-1">${window.t('rec_summary_fees')}</p>
+                        <p class="text-xl font-black text-red-300">${formatCurr(summary.cardFees)}</p>
+                    </div>
+                    <div class="rounded-2xl border border-cyan-500/20 bg-cyan-500/10 p-4">
+                        <p class="text-[10px] font-black uppercase tracking-widest text-cyan-300/80 mb-1">${window.t('rec_summary_net')}</p>
+                        <p class="text-xl font-black text-cyan-300">${formatCurr(summary.netEligible)}</p>
+                    </div>
+                    <div class="rounded-2xl border border-emerald-500/20 bg-emerald-500/10 p-4">
+                        <p class="text-[10px] font-black uppercase tracking-widest text-emerald-300/80 mb-1">${window.t('rec_summary_release')}</p>
+                        <p class="text-xl font-black text-emerald-400">${formatCurr(summary.commLiberada)}</p>
+                    </div>
+                </div>
+            </div>
+        `;
+
+        const emptyState = !state.editingRecs.recs.length
+            ? `<div class="rounded-2xl border border-dashed border-white/10 bg-black/20 px-5 py-8 text-center"><p class="text-sm font-black uppercase tracking-widest text-slate-400 mb-2">${window.t('no_receipts')}</p><p class="text-sm text-slate-500">${isPT ? 'Adicione a primeira parcela e escolha a forma real recebida.' : 'Add the first installment and choose the actual received method.'}</p></div>`
+            : '';
+
+        container.innerHTML = emptyState + receiptsHtml + `<button onclick="window.addNewRecToEdit()" class="w-full p-4 mt-2 border-2 border-dashed border-emerald-500/30 rounded-2xl text-emerald-400 font-black uppercase tracking-widest hover:bg-emerald-500/10 transition-all">+ ${window.t('rec_add_new')}</button>`;
         try { lucide.createIcons(); } catch {}
     };
-    window.updateRecField = (index, field, value) => { if (!state.editingRecs) return; if (field === 'data') state.editingRecs.recs[index].data = value; if (field === 'valor') state.editingRecs.recs[index].valor = parseFloat(value || 0); if (field === 'metodo') state.editingRecs.recs[index].metodo = value; };
-    window.removeRecFromEdit = (index) => { 
+    window.updateRecField = (index, field, value) => {
+        if (!state.editingRecs) return;
+        if (!state.editingRecs.recs[index]?._isNew) return;
+        if (field === 'data') state.editingRecs.recs[index].data = value;
+        if (field === 'valor') state.editingRecs.recs[index].valor = roundMoney(value || 0);
+        if (field === 'metodo') state.editingRecs.recs[index].metodo = value;
+        window.renderRecEditList();
+    };
+    window.removeRecFromEdit = (index) => {
         window.showModal('Confirmar Exclusão', window.t('modal_del_rec_msg'), 'confirm', () => {
-            state.editingRecs.recs.splice(index, 1); window.renderRecEditList(); 
+            state.editingRecs.recs.splice(index, 1);
+            window.renderRecEditList();
         });
     };
-    window.addNewRecToEdit = () => { if (!state.editingRecs) return; state.editingRecs.recs.push({ data: new Date().toISOString().split('T')[0], valor: 0, metodo: 'Zelle' }); window.renderRecEditList(); };
-    window.saveEditedRecs = async () => { if (!state.editingRecs) return; try { await updateDoc(doc(db, 'artifacts', appId, 'public', 'data', 'projects', state.editingRecs.projectId), { recebimentos: state.editingRecs.recs }); window.closeEditRecModal(); } catch (e) { window.showModal(window.t('error'), 'Erro ao salvar: ' + e.message, 'error'); } };
+    window.addNewRecToEdit = () => {
+        if (!state.editingRecs) return;
+        state.editingRecs.recs.push({ data: new Date().toISOString().split('T')[0], valor: 0, metodo: 'Zelle', _isNew: true });
+        window.renderRecEditList();
+    };
+    window.saveEditedRecs = async () => {
+        if (!state.editingRecs) return;
+        const invalidNewEntry = state.editingRecs.recs.some(r => r._isNew && (!r.data || Number(r.valor || 0) <= 0 || !getReceiptEffectiveMethod(r)));
+        if (invalidNewEntry) {
+            window.showModal(window.t('attention'), window.t('rec_save_block'), 'error');
+            return;
+        }
+        const payload = state.editingRecs.recs.map(r => ({ data: r.data || '', valor: roundMoney(r.valor || 0), metodo: getReceiptEffectiveMethod(r) }));
+        try {
+            await updateDoc(doc(db, 'artifacts', appId, 'public', 'data', 'projects', state.editingRecs.projectId), { recebimentos: payload });
+            window.closeEditRecModal();
+        } catch (e) {
+            window.showModal(window.t('error'), 'Erro ao salvar: ' + e.message, 'error');
+        }
+    };
 
     // --- NAVEGAÇÃO INTERNA DO MODO FOCO ---
     window.openProjectDetails = (id) => { 
@@ -1155,22 +1561,26 @@
         const orcamento = Number(p?.orcamento || 0);
 
         const globalMetodo = String(p?.metodo || '');
-        const globalIsCC = (globalMetodo === 'CC' || globalMetodo.toLowerCase().includes('cartão'));
+        const globalIsCC = isCardMethod(globalMetodo);
         const baseProjetada = globalIsCC ? valorTotal * 0.97 : valorTotal;
-        const commTotalProjetada = baseProjetada * percComissao;
+        const commTotalProjetada = roundMoney(baseProjetada * percComissao);
 
         const recebimentos = Array.isArray(p?.recebimentos) ? p.recebimentos : [];
         let totalRecebido = 0; let commLiberada = 0;
         
         recebimentos.forEach(r => {
             const rVal = Number(r.valor || 0); totalRecebido += rVal;
-            const rBase = (r.metodo === 'CC') ? rVal * 0.97 : rVal;
+            const rMethod = getReceiptEffectiveMethod(r, p);
+            const rBase = isCardMethod(rMethod) ? rVal * 0.97 : rVal;
             commLiberada += rBase * percComissao;
         });
 
+        totalRecebido = roundMoney(totalRecebido);
+        commLiberada = roundMoney(commLiberada);
+
         const pays = Array.isArray(p?.pagamentosEfetuados) ? p.pagamentosEfetuados : [];
-        const totalPaid = pays.reduce((a, c) => a + Number(c?.valor || 0), 0);
-        const balance = commLiberada - totalPaid;
+        const totalPaid = roundMoney(pays.reduce((a, c) => a + Number(c?.valor || 0), 0));
+        const balance = roundMoney(commLiberada - totalPaid);
         
         let statusColor = "bg-red-500";
         if (balance < 0) statusColor = "bg-blue-500"; 
@@ -1267,7 +1677,10 @@
             else if (f.balance === 0) { balText = window.t('balance_paid'); balColor = "text-emerald-400"; }
 
             let clientPaidPerc = p.valorTotal > 0 ? Math.floor((f.totalRecebido / p.valorTotal) * 100) : 0; if (clientPaidPerc > 100) clientPaidPerc = 100;
-            let sellerPaidPerc = f.commTotalProjetada > 0 ? Math.floor((f.totalPaid / f.commTotalProjetada) * 100) : 0; if (sellerPaidPerc > 100) sellerPaidPerc = 100;
+            const sellerReferenceTotal = f.commLiberada > 0 ? f.commLiberada : 0;
+            let sellerPaidPerc = sellerReferenceTotal > 0 ? Math.floor((f.totalPaid / sellerReferenceTotal) * 100) : 0;
+            if (f.commLiberada > 0 && f.balance <= 0) sellerPaidPerc = 100;
+            if (sellerPaidPerc > 100) sellerPaidPerc = 100;
 
             const clientPaidText = clientPaidPerc >= 100 ? window.t('paid_100') : (clientPaidPerc > 0 ? `${clientPaidPerc}${window.t('paid_perc')}` : window.t('pending'));
             const clientPaidColor = clientPaidPerc >= 100 ? 'text-emerald-400' : (clientPaidPerc > 0 ? 'text-amber-400' : 'text-slate-500');
@@ -1312,7 +1725,13 @@
                                     </div>
                                 </div>
                                 <div class="max-h-60 overflow-y-auto scrollbar-hide px-2 print:max-h-none">
-                                    ${(p.recebimentos || []).map(r => `<div class="flex justify-between items-center text-sm sm:text-base py-4 border-b border-white/5 last:border-0 print:border-slate-200 hover:bg-white/5 rounded px-2"><span class="text-slate-300 print:text-black">${r.data ? new Date(r.data + 'T12:00:00').toLocaleDateString(state.lang === 'pt' ? 'pt-BR' : 'en-US') : '-'} <span class="text-[10px] font-black text-slate-500 ml-2 uppercase bg-black/30 px-2 py-1 rounded print:bg-slate-200 print:text-slate-800">${r.metodo}</span></span><span class="font-black text-emerald-400 print:text-emerald-700">+ ${formatCurr(r.valor)}</span></div>`).join('') || `<p class="text-sm italic text-slate-600 text-center py-6">${window.t('no_receipts')}</p>`}
+                                    ${(p.recebimentos || []).map(r => {
+                                        const method = getReceiptEffectiveMethod(r, p);
+                                        const badge = getReceiptMethodBadge(method);
+                                        const fee = getReceiptFee(r, p);
+                                        const net = getReceiptNet(r, p);
+                                        return `<div class="flex justify-between items-start text-sm sm:text-base py-4 border-b border-white/5 last:border-0 print:border-slate-200 hover:bg-white/5 rounded px-2 gap-4"><div><span class="text-slate-300 print:text-black">${r.data ? new Date(r.data + 'T12:00:00').toLocaleDateString(state.lang === 'pt' ? 'pt-BR' : 'en-US') : '-'} <span class="text-[10px] font-black ml-2 uppercase border px-2 py-1 rounded ${badge.pill} print:bg-slate-200 print:text-slate-800 print:border-slate-300">${badge.label}</span></span><div class="mt-2 text-[11px] text-slate-500 flex flex-wrap gap-x-4 gap-y-1"><span>${window.t('rec_line_gross')}: <strong class="text-slate-300">${formatCurr(r.valor)}</strong></span><span>${window.t('rec_line_fee')}: <strong class="${fee > 0 ? 'text-red-300' : 'text-slate-300'}">${formatCurr(fee)}</strong></span><span>${window.t('rec_line_net')}: <strong class="${fee > 0 ? 'text-gold' : 'text-emerald-300'}">${formatCurr(net)}</strong></span></div></div><span class="font-black text-emerald-400 print:text-emerald-700 whitespace-nowrap">+ ${formatCurr(r.valor)}</span></div>`;
+                                    }).join('') || `<p class="text-sm italic text-slate-600 text-center py-6">${window.t('no_receipts')}</p>`}
                                 </div>
                             </div>
 
@@ -1573,7 +1992,7 @@
                 if (r.data) {
                     const rYear = parseInt(r.data.split('-')[0], 10);
                     const rMonth = parseInt(r.data.split('-')[1], 10) - 1;
-                    const rBase = r.metodo === 'CC' ? r.valor * 0.97 : r.valor;
+                    const rBase = isCardMethod(getReceiptEffectiveMethod(r, p)) ? Number(r.valor || 0) * 0.97 : Number(r.valor || 0);
                     const rComm = rBase * (p.percComissao / 100);
                     if (rYear === currentYear) { sellerStats[vend].months[rMonth] += rComm; sellerStats[vend].total += rComm; }
                 }
