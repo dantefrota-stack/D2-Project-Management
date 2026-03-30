@@ -1061,6 +1061,30 @@
     function getProjectDisplayName(project) {
         return project?.cliente || project?.nomeObra || (state.lang === 'pt' ? 'Projeto sem nome' : 'Untitled project');
     }
+    function escapeInlineHtml(value) {
+        return String(value ?? '').replace(/[&<>"']/g, char => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[char] || char));
+    }
+    function renderProjectDocumentMeta(project, compact = false) {
+        const invoice = String(project?.numeroInvoice || '').trim();
+        const proposal = String(project?.numeroProposta || '').trim();
+        if (!invoice && !proposal) return '';
+        const wrapperClass = compact ? 'flex flex-wrap gap-2 mt-3' : 'grid grid-cols-1 sm:grid-cols-2 gap-3 mb-6';
+        const cardClass = compact
+            ? 'inline-flex items-center gap-2 rounded-xl border border-white/10 bg-white/5 px-3 py-2'
+            : 'rounded-2xl border border-white/10 bg-white/5 px-4 py-3';
+        const labelClass = compact
+            ? 'text-[9px] font-black uppercase tracking-widest text-slate-500 whitespace-nowrap'
+            : 'text-[10px] font-black uppercase tracking-widest text-slate-500 mb-1';
+        const valueClass = compact
+            ? 'text-xs font-black text-slate-100 whitespace-nowrap'
+            : 'text-sm font-black text-slate-100';
+        return `
+            <div class="${wrapperClass}">
+                ${invoice ? `<div class="${cardClass}"><span class="${labelClass}">${window.t('doc_invoice')}</span><span class="${valueClass}">${escapeInlineHtml(invoice)}</span></div>` : ''}
+                ${proposal ? `<div class="${cardClass}"><span class="${labelClass}">${window.t('doc_proposal')}</span><span class="${valueClass}">${escapeInlineHtml(proposal)}</span></div>` : ''}
+            </div>
+        `;
+    }
     function renderInfoMiniButton(title, message) {
         const encodedTitle = encodeURIComponent(title || (state.lang === 'pt' ? 'Informação' : 'Information'));
         const encodedMessage = encodeURIComponent(message || '');
@@ -1209,6 +1233,7 @@
                         <p class="text-[10px] font-black uppercase tracking-[0.28em] text-slate-500 mb-2">${isPT ? 'Resumo executivo do pagamento' : 'Executive payment summary'}</p>
                         <h4 class="text-xl sm:text-2xl font-black text-white force-white-text leading-tight">${projectName}</h4>
                         <p class="text-xs text-slate-400 mt-2">${isPT ? 'Vendedor responsável' : 'Responsible seller'}: <span class="text-slate-200 font-bold">${sellerName}</span></p>
+                        ${renderProjectDocumentMeta(project, true)}
                     </div>
                     <div class="inline-flex items-center gap-3 self-start rounded-2xl border ${statusChipClass} px-4 py-3 min-w-[220px]">
                         <div class="w-2.5 h-2.5 rounded-full ${statusDotClass}"></div>
@@ -1778,6 +1803,7 @@
                     moduleTitle = window.t('comm_finances');
                     moduleContent = `
                         <div class="space-y-6 text-left print:bg-transparent print:border-slate-300 print:shadow-none print:p-0">
+                            ${renderProjectDocumentMeta(p)}
                             <div class="grid grid-cols-2 print:grid-cols-4 gap-4 sm:gap-6 pb-8 border-b border-white/5 print:border-slate-200">
                                 <div class="print:p-3"><p class="text-[11px] font-bold text-slate-500 uppercase print:text-black tracking-widest mb-1 print:text-[9px]">${window.t('comm_projected')}</p><p class="text-xl font-black text-slate-400 print:text-black print:text-base">${formatCurr(f.commTotalProjetada)}</p></div>
                                 <div class="text-right print:text-left print:p-3"><p class="text-[11px] font-bold text-emerald-500/80 uppercase print:text-emerald-700 tracking-widest mb-1 print:text-[9px]">${window.t('comm_released')}</p><p class="text-3xl font-black text-emerald-500 print:text-emerald-700 print:text-base truncate">${formatCurr(f.commLiberada)}</p></div>
