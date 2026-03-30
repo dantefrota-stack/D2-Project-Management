@@ -570,7 +570,7 @@
             rec_summary_gross: "Recebido bruto", rec_summary_fees: "Taxas de cartão 3%", rec_summary_net: "Base líquida elegível", rec_summary_release: "Comissão liberada",
             rec_method_actual: "Forma real recebida", rec_method_locked: "Recebimento já registrado. Para corrigir, exclua e crie uma nova entrada.", rec_method_card_note: "Cartão deduz 3% automaticamente da base de comissão.",
             rec_line_gross: "Bruto", rec_line_fee: "Taxa", rec_line_net: "Líquido base", rec_add_new: "Adicionar Novo Recebimento", rec_save_block: "Preencha data, valor e forma de pagamento em todas as novas entradas antes de salvar.",
-            payment_summary_card_fees: "Taxas cartão (cliente)", payment_summary_net_basis: "Base líquida recebida", payment_summary_received: "Recebido do cliente", pay_pending_badge: "Pagamento pendente", timeline_due_soon: "Prazo próximo", invoice_label: "Invoice", proposal_label: "Proposta", client_outstanding: "Saldo cliente a receber", comm_remaining_projected: "Comissão restante projetada", commission_released_settled: "Liberada quitada", commission_total_paid: "Comissão total quitada", commission_due_now: "Pendente agora", commission_paid_from_released: "Pago da liberada", commission_still_to_release: "Ainda a liberar", commission_waiting_receipts: "Aguardando recebimentos", commission_future_pending: "Comissão futura estimada", commission_released_paid_label: "Liberada paga", commission_overall_paid_label: "Pago do total projetado", commission_note_released_only: "A comissão do vendedor foi quitada apenas sobre o valor já recebido do cliente.", commission_note_future_release: "Ainda restam {commission} de comissão projetada, que serão liberados conforme o cliente pagar os {client} em aberto.", commission_note_due_now: "Existe {due} de comissão liberada pendente agora e ainda {future} de comissão projetada aguardando novos recebimentos.", commission_note_waiting_receipts: "Ainda não há comissão liberada. O cliente ainda deve {client} e isso pode liberar até {commission} de comissão projetada.", client_received_label: "Recebido", commission_paid_simple: "Comissão paga", commission_to_receive_label: "Comissão a receber", commission_partial_status: "Parcial", commission_review_status: "Revisar pagamento", commission_due_now_short: "Pendente agora"
+            payment_summary_card_fees: "Taxas cartão (cliente)", payment_summary_net_basis: "Base líquida recebida", payment_summary_received: "Recebido do cliente", pay_pending_badge: "Pagamento pendente", timeline_due_soon: "Prazo próximo", invoice_label: "Invoice", proposal_label: "Proposta", client_outstanding: "Saldo cliente a receber", comm_remaining_projected: "Comissão restante projetada", commission_released_settled: "Liberada quitada", commission_total_paid: "Comissão total quitada", commission_due_now: "Pendente agora", commission_paid_from_released: "Pago da liberada", commission_still_to_release: "Ainda a liberar", commission_waiting_receipts: "Aguardando recebimentos", commission_future_pending: "Comissão futura estimada", commission_released_paid_label: "Liberada paga", commission_overall_paid_label: "Pago do total projetado", commission_note_released_only: "A comissão do vendedor foi quitada apenas sobre o valor já recebido do cliente.", commission_note_future_release: "Ainda restam {commission} de comissão projetada, que serão liberados conforme o cliente pagar os {client} em aberto.", commission_note_due_now: "Existe {due} de comissão liberada pendente agora e ainda {future} de comissão projetada aguardando novos recebimentos.", commission_note_waiting_receipts: "Ainda não há comissão liberada. O cliente ainda deve {client} e isso pode liberar até {commission} de comissão projetada.", client_received_label: "Recebido", client_balance_short: "Saldo a receber", commission_paid_simple: "Comissão paga", commission_to_receive_label: "Comissão a receber", commission_to_receive_short: "Comissão restante", commission_partial_status: "Parcial", commission_review_status: "Revisar pagamento", commission_due_now_short: "Pendente agora"
         },
         en: {
             admin_panel: "Corporate Management", nav_proj: "Projects", nav_new: "New Entry", nav_rep: "Reports", nav_users: "Team",
@@ -2089,38 +2089,42 @@
                     <p class="text-4xl font-black text-white force-white-text text-center tracking-tight print:text-black">${formatCurr(p.valorTotal)}</p>
                 </div>
 
-                <div class="flex justify-between gap-4 mt-6 no-print">
-                    <div class="flex-1 rounded-2xl p-4 border ${clientBorderColor} shadow-inner transition-colors">
-                        <p class="text-[10px] font-black uppercase text-slate-400 mb-1.5 tracking-widest text-center">${window.t('client')}</p>
-                        <p class="text-sm font-black ${clientPaidColor} text-center">${clientPaidText}</p>
-                        <div class="mt-3 grid grid-cols-2 gap-2 text-left">
-                            <div class="rounded-xl border border-white/5 bg-black/20 px-3 py-2.5">
-                                <p class="text-[10px] font-black uppercase tracking-widest text-slate-500 mb-1">${window.t('client_received_label')}</p>
-                                <p class="text-sm font-black text-slate-100">${formatCurr(f.totalRecebido)}</p>
+                <div class="grid grid-cols-2 gap-4 mt-6 no-print project-finance-snapshot">
+                    <div class="rounded-[28px] p-5 border ${clientBorderColor} shadow-inner transition-colors min-h-[232px] flex flex-col bg-gradient-to-br from-black/20 to-transparent">
+                        <div class="mb-4">
+                            <p class="text-[10px] font-black uppercase text-slate-400 tracking-[0.22em] text-center">${window.t('client')}</p>
+                            <p class="text-xl font-black ${clientPaidColor} text-center mt-2 leading-none">${clientPaidText}</p>
+                        </div>
+                        <div class="space-y-3 mt-auto">
+                            <div class="rounded-2xl border border-white/5 bg-black/25 px-4 py-3.5">
+                                <p class="text-[10px] font-black uppercase tracking-[0.18em] text-slate-500">${window.t('client_received_label')}</p>
+                                <p class="text-2xl font-black text-slate-50 mt-2 leading-none">${formatCurr(f.totalRecebido)}</p>
                             </div>
-                            <div class="rounded-xl border border-white/5 bg-black/20 px-3 py-2.5">
-                                <p class="text-[10px] font-black uppercase tracking-widest text-slate-500 mb-1">${window.t('client_outstanding')}</p>
-                                <p class="text-sm font-black ${commissionProgress.clientOutstanding > 0.009 ? 'text-amber-300' : 'text-emerald-400'}">${formatCurr(commissionProgress.clientOutstanding)}</p>
+                            <div class="rounded-2xl border border-white/5 bg-black/25 px-4 py-3.5">
+                                <p class="text-[10px] font-black uppercase tracking-[0.18em] text-slate-500">${window.t('client_balance_short')}</p>
+                                <p class="text-2xl font-black ${commissionProgress.clientOutstanding > 0.009 ? 'text-amber-300' : 'text-emerald-400'} mt-2 leading-none">${formatCurr(commissionProgress.clientOutstanding)}</p>
                             </div>
                         </div>
                     </div>
-                    <div class="flex-1 rounded-2xl p-4 border ${commissionStatus.toneClass} shadow-inner transition-colors ${commissionStatus.pulse ? 'balance-due-pulse' : ''}">
-                        <div class="flex items-center justify-center gap-2 mb-2 flex-wrap">
-                            <p class="text-[10px] font-black uppercase text-slate-400 tracking-widest">${window.t('commission')}</p>
-                            ${sellerPendingBadge}
-                        </div>
-                        <p class="text-sm font-black ${commissionStatus.headlineClass} text-center">${commissionStatus.headline}</p>
-                        <div class="mt-3 grid grid-cols-2 gap-2 text-left">
-                            <div class="rounded-xl border border-white/5 bg-black/20 px-3 py-2.5">
-                                <p class="text-[10px] font-black uppercase tracking-widest text-slate-500 mb-1">${window.t('commission_paid_simple')}</p>
-                                <p class="text-sm font-black text-slate-100">${formatCurr(commissionProgress.paid)}</p>
+                    <div class="rounded-[28px] p-5 border ${commissionStatus.toneClass} shadow-inner transition-colors ${commissionStatus.pulse ? 'balance-due-pulse' : ''} min-h-[232px] flex flex-col bg-gradient-to-br from-black/20 to-transparent">
+                        <div class="mb-4">
+                            <div class="flex flex-wrap items-center justify-center gap-2 mb-2">
+                                <p class="text-[10px] font-black uppercase text-slate-400 tracking-[0.22em] text-center">${window.t('commission')}</p>
+                                ${sellerPendingBadge}
                             </div>
-                            <div class="rounded-xl border border-white/5 bg-black/20 px-3 py-2.5">
-                                <p class="text-[10px] font-black uppercase tracking-widest text-slate-500 mb-1">${window.t('commission_to_receive_label')}</p>
-                                <p class="text-sm font-black ${commissionProgress.remainingToPayTotal > 0.009 ? 'text-amber-300' : 'text-emerald-400'}">${formatCurr(commissionProgress.remainingToPayTotal)}</p>
-                            </div>
+                            <p class="text-xl font-black ${commissionStatus.headlineClass} text-center leading-tight">${commissionStatus.headline}</p>
                         </div>
-                        ${commissionProgress.currentDue > 0.009 ? `<p class="mt-3 text-[11px] font-black text-gold text-center">${window.t('commission_due_now_short')}: ${formatCurr(commissionProgress.currentDue)}</p>` : ''}
+                        <div class="space-y-3 mt-auto">
+                            <div class="rounded-2xl border border-white/5 bg-black/25 px-4 py-3.5">
+                                <p class="text-[10px] font-black uppercase tracking-[0.18em] text-slate-500">${window.t('commission_paid_simple')}</p>
+                                <p class="text-2xl font-black text-slate-50 mt-2 leading-none">${formatCurr(commissionProgress.paid)}</p>
+                            </div>
+                            <div class="rounded-2xl border border-white/5 bg-black/25 px-4 py-3.5">
+                                <p class="text-[10px] font-black uppercase tracking-[0.18em] text-slate-500">${window.t('commission_to_receive_short')}</p>
+                                <p class="text-2xl font-black ${commissionProgress.remainingToPayTotal > 0.009 ? 'text-amber-300' : 'text-emerald-400'} mt-2 leading-none">${formatCurr(commissionProgress.remainingToPayTotal)}</p>
+                            </div>
+                            ${commissionProgress.currentDue > 0.009 ? `<div class="rounded-2xl border border-gold/25 bg-gold/10 px-4 py-3.5"><p class="text-[10px] font-black uppercase tracking-[0.18em] text-gold/80">${window.t('commission_due_now_short')}</p><p class="text-xl font-black text-gold mt-2 leading-none">${formatCurr(commissionProgress.currentDue)}</p></div>` : ''}
+                        </div>
                     </div>
                 </div>
             `;
