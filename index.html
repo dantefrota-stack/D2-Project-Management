@@ -1123,7 +1123,7 @@
             helperStateText = isPT ? 'Assim que houver comissão liberada, o valor exato aparecerá aqui para pagamento.' : 'As soon as commission is released, the exact payable amount will appear here.';
         } else {
             statusTitle = isPT ? 'Pagamento disponível' : 'Payment available';
-            statusDesc = isPT ? 'Use o saldo exato abaixo para quitar apenas a comissão elegível do vendedor.' : 'Use the exact balance below to settle only the seller's eligible commission.';
+            statusDesc = isPT ? 'Use o saldo exato abaixo para quitar apenas a comissão elegível do vendedor.' : "Use the exact balance below to settle only the seller's eligible commission.";
             statusChipClass = 'border-gold/30 bg-gold/10';
             statusDotClass = 'bg-gold';
             statusTextClass = 'text-gold';
@@ -1181,7 +1181,7 @@
                                 <p class="text-2xl font-black ${summary.overpaidAmount > 0.009 ? 'text-blue-300' : 'text-gold'}">${summary.overpaidAmount > 0.009 ? '+ ' + formatCurr(summary.overpaidAmount) : formatCurr(summary.remainingToPay)}</p>
                             </div>
                             <div class="rounded-xl border border-white/10 bg-black/20 px-4 py-3 text-xs text-slate-400 max-w-xl">
-                                ${isPT ? 'A comissão liberada usa os recebimentos reais do cliente. Entradas em cartão deduzem 3% automaticamente da base antes de calcular a comissão do vendedor.' : 'Released commission uses the client's actual receipts. Card entries automatically deduct 3% from the basis before calculating seller commission.'}
+                                ${isPT ? 'A comissão liberada usa os recebimentos reais do cliente. Entradas em cartão deduzem 3% automaticamente da base antes de calcular a comissão do vendedor.' : "Released commission uses the client's actual receipts. Card entries automatically deduct 3% from the basis before calculating seller commission."}
                             </div>
                         </div>
                     </div>
