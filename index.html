@@ -172,6 +172,12 @@
         .app-body-light .info-mini-btn:hover { color:#0f172a; border-color:#b45309; background:#fffbeb; }
         @keyframes balancePulse { 0%, 100% { box-shadow: 0 0 0 0 rgba(251,191,36,0.0), inset 0 0 0 0 rgba(251,191,36,0.0); border-color: rgba(251,191,36,0.35); } 50% { box-shadow: 0 0 0 6px rgba(251,191,36,0.08), 0 0 28px -10px rgba(251,191,36,0.65); border-color: rgba(251,191,36,0.8); } }
         .balance-due-pulse { animation: balancePulse 1.6s ease-in-out infinite; }
+        @keyframes dangerPulse { 0%, 100% { box-shadow: 0 0 0 0 rgba(239,68,68,0.0); border-color: rgba(239,68,68,0.35); } 50% { box-shadow: 0 0 0 6px rgba(239,68,68,0.08), 0 0 28px -10px rgba(239,68,68,0.75); border-color: rgba(239,68,68,0.85); } }
+        .timeline-alert-pulse { animation: dangerPulse 1.5s ease-in-out infinite; }
+        .alert-chip { display:inline-flex; align-items:center; gap:.4rem; border-radius:999px; padding:.45rem .75rem; font-size:10px; font-weight:900; text-transform:uppercase; letter-spacing:.14em; white-space:nowrap; }
+        .alert-chip-gold { border:1px solid rgba(251,191,36,0.32); background:rgba(251,191,36,0.11); color:#fbbf24; }
+        .alert-chip-red { border:1px solid rgba(239,68,68,0.34); background:rgba(239,68,68,0.12); color:#f87171; }
+        .alert-chip-amber { border:1px solid rgba(245,158,11,0.34); background:rgba(245,158,11,0.12); color:#fbbf24; }
     </style>
 </head>
 <body class="auth-body">
@@ -564,7 +570,7 @@
             rec_summary_gross: "Recebido bruto", rec_summary_fees: "Taxas de cartão 3%", rec_summary_net: "Base líquida elegível", rec_summary_release: "Comissão liberada",
             rec_method_actual: "Forma real recebida", rec_method_locked: "Recebimento já registrado. Para corrigir, exclua e crie uma nova entrada.", rec_method_card_note: "Cartão deduz 3% automaticamente da base de comissão.",
             rec_line_gross: "Bruto", rec_line_fee: "Taxa", rec_line_net: "Líquido base", rec_add_new: "Adicionar Novo Recebimento", rec_save_block: "Preencha data, valor e forma de pagamento em todas as novas entradas antes de salvar.",
-            payment_summary_card_fees: "Taxas cartão (cliente)", payment_summary_net_basis: "Base líquida recebida", payment_summary_received: "Recebido do cliente"
+            payment_summary_card_fees: "Taxas cartão (cliente)", payment_summary_net_basis: "Base líquida recebida", payment_summary_received: "Recebido do cliente", pay_pending_badge: "Pagamento pendente", timeline_due_soon: "Prazo próximo"
         },
         en: {
             admin_panel: "Corporate Management", nav_proj: "Projects", nav_new: "New Entry", nav_rep: "Reports", nav_users: "Team",
@@ -612,7 +618,7 @@
             rec_summary_gross: "Gross received", rec_summary_fees: "Card fees 3%", rec_summary_net: "Eligible net basis", rec_summary_release: "Commission released",
             rec_method_actual: "Actual received method", rec_method_locked: "Receipt already recorded. To correct it, delete it and create a new entry.", rec_method_card_note: "Card payments automatically deduct 3% from the commission basis.",
             rec_line_gross: "Gross", rec_line_fee: "Fee", rec_line_net: "Net basis", rec_add_new: "Add New Receipt", rec_save_block: "Fill in date, amount, and payment method on all new entries before saving.",
-            payment_summary_card_fees: "Client card fees", payment_summary_net_basis: "Net received basis", payment_summary_received: "Client received"
+            payment_summary_card_fees: "Client card fees", payment_summary_net_basis: "Net received basis", payment_summary_received: "Client received", pay_pending_badge: "Payment pending", timeline_due_soon: "Due soon"
         }
     };
     
@@ -1061,6 +1067,33 @@
         return `<button type="button" onclick="window.openInfoModal(decodeURIComponent('${encodedTitle}'), decodeURIComponent('${encodedMessage}'))" class="info-mini-btn" aria-label="${title || 'Info'}" title="${title || 'Info'}"><i data-lucide="info" class="w-3.5 h-3.5"></i></button>`;
     }
     window.openInfoModal = (title, message) => window.showModal(title, message, 'info');
+
+    function getProjectSellerPaymentAlert(project) {
+        const fin = getFin(project);
+        return {
+            hasPending: fin.commLiberada > 0.009 && fin.balance > 0.009,
+            amount: roundMoney(Math.max(0, fin.balance))
+        };
+    }
+
+    function getProjectScheduleAlert(project) {
+        const isFinished = project?.status === 'Finalizado';
+        const endMs = new Date(project?.dataEntrega).getTime();
+        if (isFinished || !Number.isFinite(endMs)) return { isLate: false, isDueSoon: false, daysRemaining: null };
+        const nowMs = Date.now();
+        const daysRemaining = Math.ceil((endMs - nowMs) / (1000 * 3600 * 24));
+        return {
+            isLate: nowMs > endMs,
+            isDueSoon: nowMs <= endMs && daysRemaining <= 3,
+            daysRemaining
+        };
+    }
+
+    function renderAlertChip(label, tone = 'gold', pulse = false) {
+        if (!label) return '';
+        const toneClass = tone === 'red' ? 'alert-chip-red' : (tone === 'amber' ? 'alert-chip-amber' : 'alert-chip-gold');
+        return `<span class="alert-chip ${toneClass} ${pulse ? 'balance-due-pulse' : ''}"><i data-lucide="alert-triangle" class="w-3.5 h-3.5"></i>${label}</span>`;
+    }
 
     function getPaymentDraftSummary(projectId, draftPayments = null) {
         const p = state.projects.find(x => x.id === projectId);
@@ -1700,6 +1733,13 @@
 
             const f = getFin(p);
             const isFocused = state.focusedProject === p.id;
+            const sellerPaymentAlert = getProjectSellerPaymentAlert(p);
+            const scheduleAlert = getProjectScheduleAlert(p);
+            const sellerPendingBadge = sellerPaymentAlert.hasPending ? renderAlertChip(window.t('pay_pending_badge'), 'gold', true) : '';
+            const timelineBadge = scheduleAlert.isLate
+                ? renderAlertChip(window.t('late'), 'red', true)
+                : (scheduleAlert.isDueSoon ? renderAlertChip(window.t('timeline_due_soon'), 'amber', true) : '');
+            const timelineWrapClass = (scheduleAlert.isLate || scheduleAlert.isDueSoon) ? 'timeline-alert-pulse rounded-2xl p-3 -mx-3' : '';
 
             let balText = window.t('balance_pay'); let balColor = "text-red-400"; let balDisplay = formatCurr(f.balance);
             if (f.balance < 0) { balText = window.t('balance_over'); balColor = "text-blue-400"; balDisplay = "+ " + formatCurr(Math.abs(f.balance)); } 
@@ -1765,8 +1805,11 @@
                             </div>
 
                             <div class="space-y-4 pt-8 border-t border-white/10 print:border-slate-200">
-                                <div class="flex justify-between items-center bg-gold/10 p-4 px-5 rounded-2xl border border-gold/20 print:bg-amber-50 print:border-amber-200">
-                                    <p class="text-xs sm:text-sm font-black text-gold uppercase tracking-widest print:text-amber-800">${window.t('seller_payments')}</p>
+                                <div class="flex flex-col sm:flex-row sm:justify-between sm:items-center gap-3 bg-gold/10 p-4 px-5 rounded-2xl border border-gold/20 print:bg-amber-50 print:border-amber-200 ${sellerPaymentAlert.hasPending ? 'balance-due-pulse' : ''}">
+                                    <div class="flex flex-wrap items-center gap-3">
+                                        <p class="text-xs sm:text-sm font-black text-gold uppercase tracking-widest print:text-amber-800">${window.t('seller_payments')}</p>
+                                        ${sellerPendingBadge}
+                                    </div>
                                     ${state.userPerms.fin ? `<button onclick="window.openEditPaymentModal('${p.id}')" class="flex items-center gap-2 text-[10px] font-black text-white force-white-text hover:text-gold transition-colors no-print px-4 py-2 bg-slate-800 rounded-xl shadow-md border border-gold/30 force-dark-bg uppercase tracking-widest"><i data-lucide="settings-2" class="w-4 h-4"></i> ${window.t('btn_manage')}</button>` : ''}
                                 </div>
                                 <div class="max-h-60 overflow-y-auto scrollbar-hide px-2 print:max-h-none">
@@ -1912,12 +1955,18 @@
 
                 <div class="mt-auto"></div>
 
-                <div class="space-y-4 mb-10 text-left">
-                    <div class="flex justify-between text-xs font-black uppercase text-slate-400 print:text-slate-800"><span>${window.t('timeline')}</span><span style="color: ${colorHex}">${prog}%</span></div>
-                    <div class="progress-track print:bg-slate-200"><div class="progress-bar-fill print:!bg-black" style="width: ${prog}%; background-color: ${colorHex};"></div></div>
+                <div class="space-y-4 mb-10 text-left ${timelineWrapClass}">
+                    <div class="flex justify-between items-center gap-3 text-xs font-black uppercase text-slate-400 print:text-slate-800">
+                        <div class="flex items-center gap-2 flex-wrap">
+                            <span>${window.t('timeline')}</span>
+                            ${timelineBadge}
+                        </div>
+                        <span style="color: ${colorHex}">${prog}%</span>
+                    </div>
+                    <div class="progress-track print:bg-slate-200 ${scheduleAlert.isLate || scheduleAlert.isDueSoon ? 'timeline-alert-pulse' : ''}"><div class="progress-bar-fill print:!bg-black" style="width: ${prog}%; background-color: ${colorHex};"></div></div>
                     <div class="flex justify-between text-xs font-extrabold uppercase mt-2">
                         <span class="print:text-black">${p.dataInicio ? new Date(p.dataInicio + 'T12:00:00').toLocaleDateString(state.lang === 'pt' ? 'pt-BR' : 'en-US') : '-'}</span>
-                        <span class="${n > e && p.status !== 'Finalizado' ? 'text-red-500' : 'text-gold'} print:!text-black">${n > e && p.status !== 'Finalizado' ? window.t('late') : (prog === 100 ? window.t('completed') : (Number.isFinite(e) ? Math.ceil((e - n) / (1000 * 3600 * 24)) : 0) + ' ' + window.t('days_left'))}</span>
+                        <span class="${scheduleAlert.isLate ? 'text-red-500' : (scheduleAlert.isDueSoon ? 'text-amber-400' : 'text-gold')} print:!text-black">${scheduleAlert.isLate ? window.t('late') : (prog === 100 ? window.t('completed') : (Number.isFinite(e) ? Math.ceil((e - n) / (1000 * 3600 * 24)) : 0) + ' ' + window.t('days_left'))}</span>
                     </div>
                 </div>
 
@@ -1931,8 +1980,11 @@
                         <p class="text-[10px] font-black uppercase text-slate-400 mb-1.5 tracking-widest">${window.t('client')}</p>
                         <p class="text-sm font-black ${clientPaidColor}">${clientPaidText}</p>
                     </div>
-                    <div class="flex-1 rounded-2xl p-4 text-center border ${sellerBorderColor} shadow-inner transition-colors">
-                        <p class="text-[10px] font-black uppercase text-slate-400 mb-1.5 tracking-widest">${window.t('commission')}</p>
+                    <div class="flex-1 rounded-2xl p-4 text-center border ${sellerBorderColor} shadow-inner transition-colors ${sellerPaymentAlert.hasPending ? 'balance-due-pulse' : ''}">
+                        <div class="flex items-center justify-center gap-2 mb-1.5 flex-wrap">
+                            <p class="text-[10px] font-black uppercase text-slate-400 tracking-widest">${window.t('commission')}</p>
+                            ${sellerPendingBadge}
+                        </div>
                         <p class="text-sm font-black ${sellerPaidColor}">${sellerPaidText}</p>
                     </div>
                 </div>
@@ -1949,8 +2001,9 @@
                     const gridCols = canViewCosts ? 'sm:grid-cols-2' : 'grid-cols-1';
                     cardHTML += `
                         <div class="grid grid-cols-1 ${gridCols} gap-6 mt-10 pt-8 border-t border-white/10 no-print animate-fade-in">
-                            <button onclick="event.stopPropagation(); window.openProjectModule('commissions')" class="py-10 px-4 bg-slate-900 rounded-[32px] border border-gold/20 hover:border-gold/60 hover:shadow-[0_0_40px_-5px_rgba(251,191,36,0.3)] transition-all flex flex-col items-center justify-center gap-4 group relative overflow-hidden force-dark-bg">
+                            <button onclick="event.stopPropagation(); window.openProjectModule('commissions')" class="py-10 px-4 bg-slate-900 rounded-[32px] border border-gold/20 hover:border-gold/60 hover:shadow-[0_0_40px_-5px_rgba(251,191,36,0.3)] transition-all flex flex-col items-center justify-center gap-4 group relative overflow-hidden force-dark-bg ${sellerPaymentAlert.hasPending ? 'balance-due-pulse border-gold/40' : ''}">
                                 <div class="absolute inset-0 bg-gold/5 transform scale-0 group-hover:scale-100 transition-transform rounded-[32px] duration-500 origin-center"></div>
+                                ${sellerPaymentAlert.hasPending ? `<div class="absolute top-4 right-4 z-20">${sellerPendingBadge}</div>` : ''}
                                 <i data-lucide="wallet" class="w-12 h-12 text-gold group-hover:scale-110 group-hover:-translate-y-2 transition-all relative z-10"></i>
                                 <span class="text-sm sm:text-base font-black uppercase text-gold tracking-[0.15em] relative z-10 text-center force-white-text">${window.t('comm_finances')}</span>
                             </button>
