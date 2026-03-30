@@ -570,7 +570,7 @@
             rec_summary_gross: "Recebido bruto", rec_summary_fees: "Taxas de cartão 3%", rec_summary_net: "Base líquida elegível", rec_summary_release: "Comissão liberada",
             rec_method_actual: "Forma real recebida", rec_method_locked: "Recebimento já registrado. Para corrigir, exclua e crie uma nova entrada.", rec_method_card_note: "Cartão deduz 3% automaticamente da base de comissão.",
             rec_line_gross: "Bruto", rec_line_fee: "Taxa", rec_line_net: "Líquido base", rec_add_new: "Adicionar Novo Recebimento", rec_save_block: "Preencha data, valor e forma de pagamento em todas as novas entradas antes de salvar.",
-            payment_summary_card_fees: "Taxas cartão (cliente)", payment_summary_net_basis: "Base líquida recebida", payment_summary_received: "Recebido do cliente", pay_pending_badge: "Pagamento pendente", timeline_due_soon: "Prazo próximo", invoice_label: "Invoice", proposal_label: "Proposta"
+            payment_summary_card_fees: "Taxas cartão (cliente)", payment_summary_net_basis: "Base líquida recebida", payment_summary_received: "Recebido do cliente", pay_pending_badge: "Pagamento pendente", timeline_due_soon: "Prazo próximo", invoice_label: "Invoice", proposal_label: "Proposta", client_outstanding: "Saldo cliente a receber", comm_remaining_projected: "Comissão restante projetada", commission_released_settled: "Liberada quitada", commission_total_paid: "Comissão total quitada", commission_due_now: "Pendente agora", commission_paid_from_released: "Pago da liberada", commission_still_to_release: "Ainda a liberar", commission_waiting_receipts: "Aguardando recebimentos", commission_future_pending: "Comissão futura estimada", commission_released_paid_label: "Liberada paga", commission_overall_paid_label: "Pago do total projetado", commission_note_released_only: "A comissão do vendedor foi quitada apenas sobre o valor já recebido do cliente.", commission_note_future_release: "Ainda restam {commission} de comissão projetada, que serão liberados conforme o cliente pagar os {client} em aberto.", commission_note_due_now: "Existe {due} de comissão liberada pendente agora e ainda {future} de comissão projetada aguardando novos recebimentos.", commission_note_waiting_receipts: "Ainda não há comissão liberada. O cliente ainda deve {client} e isso pode liberar até {commission} de comissão projetada."
         },
         en: {
             admin_panel: "Corporate Management", nav_proj: "Projects", nav_new: "New Entry", nav_rep: "Reports", nav_users: "Team",
@@ -618,7 +618,7 @@
             rec_summary_gross: "Gross received", rec_summary_fees: "Card fees 3%", rec_summary_net: "Eligible net basis", rec_summary_release: "Commission released",
             rec_method_actual: "Actual received method", rec_method_locked: "Receipt already recorded. To correct it, delete it and create a new entry.", rec_method_card_note: "Card payments automatically deduct 3% from the commission basis.",
             rec_line_gross: "Gross", rec_line_fee: "Fee", rec_line_net: "Net basis", rec_add_new: "Add New Receipt", rec_save_block: "Fill in date, amount, and payment method on all new entries before saving.",
-            payment_summary_card_fees: "Client card fees", payment_summary_net_basis: "Net received basis", payment_summary_received: "Client received", pay_pending_badge: "Payment pending", timeline_due_soon: "Due soon", invoice_label: "Invoice", proposal_label: "Proposal"
+            payment_summary_card_fees: "Client card fees", payment_summary_net_basis: "Net received basis", payment_summary_received: "Client received", pay_pending_badge: "Payment pending", timeline_due_soon: "Due soon", invoice_label: "Invoice", proposal_label: "Proposal", client_outstanding: "Client outstanding", comm_remaining_projected: "Projected commission remaining", commission_released_settled: "Released portion settled", commission_total_paid: "Total commission settled", commission_due_now: "Due now", commission_paid_from_released: "Paid from released", commission_still_to_release: "Still to release", commission_waiting_receipts: "Waiting for receipts", commission_future_pending: "Estimated future commission", commission_released_paid_label: "Released paid", commission_overall_paid_label: "Paid from projected total", commission_note_released_only: "The seller commission has been fully paid only on the amount already received from the client.", commission_note_future_release: "There is still {commission} of projected commission to be released as the client pays the remaining {client}.", commission_note_due_now: "There is {due} of released commission due now and another {future} of projected commission waiting for new client receipts.", commission_note_waiting_receipts: "There is no released commission yet. The client still owes {client}, which may release up to {commission} of projected commission."
         }
     };
     
@@ -1119,6 +1119,95 @@
         return `<span class="alert-chip ${toneClass} ${pulse ? 'balance-due-pulse' : ''}"><i data-lucide="alert-triangle" class="w-3.5 h-3.5"></i>${label}</span>`;
     }
 
+    function interpolateText(template, values = {}) {
+        return String(template || '').replace(/\{(\w+)\}/g, (_, key) => values[key] ?? '');
+    }
+
+    function getCommissionProgressData(project, finOverride = null) {
+        const fin = finOverride || getFin(project);
+        const projectedTotal = roundMoney(Number(fin?.commTotalProjetada || 0));
+        const released = roundMoney(Number(fin?.commLiberada || 0));
+        const paid = roundMoney(Number(fin?.totalPaid || 0));
+        const releasedPaidAmount = roundMoney(Math.min(paid, released));
+        const currentDue = roundMoney(Math.max(0, Number(fin?.balance || 0)));
+        const overpaidAmount = roundMoney(Math.max(0, -Number(fin?.balance || 0)));
+        const projectedRemaining = roundMoney(Math.max(0, projectedTotal - released));
+        const clientOutstanding = roundMoney(Math.max(0, Number(project?.valorTotal || 0) - Number(fin?.totalRecebido || 0)));
+        const releasedPaidPerc = released > 0 ? Math.min(100, Math.floor((releasedPaidAmount / released) * 100)) : 0;
+        const overallPaidPerc = projectedTotal > 0 ? Math.min(100, Math.floor((Math.min(paid, projectedTotal) / projectedTotal) * 100)) : 0;
+        return { projectedTotal, released, paid, releasedPaidAmount, currentDue, overpaidAmount, projectedRemaining, clientOutstanding, releasedPaidPerc, overallPaidPerc };
+    }
+
+    function getCommissionStatusPresentation(project, finOverride = null) {
+        const fin = finOverride || getFin(project);
+        const data = getCommissionProgressData(project, fin);
+        const releasedDisplay = `${formatCurr(data.releasedPaidAmount)} / ${formatCurr(data.released)}`;
+        const overallDisplay = `${formatCurr(Math.min(data.paid, data.projectedTotal))} / ${formatCurr(data.projectedTotal)}`;
+
+        let toneClass = 'border-white/5 bg-black/20';
+        let headlineClass = 'text-slate-300';
+        let headline = window.t('pending');
+        let line1 = `${window.t('commission_released_paid_label')}: ${releasedDisplay}`;
+        let line2 = `${window.t('comm_remaining_projected')}: ${formatCurr(data.projectedRemaining)}`;
+
+        if (data.overpaidAmount > 0.009) {
+            toneClass = 'border-blue-500/30 bg-blue-500/10';
+            headlineClass = 'text-blue-300';
+            headline = window.t('balance_over');
+            line1 = `${window.t('commission_released_paid_label')}: ${releasedDisplay}`;
+            line2 = `${window.t('balance_over')}: ${formatCurr(data.overpaidAmount)}`;
+        } else if (data.currentDue > 0.009) {
+            toneClass = 'border-gold/30 bg-gold/10';
+            headlineClass = 'text-gold';
+            headline = `${window.t('commission_due_now')}: ${formatCurr(data.currentDue)}`;
+            line1 = `${window.t('commission_released_paid_label')}: ${releasedDisplay}`;
+            line2 = `${window.t('commission_still_to_release')}: ${formatCurr(data.projectedRemaining)}`;
+        } else if (data.released > 0.009 && data.projectedRemaining > 0.009) {
+            toneClass = 'border-cyan-500/25 bg-cyan-500/10';
+            headlineClass = 'text-cyan-300';
+            headline = window.t('commission_released_settled');
+            line1 = `${window.t('commission_released_paid_label')}: ${releasedDisplay}`;
+            line2 = `${window.t('commission_still_to_release')}: ${formatCurr(data.projectedRemaining)}`;
+        } else if (data.projectedTotal > 0.009 && data.currentDue <= 0.009 && data.projectedRemaining <= 0.009) {
+            toneClass = 'border-emerald-500/30 bg-emerald-500/10';
+            headlineClass = 'text-emerald-400';
+            headline = window.t('commission_total_paid');
+            line1 = `${window.t('commission_overall_paid_label')}: ${overallDisplay}`;
+            line2 = `${window.t('paid_seller')}: ${formatCurr(data.paid)}`;
+        } else if (data.projectedRemaining > 0.009) {
+            toneClass = 'border-white/10 bg-white/5';
+            headlineClass = 'text-slate-300';
+            headline = window.t('commission_waiting_receipts');
+            line1 = `${window.t('client_outstanding')}: ${formatCurr(data.clientOutstanding)}`;
+            line2 = `${window.t('commission_future_pending')}: ${formatCurr(data.projectedRemaining)}`;
+        }
+
+        return { ...data, toneClass, headlineClass, headline, line1, line2, pulse: data.currentDue > 0.009 };
+    }
+
+    function getCommissionContextNote(project, finOverride = null) {
+        const data = getCommissionProgressData(project, finOverride || getFin(project));
+        if (data.currentDue > 0.009) {
+            return interpolateText(window.t('commission_note_due_now'), {
+                due: formatCurr(data.currentDue),
+                future: formatCurr(data.projectedRemaining)
+            });
+        }
+        if (data.released > 0.009 && data.projectedRemaining > 0.009) {
+            return `${window.t('commission_note_released_only')} ${interpolateText(window.t('commission_note_future_release'), {
+                commission: formatCurr(data.projectedRemaining),
+                client: formatCurr(data.clientOutstanding)
+            })}`;
+        }
+        if (data.released <= 0.009 && data.projectedRemaining > 0.009) {
+            return interpolateText(window.t('commission_note_waiting_receipts'), {
+                client: formatCurr(data.clientOutstanding),
+                commission: formatCurr(data.projectedRemaining)
+            });
+        }
+        return '';
+    }
+
     function getPaymentDraftSummary(projectId, draftPayments = null) {
         const p = state.projects.find(x => x.id === projectId);
         if (!p) return null;
@@ -1187,14 +1276,16 @@
             nextValueDisplay = '+ ' + formatCurr(summary.overpaidAmount);
             helperStateText = isPT ? 'Revise os lançamentos abaixo antes de salvar para evitar pagamento indevido.' : 'Review the entries below before saving to avoid an incorrect payment.';
         } else if (isSettled) {
-            statusTitle = window.t('pay_no_due_title');
-            statusDesc = window.t('pay_no_due_msg');
-            statusChipClass = 'border-emerald-500/30 bg-emerald-500/10';
-            statusDotClass = 'bg-emerald-400';
-            statusTextClass = 'text-emerald-300';
-            nextValueLabel = isPT ? 'Saldo final' : 'Final balance';
-            nextValueDisplay = formatCurr(0);
-            helperStateText = window.t('pay_edit_note');
+            const commissionProgress = getCommissionProgressData(project, summary);
+            const hasFutureRelease = commissionProgress.projectedRemaining > 0.009;
+            statusTitle = hasFutureRelease ? window.t('commission_released_settled') : window.t('pay_no_due_title');
+            statusDesc = hasFutureRelease ? getCommissionContextNote(project, summary) : window.t('pay_no_due_msg');
+            statusChipClass = hasFutureRelease ? 'border-cyan-500/30 bg-cyan-500/10' : 'border-emerald-500/30 bg-emerald-500/10';
+            statusDotClass = hasFutureRelease ? 'bg-cyan-400' : 'bg-emerald-400';
+            statusTextClass = hasFutureRelease ? 'text-cyan-300' : 'text-emerald-300';
+            nextValueLabel = hasFutureRelease ? window.t('comm_remaining_projected') : (isPT ? 'Saldo final' : 'Final balance');
+            nextValueDisplay = hasFutureRelease ? formatCurr(commissionProgress.projectedRemaining) : formatCurr(0);
+            helperStateText = hasFutureRelease ? getCommissionContextNote(project, summary) : window.t('pay_edit_note');
         } else if (noReleasedCommission) {
             statusTitle = window.t('pay_no_release_title');
             statusDesc = window.t('pay_no_release_msg');
@@ -1275,6 +1366,17 @@
                         <p class="text-[10px] font-black uppercase tracking-widest text-slate-500 mb-1">${window.t('pay_summary_paid')}</p>
                         <p class="text-xl font-black text-slate-100">${formatCurr(summary.draftTotalPaid)}</p>
                     </div>
+                    <div class="rounded-2xl border border-amber-500/20 bg-amber-500/10 p-4">
+                        <p class="text-[10px] font-black uppercase tracking-widest text-amber-300/80 mb-1">${window.t('client_outstanding')}</p>
+                        <p class="text-xl font-black text-amber-300">${formatCurr(summary.clientOutstanding)}</p>
+                    </div>
+                    <div class="rounded-2xl border border-cyan-500/20 bg-cyan-500/10 p-4">
+                        <div class="flex items-center justify-between gap-3 mb-1">
+                            <p class="text-[10px] font-black uppercase tracking-widest text-cyan-300/80">${window.t('comm_remaining_projected')}</p>
+                            ${renderInfoMiniButton(isPT ? 'Comissão restante projetada' : 'Projected commission remaining', isPT ? 'Valor estimado de comissão que ainda pode ser liberado conforme o cliente pagar o saldo restante do contrato.' : 'Estimated commission that may still be released as the client pays the remaining contract balance.')}
+                        </div>
+                        <p class="text-xl font-black text-cyan-300">${formatCurr(summary.commRemainingProjected)}</p>
+                    </div>
                 </div>
 
                 <div class="mt-4 rounded-[26px] border ${summary.overpaidAmount > 0.009 ? 'border-blue-500/30 bg-blue-500/10' : 'border-gold/20 bg-gold/10'} ${exactDuePulseClass} p-5">
@@ -1324,7 +1426,7 @@
         const canAddPayment = !noReleasedCommission && summary.remainingToPay > 0.009;
         const addButton = canAddPayment
             ? `<button onclick="window.addNewPaymentToEdit()" class="w-full p-4 mt-2 rounded-2xl border border-gold/30 bg-gold/10 text-gold font-black uppercase tracking-widest hover:bg-gold/15 hover:border-gold/50 transition-all shadow-[0_12px_30px_-18px_rgba(251,191,36,0.7)]">+ ${window.t('pay_add_remaining')}</button>`
-            : `<div class="rounded-2xl border border-white/10 bg-white/5 px-5 py-4 text-center text-sm text-slate-400">${isSettled ? (isPT ? 'Nenhum pagamento adicional disponível. Comissão já quitada.' : 'No additional payment available. Commission is already settled.') : noReleasedCommission ? (isPT ? 'Aguardando liberação de comissão para habilitar novos pagamentos.' : 'Waiting for commission release to enable new payments.') : summary.overpaidAmount > 0.009 ? (isPT ? 'Corrija o excesso lançado antes de adicionar um novo pagamento.' : 'Correct the over recorded amount before adding a new payment.') : (isPT ? 'Nenhum novo pagamento sugerido no momento.' : 'No new payment suggested at this time.')}</div>`;
+            : `<div class="rounded-2xl border border-white/10 bg-white/5 px-5 py-4 text-center text-sm text-slate-400">${isSettled ? (summary.commRemainingProjected > 0.009 ? getCommissionContextNote(project, summary) : (isPT ? 'Nenhum pagamento adicional disponível. Comissão já quitada.' : 'No additional payment available. Commission is already settled.')) : noReleasedCommission ? (isPT ? 'Aguardando liberação de comissão para habilitar novos pagamentos.' : 'Waiting for commission release to enable new payments.') : summary.overpaidAmount > 0.009 ? (isPT ? 'Corrija o excesso lançado antes de adicionar um novo pagamento.' : 'Correct the over recorded amount before adding a new payment.') : (isPT ? 'Nenhum novo pagamento sugerido no momento.' : 'No new payment suggested at this time.')}</div>`;
 
         container.innerHTML = paymentsHtml + `<div class="space-y-4 mt-4">${addButton}</div>`;
         try { lucide.createIcons(); } catch {}
@@ -1668,6 +1770,8 @@
         const pays = Array.isArray(p?.pagamentosEfetuados) ? p.pagamentosEfetuados : [];
         const totalPaid = roundMoney(pays.reduce((a, c) => a + Number(c?.valor || 0), 0));
         const balance = roundMoney(commLiberada - totalPaid);
+        const clientOutstanding = roundMoney(Math.max(0, valorTotal - totalRecebido));
+        const commRemainingProjected = roundMoney(Math.max(0, commTotalProjetada - commLiberada));
         
         let statusColor = "bg-red-500";
         if (balance < 0) statusColor = "bg-blue-500"; 
@@ -1685,7 +1789,7 @@
         const lucroBruto = valorTotal - totalDespesas;
         const margemLucro = valorTotal > 0 ? (lucroBruto / valorTotal) * 100 : 0;
 
-        return { baseProjetada, commTotalProjetada, totalRecebido, commLiberada, totalPaid, balance, statusColor, globalIsCC, orcamento, totalDespesas, lucroBruto, margemLucro, gastosPorCategoria };
+        return { baseProjetada, commTotalProjetada, totalRecebido, commLiberada, totalPaid, balance, clientOutstanding, commRemainingProjected, statusColor, globalIsCC, orcamento, totalDespesas, lucroBruto, margemLucro, gastosPorCategoria };
     }
 
     window.renderProjects = () => {
@@ -1771,18 +1875,11 @@
             else if (f.balance === 0) { balText = window.t('balance_paid'); balColor = "text-emerald-400"; }
 
             let clientPaidPerc = p.valorTotal > 0 ? Math.floor((f.totalRecebido / p.valorTotal) * 100) : 0; if (clientPaidPerc > 100) clientPaidPerc = 100;
-            const sellerReferenceTotal = f.commLiberada > 0 ? f.commLiberada : 0;
-            let sellerPaidPerc = sellerReferenceTotal > 0 ? Math.floor((f.totalPaid / sellerReferenceTotal) * 100) : 0;
-            if (f.commLiberada > 0 && f.balance <= 0) sellerPaidPerc = 100;
-            if (sellerPaidPerc > 100) sellerPaidPerc = 100;
+            const commissionStatus = getCommissionStatusPresentation(p, f);
 
             const clientPaidText = clientPaidPerc >= 100 ? window.t('paid_100') : (clientPaidPerc > 0 ? `${clientPaidPerc}${window.t('paid_perc')}` : window.t('pending'));
             const clientPaidColor = clientPaidPerc >= 100 ? 'text-emerald-400' : (clientPaidPerc > 0 ? 'text-amber-400' : 'text-slate-500');
             const clientBorderColor = clientPaidPerc >= 100 ? 'border-emerald-500/30 bg-emerald-500/10' : 'border-white/5 bg-black/20';
-
-            const sellerPaidText = sellerPaidPerc >= 100 ? window.t('paid_100') : (sellerPaidPerc > 0 ? `${sellerPaidPerc}${window.t('paid_perc')}` : window.t('pending'));
-            const sellerPaidColor = sellerPaidPerc >= 100 ? 'text-emerald-400' : (sellerPaidPerc > 0 ? 'text-amber-400' : 'text-slate-500');
-            const sellerBorderColor = sellerPaidPerc >= 100 ? 'border-emerald-500/30 bg-emerald-500/10' : 'border-white/5 bg-black/20';
 
             let actionButtons = '';
             const archiveIcon = p.archived ? 'package-open' : 'archive';
@@ -1804,12 +1901,15 @@
                     moduleContent = `
                         <div class="space-y-6 text-left print:bg-transparent print:border-slate-300 print:shadow-none print:p-0">
                             ${renderProjectDocumentMeta(p)}
-                            <div class="grid grid-cols-2 print:grid-cols-4 gap-4 sm:gap-6 pb-8 border-b border-white/5 print:border-slate-200">
+                            <div class="grid grid-cols-2 xl:grid-cols-3 print:grid-cols-3 gap-4 sm:gap-6 pb-8 border-b border-white/5 print:border-slate-200">
                                 <div class="print:p-3"><p class="text-[11px] font-bold text-slate-500 uppercase print:text-black tracking-widest mb-1 print:text-[9px]">${window.t('comm_projected')}</p><p class="text-xl font-black text-slate-400 print:text-black print:text-base">${formatCurr(f.commTotalProjetada)}</p></div>
                                 <div class="text-right print:text-left print:p-3"><p class="text-[11px] font-bold text-emerald-500/80 uppercase print:text-emerald-700 tracking-widest mb-1 print:text-[9px]">${window.t('comm_released')}</p><p class="text-3xl font-black text-emerald-500 print:text-emerald-700 print:text-base truncate">${formatCurr(f.commLiberada)}</p></div>
                                 <div class="print:p-3"><p class="text-[11px] font-bold text-slate-500 uppercase print:text-black tracking-widest mb-1 print:text-[9px]">${window.t('paid_seller')}</p><p class="text-xl font-black text-slate-300 print:text-black print:text-base">${formatCurr(f.totalPaid)}</p></div>
                                 <div class="text-right print:text-left print:p-3"><p class="text-[11px] font-bold ${balColor} uppercase print:text-black tracking-widest mb-1 print:text-[9px]">${balText}</p><p class="text-3xl font-black ${balColor} tracking-tighter print:text-black print:text-base truncate">${balDisplay}</p></div>
+                                <div class="print:p-3"><p class="text-[11px] font-bold text-amber-400/80 uppercase print:text-black tracking-widest mb-1 print:text-[9px]">${window.t('client_outstanding')}</p><p class="text-xl font-black text-amber-400 print:text-black print:text-base">${formatCurr(f.clientOutstanding)}</p></div>
+                                <div class="text-right print:text-left print:p-3"><p class="text-[11px] font-bold text-cyan-400/80 uppercase print:text-black tracking-widest mb-1 print:text-[9px]">${window.t('comm_remaining_projected')}</p><p class="text-xl font-black text-cyan-400 print:text-black print:text-base truncate">${formatCurr(f.commRemainingProjected)}</p></div>
                             </div>
+                            ${getCommissionContextNote(p, f) ? `<div class="rounded-2xl border border-cyan-500/20 bg-cyan-500/10 px-5 py-4 text-sm text-cyan-100 print:bg-slate-50 print:border-slate-300 print:text-black">${getCommissionContextNote(p, f)}</div>` : ''}
 
                             <div class="space-y-4">
                                 <div class="flex justify-between items-center bg-emerald-500/10 p-4 px-5 rounded-2xl border border-emerald-500/20 print:bg-emerald-50 print:border-emerald-200">
@@ -2006,12 +2106,16 @@
                         <p class="text-[10px] font-black uppercase text-slate-400 mb-1.5 tracking-widest">${window.t('client')}</p>
                         <p class="text-sm font-black ${clientPaidColor}">${clientPaidText}</p>
                     </div>
-                    <div class="flex-1 rounded-2xl p-4 text-center border ${sellerBorderColor} shadow-inner transition-colors ${sellerPaymentAlert.hasPending ? 'balance-due-pulse' : ''}">
-                        <div class="flex items-center justify-center gap-2 mb-1.5 flex-wrap">
+                    <div class="flex-1 rounded-2xl p-4 text-center border ${commissionStatus.toneClass} shadow-inner transition-colors ${commissionStatus.pulse ? 'balance-due-pulse' : ''}">
+                        <div class="flex items-center justify-center gap-2 mb-2 flex-wrap">
                             <p class="text-[10px] font-black uppercase text-slate-400 tracking-widest">${window.t('commission')}</p>
                             ${sellerPendingBadge}
                         </div>
-                        <p class="text-sm font-black ${sellerPaidColor}">${sellerPaidText}</p>
+                        <p class="text-sm font-black ${commissionStatus.headlineClass}">${commissionStatus.headline}</p>
+                        <div class="mt-2 space-y-1">
+                            <p class="text-[11px] font-bold text-slate-300">${commissionStatus.line1}</p>
+                            <p class="text-[11px] text-slate-500">${commissionStatus.line2}</p>
+                        </div>
                     </div>
                 </div>
             `;
