@@ -2037,106 +2037,114 @@
                     `).join('') || `<p class="text-sm italic text-cyan-300/50 text-center py-8">${window.t('no_expenses')}</p>`;
 
                     moduleContent = `
-                        <div class="grid grid-cols-1 xl:grid-cols-[1.2fr_0.95fr] gap-6 mb-10 print:mb-6">
+                        <div class="space-y-6 mb-10 print:mb-6">
                             <div class="rounded-[30px] border ${isOverBudget ? 'border-red-500/20' : 'border-cyan-500/20'} bg-gradient-to-br from-slate-950 via-slate-900 to-black/90 p-6 sm:p-7 shadow-[0_20px_60px_-30px_rgba(0,0,0,0.75)] print:bg-transparent print:border-slate-300 print:shadow-none">
-                                <div class="flex flex-col lg:flex-row lg:items-start lg:justify-between gap-4">
-                                    <div>
-                                        <p class="text-[10px] font-black uppercase tracking-[0.28em] text-slate-500 mb-2">${window.t('budget_health')}</p>
-                                        <h3 class="text-lg sm:text-xl font-black ${budgetHeadlineColor}">${budgetHeadlineLabel}</h3>
-                                        <p class="text-sm text-slate-400 mt-2 max-w-2xl">${!hasBudget ? window.t('budget_not_set_hint') : (isOverBudget ? window.t('budget_over_hint') : window.t('budget_remaining_hint'))}</p>
+                                <div class="flex flex-col xl:flex-row xl:items-start xl:justify-between gap-5">
+                                    <div class="max-w-2xl">
+                                        <div class="flex flex-wrap items-center gap-3 mb-3">
+                                            <p class="text-[10px] font-black uppercase tracking-[0.28em] text-slate-500">${window.t('budget_health')}</p>
+                                            <span class="inline-flex items-center gap-2 rounded-2xl border ${budgetStatusClass} px-3 py-2 text-[10px] font-black uppercase tracking-widest self-start">
+                                                <span class="w-2.5 h-2.5 rounded-full ${!hasBudget ? 'bg-slate-400' : (isOverBudget ? 'bg-red-400' : 'bg-emerald-400')}"></span>
+                                                ${budgetStatusLabel}
+                                            </span>
+                                        </div>
+                                        <h3 class="text-2xl sm:text-3xl font-black ${budgetHeadlineColor}">${budgetHeadlineLabel}</h3>
+                                        <p class="text-sm sm:text-base text-slate-400 mt-2">${!hasBudget ? window.t('budget_not_set_hint') : (isOverBudget ? window.t('budget_over_hint') : window.t('budget_remaining_hint'))}</p>
                                     </div>
-                                    <span class="inline-flex items-center gap-2 rounded-2xl border ${budgetStatusClass} px-4 py-2 text-[11px] font-black uppercase tracking-widest self-start">
-                                        <span class="w-2.5 h-2.5 rounded-full ${!hasBudget ? 'bg-slate-400' : (isOverBudget ? 'bg-red-400' : 'bg-emerald-400')}"></span>
-                                        ${budgetStatusLabel}
-                                    </span>
+                                    <div class="grid grid-cols-2 xl:grid-cols-4 gap-3 xl:min-w-[620px]">
+                                        <div class="rounded-2xl border border-white/10 bg-white/5 px-4 py-4">
+                                            <p class="text-[10px] font-black uppercase tracking-widest text-slate-500 mb-2">${window.t('budget')}</p>
+                                            <p class="text-[clamp(1.1rem,1.6vw,1.55rem)] font-black text-slate-100 leading-tight whitespace-nowrap">${hasBudget ? formatCurr(f.orcamento) : '—'}</p>
+                                        </div>
+                                        <div class="rounded-2xl border border-white/10 bg-white/5 px-4 py-4">
+                                            <p class="text-[10px] font-black uppercase tracking-widest text-slate-500 mb-2">${window.t('total_expenses')}</p>
+                                            <p class="text-[clamp(1.1rem,1.6vw,1.55rem)] font-black text-red-300 leading-tight whitespace-nowrap">${formatCurr(f.totalDespesas)}</p>
+                                        </div>
+                                        <div class="rounded-2xl border ${!hasBudget ? 'border-white/10 bg-white/5' : (isOverBudget ? 'border-red-500/20 bg-red-500/10' : 'border-emerald-500/20 bg-emerald-500/10')} px-4 py-4">
+                                            <p class="text-[10px] font-black uppercase tracking-widest ${!hasBudget ? 'text-slate-500' : (isOverBudget ? 'text-red-300/80' : 'text-emerald-300/80')} mb-2">${budgetHeadlineLabel}</p>
+                                            <p class="text-[clamp(1.1rem,1.6vw,1.55rem)] font-black ${budgetHeadlineColor} leading-tight whitespace-nowrap">${hasBudget ? formatCurr(budgetRemainingAbs) : '—'}</p>
+                                        </div>
+                                        <div class="rounded-2xl border border-white/10 bg-white/5 px-4 py-4">
+                                            <p class="text-[10px] font-black uppercase tracking-widest text-slate-500 mb-2">${window.t('budget_spent_perc')}</p>
+                                            <p class="text-[clamp(1.1rem,1.6vw,1.55rem)] font-black ${isOverBudget ? 'text-red-300' : 'text-gold'} leading-tight whitespace-nowrap">${hasBudget ? `${f.budgetSpentPerc.toFixed(1)}%` : '—'}</p>
+                                        </div>
+                                    </div>
                                 </div>
 
-                                <div class="mt-6 flex flex-col xl:flex-row xl:items-end xl:justify-between gap-6">
-                                    <div class="min-w-0">
-                                        <p class="text-[11px] font-black uppercase tracking-widest text-slate-500 mb-2">${budgetHeadlineLabel}</p>
-                                        <p class="${getMetricDisplayClass(formatCurr(budgetRemainingAbs), true)} sm:!text-[2rem] xl:!text-[2.35rem] font-black ${budgetHeadlineColor} leading-none break-words">${formatCurr(budgetRemainingAbs)}</p>
+                                <div class="grid grid-cols-1 xl:grid-cols-[1.1fr_0.9fr] gap-5 mt-6">
+                                    <div class="rounded-[26px] border border-white/10 bg-black/20 p-5 shadow-inner">
+                                        <div class="flex flex-col sm:flex-row sm:items-end sm:justify-between gap-4">
+                                            <div>
+                                                <p class="text-[10px] font-black uppercase tracking-widest text-slate-500 mb-2">${budgetHeadlineLabel}</p>
+                                                <p class="text-[clamp(2rem,4vw,3.2rem)] font-black ${budgetHeadlineColor} leading-none whitespace-nowrap">${hasBudget ? formatCurr(budgetRemainingAbs) : '—'}</p>
+                                            </div>
+                                            <div class="grid grid-cols-2 gap-3 sm:min-w-[290px]">
+                                                <div class="rounded-2xl border border-white/10 bg-white/5 px-4 py-4">
+                                                    <p class="text-[10px] font-black uppercase tracking-widest text-slate-500 mb-2">${window.t('real_profit')}</p>
+                                                    <p class="text-[clamp(1.05rem,1.6vw,1.45rem)] font-black ${profitColor} leading-tight whitespace-nowrap">${formatCurr(f.lucroBruto)}</p>
+                                                </div>
+                                                <div class="rounded-2xl border border-white/10 bg-white/5 px-4 py-4">
+                                                    <p class="text-[10px] font-black uppercase tracking-widest text-slate-500 mb-2">${window.t('margin')}</p>
+                                                    <p class="text-[clamp(1.05rem,1.6vw,1.45rem)] font-black ${marginColor} leading-tight whitespace-nowrap">${f.margemLucro.toFixed(1)}%</p>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="mt-6">
+                                            ${hasBudget ? `
+                                                <div class="flex items-center justify-between text-xs font-bold text-slate-400 mb-2">
+                                                    <span>${window.t('budget_consumption')}</span>
+                                                    <span>${f.budgetSpentPerc.toFixed(1)}%</span>
+                                                </div>
+                                                <div class="h-3 rounded-full bg-white/10 overflow-hidden border border-white/5">
+                                                    <div class="h-full ${budgetProgressTone}" style="width:${budgetProgressWidth}%"></div>
+                                                </div>
+                                            ` : `
+                                                <div class="rounded-2xl border border-white/10 bg-white/5 px-4 py-4 text-sm text-slate-400">
+                                                    ${window.t('budget_not_set_hint')}
+                                                </div>
+                                            `}
+                                        </div>
                                     </div>
-                                    <div class="grid grid-cols-2 sm:grid-cols-3 gap-3 xl:min-w-[390px]">
-                                        <div class="rounded-2xl border border-white/10 bg-white/5 px-4 py-3">
-                                            <p class="text-[10px] font-black uppercase tracking-widest text-slate-500 mb-1">${window.t('budget')}</p>
-                                            <p class="${getMetricDisplayClass(formatCurr(f.orcamento), true)} font-black text-slate-100 leading-tight break-words">${formatCurr(f.orcamento)}</p>
+                                    <div class="grid grid-cols-2 gap-4">
+                                        <div class="rounded-[26px] border border-white/10 bg-black/20 p-5 shadow-inner">
+                                            <p class="text-[10px] font-black uppercase tracking-widest text-slate-500 mb-2">${window.t('expense_entries')}</p>
+                                            <p class="text-[clamp(1.6rem,2.5vw,2.4rem)] font-black text-slate-100 leading-none whitespace-nowrap">${expenseCount}</p>
                                         </div>
-                                        <div class="rounded-2xl border border-white/10 bg-white/5 px-4 py-3">
-                                            <p class="text-[10px] font-black uppercase tracking-widest text-slate-500 mb-1">${window.t('total_expenses')}</p>
-                                            <p class="${getMetricDisplayClass(formatCurr(f.totalDespesas), true)} font-black text-red-300 leading-tight break-words">${formatCurr(f.totalDespesas)}</p>
+                                        <div class="rounded-[26px] border border-white/10 bg-black/20 p-5 shadow-inner">
+                                            <p class="text-[10px] font-black uppercase tracking-widest text-slate-500 mb-2">${window.t('top_category')}</p>
+                                            <p class="text-lg sm:text-xl font-black text-cyan-300 leading-tight break-words">${topCategoryLabel}</p>
                                         </div>
-                                        <div class="rounded-2xl border border-white/10 bg-white/5 px-4 py-3 sm:col-span-1 col-span-2">
-                                            <p class="text-[10px] font-black uppercase tracking-widest text-slate-500 mb-1">${window.t('budget_spent_perc')}</p>
-                                            <p class="${getMetricDisplayClass(`${f.budgetSpentPerc.toFixed(1)}%`, true)} font-black ${isOverBudget ? 'text-red-300' : 'text-gold'} leading-tight">${hasBudget ? `${f.budgetSpentPerc.toFixed(1)}%` : '—'}</p>
+                                        <div class="rounded-[26px] border border-white/10 bg-black/20 p-5 shadow-inner">
+                                            <p class="text-[10px] font-black uppercase tracking-widest text-slate-500 mb-2">${window.t('chart_spent')}</p>
+                                            <p class="text-[clamp(1.1rem,1.8vw,1.6rem)] font-black text-cyan-300 leading-tight whitespace-nowrap">${formatCurr(f.totalDespesas)}</p>
+                                        </div>
+                                        <div class="rounded-[26px] border ${isOverBudget ? 'border-red-500/20 bg-red-500/10' : 'border-emerald-500/20 bg-emerald-500/10'} p-5 shadow-inner">
+                                            <p class="text-[10px] font-black uppercase tracking-widest ${isOverBudget ? 'text-red-300/80' : 'text-emerald-300/80'} mb-2">${chartSecondaryLabel}</p>
+                                            <p class="text-[clamp(1.1rem,1.8vw,1.6rem)] font-black ${isOverBudget ? 'text-red-300' : 'text-emerald-300'} leading-tight whitespace-nowrap">${chartSecondaryValue}</p>
                                         </div>
                                     </div>
-                                </div>
-
-                                <div class="mt-6">
-                                    ${hasBudget ? `
-                                        <div class="flex items-center justify-between text-xs font-bold text-slate-400 mb-2">
-                                            <span>${window.t('budget_consumption')}</span>
-                                            <span>${f.budgetSpentPerc.toFixed(1)}%</span>
-                                        </div>
-                                        <div class="h-3 rounded-full bg-white/10 overflow-hidden border border-white/5">
-                                            <div class="h-full ${budgetProgressTone}" style="width:${budgetProgressWidth}%"></div>
-                                        </div>
-                                    ` : `
-                                        <div class="rounded-2xl border border-white/10 bg-white/5 px-4 py-3 text-sm text-slate-400">
-                                            ${window.t('budget_not_set_hint')}
-                                        </div>
-                                    `}
                                 </div>
                             </div>
 
-                            <div class="grid grid-cols-2 gap-4">
-                                <div class="bg-black/40 p-5 rounded-[24px] border border-white/5 shadow-inner print:bg-transparent print:border-slate-300 print:p-3 print:rounded-xl force-dark-bg">
-                                    <p class="text-[10px] font-black uppercase text-slate-400 mb-2 tracking-widest print:text-slate-600 print:text-[8px]">${window.t('real_profit')}</p>
-                                    <p class="${getMetricDisplayClass(formatCurr(f.lucroBruto), true)} font-black ${profitColor} print:text-black print:text-base leading-tight break-words">${formatCurr(f.lucroBruto)}</p>
-                                </div>
-                                <div class="bg-black/40 p-5 rounded-[24px] border border-white/5 shadow-inner print:bg-transparent print:border-slate-300 print:p-3 print:rounded-xl force-dark-bg">
-                                    <p class="text-[10px] font-black uppercase text-slate-400 mb-2 tracking-widest print:text-slate-600 print:text-[8px]">${window.t('margin')}</p>
-                                    <p class="${getMetricDisplayClass(`${f.margemLucro.toFixed(1)}%`, true)} font-black ${marginColor} print:text-black print:text-base leading-tight">${f.margemLucro.toFixed(1)}%</p>
-                                </div>
-                                <div class="bg-black/40 p-5 rounded-[24px] border border-white/5 shadow-inner print:bg-transparent print:border-slate-300 print:p-3 print:rounded-xl force-dark-bg">
-                                    <p class="text-[10px] font-black uppercase text-slate-400 mb-2 tracking-widest print:text-slate-600 print:text-[8px]">${window.t('expense_entries')}</p>
-                                    <p class="${getMetricDisplayClass(String(expenseCount), true)} font-black text-slate-100 print:text-black print:text-base leading-tight">${expenseCount}</p>
-                                </div>
-                                <div class="bg-black/40 p-5 rounded-[24px] border border-white/5 shadow-inner print:bg-transparent print:border-slate-300 print:p-3 print:rounded-xl force-dark-bg">
-                                    <p class="text-[10px] font-black uppercase text-slate-400 mb-2 tracking-widest print:text-slate-600 print:text-[8px]">${window.t('top_category')}</p>
-                                    <p class="text-[1rem] sm:text-[1.1rem] xl:text-[1.2rem] font-black text-cyan-300 print:text-black leading-tight break-words">${topCategoryLabel}</p>
-                                </div>
-                            </div>
-                        </div>
-
-                        <div class="grid grid-cols-1 xl:grid-cols-[0.9fr_1.1fr] gap-6 mb-10 print:mb-6 no-print">
-                            <div class="bg-black/20 p-6 rounded-[24px] border border-cyan-500/10 flex flex-col shadow-lg print:border-slate-300 print:bg-transparent">
-                                <div class="flex items-center justify-between gap-4 mb-4">
-                                    <p class="text-[11px] font-black uppercase text-cyan-300/70 tracking-widest print:text-black">${window.t('budget_vs_spent')}</p>
-                                    ${hasBudget ? `<span class="text-xs font-black uppercase tracking-widest ${isOverBudget ? 'text-red-300' : 'text-emerald-300'}">${f.budgetSpentPerc.toFixed(1)}%</span>` : ''}
-                                </div>
-                                <div class="relative w-48 h-48 mx-auto print:w-32 print:h-32"><canvas id="chart-budget-${p.id}"></canvas></div>
-                                <div class="grid grid-cols-1 sm:grid-cols-2 gap-3 mt-6">
-                                    <div class="rounded-2xl border border-white/10 bg-white/5 px-4 py-3">
-                                        <p class="text-[10px] font-black uppercase tracking-widest text-slate-500 mb-1">${window.t('chart_spent')}</p>
-                                        <p class="text-base font-black text-cyan-300 break-words">${formatCurr(f.totalDespesas)}</p>
+                            <div class="grid grid-cols-1 xl:grid-cols-[0.95fr_1.05fr] gap-6 no-print">
+                                <div class="bg-black/20 p-6 rounded-[24px] border border-cyan-500/10 flex flex-col shadow-lg print:border-slate-300 print:bg-transparent">
+                                    <div class="flex items-center justify-between gap-4 mb-4">
+                                        <p class="text-[11px] font-black uppercase text-cyan-300/70 tracking-widest print:text-black">${window.t('budget_vs_spent')}</p>
+                                        ${hasBudget ? `<span class="text-xs font-black uppercase tracking-widest ${isOverBudget ? 'text-red-300' : 'text-emerald-300'}">${f.budgetSpentPerc.toFixed(1)}%</span>` : ''}
                                     </div>
-                                    <div class="rounded-2xl border ${isOverBudget ? 'border-red-500/20 bg-red-500/10' : 'border-emerald-500/20 bg-emerald-500/10'} px-4 py-3">
-                                        <p class="text-[10px] font-black uppercase tracking-widest ${isOverBudget ? 'text-red-300/80' : 'text-emerald-300/80'} mb-1">${chartSecondaryLabel}</p>
-                                        <p class="text-base font-black ${isOverBudget ? 'text-red-300' : 'text-emerald-300'} break-words">${chartSecondaryValue}</p>
+                                    <div class="relative w-48 h-48 mx-auto print:w-32 print:h-32"><canvas id="chart-budget-${p.id}"></canvas></div>
+                                </div>
+                                <div class="bg-black/20 p-6 rounded-[24px] border border-cyan-500/10 shadow-lg print:border-slate-300 print:bg-transparent">
+                                    <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 mb-4">
+                                        <p class="text-[11px] font-black uppercase text-cyan-300/70 tracking-widest print:text-black">${window.t('dist_category')}</p>
+                                        <span class="inline-flex items-center gap-2 rounded-xl border border-white/10 bg-white/5 px-3 py-2 text-[10px] font-black uppercase tracking-widest text-slate-400">
+                                            ${window.t('top_category')}: <span class="text-cyan-300">${topCategoryLabel}</span>
+                                        </span>
                                     </div>
+                                    <div class="relative w-full h-64 print:h-32"><canvas id="chart-cat-${p.id}"></canvas></div>
                                 </div>
                             </div>
-                            <div class="bg-black/20 p-6 rounded-[24px] border border-cyan-500/10 shadow-lg print:border-slate-300 print:bg-transparent">
-                                <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 mb-4">
-                                    <p class="text-[11px] font-black uppercase text-cyan-300/70 tracking-widest print:text-black">${window.t('dist_category')}</p>
-                                    <span class="inline-flex items-center gap-2 rounded-xl border border-white/10 bg-white/5 px-3 py-2 text-[10px] font-black uppercase tracking-widest text-slate-400">
-                                        ${window.t('top_category')}: <span class="text-cyan-300">${topCategoryLabel}</span>
-                                    </span>
-                                </div>
-                                <div class="relative w-full h-56 print:h-32"><canvas id="chart-cat-${p.id}"></canvas></div>
-                            </div>
-                        </div>
+                        
 
                         <!-- Formulário e Tabela de Despesas -->
                         <div class="bg-cyan-950/20 p-6 sm:p-8 rounded-[32px] border border-cyan-500/20 shadow-2xl print:bg-transparent print:border-slate-300 print:p-0 print:shadow-none">
