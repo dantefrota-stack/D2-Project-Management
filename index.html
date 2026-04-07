@@ -557,7 +557,10 @@
             balance_over: "PAGO A MAIOR", balance_paid: "TOTALMENTE PAGO", client_receipts: "Recebimentos do Cliente",
             no_receipts: "Nenhum recebimento registrado.", save_client_pay: "Guardar Pagamento do Cliente", seller_payments: "Pagamentos ao Vendedor",
             no_payments: "Nenhum pagamento efetuado.", make_seller_pay: "Efetuar Pagamento ao Vendedor", back: "Voltar", print_ficha: "Imprimir Ficha",
-            budget: "Orçamento (Budget)", total_expenses: "Despesas Totais", real_profit: "Lucro Real", margin: "Margem",
+            budget: "Orçamento (Budget)", total_expenses: "Despesas Totais", real_profit: "Lucro Atual", margin: "Margem Atual",
+            budget_available: "Disponível no Budget", budget_over_budget: "Acima do Budget", budget_spent_perc: "% do Budget Usado",
+            budget_health: "Saúde do Budget", budget_status_within: "Dentro do Budget", budget_status_over: "Acima do Budget", budget_not_set: "Budget não definido", budget_not_set_hint: "Cadastre um budget para acompanhar saldo disponível, consumo e alertas desta obra.",
+            budget_remaining_hint: "Valor que ainda pode ser gasto sem ultrapassar o budget planejado.", budget_over_hint: "As despesas já ultrapassaram o budget planejado desta obra.", budget_consumption: "Consumo do budget", expense_entries: "Lançamentos", top_category: "Categoria líder", no_expenses_short: "Sem despesas", chart_spent: "Gasto", chart_remaining: "Disponível", chart_over_budget: "Excedente", logs_project: "Obra / Referência",
             budget_vs_spent: "Orçamento vs Gasto", dist_category: "Distribuição por Categoria", reg_expense: "Registrar Nova Despesa",
             add_table: "Adicionar à Tabela", expense_history: "Histórico Completo de Gastos", no_expenses: "Nenhuma despesa lançada nesta obra.",
             desc_expense: "Descrição do gasto",
@@ -605,7 +608,10 @@
             balance_over: "OVERPAID", balance_paid: "FULLY PAID", client_receipts: "Client Receipts",
             no_receipts: "No receipts registered.", save_client_pay: "Save Client Payment", seller_payments: "Seller Payments",
             no_payments: "No payments made.", make_seller_pay: "Make Seller Payment", back: "Back", print_ficha: "Print Sheet",
-            budget: "Budget", total_expenses: "Total Expenses", real_profit: "Real Profit", margin: "Margin",
+            budget: "Budget", total_expenses: "Total Expenses", real_profit: "Current Profit", margin: "Current Margin",
+            budget_available: "Budget Available", budget_over_budget: "Over Budget", budget_spent_perc: "% Budget Used",
+            budget_health: "Budget Health", budget_status_within: "Within Budget", budget_status_over: "Over Budget", budget_not_set: "Budget not set", budget_not_set_hint: "Set a budget to track available balance, consumption, and alerts for this project.",
+            budget_remaining_hint: "Amount still available to spend before reaching the planned budget.", budget_over_hint: "Expenses have already exceeded the planned budget for this project.", budget_consumption: "Budget consumption", expense_entries: "Entries", top_category: "Top category", no_expenses_short: "No expenses", chart_spent: "Spent", chart_remaining: "Available", chart_over_budget: "Over budget", logs_project: "Project / Reference",
             budget_vs_spent: "Budget vs Spent", dist_category: "Distribution by Category", reg_expense: "Register New Expense",
             add_table: "Add to Table", expense_history: "Complete Expense History", no_expenses: "No expenses registered.",
             desc_expense: "Expense description",
@@ -1054,9 +1060,9 @@
             if (budget === 0 && totalExpenses === 0) {
                 labels = [window.t('budget')]; dataArr = [1]; bgColors = ['#334155'];
             } else if (overspent > 0) {
-                labels = [window.t('budget'), 'Overbudget']; dataArr = [budget, overspent]; bgColors = ['#0891b2', '#dc2626'];
+                labels = [window.t('chart_spent'), window.t('chart_over_budget')]; dataArr = [budget, overspent]; bgColors = ['#0891b2', '#dc2626'];
             } else {
-                labels = [window.t('budget'), 'Restante']; dataArr = [totalExpenses, remaining]; bgColors = ['#0891b2', '#059669'];
+                labels = [window.t('chart_spent'), window.t('chart_remaining')]; dataArr = [totalExpenses, remaining]; bgColors = ['#0891b2', '#059669'];
             }
 
             window.d2Charts[`budget-${pId}`] = new Chart(ctxBudget, {
@@ -1070,7 +1076,7 @@
             if (window.d2Charts[`cat-${pId}`]) window.d2Charts[`cat-${pId}`].destroy();
             const labels = Object.keys(expensesByCategory); const dataArr = Object.values(expensesByCategory);
             window.d2Charts[`cat-${pId}`] = new Chart(ctxCat, {
-                type: 'bar', data: { labels: labels, datasets: [{ label: 'Gastos', data: dataArr, backgroundColor: '#0891b2', borderRadius: 4 }] },
+                type: 'bar', data: { labels: labels, datasets: [{ label: window.t('total_expenses'), data: dataArr, backgroundColor: '#0891b2', borderRadius: 4 }] },
                 options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { display: false } },
                     scales: { y: { beginAtZero: true, grid: { color: 'rgba(148,163,184,0.1)' }, ticks: { color: '#64748b', font: {size: 11} } }, x: { grid: { display: false }, ticks: { color: '#64748b', font: {size: 11} } } }
                 }
@@ -1996,10 +2002,26 @@
                     `;
                 } else if (state.activeModule === 'costs' && canViewCosts) {
                     moduleTitle = window.t('cost_management');
-                    const budgetColor = f.totalDespesas > f.orcamento && f.orcamento > 0 ? 'text-red-500' : 'text-slate-300';
-                    const profitColor = f.lucroBruto >= 0 ? 'text-emerald-500' : 'text-red-500';
+                    const hasBudget = Number(f.orcamento) > 0;
+                    const isOverBudget = hasBudget && f.totalDespesas > f.orcamento + 0.009;
+                    const budgetRemainingAbs = Math.abs(f.budgetRemaining);
+                    const profitColor = f.lucroBruto >= 0 ? 'text-cyan-400' : 'text-red-400';
                     const marginColor = f.margemLucro >= 0 ? 'text-emerald-400' : 'text-red-400';
-                    
+                    const expenseCount = (p.despesas || []).length;
+                    const categoryEntries = Object.entries(f.gastosPorCategoria || {});
+                    const topCategoryEntry = categoryEntries.sort((a, b) => b[1] - a[1])[0] || ['-', 0];
+                    const topCategoryLabel = topCategoryEntry[1] > 0 ? topCategoryEntry[0] : window.t('no_expenses_short');
+                    const budgetStatusLabel = !hasBudget ? window.t('budget_not_set') : (isOverBudget ? window.t('budget_status_over') : window.t('budget_status_within'));
+                    const budgetStatusClass = !hasBudget
+                        ? 'border-white/10 bg-white/5 text-slate-300'
+                        : (isOverBudget ? 'border-red-500/30 bg-red-500/10 text-red-300' : 'border-emerald-500/30 bg-emerald-500/10 text-emerald-300');
+                    const budgetHeadlineLabel = !hasBudget ? window.t('budget_not_set') : (isOverBudget ? window.t('budget_over_budget') : window.t('budget_available'));
+                    const budgetHeadlineColor = !hasBudget ? 'text-slate-100' : (isOverBudget ? 'text-red-400' : 'text-emerald-400');
+                    const budgetProgressTone = !hasBudget ? 'bg-slate-600' : (isOverBudget ? 'bg-red-500' : 'bg-emerald-500');
+                    const budgetProgressWidth = hasBudget ? Math.max(0, Math.min(100, f.budgetSpentPerc)) : 0;
+                    const chartSecondaryLabel = isOverBudget ? window.t('chart_over_budget') : window.t('chart_remaining');
+                    const chartSecondaryValue = isOverBudget ? formatCurr(Math.max(0, f.totalDespesas - f.orcamento)) : formatCurr(Math.max(0, f.budgetRemaining));
+
                     const expensesList = (p.despesas || []).sort((a,b) => new Date(b.data) - new Date(a.data)).map(exp => `
                         <div class="flex justify-between items-center text-sm py-4 border-b border-cyan-500/10 last:border-0 hover:bg-white/5 transition-colors px-3 rounded-lg print:border-slate-200">
                             <div class="flex-1 flex flex-col sm:flex-row sm:items-center gap-1.5 sm:gap-4">
@@ -2015,44 +2037,104 @@
                     `).join('') || `<p class="text-sm italic text-cyan-300/50 text-center py-8">${window.t('no_expenses')}</p>`;
 
                     moduleContent = `
-                        <!-- KPIs -->
-                        <div class="grid grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6 mb-10 print:mb-6">
-                            <div class="bg-black/40 p-5 rounded-[24px] border border-white/5 shadow-inner print:bg-transparent print:border-slate-300 print:p-3 print:rounded-xl force-dark-bg">
-                                <p class="text-[10px] font-black uppercase text-slate-400 mb-2 tracking-widest print:text-slate-600 print:text-[8px]">${window.t('budget')}</p>
-                                <p class="${getMetricDisplayClass(formatCurr(f.orcamento))} font-black text-white force-white-text print:text-black print:text-base leading-tight whitespace-nowrap">${formatCurr(f.orcamento)}</p>
+                        <div class="grid grid-cols-1 xl:grid-cols-[1.2fr_0.95fr] gap-6 mb-10 print:mb-6">
+                            <div class="rounded-[30px] border ${isOverBudget ? 'border-red-500/20' : 'border-cyan-500/20'} bg-gradient-to-br from-slate-950 via-slate-900 to-black/90 p-6 sm:p-7 shadow-[0_20px_60px_-30px_rgba(0,0,0,0.75)] print:bg-transparent print:border-slate-300 print:shadow-none">
+                                <div class="flex flex-col lg:flex-row lg:items-start lg:justify-between gap-4">
+                                    <div>
+                                        <p class="text-[10px] font-black uppercase tracking-[0.28em] text-slate-500 mb-2">${window.t('budget_health')}</p>
+                                        <h3 class="text-lg sm:text-xl font-black ${budgetHeadlineColor}">${budgetHeadlineLabel}</h3>
+                                        <p class="text-sm text-slate-400 mt-2 max-w-2xl">${!hasBudget ? window.t('budget_not_set_hint') : (isOverBudget ? window.t('budget_over_hint') : window.t('budget_remaining_hint'))}</p>
+                                    </div>
+                                    <span class="inline-flex items-center gap-2 rounded-2xl border ${budgetStatusClass} px-4 py-2 text-[11px] font-black uppercase tracking-widest self-start">
+                                        <span class="w-2.5 h-2.5 rounded-full ${!hasBudget ? 'bg-slate-400' : (isOverBudget ? 'bg-red-400' : 'bg-emerald-400')}"></span>
+                                        ${budgetStatusLabel}
+                                    </span>
+                                </div>
+
+                                <div class="mt-6 flex flex-col xl:flex-row xl:items-end xl:justify-between gap-6">
+                                    <div class="min-w-0">
+                                        <p class="text-[11px] font-black uppercase tracking-widest text-slate-500 mb-2">${budgetHeadlineLabel}</p>
+                                        <p class="${getMetricDisplayClass(formatCurr(budgetRemainingAbs), true)} sm:!text-[2rem] xl:!text-[2.35rem] font-black ${budgetHeadlineColor} leading-none break-words">${formatCurr(budgetRemainingAbs)}</p>
+                                    </div>
+                                    <div class="grid grid-cols-2 sm:grid-cols-3 gap-3 xl:min-w-[390px]">
+                                        <div class="rounded-2xl border border-white/10 bg-white/5 px-4 py-3">
+                                            <p class="text-[10px] font-black uppercase tracking-widest text-slate-500 mb-1">${window.t('budget')}</p>
+                                            <p class="${getMetricDisplayClass(formatCurr(f.orcamento), true)} font-black text-slate-100 leading-tight break-words">${formatCurr(f.orcamento)}</p>
+                                        </div>
+                                        <div class="rounded-2xl border border-white/10 bg-white/5 px-4 py-3">
+                                            <p class="text-[10px] font-black uppercase tracking-widest text-slate-500 mb-1">${window.t('total_expenses')}</p>
+                                            <p class="${getMetricDisplayClass(formatCurr(f.totalDespesas), true)} font-black text-red-300 leading-tight break-words">${formatCurr(f.totalDespesas)}</p>
+                                        </div>
+                                        <div class="rounded-2xl border border-white/10 bg-white/5 px-4 py-3 sm:col-span-1 col-span-2">
+                                            <p class="text-[10px] font-black uppercase tracking-widest text-slate-500 mb-1">${window.t('budget_spent_perc')}</p>
+                                            <p class="${getMetricDisplayClass(`${f.budgetSpentPerc.toFixed(1)}%`, true)} font-black ${isOverBudget ? 'text-red-300' : 'text-gold'} leading-tight">${hasBudget ? `${f.budgetSpentPerc.toFixed(1)}%` : '—'}</p>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="mt-6">
+                                    ${hasBudget ? `
+                                        <div class="flex items-center justify-between text-xs font-bold text-slate-400 mb-2">
+                                            <span>${window.t('budget_consumption')}</span>
+                                            <span>${f.budgetSpentPerc.toFixed(1)}%</span>
+                                        </div>
+                                        <div class="h-3 rounded-full bg-white/10 overflow-hidden border border-white/5">
+                                            <div class="h-full ${budgetProgressTone}" style="width:${budgetProgressWidth}%"></div>
+                                        </div>
+                                    ` : `
+                                        <div class="rounded-2xl border border-white/10 bg-white/5 px-4 py-3 text-sm text-slate-400">
+                                            ${window.t('budget_not_set_hint')}
+                                        </div>
+                                    `}
+                                </div>
                             </div>
-                            <div class="bg-black/40 p-5 rounded-[24px] border border-white/5 shadow-inner print:bg-transparent print:border-slate-300 print:p-3 print:rounded-xl force-dark-bg">
-                                <p class="text-[10px] font-black uppercase text-slate-400 mb-2 tracking-widest print:text-slate-600 print:text-[8px]">${window.t('total_expenses')}</p>
-                                <p class="${getMetricDisplayClass(formatCurr(f.totalDespesas))} font-black text-red-400 print:!text-black print:text-base leading-tight whitespace-nowrap">${formatCurr(f.totalDespesas)}</p>
-                            </div>
-                            <div class="bg-black/40 p-5 rounded-[24px] border ${f.budgetRemaining >= 0 ? 'border-emerald-500/20' : 'border-red-500/20'} shadow-inner print:bg-transparent print:border-slate-300 print:p-3 print:rounded-xl force-dark-bg">
-                                <p class="text-[10px] font-black uppercase ${f.budgetRemaining >= 0 ? 'text-emerald-300/80' : 'text-red-300/80'} mb-2 tracking-widest print:text-slate-600 print:text-[8px]">${f.budgetRemaining >= 0 ? window.t('budget_available') : window.t('budget_over_budget')}</p>
-                                <p class="${getMetricDisplayClass(formatCurr(Math.abs(f.budgetRemaining)))} font-black ${f.budgetRemaining >= 0 ? 'text-emerald-400' : 'text-red-400'} print:text-black print:text-base leading-tight whitespace-nowrap">${formatCurr(Math.abs(f.budgetRemaining))}</p>
-                                <p class="text-[11px] mt-2 ${f.budgetRemaining >= 0 ? 'text-emerald-300/70' : 'text-red-300/70'} print:text-slate-600">${f.budgetRemaining >= 0 ? window.t('budget_remaining_hint') : window.t('budget_over_hint')}</p>
-                            </div>
-                            <div class="bg-black/40 p-5 rounded-[24px] border border-white/5 shadow-inner print:bg-transparent print:border-slate-300 print:p-3 print:rounded-xl force-dark-bg">
-                                <p class="text-[10px] font-black uppercase text-slate-400 mb-2 tracking-widest print:text-slate-600 print:text-[8px]">${window.t('budget_spent_perc')}</p>
-                                <p class="${getMetricDisplayClass(`${Math.abs(f.budgetSpentPerc).toFixed(1)}%`)} font-black ${f.budgetSpentPerc <= 100 ? 'text-gold' : 'text-red-400'} print:text-black print:text-base leading-tight whitespace-nowrap">${f.budgetSpentPerc.toFixed(1)}%</p>
-                            </div>
-                            <div class="bg-black/40 p-5 rounded-[24px] border border-white/5 shadow-inner print:bg-transparent print:border-slate-300 print:p-3 print:rounded-xl force-dark-bg">
-                                <p class="text-[10px] font-black uppercase text-slate-400 mb-2 tracking-widest print:text-slate-600 print:text-[8px]">${window.t('real_profit')}</p>
-                                <p class="${getMetricDisplayClass(formatCurr(f.lucroBruto))} font-black text-cyan-400 print:text-black print:text-base leading-tight whitespace-nowrap">${formatCurr(f.lucroBruto)}</p>
-                            </div>
-                            <div class="bg-black/40 p-5 rounded-[24px] border border-white/5 shadow-inner print:bg-transparent print:border-slate-300 print:p-3 print:rounded-xl force-dark-bg">
-                                <p class="text-[10px] font-black uppercase text-slate-400 mb-2 tracking-widest print:text-slate-600 print:text-[8px]">${window.t('margin')}</p>
-                                <p class="${getMetricDisplayClass(`${f.margemLucro.toFixed(1)}%`)} font-black ${marginColor} print:text-black print:text-base leading-tight whitespace-nowrap">${f.margemLucro.toFixed(1)}%</p>
+
+                            <div class="grid grid-cols-2 gap-4">
+                                <div class="bg-black/40 p-5 rounded-[24px] border border-white/5 shadow-inner print:bg-transparent print:border-slate-300 print:p-3 print:rounded-xl force-dark-bg">
+                                    <p class="text-[10px] font-black uppercase text-slate-400 mb-2 tracking-widest print:text-slate-600 print:text-[8px]">${window.t('real_profit')}</p>
+                                    <p class="${getMetricDisplayClass(formatCurr(f.lucroBruto), true)} font-black ${profitColor} print:text-black print:text-base leading-tight break-words">${formatCurr(f.lucroBruto)}</p>
+                                </div>
+                                <div class="bg-black/40 p-5 rounded-[24px] border border-white/5 shadow-inner print:bg-transparent print:border-slate-300 print:p-3 print:rounded-xl force-dark-bg">
+                                    <p class="text-[10px] font-black uppercase text-slate-400 mb-2 tracking-widest print:text-slate-600 print:text-[8px]">${window.t('margin')}</p>
+                                    <p class="${getMetricDisplayClass(`${f.margemLucro.toFixed(1)}%`, true)} font-black ${marginColor} print:text-black print:text-base leading-tight">${f.margemLucro.toFixed(1)}%</p>
+                                </div>
+                                <div class="bg-black/40 p-5 rounded-[24px] border border-white/5 shadow-inner print:bg-transparent print:border-slate-300 print:p-3 print:rounded-xl force-dark-bg">
+                                    <p class="text-[10px] font-black uppercase text-slate-400 mb-2 tracking-widest print:text-slate-600 print:text-[8px]">${window.t('expense_entries')}</p>
+                                    <p class="${getMetricDisplayClass(String(expenseCount), true)} font-black text-slate-100 print:text-black print:text-base leading-tight">${expenseCount}</p>
+                                </div>
+                                <div class="bg-black/40 p-5 rounded-[24px] border border-white/5 shadow-inner print:bg-transparent print:border-slate-300 print:p-3 print:rounded-xl force-dark-bg">
+                                    <p class="text-[10px] font-black uppercase text-slate-400 mb-2 tracking-widest print:text-slate-600 print:text-[8px]">${window.t('top_category')}</p>
+                                    <p class="text-[1rem] sm:text-[1.1rem] xl:text-[1.2rem] font-black text-cyan-300 print:text-black leading-tight break-words">${topCategoryLabel}</p>
+                                </div>
                             </div>
                         </div>
 
-                        <!-- Gráficos -->
-                        <div class="grid grid-cols-1 lg:grid-cols-3 gap-6 mb-10 print:mb-6 no-print">
-                            <div class="bg-black/20 p-6 rounded-[24px] border border-cyan-500/10 flex flex-col items-center shadow-lg print:border-slate-300 print:bg-transparent">
-                                <p class="text-[11px] font-black uppercase text-cyan-300/70 mb-4 w-full text-left tracking-widest print:text-black">${window.t('budget_vs_spent')}</p>
-                                <div class="relative w-48 h-48 print:w-32 print:h-32"><canvas id="chart-budget-${p.id}"></canvas></div>
+                        <div class="grid grid-cols-1 xl:grid-cols-[0.9fr_1.1fr] gap-6 mb-10 print:mb-6 no-print">
+                            <div class="bg-black/20 p-6 rounded-[24px] border border-cyan-500/10 flex flex-col shadow-lg print:border-slate-300 print:bg-transparent">
+                                <div class="flex items-center justify-between gap-4 mb-4">
+                                    <p class="text-[11px] font-black uppercase text-cyan-300/70 tracking-widest print:text-black">${window.t('budget_vs_spent')}</p>
+                                    ${hasBudget ? `<span class="text-xs font-black uppercase tracking-widest ${isOverBudget ? 'text-red-300' : 'text-emerald-300'}">${f.budgetSpentPerc.toFixed(1)}%</span>` : ''}
+                                </div>
+                                <div class="relative w-48 h-48 mx-auto print:w-32 print:h-32"><canvas id="chart-budget-${p.id}"></canvas></div>
+                                <div class="grid grid-cols-1 sm:grid-cols-2 gap-3 mt-6">
+                                    <div class="rounded-2xl border border-white/10 bg-white/5 px-4 py-3">
+                                        <p class="text-[10px] font-black uppercase tracking-widest text-slate-500 mb-1">${window.t('chart_spent')}</p>
+                                        <p class="text-base font-black text-cyan-300 break-words">${formatCurr(f.totalDespesas)}</p>
+                                    </div>
+                                    <div class="rounded-2xl border ${isOverBudget ? 'border-red-500/20 bg-red-500/10' : 'border-emerald-500/20 bg-emerald-500/10'} px-4 py-3">
+                                        <p class="text-[10px] font-black uppercase tracking-widest ${isOverBudget ? 'text-red-300/80' : 'text-emerald-300/80'} mb-1">${chartSecondaryLabel}</p>
+                                        <p class="text-base font-black ${isOverBudget ? 'text-red-300' : 'text-emerald-300'} break-words">${chartSecondaryValue}</p>
+                                    </div>
+                                </div>
                             </div>
-                            <div class="lg:col-span-2 bg-black/20 p-6 rounded-[24px] border border-cyan-500/10 shadow-lg print:border-slate-300 print:bg-transparent">
-                                <p class="text-[11px] font-black uppercase text-cyan-300/70 mb-4 tracking-widest print:text-black">${window.t('dist_category')}</p>
-                                <div class="relative w-full h-48 print:h-32"><canvas id="chart-cat-${p.id}"></canvas></div>
+                            <div class="bg-black/20 p-6 rounded-[24px] border border-cyan-500/10 shadow-lg print:border-slate-300 print:bg-transparent">
+                                <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 mb-4">
+                                    <p class="text-[11px] font-black uppercase text-cyan-300/70 tracking-widest print:text-black">${window.t('dist_category')}</p>
+                                    <span class="inline-flex items-center gap-2 rounded-xl border border-white/10 bg-white/5 px-3 py-2 text-[10px] font-black uppercase tracking-widest text-slate-400">
+                                        ${window.t('top_category')}: <span class="text-cyan-300">${topCategoryLabel}</span>
+                                    </span>
+                                </div>
+                                <div class="relative w-full h-56 print:h-32"><canvas id="chart-cat-${p.id}"></canvas></div>
                             </div>
                         </div>
 
