@@ -469,6 +469,7 @@
                             <tr>
                                 <th class="py-4 px-4 text-xs font-black uppercase text-slate-500" data-i18n="date">Data/Hora</th>
                                 <th class="py-4 px-4 text-xs font-black uppercase text-slate-500">Usuário</th>
+                                <th class="py-4 px-4 text-xs font-black uppercase text-slate-500" data-i18n="logs_project">Obra / Referência</th>
                                 <th class="py-4 px-4 text-xs font-black uppercase text-slate-500">Ação / Operação</th>
                             </tr>
                         </thead>
@@ -522,6 +523,12 @@
         if (len >= 12) return isSmallVariant ? 'text-[0.9rem] sm:text-[1rem]' : 'text-[0.96rem] sm:text-[1.08rem]';
         if (len >= 10) return isSmallVariant ? 'text-[0.96rem] sm:text-[1.06rem]' : 'text-[1.02rem] sm:text-[1.14rem]';
         return isSmallVariant ? 'text-[1.02rem] sm:text-[1.14rem]' : 'text-[1.08rem] sm:text-[1.22rem]';
+    };
+    const getMetricDisplayClass = (displayValue, compact = false) => {
+        const len = String(displayValue || '').length;
+        if (len >= 14) return compact ? 'text-[1rem] sm:text-[1.05rem] xl:text-[1.15rem]' : 'text-[1.08rem] sm:text-[1.3rem] xl:text-[1.6rem]';
+        if (len >= 11) return compact ? 'text-[1.04rem] sm:text-[1.1rem] xl:text-[1.2rem]' : 'text-[1.14rem] sm:text-[1.45rem] xl:text-[1.8rem]';
+        return compact ? 'text-[1.08rem] sm:text-[1.14rem] xl:text-[1.24rem]' : 'text-[1.22rem] sm:text-[1.6rem] xl:text-[1.95rem]';
     };
 
     window.togglePassword = (inputId, btnId) => {
@@ -768,14 +775,15 @@
         return Array.from(map.values()).sort((a, b) => b._renderDate - a._renderDate);
     }
 
-    async function logAccess(userEmail, action) {
+    async function logAccess(userEmail, action, meta = {}) {
         if (!auth.currentUser || !userEmail || !action) return;
         try {
             await addDoc(auditLogsRef(), {
                 user: userEmail,
                 action,
                 timestampIso: new Date().toISOString(),
-                createdAt: serverTimestamp()
+                createdAt: serverTimestamp(),
+                ...meta
             });
         } catch (err) {
             console.error('Erro ao registrar log:', err);
@@ -810,13 +818,20 @@
         tbody.innerHTML = logs.map(log => {
             const logDate = log._renderDate || getLogDate(log);
             const renderedDate = Number.isNaN(logDate.getTime()) ? '-' : logDate.toLocaleString(state.lang === 'pt' ? 'pt-BR' : 'en-US');
+            const info = getLogProjectInfo(log);
+            const projectMetaLine = [info.invoice ? `${window.t('invoice_label')}: ${info.invoice}` : '', info.proposal ? `${window.t('proposal_label')}: ${info.proposal}` : ''].filter(Boolean).join(' • ');
             return `
-            <tr class="border-b border-white/5 hover:bg-white/5">
+            <tr class="border-b border-white/5 hover:bg-white/5 align-top">
                 <td class="py-4 px-4 text-sm whitespace-nowrap">${renderedDate}</td>
-                <td class="py-4 px-4 text-sm font-bold text-gold">${log.user || '-'}</td>
-                <td class="py-4 px-4 text-sm text-slate-300">${log.action || '-'}</td>
+                <td class="py-4 px-4 text-sm font-bold text-gold whitespace-nowrap">${log.user || '-'}</td>
+                <td class="py-4 px-4 text-sm text-slate-300 min-w-[240px]">
+                    ${info.projectName ? `<div class="font-black text-white">${escapeInlineHtml(info.projectName)}</div>` : `<div class="text-slate-500">-</div>`}
+                    ${projectMetaLine ? `<div class="text-[11px] text-slate-400 mt-1">${escapeInlineHtml(projectMetaLine)}</div>` : ''}
+                    ${info.projectId ? `<div class="text-[11px] text-slate-500 mt-1">ID: <span class="font-mono">${escapeInlineHtml(info.projectId)}</span></div>` : ''}
+                </td>
+                <td class="py-4 px-4 text-sm text-slate-300">${escapeInlineHtml(info.cleanAction)}</td>
             </tr>
-        `}).join('') || `<tr><td colspan="3" class="py-10 text-center text-slate-500">${window.t('logs_empty')}</td></tr>`;
+        `}).join('') || `<tr><td colspan="4" class="py-10 text-center text-slate-500">${window.t('logs_empty')}</td></tr>`;
     };
 
     function applyThemeConfig() {
@@ -1010,7 +1025,7 @@
 
         try {
             await updateDoc(doc(db, 'artifacts', appId, 'public', 'data', 'projects', projectId), { despesas: arrayUnion(newExpense) });
-            logAccess(state.user.email, `Registrou despesa de $${val} (${cat}) na obra ID: ${projectId}`);
+            logAccess(state.user.email, `Registrou despesa de $${val} (${cat})`, { projectId, projectName: getProjectDisplayName(p), projectInvoice: String(p?.numeroInvoice || '').trim(), projectProposal: String(p?.numeroProposta || '').trim() });
         } catch (e) { console.error("Erro ao adicionar despesa:", e); }
     };
 
@@ -1024,7 +1039,7 @@
 
             try {
                 await updateDoc(doc(db, 'artifacts', appId, 'public', 'data', 'projects', projectId), { despesas: updatedExpenses });
-                logAccess(state.user.email, `Excluiu despesa de $${expenseVal} (${expenseDesc}) na obra ID: ${projectId}`);
+                logAccess(state.user.email, `Excluiu despesa de $${expenseVal} (${expenseDesc})`, { projectId, projectName: getProjectDisplayName(p), projectInvoice: String(p?.numeroInvoice || '').trim(), projectProposal: String(p?.numeroProposta || '').trim() });
             } catch (e) { console.error("Erro ao remover despesa:", e); window.showModal(window.t('error'), 'Falha ao excluir despesa.', 'error'); }
         });
     };
@@ -1067,6 +1082,44 @@
 
     function getProjectDisplayName(project) {
         return project?.cliente || project?.nomeObra || (state.lang === 'pt' ? 'Projeto sem nome' : 'Untitled project');
+    }
+    function getProjectReferenceMeta(project) {
+        const invoice = String(project?.numeroInvoice || '').trim();
+        const proposal = String(project?.numeroProposta || '').trim();
+        const name = getProjectDisplayName(project);
+        return {
+            name,
+            invoice,
+            proposal,
+            refLine: [invoice ? `${window.t('invoice_label')}: ${invoice}` : '', proposal ? `${window.t('proposal_label')}: ${proposal}` : ''].filter(Boolean).join(' • ')
+        };
+    }
+    function getLogProjectInfo(log) {
+        let projectId = String(log?.projectId || '').trim();
+        let projectName = String(log?.projectName || '').trim();
+        let invoice = String(log?.projectInvoice || '').trim();
+        let proposal = String(log?.projectProposal || '').trim();
+        let actionText = String(log?.action || '-').trim();
+
+        const idMatch = actionText.match(/na obra ID:\s*([A-Za-z0-9_-]+)/i) || actionText.match(/project ID:\s*([A-Za-z0-9_-]+)/i);
+        if (!projectId && idMatch) projectId = idMatch[1];
+
+        const project = projectId ? state.projects.find(p => p.id === projectId) : null;
+        if (project) {
+            projectName = projectName || getProjectDisplayName(project);
+            invoice = invoice || String(project.numeroInvoice || '').trim();
+            proposal = proposal || String(project.numeroProposta || '').trim();
+        }
+
+        actionText = actionText.replace(/\s*na obra ID:\s*[A-Za-z0-9_-]+/ig, '').replace(/\s*project ID:\s*[A-Za-z0-9_-]+/ig, '').trim();
+
+        return {
+            projectId,
+            projectName,
+            invoice,
+            proposal,
+            cleanAction: actionText || '-'
+        };
     }
     function escapeInlineHtml(value) {
         return String(value ?? '').replace(/[&<>"']/g, char => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[char] || char));
@@ -1782,8 +1835,10 @@
 
         const lucroBruto = valorTotal - totalDespesas;
         const margemLucro = valorTotal > 0 ? (lucroBruto / valorTotal) * 100 : 0;
+        const budgetRemaining = roundMoney((Number(orcamento) || 0) - totalDespesas);
+        const budgetSpentPerc = Number(orcamento) > 0 ? (totalDespesas / Number(orcamento)) * 100 : 0;
 
-        return { baseProjetada, commTotalProjetada, totalRecebido, commLiberada, totalPaid, balance, clientOutstanding, commRemainingProjected, statusColor, globalIsCC, orcamento, totalDespesas, lucroBruto, margemLucro, gastosPorCategoria };
+        return { baseProjetada, commTotalProjetada, totalRecebido, commLiberada, totalPaid, balance, clientOutstanding, commRemainingProjected, statusColor, globalIsCC, orcamento, totalDespesas, lucroBruto, margemLucro, gastosPorCategoria, budgetRemaining, budgetSpentPerc };
     }
 
     window.renderProjects = () => {
@@ -1961,22 +2016,31 @@
 
                     moduleContent = `
                         <!-- KPIs -->
-                        <div class="grid grid-cols-2 print:grid-cols-4 sm:grid-cols-4 gap-4 sm:gap-6 mb-10 print:mb-6">
+                        <div class="grid grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6 mb-10 print:mb-6">
                             <div class="bg-black/40 p-5 rounded-[24px] border border-white/5 shadow-inner print:bg-transparent print:border-slate-300 print:p-3 print:rounded-xl force-dark-bg">
                                 <p class="text-[10px] font-black uppercase text-slate-400 mb-2 tracking-widest print:text-slate-600 print:text-[8px]">${window.t('budget')}</p>
-                                <p class="text-xl sm:text-2xl font-black text-white force-white-text print:text-black print:text-base truncate">${formatCurr(f.orcamento)}</p>
+                                <p class="${getMetricDisplayClass(formatCurr(f.orcamento))} font-black text-white force-white-text print:text-black print:text-base leading-tight whitespace-nowrap">${formatCurr(f.orcamento)}</p>
                             </div>
                             <div class="bg-black/40 p-5 rounded-[24px] border border-white/5 shadow-inner print:bg-transparent print:border-slate-300 print:p-3 print:rounded-xl force-dark-bg">
                                 <p class="text-[10px] font-black uppercase text-slate-400 mb-2 tracking-widest print:text-slate-600 print:text-[8px]">${window.t('total_expenses')}</p>
-                                <p class="text-xl sm:text-2xl font-black text-red-400 print:!text-black print:text-base truncate">${formatCurr(f.totalDespesas)}</p>
+                                <p class="${getMetricDisplayClass(formatCurr(f.totalDespesas))} font-black text-red-400 print:!text-black print:text-base leading-tight whitespace-nowrap">${formatCurr(f.totalDespesas)}</p>
+                            </div>
+                            <div class="bg-black/40 p-5 rounded-[24px] border ${f.budgetRemaining >= 0 ? 'border-emerald-500/20' : 'border-red-500/20'} shadow-inner print:bg-transparent print:border-slate-300 print:p-3 print:rounded-xl force-dark-bg">
+                                <p class="text-[10px] font-black uppercase ${f.budgetRemaining >= 0 ? 'text-emerald-300/80' : 'text-red-300/80'} mb-2 tracking-widest print:text-slate-600 print:text-[8px]">${f.budgetRemaining >= 0 ? window.t('budget_available') : window.t('budget_over_budget')}</p>
+                                <p class="${getMetricDisplayClass(formatCurr(Math.abs(f.budgetRemaining)))} font-black ${f.budgetRemaining >= 0 ? 'text-emerald-400' : 'text-red-400'} print:text-black print:text-base leading-tight whitespace-nowrap">${formatCurr(Math.abs(f.budgetRemaining))}</p>
+                                <p class="text-[11px] mt-2 ${f.budgetRemaining >= 0 ? 'text-emerald-300/70' : 'text-red-300/70'} print:text-slate-600">${f.budgetRemaining >= 0 ? window.t('budget_remaining_hint') : window.t('budget_over_hint')}</p>
+                            </div>
+                            <div class="bg-black/40 p-5 rounded-[24px] border border-white/5 shadow-inner print:bg-transparent print:border-slate-300 print:p-3 print:rounded-xl force-dark-bg">
+                                <p class="text-[10px] font-black uppercase text-slate-400 mb-2 tracking-widest print:text-slate-600 print:text-[8px]">${window.t('budget_spent_perc')}</p>
+                                <p class="${getMetricDisplayClass(`${Math.abs(f.budgetSpentPerc).toFixed(1)}%`)} font-black ${f.budgetSpentPerc <= 100 ? 'text-gold' : 'text-red-400'} print:text-black print:text-base leading-tight whitespace-nowrap">${f.budgetSpentPerc.toFixed(1)}%</p>
                             </div>
                             <div class="bg-black/40 p-5 rounded-[24px] border border-white/5 shadow-inner print:bg-transparent print:border-slate-300 print:p-3 print:rounded-xl force-dark-bg">
                                 <p class="text-[10px] font-black uppercase text-slate-400 mb-2 tracking-widest print:text-slate-600 print:text-[8px]">${window.t('real_profit')}</p>
-                                <p class="text-xl sm:text-2xl font-black text-cyan-400 print:text-black print:text-base truncate">${formatCurr(f.lucroBruto)}</p>
+                                <p class="${getMetricDisplayClass(formatCurr(f.lucroBruto))} font-black text-cyan-400 print:text-black print:text-base leading-tight whitespace-nowrap">${formatCurr(f.lucroBruto)}</p>
                             </div>
                             <div class="bg-black/40 p-5 rounded-[24px] border border-white/5 shadow-inner print:bg-transparent print:border-slate-300 print:p-3 print:rounded-xl force-dark-bg">
                                 <p class="text-[10px] font-black uppercase text-slate-400 mb-2 tracking-widest print:text-slate-600 print:text-[8px]">${window.t('margin')}</p>
-                                <p class="text-xl sm:text-2xl font-black ${marginColor} print:text-black print:text-base truncate">${f.margemLucro.toFixed(1)}%</p>
+                                <p class="${getMetricDisplayClass(`${f.margemLucro.toFixed(1)}%`)} font-black ${marginColor} print:text-black print:text-base leading-tight whitespace-nowrap">${f.margemLucro.toFixed(1)}%</p>
                             </div>
                         </div>
 
