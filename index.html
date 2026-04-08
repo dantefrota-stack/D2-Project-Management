@@ -314,9 +314,10 @@
                 </div>
                 <div class="flex flex-col sm:flex-row gap-3 items-stretch sm:items-end w-full xl:w-auto xl:justify-end">
                     <div id="seller-filter-box" class="hidden w-full sm:w-[280px]"></div>
-                    <div class="flex gap-2 self-start sm:self-auto">
-                        <button onclick="window.setArchiveFilter(false)" id="filter-active" class="filter-pill active" data-i18n="filter_active">ATIVAS</button>
-                        <button onclick="window.setArchiveFilter(true)" id="filter-archived" class="filter-pill" data-i18n="filter_archived">ARQUIVADAS <i data-lucide="archive" class="inline w-3 h-3 ml-1 mb-0.5"></i></button>
+                    <div class="flex gap-2 self-start sm:self-auto flex-wrap">
+                        <button onclick="window.setArchiveFilter('active')" id="filter-active" class="filter-pill active" data-i18n="filter_active">ATIVAS</button>
+                        <button onclick="window.setArchiveFilter('archived')" id="filter-archived" class="filter-pill" data-i18n="filter_archived">ARQUIVADAS <i data-lucide="archive" class="inline w-3 h-3 ml-1 mb-0.5"></i></button>
+                        <button onclick="window.setArchiveFilter('all')" id="filter-all" class="filter-pill" data-i18n="filter_all">TODAS</button>
                     </div>
                 </div>
             </div>
@@ -510,7 +511,7 @@
         isSuperAdmin: false,
         userPerms: { tab_proj: true, tab_new: false, tab_rep: false, fin: false, costs: false, smart: true, hvac: false, global: false },
         projects: [], team: [], logs: [], company: 'Ambas', lang: 'pt', theme: 'dark', 
-        editingPayments: null, editingRecs: null, focusedProject: null, activeModule: null, showArchived: false,
+        editingPayments: null, editingRecs: null, focusedProject: null, activeModule: null, archiveFilter: 'active',
         reportActiveKpi: 'receita', projectSellerFilter: 'all' 
     };
 
@@ -540,8 +541,8 @@
         pt: {
             admin_panel: "Gestão Corporativa", nav_proj: "Projetos", nav_new: "Nova Obra", nav_rep: "Relatórios", nav_users: "Equipe",
             form_new_title: "Registrar Obra", team_title: "Gestão de Equipe", btn_team: "Salvar e Autorizar Acesso",
-            filter_both: "AMBAS", filter_active: "ATIVAS", filter_archived: "ARQUIVADAS",
-            project_filter_seller: "Filtro por Vendedor", project_filter_all_sellers: "Todos os vendedores", logs_empty: "Nenhum log registrado",
+            filter_both: "AMBAS", filter_active: "ATIVAS", filter_archived: "ARQUIVADAS", filter_all: "TODAS",
+            project_filter_seller: "Filtro por Vendedor", project_filter_all_sellers: "Todos os vendedores", logs_empty: "Nenhum log registrado", margin_alert_low: "Margem abaixo de 45%", margin_current: "Margem Atual", completed_on: "Concluída em", category_commission: "Comissões", seller_margin_cover: "Margem da obra",
             lbl_email: "E-mail Corporativo", lbl_pass: "Senha de Acesso", btn_login: "Acessar Sistema",
             f_prop: "Nº Proposta", f_inv: "Nº Invoice", f_unit: "Unidade Responsável", f_client: "Cliente", f_seller: "Vendedor",
             f_gross: "Valor Contrato Bruto", f_budget: "Orçamento Custo (Budget)", f_comm_perc: "% Comissão",
@@ -592,8 +593,8 @@
         en: {
             admin_panel: "Corporate Management", nav_proj: "Projects", nav_new: "New Entry", nav_rep: "Reports", nav_users: "Team",
             form_new_title: "Register Project", team_title: "Team Management", btn_team: "Authorize Access",
-            filter_both: "BOTH", filter_active: "ACTIVE", filter_archived: "ARCHIVED",
-            project_filter_seller: "Seller Filter", project_filter_all_sellers: "All sellers", logs_empty: "No logs recorded",
+            filter_both: "BOTH", filter_active: "ACTIVE", filter_archived: "ARCHIVED", filter_all: "ALL",
+            project_filter_seller: "Seller Filter", project_filter_all_sellers: "All sellers", logs_empty: "No logs recorded", margin_alert_low: "Margin below 45%", margin_current: "Current Margin", completed_on: "Completed on", category_commission: "Commissions", seller_margin_cover: "Project margin",
             lbl_email: "Corporate Email", lbl_pass: "Password", btn_login: "Access System",
             f_prop: "Proposal No.", f_inv: "Invoice No.", f_unit: "Responsible Unit", f_client: "Client", f_seller: "Seller",
             f_gross: "Gross Contract Value", f_budget: "Cost Budget", f_comm_perc: "% Commission",
@@ -998,10 +999,13 @@
         window.renderReport();
     };
 
-    window.setArchiveFilter = (showArchived) => {
-        state.showArchived = showArchived;
-        document.getElementById('filter-active').classList.toggle('active', !showArchived);
-        document.getElementById('filter-archived').classList.toggle('active', showArchived);
+    window.setArchiveFilter = (mode) => {
+        if (mode === true) mode = 'archived';
+        if (mode === false) mode = 'active';
+        state.archiveFilter = ['active', 'archived', 'all'].includes(mode) ? mode : 'active';
+        document.getElementById('filter-active')?.classList.toggle('active', state.archiveFilter === 'active');
+        document.getElementById('filter-archived')?.classList.toggle('active', state.archiveFilter === 'archived');
+        document.getElementById('filter-all')?.classList.toggle('active', state.archiveFilter === 'all');
         state.focusedProject = null;
         state.activeModule = null;
         window.renderProjects();
@@ -1024,6 +1028,7 @@
         const desc = document.getElementById(`exp-desc-${projectId}`)?.value;
         const cat = document.getElementById(`exp-cat-${projectId}`)?.value;
         const val = document.getElementById(`exp-val-${projectId}`)?.value;
+        const p = state.projects.find(x => x.id === projectId);
 
         if (!date || !desc || !cat || !val) { window.showModal(window.t('attention'), window.t('error'), 'alert'); return; }
         
@@ -1285,10 +1290,65 @@
         return { ...f, grossReceived, cardFees, netEligible, receiptsCount: receipts.length };
     }
 
+
+    function normalizePaymentEntries(payments = []) {
+        return (Array.isArray(payments) ? payments : []).map(pay => ({
+            ...pay,
+            id: pay?.id || crypto.randomUUID(),
+            valor: roundMoney(Number(pay?.valor || 0))
+        }));
+    }
+
+    function buildCommissionExpenseFromPayment(pay, project) {
+        const sellerLabel = String(project?.vendedor || '').split('@')[0] || 'seller';
+        return {
+            id: `auto-commission-${pay.id}`,
+            data: pay?.data || new Date().toISOString().split('T')[0],
+            descricao: `${state.lang === 'pt' ? 'Comissão paga' : 'Commission paid'} - ${sellerLabel}`,
+            categoria: 'Comissões',
+            valor: roundMoney(Number(pay?.valor || 0)),
+            autoType: 'commission_payment',
+            autoGenerated: true,
+            linkedPaymentId: pay.id,
+            adicionadoPor: pay?.adicionadoPor || state.user?.email || '',
+            criadoEm: pay?.criadoEm || new Date().toISOString()
+        };
+    }
+
+    function getProjectExpensesForMetrics(project) {
+        const manualExpenses = (Array.isArray(project?.despesas) ? project.despesas : []).filter(exp => exp?.autoType !== 'commission_payment');
+        const payments = normalizePaymentEntries(project?.pagamentosEfetuados || []);
+        const commissionExpenses = payments
+            .filter(pay => Number(pay?.valor || 0) > 0)
+            .map(pay => buildCommissionExpenseFromPayment(pay, project));
+        return [...manualExpenses, ...commissionExpenses].sort((a, b) => String(b?.data || '').localeCompare(String(a?.data || '')));
+    }
+
+    function buildSyncedCommissionExpensePayload(project, payments = []) {
+        const normalizedPayments = normalizePaymentEntries(payments).map(pay => ({
+            ...pay,
+            adicionadoPor: pay?.adicionadoPor || state.user?.email || '',
+            criadoEm: pay?.criadoEm || new Date().toISOString()
+        }));
+        const manualExpenses = (Array.isArray(project?.despesas) ? project.despesas : []).filter(exp => exp?.autoType !== 'commission_payment');
+        const commissionExpenses = normalizedPayments
+            .filter(pay => Number(pay?.valor || 0) > 0)
+            .map(pay => buildCommissionExpenseFromPayment(pay, project));
+        return { normalizedPayments, syncedExpenses: [...manualExpenses, ...commissionExpenses] };
+    }
+
+    function getMarginAlertState(fin) {
+        const margin = Number(fin?.margemLucro || 0);
+        return {
+            isLow: margin < 45,
+            label: `${margin.toFixed(1)}%`
+        };
+    }
+
     window.openEditPaymentModal = (projectId) => {
         const p = state.projects.find(x => x.id === projectId);
         if (!p) return;
-        state.editingPayments = { projectId, payments: [...(p.pagamentosEfetuados || [])] };
+        state.editingPayments = { projectId, payments: normalizePaymentEntries(p.pagamentosEfetuados || []) };
         window.renderPaymentEditList();
         document.getElementById('edit-payment-modal').classList.add('active');
     };
@@ -1504,18 +1564,24 @@
             window.renderPaymentEditList();
             return;
         }
-        state.editingPayments.payments.push({ data: new Date().toISOString().split('T')[0], valor: summary.remainingToPay });
+        state.editingPayments.payments.push({ id: crypto.randomUUID(), data: new Date().toISOString().split('T')[0], valor: summary.remainingToPay, adicionadoPor: state.user?.email || '', criadoEm: new Date().toISOString() });
         window.renderPaymentEditList();
     };
     window.saveEditedPayments = async () => {
         if (!state.editingPayments) return;
+        const project = state.projects.find(x => x.id === state.editingPayments.projectId);
         const summary = getPaymentDraftSummary(state.editingPayments.projectId, state.editingPayments.payments);
         if (summary && summary.draftTotalPaid > summary.commLiberada + 0.009) {
             window.showModal(window.t('pay_block_over_title'), window.t('pay_block_over_msg'), 'error');
             return;
         }
+        if (!project) return;
+        const { normalizedPayments, syncedExpenses } = buildSyncedCommissionExpensePayload(project, state.editingPayments.payments);
         try {
-            await updateDoc(doc(db, 'artifacts', appId, 'public', 'data', 'projects', state.editingPayments.projectId), { pagamentosEfetuados: state.editingPayments.payments });
+            await updateDoc(doc(db, 'artifacts', appId, 'public', 'data', 'projects', state.editingPayments.projectId), {
+                pagamentosEfetuados: normalizedPayments,
+                despesas: syncedExpenses
+            });
             window.closeEditPaymentModal();
         } catch (e) {
             window.showModal(window.t('error'), 'Erro ao salvar pagamentos: ' + e.message, 'error');
@@ -1820,7 +1886,7 @@
         totalRecebido = roundMoney(totalRecebido);
         commLiberada = roundMoney(commLiberada);
 
-        const pays = Array.isArray(p?.pagamentosEfetuados) ? p.pagamentosEfetuados : [];
+        const pays = normalizePaymentEntries(p?.pagamentosEfetuados || []);
         const totalPaid = roundMoney(pays.reduce((a, c) => a + Number(c?.valor || 0), 0));
         const balance = roundMoney(commLiberada - totalPaid);
         const clientOutstanding = roundMoney(Math.max(0, valorTotal - totalRecebido));
@@ -1831,20 +1897,21 @@
         else if (balance === 0 && commLiberada > 0) statusColor = "bg-emerald-500";
         else if (totalPaid > 0) statusColor = "bg-orange-500"; 
 
-        const despesas = Array.isArray(p?.despesas) ? p.despesas : [];
-        let totalDespesas = 0; let gastosPorCategoria = { 'Materiais': 0, 'Mão-de-obra': 0, 'Equipamentos': 0, 'Licenças': 0, 'Outros': 0 };
+        const despesas = getProjectExpensesForMetrics({ ...p, pagamentosEfetuados: pays });
+        let totalDespesas = 0; let gastosPorCategoria = { 'Materiais': 0, 'Mão-de-obra': 0, 'Equipamentos': 0, 'Licenças': 0, 'Outros': 0, 'Comissões': 0 };
         
         despesas.forEach(d => {
             const val = Number(d.valor || 0); totalDespesas += val;
             if (gastosPorCategoria[d.categoria] !== undefined) { gastosPorCategoria[d.categoria] += val; } else { gastosPorCategoria['Outros'] += val; }
         });
 
-        const lucroBruto = valorTotal - totalDespesas;
+        totalDespesas = roundMoney(totalDespesas);
+        const lucroBruto = roundMoney(valorTotal - totalDespesas);
         const margemLucro = valorTotal > 0 ? (lucroBruto / valorTotal) * 100 : 0;
         const budgetRemaining = roundMoney((Number(orcamento) || 0) - totalDespesas);
         const budgetSpentPerc = Number(orcamento) > 0 ? (totalDespesas / Number(orcamento)) * 100 : 0;
 
-        return { baseProjetada, commTotalProjetada, totalRecebido, commLiberada, totalPaid, balance, clientOutstanding, commRemainingProjected, statusColor, globalIsCC, orcamento, totalDespesas, lucroBruto, margemLucro, gastosPorCategoria, budgetRemaining, budgetSpentPerc };
+        return { baseProjetada, commTotalProjetada, totalRecebido, commLiberada, totalPaid, balance, clientOutstanding, commRemainingProjected, statusColor, globalIsCC, orcamento, totalDespesas, lucroBruto, margemLucro, gastosPorCategoria, budgetRemaining, budgetSpentPerc, despesasMetricas: despesas };
     }
 
     window.renderProjects = () => {
@@ -1867,7 +1934,7 @@
             const matchUser = canViewAll || p.vendedor === state.user.email; 
             const matchSellerFilter = !state.isSuperAdmin || state.projectSellerFilter === 'all' || p.vendedor === state.projectSellerFilter;
             const isArchived = p.archived === true;
-            const matchArchive = isArchived === state.showArchived;
+            const matchArchive = state.archiveFilter === 'all' ? true : (state.archiveFilter === 'archived' ? isArchived : !isArchived);
             return matchCompany && matchSelectedTab && matchUser && matchSellerFilter && matchArchive;
         });
 
@@ -2006,7 +2073,8 @@
                     const isOverBudget = hasBudget && f.totalDespesas > f.orcamento + 0.009;
                     const budgetRemainingAbs = Math.abs(f.budgetRemaining);
                     const profitColor = f.lucroBruto >= 0 ? 'text-cyan-400' : 'text-red-400';
-                    const marginColor = f.margemLucro >= 0 ? 'text-emerald-400' : 'text-red-400';
+                    const marginAlert = getMarginAlertState(f);
+                    const marginColor = marginAlert.isLow ? 'text-red-400' : (f.margemLucro >= 0 ? 'text-emerald-400' : 'text-red-400');
                     const expenseCount = (p.despesas || []).length;
                     const categoryEntries = Object.entries(f.gastosPorCategoria || {});
                     const topCategoryEntry = categoryEntries.sort((a, b) => b[1] - a[1])[0] || ['-', 0];
@@ -2082,6 +2150,7 @@
                                                     <span class="w-2.5 h-2.5 rounded-full ${!hasBudget ? 'bg-slate-400' : (isOverBudget ? 'bg-red-400' : 'bg-emerald-400')}"></span>
                                                     ${budgetStatusLabel}
                                                 </span>
+                                                ${marginAlert.isLow ? `<span class="inline-flex items-center gap-2 rounded-2xl border border-red-500/30 bg-red-500/10 px-3 py-2 text-[10px] font-black uppercase tracking-widest text-red-300 balance-due-pulse"><span class="w-2.5 h-2.5 rounded-full bg-red-400"></span>${window.t('margin_alert_low')}</span>` : ''}
                                             </div>
 
                                             <p class="text-[11px] font-black uppercase tracking-[0.22em] text-slate-500 mb-3">${window.t('contract_value')}</p>
@@ -2128,8 +2197,8 @@
                                                 <p class="text-[10px] font-black uppercase tracking-[0.22em] text-slate-500 mb-2">${window.t('real_profit')}</p>
                                                 <p class="${profitMetricClass} font-black ${profitColor} leading-none tracking-tight whitespace-nowrap">${formatCurr(f.lucroBruto)}</p>
                                             </div>
-                                            <div class="rounded-[24px] border border-white/10 bg-white/5 px-5 py-5">
-                                                <p class="text-[10px] font-black uppercase tracking-[0.22em] text-slate-500 mb-2">${window.t('margin')}</p>
+                                            <div class="rounded-[24px] border ${marginAlert.isLow ? 'border-red-500/30 bg-red-500/10 balance-due-pulse' : 'border-white/10 bg-white/5'} px-5 py-5">
+                                                <div class="flex items-center justify-between gap-3 mb-2"><p class="text-[10px] font-black uppercase tracking-[0.22em] text-slate-500">${window.t('margin_current')}</p>${marginAlert.isLow ? `<span class="text-[9px] font-black uppercase tracking-widest text-red-300">${window.t('margin_alert_low')}</span>` : ''}</div>
                                                 <p class="${getMetricDisplayClass(`${f.margemLucro.toFixed(1)}%`, true)} font-black ${marginColor} leading-none tracking-tight whitespace-nowrap">${f.margemLucro.toFixed(1)}%</p>
                                             </div>
                                             <div class="rounded-[24px] border border-white/10 bg-white/5 px-5 py-5">
@@ -2271,7 +2340,7 @@
                     </div>
                     <div class="progress-track print:bg-slate-200 ${scheduleAlert.isLate || scheduleAlert.isDueSoon ? 'timeline-alert-pulse' : ''}"><div class="progress-bar-fill print:!bg-black" style="width: ${prog}%; background-color: ${colorHex};"></div></div>
                     <div class="flex justify-between text-xs font-extrabold uppercase mt-2">
-                        <span class="print:text-black">${p.dataInicio ? new Date(p.dataInicio + 'T12:00:00').toLocaleDateString(state.lang === 'pt' ? 'pt-BR' : 'en-US') : '-'}</span>
+                        <span class="print:text-black">${(p.status === 'Finalizado' && p.dataConclusao ? p.dataConclusao : p.dataInicio) ? new Date(((p.status === 'Finalizado' && p.dataConclusao ? p.dataConclusao : p.dataInicio)) + 'T12:00:00').toLocaleDateString(state.lang === 'pt' ? 'pt-BR' : 'en-US') : '-'}</span>
                         <span class="${scheduleAlert.isLate ? 'text-red-500' : (scheduleAlert.isDueSoon ? 'text-amber-400' : 'text-gold')} print:!text-black">${scheduleAlert.isLate ? window.t('late') : (prog === 100 ? window.t('completed') : (Number.isFinite(e) ? Math.ceil((e - n) / (1000 * 3600 * 24)) : 0) + ' ' + window.t('days_left'))}</span>
                     </div>
                 </div>
@@ -2281,7 +2350,7 @@
                     <p class="text-4xl font-black text-white force-white-text text-center tracking-tight print:text-black">${formatCurr(p.valorTotal)}</p>
                 </div>
 
-                <div class="grid grid-cols-2 gap-4 mt-6 no-print project-finance-snapshot">
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mt-6 no-print project-finance-snapshot">
                     <div class="rounded-[28px] p-4 sm:p-5 border ${clientBorderColor} shadow-inner transition-colors min-h-[208px] flex flex-col bg-gradient-to-br from-black/20 to-transparent overflow-hidden">
                         <div class="mb-4">
                             <p class="text-[10px] font-black uppercase text-slate-400 tracking-[0.22em] text-center">${window.t('client')}</p>
@@ -2316,6 +2385,25 @@
                                 <p class="${getSnapshotValueClass(commissionProgress.remainingToPayTotal)} font-black ${commissionProgress.remainingToPayTotal > 0.009 ? 'text-amber-300' : 'text-emerald-400'} leading-tight tracking-tight whitespace-nowrap">${formatCurr(commissionProgress.remainingToPayTotal)}</p>
                             </div>
                             ${commissionProgress.currentDue > 0.009 ? `<div class="rounded-2xl border border-gold/25 bg-gold/10 px-3.5 py-3"><p class="text-[9px] font-black uppercase tracking-[0.16em] text-gold/80 leading-none mb-2">${window.t('commission_due_now_compact')}</p><p class="${getSnapshotValueClass(commissionProgress.currentDue, true)} font-black text-gold leading-tight tracking-tight whitespace-nowrap">${formatCurr(commissionProgress.currentDue)}</p></div>` : ''}
+                        </div>
+                    </div>
+                    <div class="rounded-[28px] p-4 sm:p-5 border ${getMarginAlertState(f).isLow ? 'border-red-500/30 bg-red-500/10 balance-due-pulse' : 'border-emerald-500/20 bg-emerald-500/10'} shadow-inner transition-colors min-h-[208px] flex flex-col bg-gradient-to-br from-black/20 to-transparent overflow-hidden">
+                        <div class="mb-4">
+                            <div class="flex flex-wrap items-center justify-between gap-2 mb-2">
+                                <p class="text-[10px] font-black uppercase text-slate-400 tracking-[0.22em]">${window.t('seller_margin_cover')}</p>
+                                ${getMarginAlertState(f).isLow ? renderAlertChip(window.t('margin_alert_low'), 'red', true) : ''}
+                            </div>
+                            <p class="text-lg sm:text-xl font-black ${getMarginAlertState(f).isLow ? 'text-red-300' : 'text-emerald-400'} leading-tight">${f.margemLucro.toFixed(1)}%</p>
+                        </div>
+                        <div class="grid grid-cols-1 gap-2.5 mt-auto">
+                            <div class="rounded-2xl border border-white/5 bg-black/25 px-3.5 py-3">
+                                <p class="text-[9px] font-black uppercase tracking-[0.16em] text-slate-500 leading-none mb-2">${window.t('real_profit')}</p>
+                                <p class="${getSnapshotValueClass(f.lucroBruto)} font-black ${f.lucroBruto >= 0 ? 'text-cyan-300' : 'text-red-300'} leading-tight tracking-tight whitespace-nowrap">${formatCurr(f.lucroBruto)}</p>
+                            </div>
+                            <div class="rounded-2xl border border-white/5 bg-black/25 px-3.5 py-3">
+                                <p class="text-[9px] font-black uppercase tracking-[0.16em] text-slate-500 leading-none mb-2">${window.t('total_expenses')}</p>
+                                <p class="${getSnapshotValueClass(f.totalDespesas)} font-black text-slate-50 leading-tight tracking-tight whitespace-nowrap">${formatCurr(f.totalDespesas)}</p>
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -2723,6 +2811,14 @@
         document.getElementById('project-form').onsubmit = async (e) => {
             e.preventDefault(); if (!auth.currentUser) return;
             const id = document.getElementById('edit-id').value;
+            const existingProject = id ? state.projects.find(p => p.id === id) : null;
+            const nextStatus = document.getElementById('f-status').value;
+            let completionDate = existingProject?.dataConclusao || '';
+            if (nextStatus === 'Finalizado') {
+                completionDate = completionDate || new Date().toISOString().split('T')[0];
+            } else {
+                completionDate = '';
+            }
             const d = {
                 numeroProposta: document.getElementById('f-proposta').value || '', numeroInvoice: document.getElementById('f-invoice').value || '',
                 empresa: document.getElementById('f-empresa').value, cliente: document.getElementById('f-cliente').value, vendedor: document.getElementById('f-vendedor').value,
@@ -2730,7 +2826,8 @@
                 orcamento: parseFloat(document.getElementById('f-orcamento').value || 0), 
                 metodo: document.getElementById('f-metodo').value, percComissao: parseInt(document.getElementById('f-comm').value),
                 dataInicio: document.getElementById('f-inicio').value, dataEntrega: document.getElementById('f-entrega').value,
-                status: document.getElementById('f-status').value, updatedAt: serverTimestamp()
+                dataConclusao: completionDate,
+                status: nextStatus, updatedAt: serverTimestamp()
             };
 
             try {
