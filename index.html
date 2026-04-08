@@ -174,7 +174,7 @@
         .balance-due-pulse { animation: balancePulse 1.6s ease-in-out infinite; }
         @keyframes dangerPulse { 0%, 100% { box-shadow: 0 0 0 0 rgba(239,68,68,0.0); border-color: rgba(239,68,68,0.35); } 50% { box-shadow: 0 0 0 6px rgba(239,68,68,0.08), 0 0 28px -10px rgba(239,68,68,0.75); border-color: rgba(239,68,68,0.85); } }
         .timeline-alert-pulse { animation: dangerPulse 1.5s ease-in-out infinite; }
-        .alert-chip { display:inline-flex; align-items:center; gap:.4rem; border-radius:999px; padding:.45rem .75rem; font-size:10px; font-weight:900; text-transform:uppercase; letter-spacing:.14em; white-space:nowrap; }
+        .alert-chip { display:inline-flex; align-items:center; justify-content:center; text-align:center; gap:.4rem; border-radius:999px; padding:.45rem .75rem; font-size:10px; font-weight:900; text-transform:uppercase; letter-spacing:.14em; white-space:normal; line-height:1.1; max-width:100%; }
         .alert-chip-gold { border:1px solid rgba(251,191,36,0.32); background:rgba(251,191,36,0.11); color:#fbbf24; }
         .alert-chip-red { border:1px solid rgba(239,68,68,0.34); background:rgba(239,68,68,0.12); color:#f87171; }
         .alert-chip-amber { border:1px solid rgba(245,158,11,0.34); background:rgba(245,158,11,0.12); color:#fbbf24; }
@@ -2198,8 +2198,9 @@
                                                 <p class="${profitMetricClass} font-black ${profitColor} leading-none tracking-tight whitespace-nowrap">${formatCurr(f.lucroBruto)}</p>
                                             </div>
                                             <div class="rounded-[24px] border ${marginAlert.isLow ? 'border-red-500/30 bg-red-500/10 balance-due-pulse' : 'border-white/10 bg-white/5'} px-5 py-5">
-                                                <div class="flex items-center justify-between gap-3 mb-2"><p class="text-[10px] font-black uppercase tracking-[0.22em] text-slate-500">${window.t('margin_current')}</p>${marginAlert.isLow ? `<span class="text-[9px] font-black uppercase tracking-widest text-red-300">${window.t('margin_alert_low')}</span>` : ''}</div>
-                                                <p class="${getMetricDisplayClass(`${f.margemLucro.toFixed(1)}%`, true)} font-black ${marginColor} leading-none tracking-tight whitespace-nowrap">${f.margemLucro.toFixed(1)}%</p>
+                                                <p class="text-[10px] font-black uppercase tracking-[0.22em] text-slate-500 text-center sm:text-left">${window.t('margin_current')}</p>
+                                                ${marginAlert.isLow ? `<div class="mt-2 mb-3 flex justify-center sm:justify-start">${renderAlertChip(window.t('margin_alert_low'), 'red', true)}</div>` : ''}
+                                                <p class="${getMetricDisplayClass(`${f.margemLucro.toFixed(1)}%`, true)} font-black ${marginColor} leading-none tracking-tight whitespace-nowrap text-center sm:text-left ${marginAlert.isLow ? 'mt-1' : 'mt-2'}">${f.margemLucro.toFixed(1)}%</p>
                                             </div>
                                             <div class="rounded-[24px] border border-white/10 bg-white/5 px-5 py-5">
                                                 <p class="text-[10px] font-black uppercase tracking-[0.22em] text-slate-500 mb-2">${window.t('avg_expense')}</p>
@@ -2368,12 +2369,10 @@
                         </div>
                     </div>
                     <div class="rounded-[28px] p-4 sm:p-5 border ${commissionStatus.toneClass} shadow-inner transition-colors ${commissionStatus.pulse ? 'balance-due-pulse' : ''} min-h-[208px] flex flex-col bg-gradient-to-br from-black/20 to-transparent overflow-hidden">
-                        <div class="mb-3.5">
-                            <div class="flex flex-wrap items-center justify-between gap-2 mb-2">
-                                <p class="text-[10px] font-black uppercase text-slate-400 tracking-[0.22em]">${window.t('commission')}</p>
-                                ${sellerPendingBadge}
-                            </div>
-                            <p class="text-base sm:text-lg font-black ${commissionStatus.headlineClass} leading-tight">${commissionStatus.headline}</p>
+                        <div class="mb-3.5 text-center">
+                            <p class="text-[10px] font-black uppercase text-slate-400 tracking-[0.22em] text-center">${window.t('commission')}</p>
+                            ${sellerPendingBadge ? `<div class="mt-2 flex justify-center">${sellerPendingBadge}</div>` : ''}
+                            <p class="text-base sm:text-lg font-black ${commissionStatus.headlineClass} leading-tight text-center mt-3">${commissionStatus.headline}</p>
                         </div>
                         <div class="grid grid-cols-1 gap-2.5 mt-auto">
                             <div class="rounded-2xl border border-white/5 bg-black/25 px-3.5 py-3">
@@ -2388,12 +2387,10 @@
                         </div>
                     </div>
                     <div class="rounded-[28px] p-4 sm:p-5 border ${getMarginAlertState(f).isLow ? 'border-red-500/30 bg-red-500/10 balance-due-pulse' : 'border-emerald-500/20 bg-emerald-500/10'} shadow-inner transition-colors min-h-[208px] flex flex-col bg-gradient-to-br from-black/20 to-transparent overflow-hidden">
-                        <div class="mb-4">
-                            <div class="flex flex-wrap items-center justify-between gap-2 mb-2">
-                                <p class="text-[10px] font-black uppercase text-slate-400 tracking-[0.22em]">${window.t('seller_margin_cover')}</p>
-                                ${getMarginAlertState(f).isLow ? renderAlertChip(window.t('margin_alert_low'), 'red', true) : ''}
-                            </div>
-                            <p class="text-lg sm:text-xl font-black ${getMarginAlertState(f).isLow ? 'text-red-300' : 'text-emerald-400'} leading-tight">${f.margemLucro.toFixed(1)}%</p>
+                        <div class="mb-4 text-center">
+                            <p class="text-[10px] font-black uppercase text-slate-400 tracking-[0.22em] text-center">${window.t('seller_margin_cover')}</p>
+                            ${getMarginAlertState(f).isLow ? `<div class="mt-2 flex justify-center">${renderAlertChip(window.t('margin_alert_low'), 'red', true)}</div>` : ''}
+                            <p class="text-lg sm:text-xl font-black ${getMarginAlertState(f).isLow ? 'text-red-300' : 'text-emerald-400'} leading-tight text-center mt-3">${f.margemLucro.toFixed(1)}%</p>
                         </div>
                         <div class="grid grid-cols-1 gap-2.5 mt-auto">
                             <div class="rounded-2xl border border-white/5 bg-black/25 px-3.5 py-3">
