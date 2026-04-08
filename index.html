@@ -559,9 +559,9 @@
             no_payments: "Nenhum pagamento efetuado.", make_seller_pay: "Efetuar Pagamento ao Vendedor", back: "Voltar", print_ficha: "Imprimir Ficha",
             budget: "Orçamento (Budget)", total_expenses: "Despesas Totais", real_profit: "Lucro Atual", margin: "Margem Atual",
             budget_available: "Disponível no Budget", budget_over_budget: "Acima do Budget", budget_spent_perc: "% do Budget Usado",
-            budget_health: "Saúde do Budget", budget_status_within: "Dentro do Budget", budget_status_over: "Acima do Budget", budget_not_set: "Budget não definido", budget_not_set_hint: "Cadastre um budget para acompanhar saldo disponível, consumo e alertas desta obra.",
+            budget_health: "Saúde do Budget", budget_status_within: "Dentro do Budget", budget_status_attention: "Atenção 80%", budget_status_critical: "Crítico 90%", budget_status_over: "Acima do Budget", budget_not_set: "Budget não definido", budget_not_set_hint: "Cadastre um budget para acompanhar saldo disponível, consumo e alertas desta obra.",
             budget_remaining_hint: "Valor que ainda pode ser gasto sem ultrapassar o budget planejado.", budget_over_hint: "As despesas já ultrapassaram o budget planejado desta obra.", budget_consumption: "Consumo do budget", expense_entries: "Lançamentos", top_category: "Categoria líder", no_expenses_short: "Sem despesas", chart_spent: "Gasto", chart_remaining: "Disponível", chart_over_budget: "Excedente", logs_project: "Obra / Referência",
-            budget_vs_spent: "Orçamento vs Gasto", dist_category: "Distribuição por Categoria", contract_value: "Valor da Obra", planned_profit: "Lucro Planejado", avg_expense: "Ticket Médio", reg_expense: "Registrar Nova Despesa",
+            budget_vs_spent: "Orçamento vs Gasto", dist_category: "Distribuição por Categoria", contract_value: "Valor da Obra", planned_profit: "Lucro Planejado", avg_expense: "Ticket Médio", largest_expense: "Maior Despesa", reg_expense: "Registrar Nova Despesa",
             add_table: "Adicionar à Tabela", expense_history: "Histórico Completo de Gastos", no_expenses: "Nenhuma despesa lançada nesta obra.",
             desc_expense: "Descrição do gasto",
             rep_title: "Relatório Executivo Geral", rep_title_company: "Relatório Executivo - ", date: "Data", exec_vision: "Visão Executiva Institucional",
@@ -610,9 +610,9 @@
             no_payments: "No payments made.", make_seller_pay: "Make Seller Payment", back: "Back", print_ficha: "Print Sheet",
             budget: "Budget", total_expenses: "Total Expenses", real_profit: "Current Profit", margin: "Current Margin",
             budget_available: "Budget Available", budget_over_budget: "Over Budget", budget_spent_perc: "% Budget Used",
-            budget_health: "Budget Health", budget_status_within: "Within Budget", budget_status_over: "Over Budget", budget_not_set: "Budget not set", budget_not_set_hint: "Set a budget to track available balance, consumption, and alerts for this project.",
+            budget_health: "Budget Health", budget_status_within: "Within Budget", budget_status_attention: "Attention 80%", budget_status_critical: "Critical 90%", budget_status_over: "Over Budget", budget_not_set: "Budget not set", budget_not_set_hint: "Set a budget to track available balance, consumption, and alerts for this project.",
             budget_remaining_hint: "Amount still available to spend before reaching the planned budget.", budget_over_hint: "Expenses have already exceeded the planned budget for this project.", budget_consumption: "Budget consumption", expense_entries: "Entries", top_category: "Top category", no_expenses_short: "No expenses", chart_spent: "Spent", chart_remaining: "Available", chart_over_budget: "Over budget", logs_project: "Project / Reference",
-            budget_vs_spent: "Budget vs Spent", dist_category: "Distribution by Category", contract_value: "Project Value", planned_profit: "Planned Profit", avg_expense: "Average Expense", reg_expense: "Register New Expense",
+            budget_vs_spent: "Budget vs Spent", dist_category: "Distribution by Category", contract_value: "Project Value", planned_profit: "Planned Profit", avg_expense: "Average Expense", largest_expense: "Largest Expense", reg_expense: "Register New Expense",
             add_table: "Add to Table", expense_history: "Complete Expense History", no_expenses: "No expenses registered.",
             desc_expense: "Expense description",
             rep_title: "General Executive Report", rep_title_company: "Executive Report - ", date: "Date", exec_vision: "Institutional Executive Vision",
@@ -2011,13 +2011,28 @@
                     const categoryEntries = Object.entries(f.gastosPorCategoria || {});
                     const topCategoryEntry = categoryEntries.sort((a, b) => b[1] - a[1])[0] || ['-', 0];
                     const topCategoryLabel = topCategoryEntry[1] > 0 ? topCategoryEntry[0] : window.t('no_expenses_short');
-                    const budgetStatusLabel = !hasBudget ? window.t('budget_not_set') : (isOverBudget ? window.t('budget_status_over') : window.t('budget_status_within'));
+                    const budgetAlertLevel = !hasBudget ? 'none' : (isOverBudget ? 'over' : (f.budgetSpentPerc >= 90 ? 'critical' : (f.budgetSpentPerc >= 80 ? 'attention' : 'within')));
+                    const budgetStatusLabel = !hasBudget
+                        ? window.t('budget_not_set')
+                        : (budgetAlertLevel === 'over'
+                            ? window.t('budget_status_over')
+                            : (budgetAlertLevel === 'critical'
+                                ? window.t('budget_status_critical')
+                                : (budgetAlertLevel === 'attention'
+                                    ? window.t('budget_status_attention')
+                                    : window.t('budget_status_within'))));
                     const budgetStatusClass = !hasBudget
                         ? 'border-white/10 bg-white/5 text-slate-300'
-                        : (isOverBudget ? 'border-red-500/30 bg-red-500/10 text-red-300' : 'border-emerald-500/30 bg-emerald-500/10 text-emerald-300');
+                        : (budgetAlertLevel === 'over'
+                            ? 'border-red-500/30 bg-red-500/10 text-red-300'
+                            : (budgetAlertLevel === 'critical'
+                                ? 'border-orange-500/30 bg-orange-500/10 text-orange-300'
+                                : (budgetAlertLevel === 'attention'
+                                    ? 'border-gold/30 bg-gold/10 text-gold'
+                                    : 'border-emerald-500/30 bg-emerald-500/10 text-emerald-300')));
                     const budgetHeadlineLabel = !hasBudget ? window.t('budget_not_set') : (isOverBudget ? window.t('budget_over_budget') : window.t('budget_available'));
                     const budgetHeadlineColor = !hasBudget ? 'text-slate-100' : (isOverBudget ? 'text-red-400' : 'text-emerald-400');
-                    const budgetProgressTone = !hasBudget ? 'bg-slate-600' : (isOverBudget ? 'bg-red-500' : 'bg-emerald-500');
+                    const budgetProgressTone = !hasBudget ? 'bg-slate-600' : (budgetAlertLevel === 'over' ? 'bg-red-500' : (budgetAlertLevel === 'critical' ? 'bg-orange-500' : (budgetAlertLevel === 'attention' ? 'bg-gold' : 'bg-emerald-500')));
                     const budgetProgressWidth = hasBudget ? Math.max(0, Math.min(100, f.budgetSpentPerc)) : 0;
                     const chartSecondaryLabel = isOverBudget ? window.t('chart_over_budget') : window.t('chart_remaining');
                     const chartSecondaryValue = isOverBudget ? formatCurr(Math.max(0, f.totalDespesas - f.orcamento)) : formatCurr(Math.max(0, f.budgetRemaining));
@@ -2030,7 +2045,9 @@
                     const plannedProfitMetricClass = getMetricDisplayClass(plannedProfit === null ? '—' : formatCurr(plannedProfit), true);
                     const plannedProfitColor = plannedProfit === null ? 'text-slate-300' : (plannedProfit >= 0 ? 'text-emerald-300' : 'text-red-300');
                     const avgExpense = expenseCount ? roundMoney(f.totalDespesas / expenseCount) : 0;
+                    const maxExpenseValue = expenseCount ? Math.max(...(p.despesas || []).map(exp => Number(exp.valor) || 0)) : 0;
                     const avgExpenseMetricClass = getMetricDisplayClass(formatCurr(avgExpense), true);
+                    const maxExpenseMetricClass = getMetricDisplayClass(formatCurr(maxExpenseValue), true);
                     const entriesMetricClass = getMetricDisplayClass(String(expenseCount), true);
                     const leaderMetricClass = String(topCategoryLabel || '').length > 14 ? 'text-sm sm:text-base xl:text-lg' : 'text-base sm:text-lg xl:text-xl';
                     const spentSummary = formatCurr(f.totalDespesas);
@@ -2130,8 +2147,8 @@
                                         </div>
                                         <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
                                             <div class="rounded-[24px] border border-white/10 bg-white/5 px-5 py-5">
-                                                <p class="text-[10px] font-black uppercase tracking-[0.22em] text-slate-500 mb-2">${window.t('chart_spent')}</p>
-                                                <p class="${expensesMetricClass} font-black text-red-300 leading-none tracking-tight whitespace-nowrap">${spentSummary}</p>
+                                                <p class="text-[10px] font-black uppercase tracking-[0.22em] text-slate-500 mb-2">${window.t('largest_expense')}</p>
+                                                <p class="${maxExpenseMetricClass} font-black text-slate-100 leading-none tracking-tight whitespace-nowrap">${expenseCount ? formatCurr(maxExpenseValue) : '—'}</p>
                                             </div>
                                             <div class="rounded-[24px] border border-white/10 bg-white/5 px-5 py-5">
                                                 <p class="text-[10px] font-black uppercase tracking-[0.22em] text-slate-500 mb-2">${window.t('planned_profit')}</p>
