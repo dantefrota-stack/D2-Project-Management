@@ -2106,6 +2106,19 @@
             return;
         }
 
+        const activeProject = state.projects.find(project => project.id === state.focusedProject) || null;
+        const filenameParts = [];
+        const displayName = activeProject ? getProjectDisplayName(activeProject) : '';
+        const invoice = String(activeProject?.numeroInvoice || '').trim();
+        const proposal = String(activeProject?.numeroProposta || '').trim();
+        if (displayName) filenameParts.push(displayName);
+        if (invoice) filenameParts.push(`INV ${invoice}`);
+        if (proposal) filenameParts.push(`PROP ${proposal}`);
+        const safePrintTitle = (filenameParts.join(' - ') || document.title || 'Project Report')
+            .replace(/[\/:*?"<>|]+/g, '-')
+            .replace(/\s+/g, ' ')
+            .trim();
+
         const printWindow = window.open('', '_blank', 'width=980,height=1280');
         if (!printWindow) {
             window.print();
@@ -2164,12 +2177,13 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>${document.title || 'Project Report'}</title>
+<title>${safePrintTitle}</title>
 <style>${sheetStyles}</style>
 </head>
 <body>${activeSheet.outerHTML}</body>
 </html>`);
         printWindow.document.close();
+        try { printWindow.document.title = safePrintTitle; } catch (e) {}
 
         const triggerPrint = () => {
             printWindow.focus();
