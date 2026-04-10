@@ -394,6 +394,8 @@
                     </select>
                 </div>
                 <div class="col-span-2 md:col-span-1 space-y-2"><label class="text-xs font-black uppercase text-slate-500 ml-1 tracking-widest" data-i18n="f_client">Cliente</label><input type="text" id="f-cliente" required class="modern-input"></div>
+                <div class="col-span-2 md:col-span-1 space-y-2"><label class="text-xs font-black uppercase text-slate-500 ml-1 tracking-widest" data-i18n="f_project_name">Nome do Projeto / Referência</label><input type="text" id="f-project-name" class="modern-input" placeholder="Ex: 824 Azalea / Kitchen Remodel"></div>
+                <div class="col-span-2 space-y-2"><label class="text-xs font-black uppercase text-slate-500 ml-1 tracking-widest" data-i18n="f_address">Endereço da Obra</label><input type="text" id="f-address" class="modern-input" placeholder="Ex: 824 Azalea St, Boca Raton, FL"></div>
                 <div class="col-span-2 md:col-span-1 space-y-2"><label class="text-xs font-black uppercase text-slate-500 ml-1 tracking-widest" data-i18n="f_seller">Vendedor</label><select id="f-vendedor" required class="modern-input !pr-10"></select></div>
                 
                 <div class="space-y-2">
@@ -583,12 +585,12 @@
 
     const translations = {
         pt: {
-            admin_panel: "Gestão Corporativa", nav_proj: "Projetos", nav_new: "Nova Obra", nav_rep: "Relatórios", nav_users: "Equipe", project_search_label: "Busca rápida", project_search_placeholder: "Buscar por cliente, invoice ou proposta",
+            admin_panel: "Gestão Corporativa", nav_proj: "Projetos", nav_new: "Nova Obra", nav_rep: "Relatórios", nav_users: "Equipe", project_search_label: "Busca rápida", project_search_placeholder: "Buscar por cliente, projeto, endereço, invoice ou proposta",
             form_new_title: "Registrar Obra", team_title: "Gestão de Equipe", btn_team: "Salvar e Autorizar Acesso",
             filter_both: "AMBAS", filter_active: "ATIVAS", filter_archived: "ARQUIVADAS", filter_all: "TODAS",
             project_filter_seller: "Filtro por Vendedor", project_filter_all_sellers: "Todos os vendedores", logs_empty: "Nenhum log registrado", margin_alert_low: "Margem abaixo de 45%", margin_current: "Margem Atual", completed_on: "Concluída em", category_commission: "Comissões", seller_margin_cover: "Margem da obra",
             lbl_email: "E-mail Corporativo", lbl_pass: "Senha de Acesso", btn_login: "Acessar Sistema",
-            f_prop: "Nº Proposta", f_inv: "Nº Invoice", f_unit: "Unidade Responsável", f_client: "Cliente", f_seller: "Vendedor",
+            f_prop: "Nº Proposta", f_inv: "Nº Invoice", f_unit: "Unidade Responsável", f_client: "Cliente", f_project_name: "Nome do Projeto / Referência", f_address: "Endereço da Obra", f_seller: "Vendedor",
             f_gross: "Valor Contrato Bruto", f_budget: "Orçamento Custo (Budget)", f_comm_perc: "% Comissão",
             f_pay_method: "Forma Pagt. Prevista", f_start: "Início", f_end: "Entrega", f_status: "Status",
             btn_save: "Salvar Registro", btn_cancel: "Cancelar",
@@ -635,7 +637,7 @@
             payment_summary_card_fees: "Taxas cartão (cliente)", payment_summary_net_basis: "Base líquida recebida", payment_summary_received: "Recebido do cliente", pay_pending_badge: "Pagamento pendente", timeline_due_soon: "Prazo próximo", invoice_label: "Invoice", proposal_label: "Proposta", client_outstanding: "Saldo cliente a receber", comm_remaining_projected: "Comissão restante projetada", commission_released_settled: "Liberada quitada", commission_total_paid: "Comissão total quitada", commission_due_now: "Pendente agora", commission_paid_from_released: "Pago da liberada", commission_still_to_release: "Ainda a liberar", commission_waiting_receipts: "Aguardando recebimentos", commission_future_pending: "Comissão futura estimada", commission_released_paid_label: "Liberada paga", commission_overall_paid_label: "Pago do total projetado", commission_note_released_only: "A comissão do vendedor foi quitada apenas sobre o valor já recebido do cliente.", commission_note_future_release: "Ainda restam {commission} de comissão projetada, que serão liberados conforme o cliente pagar os {client} em aberto.", commission_note_due_now: "Existe {due} de comissão liberada pendente agora e ainda {future} de comissão projetada aguardando novos recebimentos.", commission_note_waiting_receipts: "Ainda não há comissão liberada. O cliente ainda deve {client} e isso pode liberar até {commission} de comissão projetada.", client_received_label: "Recebido", client_balance_short: "Saldo a receber", commission_paid_simple: "Comissão paga", commission_to_receive_label: "Comissão a receber", commission_to_receive_short: "Comissão restante", commission_partial_status: "Parcial", commission_review_status: "Revisar pagamento", commission_due_now_short: "Pendente agora", client_received_compact: "Recebido", client_balance_compact: "Falta receber", commission_paid_compact: "Paga", commission_remaining_compact: "A receber", commission_due_now_compact: "Pendente agora"
         },
         en: {
-            admin_panel: "Corporate Management", nav_proj: "Projects", nav_new: "New Entry", nav_rep: "Reports", nav_users: "Team", project_search_label: "Quick search", project_search_placeholder: "Search by client, invoice, or proposal",
+            admin_panel: "Corporate Management", nav_proj: "Projects", nav_new: "New Entry", nav_rep: "Reports", nav_users: "Team", project_search_label: "Quick search", project_search_placeholder: "Search by client, project, address, invoice, or proposal",
             form_new_title: "Register Project", team_title: "Team Management", btn_team: "Authorize Access",
             filter_both: "BOTH", filter_active: "ACTIVE", filter_archived: "ARCHIVED", filter_all: "ALL",
             project_filter_seller: "Seller Filter", project_filter_all_sellers: "All sellers", logs_empty: "No logs recorded", margin_alert_low: "Margin below 45%", margin_current: "Current Margin", completed_on: "Completed on", category_commission: "Commissions", seller_margin_cover: "Project margin",
@@ -1180,8 +1182,35 @@
 
     // --- PAGAMENTOS E RECEBIMENTOS (SISTEMA UNIFICADO NO MODAL) ---
 
+    function getProjectPrimaryTitle(project) {
+        return String(project?.cliente || project?.nomeProjeto || project?.nomeObra || '').trim() || (state.lang === 'pt' ? 'Projeto sem nome' : 'Untitled project');
+    }
     function getProjectDisplayName(project) {
-        return project?.cliente || project?.nomeObra || (state.lang === 'pt' ? 'Projeto sem nome' : 'Untitled project');
+        const client = String(project?.cliente || '').trim();
+        const projectName = String(project?.nomeProjeto || project?.nomeObra || '').trim();
+        if (client && projectName && client.toLowerCase() !== projectName.toLowerCase()) return `${client} — ${projectName}`;
+        return client || projectName || (state.lang === 'pt' ? 'Projeto sem nome' : 'Untitled project');
+    }
+    function getProjectSecondaryMeta(project) {
+        const projectName = String(project?.nomeProjeto || '').trim();
+        const address = String(project?.endereco || '').trim();
+        const client = String(project?.cliente || '').trim();
+        const parts = [];
+        if (projectName && projectName.toLowerCase() !== client.toLowerCase()) parts.push(projectName);
+        if (address) parts.push(address);
+        return parts;
+    }
+    function renderProjectIdentityBlock(project, compact = false) {
+        const parts = getProjectSecondaryMeta(project);
+        if (!parts.length) return '';
+        if (compact) {
+            return `<div class="mt-2.5 space-y-1.5">${parts.map((part, idx) => idx === 0
+                ? `<p class="text-[11px] sm:text-xs font-black uppercase tracking-[0.14em] text-cyan-300 truncate" title="${escapeInlineHtml(part)}">${escapeInlineHtml(part)}</p>`
+                : `<p class="text-[11px] text-slate-400 truncate flex items-center gap-1.5" title="${escapeInlineHtml(part)}"><i data-lucide="map-pin" class="w-3.5 h-3.5 shrink-0"></i><span class="truncate">${escapeInlineHtml(part)}</span></p>`).join('')}</div>`;
+        }
+        return `<div class="space-y-2">${parts.map((part, idx) => idx === 0
+            ? `<p class="text-xs sm:text-sm font-black uppercase tracking-[0.18em] text-cyan-300" title="${escapeInlineHtml(part)}">${escapeInlineHtml(part)}</p>`
+            : `<p class="text-sm text-slate-400 flex items-center gap-2" title="${escapeInlineHtml(part)}"><i data-lucide="map-pin" class="w-4 h-4 shrink-0"></i><span class="truncate">${escapeInlineHtml(part)}</span></p>`).join('')}</div>`;
     }
     function getProjectReferenceMeta(project) {
         const invoice = String(project?.numeroInvoice || '').trim();
@@ -1979,7 +2008,7 @@
         }
 
         document.getElementById('edit-id').value = id; document.getElementById('f-proposta').value = p.numeroProposta || ''; document.getElementById('f-invoice').value = p.numeroInvoice || ''; document.getElementById('f-empresa').value = p.empresa || 'Smart Home';
-        document.getElementById('f-cliente').value = p.cliente || ''; document.getElementById('f-vendedor').value = p.vendedor || ''; document.getElementById('f-valor').value = p.valorTotal ?? ''; document.getElementById('f-orcamento').value = p.orcamento ?? ''; 
+        document.getElementById('f-cliente').value = p.cliente || ''; document.getElementById('f-project-name').value = p.nomeProjeto || ''; document.getElementById('f-address').value = p.endereco || ''; document.getElementById('f-vendedor').value = p.vendedor || ''; document.getElementById('f-valor').value = p.valorTotal ?? ''; document.getElementById('f-orcamento').value = p.orcamento ?? ''; 
         document.getElementById('f-comm').value = p.percComissao ?? 5; document.getElementById('f-metodo').value = p.metodo || 'Zelle'; document.getElementById('f-inicio').value = p.dataInicio || ''; document.getElementById('f-entrega').value = p.dataEntrega || ''; 
         document.getElementById('f-status').value = p.status || '✅ Aprovado';
         window.showView('new');
@@ -2101,7 +2130,7 @@
             const isArchived = p.archived === true;
             const matchArchive = state.archiveFilter === 'all' ? true : (state.archiveFilter === 'archived' ? isArchived : !isArchived);
             const q = state.projectSearchQuery;
-            const searchable = `${p.cliente || ''} ${p.numeroInvoice || ''} ${p.numeroProposta || ''}`.toLowerCase();
+            const searchable = `${p.cliente || ''} ${p.nomeProjeto || ''} ${p.endereco || ''} ${p.numeroInvoice || ''} ${p.numeroProposta || ''}`.toLowerCase();
             const matchSearch = !q || searchable.includes(q);
             return matchCompany && matchSelectedTab && matchUser && matchSellerFilter && matchArchive && matchSearch;
         });
@@ -2469,7 +2498,7 @@
 
                     <div class="hidden print:block mb-8 border-b border-slate-300 pb-4">
                         <div class="mb-4"><img src="logo-D2-Group-preto.png" class="h-12"></div>
-                        <h4 class="font-black text-3xl uppercase tracking-tight text-black leading-none">${p.cliente || 'Sem Nome'}</h4>
+                        <h4 class="font-black text-3xl uppercase tracking-tight text-black leading-none">${escapeInlineHtml(getProjectPrimaryTitle(p))}</h4>
                         <p class="text-sm font-bold text-slate-500 uppercase tracking-widest mt-2">${p.empresa} | Módulo: ${moduleTitle}</p>
                     </div>
 
@@ -2512,7 +2541,8 @@
                     </div>
                     <div class="space-y-4">
                         <div>
-                            <h4 class="compact-card-name text-white force-white-text">${p.cliente || 'Sem Nome'}</h4>
+                            <h4 class="compact-card-name text-white force-white-text">${escapeInlineHtml(getProjectPrimaryTitle(p))}</h4>
+                            ${renderProjectIdentityBlock(p, true)}
                         </div>
                         ${p.status === 'Finalizado' ? '' : `<div class="flex flex-wrap items-center gap-2"><span class="compact-status-chip ${compactStatusTone}">${tStatus(p.status)}</span>${timelineBadge ? `<span class="shrink-0">${timelineBadge}</span>` : ''}</div>`}
                         <div class="compact-kpi-card">
@@ -2524,9 +2554,15 @@
                                 <p class="compact-kpi-label mb-2">${window.t('prop_inv')}</p>
                                 <p class="text-base sm:text-lg font-black text-slate-100 leading-tight whitespace-nowrap">${quickInvoice} <span class="text-slate-600 font-normal mx-1">|</span> ${quickProposal}</p>
                             </div>
-                            <div class="compact-kpi-card">
-                                <p class="compact-kpi-label mb-2">${window.t('status_obra')}</p>
-                                <p class="text-base sm:text-lg font-black ${compactStatusTone} leading-tight">${tStatus(p.status)}</p>
+                            <div class="compact-kpi-card flex flex-col justify-between">
+                                <div>
+                                    <p class="compact-kpi-label mb-2">${window.t('seller')}</p>
+                                    <p class="text-sm sm:text-base font-black text-slate-100 leading-tight truncate" title="${escapeInlineHtml(getUserDisplayName(p.vendedor, '--'))}">${escapeInlineHtml(getUserDisplayName(p.vendedor, '--'))}</p>
+                                </div>
+                                <div class="mt-3 pt-3 border-t border-white/5">
+                                    <p class="compact-kpi-label mb-2">${window.t('status_obra')}</p>
+                                    <p class="text-base sm:text-lg font-black ${compactStatusTone} leading-tight">${tStatus(p.status)}</p>
+                                </div>
                             </div>
                         </div>
                         <div class="space-y-3 pt-1">
@@ -2556,7 +2592,7 @@
                     </div>
                 </div>
 
-                <div class="text-left mb-8 space-y-4 relative z-[1]"><h4 class="font-black text-3xl uppercase tracking-tight text-white force-white-text leading-none print:text-black">${p.cliente || 'Sem Nome'}</h4>${finishedBadge}</div>
+                <div class="text-left mb-8 space-y-4 relative z-[1]"><div class="space-y-3"><h4 class="font-black text-3xl uppercase tracking-tight text-white force-white-text leading-none print:text-black">${escapeInlineHtml(getProjectPrimaryTitle(p))}</h4>${renderProjectIdentityBlock(p)}</div>${finishedBadge}</div>
 
                 <div class="grid grid-cols-2 gap-y-6 gap-x-4 p-6 bg-black/20 rounded-[24px] border border-white/5 mb-10 text-left shadow-inner print:bg-transparent print:border-slate-200">
                     <div><p class="text-xs font-black text-slate-500 uppercase tracking-widest mb-1.5">${window.t('seller')}</p><p class="text-sm font-bold text-slate-200 truncate print:text-black" title="${escapeInlineHtml(getUserDisplayName(p.vendedor, p.vendedor || "--"))}">${escapeInlineHtml(getUserDisplayName(p.vendedor, '--'))}</p></div>
@@ -2832,7 +2868,7 @@
                 if (coProjects.length === 0) return '';
                 const tableRows = coProjects.map(({p, f}) => {
                     const profitCol = canViewCosts ? `<td class="p-3 sm:p-4 text-right font-black text-gold print:text-amber-700">${formatCurr(f.totalPaid)}</td><td class="p-3 sm:p-4 text-right font-black ${f.lucroBruto >= 0 ? 'text-cyan-400 print:text-cyan-600' : 'text-red-400 print:text-red-500'}">${formatCurr(f.lucroBruto)}</td><td class="p-3 sm:p-4 text-right font-black ${f.margemLucro >= 0 ? 'text-indigo-400 print:text-indigo-600' : 'text-red-400 print:text-red-500'}">${f.margemLucro.toFixed(1)}%</td>` : `<td class="p-3 sm:p-4 text-right font-black text-gold print:text-amber-700">${formatCurr(f.totalPaid)}</td>`;
-                    return `<tr class="border-b border-white/5 text-[10px] sm:text-xs text-left text-slate-300 print:text-slate-800 hover:bg-white/5 transition-colors print:border-slate-100"><td class="p-3 sm:p-4 font-bold text-[9px] sm:text-[10px] text-slate-400 print:text-slate-500">${p.numeroInvoice || '-'} / ${p.numeroProposta || '-'}</td><td class="p-3 sm:p-4 font-black uppercase text-white print:text-black"><div class="flex flex-col"><span>${p.cliente || ''}</span><span class="text-[8px] sm:text-[9px] font-bold text-slate-500 print:text-slate-400 mt-0.5">${tStatus(p.status)}</span></div></td><td class="p-3 sm:p-4 font-bold text-slate-300 print:text-slate-600">${escapeInlineHtml(getUserDisplayName(p.vendedor, ''))}</td><td class="p-3 sm:p-4 text-right">${formatCurr(p.valorTotal)}</td><td class="p-3 sm:p-4 text-right font-black text-emerald-400 print:text-emerald-600">${formatCurr(f.totalRecebido)}</td><td class="p-3 sm:p-4 text-right font-black text-amber-400 print:text-amber-600">${formatCurr(f.commLiberada)}</td>${profitCol}</tr>`;
+                    return `<tr class="border-b border-white/5 text-[10px] sm:text-xs text-left text-slate-300 print:text-slate-800 hover:bg-white/5 transition-colors print:border-slate-100"><td class="p-3 sm:p-4 font-bold text-[9px] sm:text-[10px] text-slate-400 print:text-slate-500">${p.numeroInvoice || '-'} / ${p.numeroProposta || '-'}</td><td class="p-3 sm:p-4 font-black uppercase text-white print:text-black"><div class="flex flex-col"><span>${escapeInlineHtml(getProjectPrimaryTitle(p))}</span>${getProjectSecondaryMeta(p).map(meta => `<span class=\"text-[8px] sm:text-[9px] font-bold text-slate-500 print:text-slate-400 mt-0.5\">${escapeInlineHtml(meta)}</span>`).join('')}<span class="text-[8px] sm:text-[9px] font-bold text-slate-500 print:text-slate-400 mt-0.5">${tStatus(p.status)}</span></div></td><td class="p-3 sm:p-4 font-bold text-slate-300 print:text-slate-600">${escapeInlineHtml(getUserDisplayName(p.vendedor, ''))}</td><td class="p-3 sm:p-4 text-right">${formatCurr(p.valorTotal)}</td><td class="p-3 sm:p-4 text-right font-black text-emerald-400 print:text-emerald-600">${formatCurr(f.totalRecebido)}</td><td class="p-3 sm:p-4 text-right font-black text-amber-400 print:text-amber-600">${formatCurr(f.commLiberada)}</td>${profitCol}</tr>`;
                 }).join('');
                 return `<div class="mb-10"><h4 class="text-sm font-black text-slate-200 print:text-slate-700 bg-black/40 print:bg-slate-100 inline-block px-4 py-2 rounded-t-xl uppercase tracking-widest border border-b-0 border-white/5 print:border-slate-200">${companyLabel}</h4><div class="overflow-x-auto print:overflow-visible border border-white/5 print:border-slate-200 rounded-xl rounded-tl-none print:border-none shadow-sm"><table class="w-full"><thead class="bg-black/20 print:bg-slate-50 border-b border-white/5 print:border-slate-200 print:bg-transparent"><tr class="font-black uppercase text-[8px] sm:text-[9px] text-slate-400 print:text-slate-500 text-left tracking-widest"><th class="p-3 sm:p-4">${window.t('prop_inv')}</th><th class="p-3 sm:p-4">${window.t('f_client')}</th><th class="p-3 sm:p-4">${window.t('f_seller')}</th><th class="p-3 sm:p-4 text-right">${window.t('f_gross')}</th><th class="p-3 sm:p-4 text-right bg-emerald-500/10 print:bg-emerald-50 text-emerald-400 print:text-emerald-700 print:bg-transparent">Recebido</th><th class="p-3 sm:p-4 text-right bg-amber-500/10 print:bg-amber-50 text-amber-400 print:text-amber-700 print:bg-transparent">${window.t('comm_released')}</th><th class="p-3 sm:p-4 text-right bg-gold/10 print:bg-amber-50 text-gold print:text-amber-700 print:bg-transparent">${window.t('paid_seller')}</th>${canViewCosts ? `<th class="p-3 sm:p-4 text-right bg-cyan-950/20 print:bg-cyan-50 text-cyan-400 print:text-cyan-700 print:bg-transparent">${window.t('real_profit')}</th><th class="p-3 sm:p-4 text-right bg-indigo-900/20 print:bg-indigo-50 text-indigo-400 print:text-indigo-700 print:bg-transparent">${window.t('margin')}</th>` : ''}</tr></thead><tbody>${tableRows}</tbody></table></div></div>`;
             };
@@ -2871,19 +2907,19 @@
             
             if (state.reportActiveKpi === 'receita') {
                 kpiTitle = `Detalhamento: ${window.t('gross_revenue')}`;
-                sRows = enrichedProjects.map(({p}) => `<tr class="border-b border-white/5 print:border-slate-100 text-[10px] sm:text-xs text-left text-slate-300 print:text-slate-800 hover:bg-white/5 transition-colors"><td class="p-3 sm:p-4 font-bold text-slate-400 print:text-slate-500">${p.numeroInvoice || '-'} / ${p.numeroProposta || '-'}</td><td class="p-3 sm:p-4 font-black uppercase text-white print:text-black"><div class="flex flex-col"><span>${p.cliente || ''}</span><span class="text-[8px] sm:text-[9px] font-bold text-slate-500 print:text-slate-400 mt-0.5">${tStatus(p.status)}</span></div></td><td class="p-3 sm:p-4 font-bold text-slate-300 print:text-slate-600">${escapeInlineHtml(getUserDisplayName(p.vendedor, ''))}</td><td class="p-3 sm:p-4 text-right font-black text-slate-100 print:text-slate-800 text-sm">${formatCurr(p.valorTotal)}</td></tr>`).join('');
+                sRows = enrichedProjects.map(({p}) => `<tr class="border-b border-white/5 print:border-slate-100 text-[10px] sm:text-xs text-left text-slate-300 print:text-slate-800 hover:bg-white/5 transition-colors"><td class="p-3 sm:p-4 font-bold text-slate-400 print:text-slate-500">${p.numeroInvoice || '-'} / ${p.numeroProposta || '-'}</td><td class="p-3 sm:p-4 font-black uppercase text-white print:text-black"><div class="flex flex-col"><span>${escapeInlineHtml(getProjectPrimaryTitle(p))}</span>${getProjectSecondaryMeta(p).map(meta => `<span class=\"text-[8px] sm:text-[9px] font-bold text-slate-500 print:text-slate-400 mt-0.5\">${escapeInlineHtml(meta)}</span>`).join('')}<span class="text-[8px] sm:text-[9px] font-bold text-slate-500 print:text-slate-400 mt-0.5">${tStatus(p.status)}</span></div></td><td class="p-3 sm:p-4 font-bold text-slate-300 print:text-slate-600">${escapeInlineHtml(getUserDisplayName(p.vendedor, ''))}</td><td class="p-3 sm:p-4 text-right font-black text-slate-100 print:text-slate-800 text-sm">${formatCurr(p.valorTotal)}</td></tr>`).join('');
                 specificTableHTML = `<table class="w-full"><thead class="bg-black/20 print:bg-slate-100 border-b border-white/5 print:border-slate-200 print:bg-transparent"><tr class="font-black uppercase text-[8px] sm:text-[9px] text-slate-400 print:text-slate-500 text-left tracking-widest"><th class="p-3 sm:p-4">${window.t('prop_inv')}</th><th class="p-3 sm:p-4">${window.t('f_client')}</th><th class="p-3 sm:p-4">${window.t('f_seller')}</th><th class="p-3 sm:p-4 text-right">${window.t('f_gross')}</th></tr></thead><tbody>${sRows || `<tr><td colspan="4" class="p-6 text-center text-slate-500 text-xs italic">${window.t('no_active_works')}</td></tr>`}</tbody></table>`;
             } else if (state.reportActiveKpi === 'entradas') {
                 kpiTitle = `Detalhamento: ${window.t('entries')}`;
-                sRows = enrichedProjects.filter(({f}) => f.totalRecebido > 0).map(({p, f}) => `<tr class="border-b border-white/5 print:border-slate-100 text-[10px] sm:text-xs text-left text-slate-300 print:text-slate-800 hover:bg-white/5 transition-colors"><td class="p-3 sm:p-4 font-bold text-slate-400 print:text-slate-500">${p.numeroInvoice || '-'} / ${p.numeroProposta || '-'}</td><td class="p-3 sm:p-4 font-black uppercase text-white print:text-black"><div class="flex flex-col"><span>${p.cliente || ''}</span><span class="text-[8px] sm:text-[9px] font-bold text-slate-500 print:text-slate-400 mt-0.5">${tStatus(p.status)}</span></div></td><td class="p-3 sm:p-4 font-bold text-slate-300 print:text-slate-600">${escapeInlineHtml(getUserDisplayName(p.vendedor, ''))}</td><td class="p-3 sm:p-4 text-right text-slate-400 print:text-slate-500">${formatCurr(p.valorTotal)}</td><td class="p-3 sm:p-4 text-right font-black text-emerald-400 print:text-emerald-600 text-sm">${formatCurr(f.totalRecebido)}</td></tr>`).join('');
+                sRows = enrichedProjects.filter(({f}) => f.totalRecebido > 0).map(({p, f}) => `<tr class="border-b border-white/5 print:border-slate-100 text-[10px] sm:text-xs text-left text-slate-300 print:text-slate-800 hover:bg-white/5 transition-colors"><td class="p-3 sm:p-4 font-bold text-slate-400 print:text-slate-500">${p.numeroInvoice || '-'} / ${p.numeroProposta || '-'}</td><td class="p-3 sm:p-4 font-black uppercase text-white print:text-black"><div class="flex flex-col"><span>${escapeInlineHtml(getProjectPrimaryTitle(p))}</span>${getProjectSecondaryMeta(p).map(meta => `<span class=\"text-[8px] sm:text-[9px] font-bold text-slate-500 print:text-slate-400 mt-0.5\">${escapeInlineHtml(meta)}</span>`).join('')}<span class="text-[8px] sm:text-[9px] font-bold text-slate-500 print:text-slate-400 mt-0.5">${tStatus(p.status)}</span></div></td><td class="p-3 sm:p-4 font-bold text-slate-300 print:text-slate-600">${escapeInlineHtml(getUserDisplayName(p.vendedor, ''))}</td><td class="p-3 sm:p-4 text-right text-slate-400 print:text-slate-500">${formatCurr(p.valorTotal)}</td><td class="p-3 sm:p-4 text-right font-black text-emerald-400 print:text-emerald-600 text-sm">${formatCurr(f.totalRecebido)}</td></tr>`).join('');
                 specificTableHTML = `<table class="w-full"><thead class="bg-black/20 print:bg-slate-100 border-b border-white/5 print:border-slate-200 print:bg-transparent"><tr class="font-black uppercase text-[8px] sm:text-[9px] text-slate-400 print:text-slate-500 text-left tracking-widest"><th class="p-3 sm:p-4">${window.t('prop_inv')}</th><th class="p-3 sm:p-4">${window.t('f_client')}</th><th class="p-3 sm:p-4">${window.t('f_seller')}</th><th class="p-3 sm:p-4 text-right">${window.t('f_gross')}</th><th class="p-3 sm:p-4 text-right">Total Recebido</th></tr></thead><tbody>${sRows || `<tr><td colspan="5" class="p-6 text-center text-slate-500 text-xs italic">Nenhum recebimento encontrado.</td></tr>`}</tbody></table>`;
             } else if (state.reportActiveKpi === 'fluxo') {
                 kpiTitle = `Detalhamento: ${window.t('to_receive')}`;
-                sRows = enrichedProjects.filter(({p, f}) => (p.valorTotal - f.totalRecebido) > 0).map(({p, f}) => `<tr class="border-b border-white/5 print:border-slate-100 text-[10px] sm:text-xs text-left text-slate-300 print:text-slate-800 hover:bg-white/5 transition-colors"><td class="p-3 sm:p-4 font-bold text-slate-400 print:text-slate-500">${p.numeroInvoice || '-'} / ${p.numeroProposta || '-'}</td><td class="p-3 sm:p-4 font-black uppercase text-white print:text-black"><div class="flex flex-col"><span>${p.cliente || ''}</span><span class="text-[8px] sm:text-[9px] font-bold text-slate-500 print:text-slate-400 mt-0.5">${tStatus(p.status)}</span></div></td><td class="p-3 sm:p-4 font-bold text-slate-300 print:text-slate-600">${escapeInlineHtml(getUserDisplayName(p.vendedor, ''))}</td><td class="p-3 sm:p-4 text-right text-slate-400 print:text-slate-500">${formatCurr(p.valorTotal)}</td><td class="p-3 sm:p-4 text-right text-emerald-400 print:text-emerald-600">${formatCurr(f.totalRecebido)}</td><td class="p-3 sm:p-4 text-right font-black text-amber-400 print:text-amber-500 text-sm">${formatCurr(p.valorTotal - f.totalRecebido)}</td></tr>`).join('');
+                sRows = enrichedProjects.filter(({p, f}) => (p.valorTotal - f.totalRecebido) > 0).map(({p, f}) => `<tr class="border-b border-white/5 print:border-slate-100 text-[10px] sm:text-xs text-left text-slate-300 print:text-slate-800 hover:bg-white/5 transition-colors"><td class="p-3 sm:p-4 font-bold text-slate-400 print:text-slate-500">${p.numeroInvoice || '-'} / ${p.numeroProposta || '-'}</td><td class="p-3 sm:p-4 font-black uppercase text-white print:text-black"><div class="flex flex-col"><span>${escapeInlineHtml(getProjectPrimaryTitle(p))}</span>${getProjectSecondaryMeta(p).map(meta => `<span class=\"text-[8px] sm:text-[9px] font-bold text-slate-500 print:text-slate-400 mt-0.5\">${escapeInlineHtml(meta)}</span>`).join('')}<span class="text-[8px] sm:text-[9px] font-bold text-slate-500 print:text-slate-400 mt-0.5">${tStatus(p.status)}</span></div></td><td class="p-3 sm:p-4 font-bold text-slate-300 print:text-slate-600">${escapeInlineHtml(getUserDisplayName(p.vendedor, ''))}</td><td class="p-3 sm:p-4 text-right text-slate-400 print:text-slate-500">${formatCurr(p.valorTotal)}</td><td class="p-3 sm:p-4 text-right text-emerald-400 print:text-emerald-600">${formatCurr(f.totalRecebido)}</td><td class="p-3 sm:p-4 text-right font-black text-amber-400 print:text-amber-500 text-sm">${formatCurr(p.valorTotal - f.totalRecebido)}</td></tr>`).join('');
                 specificTableHTML = `<table class="w-full"><thead class="bg-black/20 print:bg-slate-100 border-b border-white/5 print:border-slate-200 print:bg-transparent"><tr class="font-black uppercase text-[8px] sm:text-[9px] text-slate-400 print:text-slate-500 text-left tracking-widest"><th class="p-3 sm:p-4">${window.t('prop_inv')}</th><th class="p-3 sm:p-4">${window.t('f_client')}</th><th class="p-3 sm:p-4">${window.t('f_seller')}</th><th class="p-3 sm:p-4 text-right">${window.t('f_gross')}</th><th class="p-3 sm:p-4 text-right">Recebido</th><th class="p-3 sm:p-4 text-right">${window.t('missing_receive')}</th></tr></thead><tbody>${sRows || `<tr><td colspan="6" class="p-6 text-center text-slate-500 text-xs italic">Nenhum saldo pendente.</td></tr>`}</tbody></table>`;
             } else if (state.reportActiveKpi === 'lucro') {
                 kpiTitle = `Detalhamento: ${window.t('est_profit')} e ${window.t('margin')}`;
-                sRows = enrichedProjects.map(({p, f}) => `<tr class="border-b border-white/5 print:border-slate-100 text-[10px] sm:text-xs text-left text-slate-300 print:text-slate-800 hover:bg-white/5 transition-colors"><td class="p-3 sm:p-4 font-bold text-slate-400 print:text-slate-500">${p.numeroInvoice || '-'} / ${p.numeroProposta || '-'}</td><td class="p-3 sm:p-4 font-black uppercase text-white print:text-black"><div class="flex flex-col"><span>${p.cliente || ''}</span><span class="text-[8px] sm:text-[9px] font-bold text-slate-500 print:text-slate-400 mt-0.5">${tStatus(p.status)}</span></div></td><td class="p-3 sm:p-4 text-right text-slate-400 print:text-slate-500">${formatCurr(p.valorTotal)}</td><td class="p-3 sm:p-4 text-right text-red-400 print:text-red-500">${formatCurr(f.totalDespesas)}</td><td class="p-3 sm:p-4 text-right font-black ${f.lucroBruto >= 0 ? 'text-cyan-400 print:text-cyan-600' : 'text-red-500 print:text-red-600'} text-sm">${formatCurr(f.lucroBruto)}</td><td class="p-3 sm:p-4 text-right font-black ${f.margemLucro >= 0 ? 'text-indigo-400 print:text-indigo-500' : 'text-red-400 print:text-red-500'} text-sm">${f.margemLucro.toFixed(1)}%</td></tr>`).join('');
+                sRows = enrichedProjects.map(({p, f}) => `<tr class="border-b border-white/5 print:border-slate-100 text-[10px] sm:text-xs text-left text-slate-300 print:text-slate-800 hover:bg-white/5 transition-colors"><td class="p-3 sm:p-4 font-bold text-slate-400 print:text-slate-500">${p.numeroInvoice || '-'} / ${p.numeroProposta || '-'}</td><td class="p-3 sm:p-4 font-black uppercase text-white print:text-black"><div class="flex flex-col"><span>${escapeInlineHtml(getProjectPrimaryTitle(p))}</span>${getProjectSecondaryMeta(p).map(meta => `<span class=\"text-[8px] sm:text-[9px] font-bold text-slate-500 print:text-slate-400 mt-0.5\">${escapeInlineHtml(meta)}</span>`).join('')}<span class="text-[8px] sm:text-[9px] font-bold text-slate-500 print:text-slate-400 mt-0.5">${tStatus(p.status)}</span></div></td><td class="p-3 sm:p-4 text-right text-slate-400 print:text-slate-500">${formatCurr(p.valorTotal)}</td><td class="p-3 sm:p-4 text-right text-red-400 print:text-red-500">${formatCurr(f.totalDespesas)}</td><td class="p-3 sm:p-4 text-right font-black ${f.lucroBruto >= 0 ? 'text-cyan-400 print:text-cyan-600' : 'text-red-500 print:text-red-600'} text-sm">${formatCurr(f.lucroBruto)}</td><td class="p-3 sm:p-4 text-right font-black ${f.margemLucro >= 0 ? 'text-indigo-400 print:text-indigo-500' : 'text-red-400 print:text-red-500'} text-sm">${f.margemLucro.toFixed(1)}%</td></tr>`).join('');
                 specificTableHTML = `<table class="w-full"><thead class="bg-black/20 print:bg-slate-100 border-b border-white/5 print:border-slate-200 print:bg-transparent"><tr class="font-black uppercase text-[8px] sm:text-[9px] text-slate-400 print:text-slate-500 text-left tracking-widest"><th class="p-3 sm:p-4">${window.t('prop_inv')}</th><th class="p-3 sm:p-4">${window.t('f_client')}</th><th class="p-3 sm:p-4 text-right">${window.t('f_gross')}</th><th class="p-3 sm:p-4 text-right">${window.t('total_expenses')}</th><th class="p-3 sm:p-4 text-right">${window.t('real_profit')}</th><th class="p-3 sm:p-4 text-right">${window.t('margin')} %</th></tr></thead><tbody>${sRows || `<tr><td colspan="6" class="p-6 text-center text-slate-500 text-xs italic">${window.t('no_active_works')}</td></tr>`}</tbody></table>`;
             } else if (state.reportActiveKpi.startsWith('status_')) {
                 const targetStatusMap = {
@@ -2894,7 +2930,7 @@
                 };
                 const targetStatus = targetStatusMap[state.reportActiveKpi];
                 kpiTitle = `Funil: ${tStatus(targetStatus).replace('✅ ', '')}`;
-                sRows = enrichedProjects.filter(({p}) => p.status === targetStatus).map(({p, f}) => `<tr class="border-b border-white/5 print:border-slate-100 text-[10px] sm:text-xs text-left text-slate-300 print:text-slate-800 hover:bg-white/5 transition-colors"><td class="p-3 sm:p-4 font-bold text-slate-400 print:text-slate-500">${p.numeroInvoice || '-'} / ${p.numeroProposta || '-'}</td><td class="p-3 sm:p-4 font-black uppercase text-white print:text-black"><div class="flex flex-col"><span>${p.cliente || ''}</span><span class="text-[8px] sm:text-[9px] font-bold text-slate-500 print:text-slate-400 mt-0.5">${tStatus(p.status)}</span></div></td><td class="p-3 sm:p-4 font-bold text-slate-300 print:text-slate-600">${escapeInlineHtml(getUserDisplayName(p.vendedor, ''))}</td><td class="p-3 sm:p-4 text-right font-black text-slate-100 print:text-slate-800 text-sm">${formatCurr(p.valorTotal)}</td></tr>`).join('');
+                sRows = enrichedProjects.filter(({p}) => p.status === targetStatus).map(({p, f}) => `<tr class="border-b border-white/5 print:border-slate-100 text-[10px] sm:text-xs text-left text-slate-300 print:text-slate-800 hover:bg-white/5 transition-colors"><td class="p-3 sm:p-4 font-bold text-slate-400 print:text-slate-500">${p.numeroInvoice || '-'} / ${p.numeroProposta || '-'}</td><td class="p-3 sm:p-4 font-black uppercase text-white print:text-black"><div class="flex flex-col"><span>${escapeInlineHtml(getProjectPrimaryTitle(p))}</span>${getProjectSecondaryMeta(p).map(meta => `<span class=\"text-[8px] sm:text-[9px] font-bold text-slate-500 print:text-slate-400 mt-0.5\">${escapeInlineHtml(meta)}</span>`).join('')}<span class="text-[8px] sm:text-[9px] font-bold text-slate-500 print:text-slate-400 mt-0.5">${tStatus(p.status)}</span></div></td><td class="p-3 sm:p-4 font-bold text-slate-300 print:text-slate-600">${escapeInlineHtml(getUserDisplayName(p.vendedor, ''))}</td><td class="p-3 sm:p-4 text-right font-black text-slate-100 print:text-slate-800 text-sm">${formatCurr(p.valorTotal)}</td></tr>`).join('');
                 specificTableHTML = `<table class="w-full"><thead class="bg-black/20 print:bg-slate-100 border-b border-white/5 print:border-slate-200 print:bg-transparent"><tr class="font-black uppercase text-[8px] sm:text-[9px] text-slate-400 print:text-slate-500 text-left tracking-widest"><th class="p-3 sm:p-4">${window.t('prop_inv')}</th><th class="p-3 sm:p-4">${window.t('f_client')}</th><th class="p-3 sm:p-4">${window.t('f_seller')}</th><th class="p-3 sm:p-4 text-right">${window.t('f_gross')}</th></tr></thead><tbody>${sRows || `<tr><td colspan="4" class="p-6 text-center text-slate-500 text-xs italic">Nenhuma obra nesta etapa.</td></tr>`}</tbody></table>`;
             }
 
@@ -3083,7 +3119,7 @@
             }
             const d = {
                 numeroProposta: document.getElementById('f-proposta').value || '', numeroInvoice: document.getElementById('f-invoice').value || '',
-                empresa: document.getElementById('f-empresa').value, cliente: document.getElementById('f-cliente').value, vendedor: document.getElementById('f-vendedor').value,
+                empresa: document.getElementById('f-empresa').value, cliente: document.getElementById('f-cliente').value, nomeProjeto: document.getElementById('f-project-name').value || '', endereco: document.getElementById('f-address').value || '', vendedor: document.getElementById('f-vendedor').value,
                 valorTotal: parseFloat(document.getElementById('f-valor').value),
                 orcamento: parseFloat(document.getElementById('f-orcamento').value || 0), 
                 metodo: document.getElementById('f-metodo').value, percComissao: parseInt(document.getElementById('f-comm').value),
