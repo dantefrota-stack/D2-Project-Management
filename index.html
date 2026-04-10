@@ -1167,24 +1167,39 @@
     function escapeInlineHtml(value) {
         return String(value ?? '').replace(/[&<>"']/g, char => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[char] || char));
     }
+    function getCompanyDisplayName(companyKey) {
+        if (companyKey === 'Smart Home') return 'D2 Smart Home';
+        if (companyKey === 'HVAC') return 'D2 HVAC Solutions';
+        if (companyKey === 'Ambas') return state.lang === 'pt' ? 'Ambas' : 'Both';
+        return String(companyKey || '').trim() || (state.lang === 'pt' ? 'Não definida' : 'Not set');
+    }
     function renderProjectDocumentMeta(project, compact = false) {
         const invoice = String(project?.numeroInvoice || '').trim();
         const proposal = String(project?.numeroProposta || '').trim();
-        if (!invoice && !proposal) return '';
-        const wrapperClass = compact ? 'flex flex-wrap gap-3 mt-3' : 'grid grid-cols-1 sm:grid-cols-2 gap-3 mb-6';
+        const companyLabel = state.lang === 'pt' ? 'Empresa pagadora' : 'Paying company';
+        const companyValue = getCompanyDisplayName(project?.empresa);
+        if (!invoice && !proposal && !companyValue) return '';
+        const wrapperClass = compact ? 'flex flex-wrap gap-3 mt-3' : 'grid grid-cols-1 sm:grid-cols-3 gap-3 mb-6';
         const cardClass = compact
             ? 'min-w-[148px] rounded-2xl border border-white/10 bg-white/5 px-3.5 py-3'
             : 'rounded-2xl border border-white/10 bg-white/5 px-4 py-3';
+        const companyCardClass = compact
+            ? 'min-w-[220px] rounded-2xl border border-emerald-500/20 bg-emerald-500/10 px-3.5 py-3'
+            : 'rounded-2xl border border-emerald-500/20 bg-emerald-500/10 px-4 py-3';
         const labelClass = compact
             ? 'text-[9px] font-black uppercase tracking-[0.22em] text-slate-500 mb-1.5 block'
             : 'text-[10px] font-black uppercase tracking-widest text-slate-500 mb-1 block';
         const valueClass = compact
             ? 'text-sm font-black text-slate-100 block break-all'
             : 'text-sm font-black text-slate-100 block break-all';
+        const companyValueClass = compact
+            ? 'text-sm font-black text-emerald-300 block leading-tight'
+            : 'text-sm font-black text-emerald-300 block leading-tight';
         return `
             <div class="${wrapperClass}">
                 ${invoice ? `<div class="${cardClass}"><span class="${labelClass}">${window.t('invoice_label')}</span><span class="${valueClass}">${escapeInlineHtml(invoice)}</span></div>` : ''}
                 ${proposal ? `<div class="${cardClass}"><span class="${labelClass}">${window.t('proposal_label')}</span><span class="${valueClass}">${escapeInlineHtml(proposal)}</span></div>` : ''}
+                <div class="${companyCardClass}"><span class="${labelClass}">${companyLabel}</span><span class="${companyValueClass}">${escapeInlineHtml(companyValue)}</span></div>
             </div>
         `;
     }
@@ -2577,12 +2592,14 @@
         const currentYear = new Date().getFullYear();
         const monthNames = state.lang === 'en' ? ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'] : ['Jan','Fev','Mar','Abr','Mai','Jun','Jul','Ago','Sep','Out','Nov','Dez'];
         const sellerStats = {};
+        const companyCommissionPaidTotals = { 'Smart Home': 0, 'HVAC': 0 };
 
         const enrichedProjects = baseFiltered.map(p => {
             const f = getFin(p);
             tv += Number(p.valorTotal || 0);
             tc += Number(f.commLiberada || 0); 
             totalCollected += f.totalRecebido;
+            companyCommissionPaidTotals[p.empresa] = roundMoney((companyCommissionPaidTotals[p.empresa] || 0) + Number(f.totalPaid || 0));
             if (canViewCosts) tProfit += Number(f.lucroBruto || 0);
 
             if (p.status && statusFunnel[p.status] !== undefined) {
@@ -2660,6 +2677,24 @@
                         </div>
                     </div>
 
+                    <div class="mb-8">
+                        <h4 class="text-xs sm:text-sm font-black uppercase mb-4 text-slate-400 tracking-widest border-b border-white/10 print:border-slate-100 pb-2 print:text-slate-500">${state.lang === 'pt' ? 'Comissão paga por empresa' : 'Commission paid by company'}</h4>
+                        <div class="grid grid-cols-1 ${(state.company === 'Ambas') ? 'md:grid-cols-2' : 'md:grid-cols-1'} gap-3 sm:gap-4">
+                            ${(state.company === 'Ambas' ? ['Smart Home', 'HVAC'] : [state.company]).map(companyKey => `
+                                <div class="rounded-2xl border border-emerald-500/20 bg-emerald-500/10 p-4 print:bg-transparent print:border-slate-300 shadow-sm force-dark-bg">
+                                    <p class="text-[9px] sm:text-[10px] font-black uppercase tracking-widest text-emerald-300/80 mb-2">${state.lang === 'pt' ? 'Empresa pagadora' : 'Paying company'}</p>
+                                    <div class="flex flex-col sm:flex-row sm:items-end sm:justify-between gap-3">
+                                        <div>
+                                            <p class="text-sm sm:text-base font-black text-white force-white-text">${getCompanyDisplayName(companyKey)}</p>
+                                            <p class="text-[10px] uppercase tracking-widest text-slate-500 mt-1">${state.lang === 'pt' ? 'Comissão já paga' : 'Commission already paid'}</p>
+                                        </div>
+                                        <p class="text-xl sm:text-2xl font-black text-emerald-400">${formatCurr(companyCommissionPaidTotals[companyKey] || 0)}</p>
+                                    </div>
+                                </div>
+                            `).join('')}
+                        </div>
+                    </div>
+
                     <h4 class="text-xs sm:text-sm font-black uppercase mb-4 text-slate-400 tracking-widest border-b border-white/10 print:border-slate-100 pb-2 print:text-slate-500">${window.t('active_funnel')}</h4>
                     <div class="grid grid-cols-2 md:grid-cols-4 gap-3 sm:gap-4 mb-4">
                         ${funnelHTML}
@@ -2679,22 +2714,23 @@
             }).join('');
             let summaryHeaderMonths = monthNames.map(m => `<th class="p-2 sm:p-3 text-right">${m}</th>`).join('');
 
-            const buildGroupedTable = (companyName) => {
-                const coProjects = enrichedProjects.filter(({p}) => p.empresa === companyName);
+            const buildGroupedTable = (companyKey) => {
+                const companyLabel = getCompanyDisplayName(companyKey);
+                const coProjects = enrichedProjects.filter(({p}) => p.empresa === companyKey);
                 if (coProjects.length === 0) return '';
                 const tableRows = coProjects.map(({p, f}) => {
-                    const profitCol = canViewCosts ? `<td class="p-3 sm:p-4 text-right font-black ${f.lucroBruto >= 0 ? 'text-cyan-400 print:text-cyan-600' : 'text-red-400 print:text-red-500'}">${formatCurr(f.lucroBruto)}</td><td class="p-3 sm:p-4 text-right font-black ${f.margemLucro >= 0 ? 'text-indigo-400 print:text-indigo-600' : 'text-red-400 print:text-red-500'}">${f.margemLucro.toFixed(1)}%</td>` : '';
+                    const profitCol = canViewCosts ? `<td class="p-3 sm:p-4 text-right font-black text-gold print:text-amber-700">${formatCurr(f.totalPaid)}</td><td class="p-3 sm:p-4 text-right font-black ${f.lucroBruto >= 0 ? 'text-cyan-400 print:text-cyan-600' : 'text-red-400 print:text-red-500'}">${formatCurr(f.lucroBruto)}</td><td class="p-3 sm:p-4 text-right font-black ${f.margemLucro >= 0 ? 'text-indigo-400 print:text-indigo-600' : 'text-red-400 print:text-red-500'}">${f.margemLucro.toFixed(1)}%</td>` : `<td class="p-3 sm:p-4 text-right font-black text-gold print:text-amber-700">${formatCurr(f.totalPaid)}</td>`;
                     return `<tr class="border-b border-white/5 text-[10px] sm:text-xs text-left text-slate-300 print:text-slate-800 hover:bg-white/5 transition-colors print:border-slate-100"><td class="p-3 sm:p-4 font-bold text-[9px] sm:text-[10px] text-slate-400 print:text-slate-500">${p.numeroInvoice || '-'} / ${p.numeroProposta || '-'}</td><td class="p-3 sm:p-4 font-black uppercase text-white print:text-black"><div class="flex flex-col"><span>${p.cliente || ''}</span><span class="text-[8px] sm:text-[9px] font-bold text-slate-500 print:text-slate-400 mt-0.5">${tStatus(p.status)}</span></div></td><td class="p-3 sm:p-4 font-bold text-slate-300 print:text-slate-600">${p.vendedor?.split('@')[0] || ''}</td><td class="p-3 sm:p-4 text-right">${formatCurr(p.valorTotal)}</td><td class="p-3 sm:p-4 text-right font-black text-emerald-400 print:text-emerald-600">${formatCurr(f.totalRecebido)}</td><td class="p-3 sm:p-4 text-right font-black text-amber-400 print:text-amber-600">${formatCurr(f.commLiberada)}</td>${profitCol}</tr>`;
                 }).join('');
-                return `<div class="mb-10"><h4 class="text-sm font-black text-slate-200 print:text-slate-700 bg-black/40 print:bg-slate-100 inline-block px-4 py-2 rounded-t-xl uppercase tracking-widest border border-b-0 border-white/5 print:border-slate-200">${companyName}</h4><div class="overflow-x-auto print:overflow-visible border border-white/5 print:border-slate-200 rounded-xl rounded-tl-none print:border-none shadow-sm"><table class="w-full"><thead class="bg-black/20 print:bg-slate-50 border-b border-white/5 print:border-slate-200 print:bg-transparent"><tr class="font-black uppercase text-[8px] sm:text-[9px] text-slate-400 print:text-slate-500 text-left tracking-widest"><th class="p-3 sm:p-4">${window.t('prop_inv')}</th><th class="p-3 sm:p-4">${window.t('f_client')}</th><th class="p-3 sm:p-4">${window.t('f_seller')}</th><th class="p-3 sm:p-4 text-right">${window.t('f_gross')}</th><th class="p-3 sm:p-4 text-right bg-emerald-500/10 print:bg-emerald-50 text-emerald-400 print:text-emerald-700 print:bg-transparent">Recebido</th><th class="p-3 sm:p-4 text-right bg-amber-500/10 print:bg-amber-50 text-amber-400 print:text-amber-700 print:bg-transparent">${window.t('comm_released')}</th>${canViewCosts ? `<th class="p-3 sm:p-4 text-right bg-cyan-950/20 print:bg-cyan-50 text-cyan-400 print:text-cyan-700 print:bg-transparent">${window.t('real_profit')}</th><th class="p-3 sm:p-4 text-right bg-indigo-900/20 print:bg-indigo-50 text-indigo-400 print:text-indigo-700 print:bg-transparent">${window.t('margin')}</th>` : ''}</tr></thead><tbody>${tableRows}</tbody></table></div></div>`;
+                return `<div class="mb-10"><h4 class="text-sm font-black text-slate-200 print:text-slate-700 bg-black/40 print:bg-slate-100 inline-block px-4 py-2 rounded-t-xl uppercase tracking-widest border border-b-0 border-white/5 print:border-slate-200">${companyLabel}</h4><div class="overflow-x-auto print:overflow-visible border border-white/5 print:border-slate-200 rounded-xl rounded-tl-none print:border-none shadow-sm"><table class="w-full"><thead class="bg-black/20 print:bg-slate-50 border-b border-white/5 print:border-slate-200 print:bg-transparent"><tr class="font-black uppercase text-[8px] sm:text-[9px] text-slate-400 print:text-slate-500 text-left tracking-widest"><th class="p-3 sm:p-4">${window.t('prop_inv')}</th><th class="p-3 sm:p-4">${window.t('f_client')}</th><th class="p-3 sm:p-4">${window.t('f_seller')}</th><th class="p-3 sm:p-4 text-right">${window.t('f_gross')}</th><th class="p-3 sm:p-4 text-right bg-emerald-500/10 print:bg-emerald-50 text-emerald-400 print:text-emerald-700 print:bg-transparent">Recebido</th><th class="p-3 sm:p-4 text-right bg-amber-500/10 print:bg-amber-50 text-amber-400 print:text-amber-700 print:bg-transparent">${window.t('comm_released')}</th><th class="p-3 sm:p-4 text-right bg-gold/10 print:bg-amber-50 text-gold print:text-amber-700 print:bg-transparent">${window.t('paid_seller')}</th>${canViewCosts ? `<th class="p-3 sm:p-4 text-right bg-cyan-950/20 print:bg-cyan-50 text-cyan-400 print:text-cyan-700 print:bg-transparent">${window.t('real_profit')}</th><th class="p-3 sm:p-4 text-right bg-indigo-900/20 print:bg-indigo-50 text-indigo-400 print:text-indigo-700 print:bg-transparent">${window.t('margin')}</th>` : ''}</tr></thead><tbody>${tableRows}</tbody></table></div></div>`;
             };
 
             let detailedTablesHTML = '';
             if (state.company === 'Ambas') {
-                detailedTablesHTML += buildGroupedTable('D2 Smart Home');
-                detailedTablesHTML += buildGroupedTable('D2 HVAC Solutions');
+                detailedTablesHTML += buildGroupedTable('Smart Home');
+                detailedTablesHTML += buildGroupedTable('HVAC');
             } else {
-                detailedTablesHTML += buildGroupedTable(state.company === 'Smart Home' ? 'D2 Smart Home' : 'D2 HVAC Solutions');
+                detailedTablesHTML += buildGroupedTable(state.company);
             }
             if(!detailedTablesHTML) detailedTablesHTML = `<p class="p-6 text-center text-slate-400 text-xs italic">${window.t('no_active_works')}</p>`;
 
