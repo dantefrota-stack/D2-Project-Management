@@ -399,7 +399,7 @@
                         <div class="space-y-2">
                             <label class="text-xs font-black uppercase text-slate-500 ml-1 tracking-widest" data-i18n="project_search_label">Busca rápida</label>
                             <div class="relative">
-                                <input type="text" id="project-search" class="modern-input project-search-input !pr-12" data-i18n-placeholder="project_search_placeholder" placeholder="Buscar por cliente, invoice ou proposta" oninput="window.setProjectSearchQuery(this.value)">
+                                <input type="text" id="project-search" class="modern-input project-search-input !pr-12" data-i18n-placeholder="project_search_placeholder" placeholder="Buscar por cliente, projeto, endereço, invoice, proposta ou valor" oninput="window.setProjectSearchQuery(this.value)">
                                 <i data-lucide="search" class="w-4 h-4 text-slate-500 absolute right-4 top-1/2 -translate-y-1/2 pointer-events-none"></i>
                             </div>
                         </div>
@@ -633,7 +633,7 @@
 
     const translations = {
         pt: {
-            admin_panel: "Gestão Corporativa", nav_proj: "Projetos", nav_new: "Nova Obra", nav_rep: "Relatórios", nav_users: "Equipe", project_search_label: "Busca rápida", project_search_placeholder: "Buscar por cliente, projeto, endereço, invoice ou proposta",
+            admin_panel: "Gestão Corporativa", nav_proj: "Projetos", nav_new: "Nova Obra", nav_rep: "Relatórios", nav_users: "Equipe", project_search_label: "Busca rápida", project_search_placeholder: "Buscar por cliente, projeto, endereço, invoice, proposta ou valor",
             form_new_title: "Registrar Obra", team_title: "Gestão de Equipe", btn_team: "Salvar e Autorizar Acesso",
             filter_both: "AMBAS", filter_active: "ATIVAS", filter_archived: "ARQUIVADAS", filter_all: "TODAS",
             project_filter_seller: "Filtro por Vendedor", project_filter_all_sellers: "Todos os vendedores", logs_empty: "Nenhum log registrado", margin_alert_low: "Margem abaixo de 45%", margin_current: "Margem Atual", completed_on: "Concluída em", category_commission: "Comissões", seller_margin_cover: "Margem da obra",
@@ -685,7 +685,7 @@
             payment_summary_card_fees: "Taxas cartão (cliente)", payment_summary_net_basis: "Base líquida recebida", payment_summary_received: "Recebido do cliente", pay_pending_badge: "Pagamento pendente", timeline_due_soon: "Prazo próximo", invoice_label: "Invoice", proposal_label: "Proposta", client_outstanding: "Saldo cliente a receber", comm_remaining_projected: "Comissão restante projetada", commission_released_settled: "Liberada quitada", commission_total_paid: "Comissão total quitada", commission_due_now: "Pendente agora", commission_paid_from_released: "Pago da liberada", commission_still_to_release: "Ainda a liberar", commission_waiting_receipts: "Aguardando recebimentos", commission_future_pending: "Comissão futura estimada", commission_released_paid_label: "Liberada paga", commission_overall_paid_label: "Pago do total projetado", commission_note_released_only: "A comissão do vendedor foi quitada apenas sobre o valor já recebido do cliente.", commission_note_future_release: "Ainda restam {commission} de comissão projetada, que serão liberados conforme o cliente pagar os {client} em aberto.", commission_note_due_now: "Existe {due} de comissão liberada pendente agora e ainda {future} de comissão projetada aguardando novos recebimentos.", commission_note_waiting_receipts: "Ainda não há comissão liberada. O cliente ainda deve {client} e isso pode liberar até {commission} de comissão projetada.", client_received_label: "Recebido", client_balance_short: "Saldo a receber", commission_paid_simple: "Comissão paga", commission_to_receive_label: "Comissão a receber", commission_to_receive_short: "Comissão restante", commission_partial_status: "Parcial", commission_review_status: "Revisar pagamento", commission_due_now_short: "Pendente agora", client_received_compact: "Recebido", client_balance_compact: "Falta receber", commission_paid_compact: "Paga", commission_remaining_compact: "A receber", commission_due_now_compact: "Pendente agora"
         },
         en: {
-            admin_panel: "Corporate Management", nav_proj: "Projects", nav_new: "New Entry", nav_rep: "Reports", nav_users: "Team", project_search_label: "Quick search", project_search_placeholder: "Search by client, project, address, invoice, or proposal",
+            admin_panel: "Corporate Management", nav_proj: "Projects", nav_new: "New Entry", nav_rep: "Reports", nav_users: "Team", project_search_label: "Quick search", project_search_placeholder: "Search by client, project, address, invoice, proposal, or value",
             form_new_title: "Register Project", team_title: "Team Management", btn_team: "Authorize Access",
             filter_both: "BOTH", filter_active: "ACTIVE", filter_archived: "ARCHIVED", filter_all: "ALL",
             project_filter_seller: "Seller Filter", project_filter_all_sellers: "All sellers", logs_empty: "No logs recorded", margin_alert_low: "Margin below 45%", margin_current: "Current Margin", completed_on: "Completed on", category_commission: "Commissions", seller_margin_cover: "Project margin",
@@ -2098,7 +2098,91 @@
         window.scrollTo({ top: 0, behavior: 'smooth' });
     };
 
-    window.printReport = () => { window.print(); };
+    window.printReport = () => {
+        const activeModule = document.querySelector('#projects-grid .project-module-shell');
+        const activeSheet = activeModule?.querySelector('.project-print-sheet');
+        if (!activeSheet) {
+            window.print();
+            return;
+        }
+
+        const printWindow = window.open('', '_blank', 'width=980,height=1280');
+        if (!printWindow) {
+            window.print();
+            return;
+        }
+
+        const sheetStyles = `
+            @page { size: letter; margin: 10mm; }
+            * { box-sizing: border-box; }
+            html, body { margin: 0; padding: 0; background: #ffffff; color: #0f172a; font-family: Inter, Arial, sans-serif; }
+            body { padding: 0; }
+            .project-print-sheet { display: block; color: #0f172a; }
+            .project-print-sheet * { color: inherit; box-sizing: border-box; }
+            .sheet-header {
+                display: flex; align-items: center; justify-content: space-between; gap: 14px;
+                border-bottom: 2px solid #cbd5e1; padding-bottom: 10px; margin-bottom: 14px;
+            }
+            .sheet-logo { height: 42px; width: auto; }
+            .sheet-title { font-size: 24px; line-height: 1.05; font-weight: 900; text-transform: uppercase; letter-spacing: -0.03em; margin: 0; }
+            .sheet-subtitle { font-size: 11px; font-weight: 800; text-transform: uppercase; letter-spacing: 0.16em; color: #475569; margin-top: 4px; }
+            .sheet-summary { display: grid; grid-template-columns: 1.1fr 1fr; gap: 12px; margin-bottom: 12px; }
+            .sheet-card { border: 1px solid #cbd5e1; border-radius: 14px; padding: 10px 12px; background: #ffffff; break-inside: avoid; page-break-inside: avoid; }
+            .sheet-card-highlight { border-color: #94a3b8; background: #f8fafc; }
+            .sheet-section-title { font-size: 10px; font-weight: 900; text-transform: uppercase; letter-spacing: 0.18em; color: #64748b; margin-bottom: 8px; }
+            .sheet-card-title { font-size: 16px; line-height: 1.2; font-weight: 900; margin-bottom: 6px; }
+            .sheet-card-copy { font-size: 11px; line-height: 1.45; color: #475569; }
+            .sheet-info-grid { display: grid; grid-template-columns: repeat(2, minmax(0,1fr)); gap: 8px; }
+            .sheet-info-item { border: 1px solid #e2e8f0; border-radius: 12px; padding: 8px 10px; min-height: 56px; }
+            .sheet-info-label { display:block; font-size: 9px; font-weight: 900; text-transform: uppercase; letter-spacing: 0.16em; color: #64748b; margin-bottom: 5px; }
+            .sheet-info-value { display:block; font-size: 13px; line-height: 1.25; font-weight: 800; word-break: break-word; }
+            .sheet-metrics { display: grid; grid-template-columns: repeat(3, minmax(0,1fr)); gap: 8px; margin-bottom: 12px; }
+            .sheet-metric { border: 1px solid #e2e8f0; border-radius: 12px; padding: 8px 10px; min-height: 62px; break-inside: avoid; page-break-inside: avoid; }
+            .sheet-metric-label { display:block; font-size: 9px; font-weight: 900; text-transform: uppercase; letter-spacing: 0.16em; color: #64748b; margin-bottom: 6px; }
+            .sheet-metric-value { display:block; font-size: 16px; line-height: 1.1; font-weight: 900; word-break: break-word; }
+            .sheet-metric-value.small { font-size: 14px; }
+            .sheet-metric-value.positive { color: #047857; }
+            .sheet-metric-value.negative { color: #b91c1c; }
+            .sheet-metric-value.warn { color: #b45309; }
+            .sheet-columns { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+            .sheet-list { list-style: none; padding: 0; margin: 0; }
+            .sheet-list li { display: flex; justify-content: space-between; gap: 12px; padding: 7px 0; border-bottom: 1px solid #e2e8f0; font-size: 11px; }
+            .sheet-list li:last-child { border-bottom: none; }
+            .sheet-list-label { color: #334155; font-weight: 700; }
+            .sheet-list-value { font-weight: 900; white-space: nowrap; }
+            .sheet-note { margin-top: 10px; padding: 10px 12px; border-radius: 12px; background: #f8fafc; border: 1px solid #e2e8f0; font-size: 11px; line-height: 1.45; color: #475569; }
+            .sheet-footer { margin-top: 10px; padding-top: 8px; border-top: 1px solid #cbd5e1; font-size: 10px; color: #64748b; display: flex; justify-content: space-between; gap: 10px; }
+            @media print {
+                html, body { width: 100%; }
+                .project-print-sheet { margin: 0; }
+            }
+        `;
+
+        printWindow.document.open();
+        printWindow.document.write(`<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>${document.title || 'Project Report'}</title>
+<style>${sheetStyles}</style>
+</head>
+<body>${activeSheet.outerHTML}</body>
+</html>`);
+        printWindow.document.close();
+
+        const triggerPrint = () => {
+            printWindow.focus();
+            printWindow.print();
+            setTimeout(() => printWindow.close(), 300);
+        };
+
+        if (printWindow.document.readyState === 'complete') {
+            setTimeout(triggerPrint, 250);
+        } else {
+            printWindow.onload = () => setTimeout(triggerPrint, 250);
+        }
+    };
 
     window.printKpiReport = () => {
         document.body.classList.add('printing-kpi');
@@ -2291,7 +2375,15 @@
             const isArchived = p.archived === true;
             const matchArchive = state.archiveFilter === 'all' ? true : (state.archiveFilter === 'archived' ? isArchived : !isArchived);
             const q = state.projectSearchQuery;
-            const searchable = `${p.cliente || ''} ${p.nomeProjeto || ''} ${p.endereco || ''} ${p.numeroInvoice || ''} ${p.numeroProposta || ''}`.toLowerCase();
+            const contractValue = Number(p.valorTotal || 0);
+            const searchableValue = [
+                contractValue ? String(contractValue) : '',
+                contractValue ? contractValue.toFixed(2) : '',
+                contractValue ? contractValue.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 }) : '',
+                contractValue ? contractValue.toLocaleString('pt-BR', { minimumFractionDigits: 2, maximumFractionDigits: 2 }) : '',
+                contractValue ? formatCurr(contractValue) : ''
+            ].join(' ');
+            const searchable = `${p.cliente || ''} ${p.nomeProjeto || ''} ${p.endereco || ''} ${p.numeroInvoice || ''} ${p.numeroProposta || ''} ${searchableValue}`.toLowerCase();
             const matchSearch = !q || searchable.includes(q);
             return matchCompany && matchSelectedTab && matchUser && matchSellerFilter && matchArchive && matchSearch;
         });
