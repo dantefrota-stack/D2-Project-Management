@@ -457,7 +457,8 @@
                 <form id="team-form" class="space-y-6">
                     <input type="hidden" id="t-id">
 
-                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-6">
+                    <div class="grid grid-cols-1 sm:grid-cols-3 gap-6">
+                        <div class="space-y-1"><label class="label-auth text-xs" data-i18n="team_name">Nome do Vendedor</label><input type="text" id="t-name" required class="modern-input"></div>
                         <div class="space-y-1"><label class="label-auth text-xs" data-i18n="team_email">E-mail</label><input type="email" id="t-email" required class="modern-input"></div>
                         <div class="space-y-1 relative">
                             <label class="label-auth text-xs" data-i18n="team_pass">Senha</label>
@@ -591,7 +592,7 @@
             f_gross: "Valor Contrato Bruto", f_budget: "Orçamento Custo (Budget)", f_comm_perc: "% Comissão",
             f_pay_method: "Forma Pagt. Prevista", f_start: "Início", f_end: "Entrega", f_status: "Status",
             btn_save: "Salvar Registro", btn_cancel: "Cancelar",
-            team_email: "E-mail", team_pass: "Senha", 
+            team_name: "Nome do vendedor", team_email: "E-mail", team_pass: "Senha", 
             team_scope: "Visibilidade e Escopo", team_tabs: "Acesso às Abas do Sistema", team_perms: "Permissões de Escrita",
             seller: "Vendedor", status_obra: "Status da Obra", prop_inv: "Invoice / Proposta", pay_comm: "Pagamento • % Comissão",
             timeline: "Timeline", days_left: "DIAS RESTANTES", completed: "CONCLUÍDA", late: "ATRASADA", gross_contract: "Valor Contrato Bruto",
@@ -643,7 +644,7 @@
             f_gross: "Gross Contract Value", f_budget: "Cost Budget", f_comm_perc: "% Commission",
             f_pay_method: "Expected Pay Method", f_start: "Start Date", f_end: "Delivery", f_status: "Status",
             btn_save: "Save Record", btn_cancel: "Cancel",
-            team_email: "Email", team_pass: "Password", team_scope: "Visibility & Scope", team_tabs: "System Tabs Access", team_perms: "Write Permissions",
+            team_name: "Seller name", team_email: "Email", team_pass: "Password", team_scope: "Visibility & Scope", team_tabs: "System Tabs Access", team_perms: "Write Permissions",
             seller: "Seller", status_obra: "Project Status", prop_inv: "Invoice / Proposal", pay_comm: "Payment • % Comm",
             timeline: "Timeline", days_left: "DAYS LEFT", completed: "COMPLETED", late: "LATE", gross_contract: "Gross Contract Value",
             client: "Client", commission: "Commission", paid_100: "100% PAID", paid_perc: "% PAID", pending: "PENDING",
@@ -803,6 +804,45 @@
         document.getElementById('login-hint-msg')?.classList.add('hidden');
     }
 
+    function normalizeEmail(email) {
+        return String(email || '').trim().toLowerCase();
+    }
+
+    function titleCaseWords(str = '') {
+        return String(str || '')
+            .split(/\s+/)
+            .filter(Boolean)
+            .map(word => word.charAt(0).toUpperCase() + word.slice(1).toLowerCase())
+            .join(' ');
+    }
+
+    function fallbackDisplayNameFromEmail(email) {
+        const base = String(email || '').split('@')[0] || '';
+        if (!base) return '';
+        return titleCaseWords(base.replace(/[._-]+/g, ' '));
+    }
+
+    function getTeamMemberByEmail(email) {
+        const normalized = normalizeEmail(email);
+        if (!normalized) return null;
+        return state.team.find(member => normalizeEmail(member?.email) === normalized) || null;
+    }
+
+    function getUserDisplayName(email, fallback = '--') {
+        if (!email) return fallback;
+        const member = getTeamMemberByEmail(email);
+        const explicitName = String(member?.name || '').trim();
+        if (explicitName) return explicitName;
+        const inferred = fallbackDisplayNameFromEmail(email);
+        return inferred || fallback;
+    }
+
+    function getUserNameAndEmailHtml(email, fallbackName = '--') {
+        const name = escapeInlineHtml(getUserDisplayName(email, fallbackName));
+        const safeEmail = escapeInlineHtml(String(email || '').trim());
+        return safeEmail ? `<div class="flex flex-col"><span>${name}</span><span class="text-[10px] text-slate-500 font-bold normal-case tracking-normal mt-1">${safeEmail}</span></div>` : name;
+    }
+
     const auditLogsRef = () => collection(db, 'artifacts', appId, 'public', 'data', 'audit_logs');
 
     function getLogDate(log) {
@@ -877,7 +917,7 @@
             return `
             <tr class="border-b border-white/5 hover:bg-white/5 align-top">
                 <td class="py-4 px-4 text-sm whitespace-nowrap">${renderedDate}</td>
-                <td class="py-4 px-4 text-sm font-bold text-gold whitespace-nowrap">${log.user || '-'}</td>
+                <td class="py-4 px-4 text-sm font-bold text-gold whitespace-nowrap">${escapeInlineHtml(getUserDisplayName(log.user, '-'))}</td>
                 <td class="py-4 px-4 text-sm text-slate-300 min-w-[240px]">
                     ${info.projectName ? `<div class="font-black text-white">${escapeInlineHtml(info.projectName)}</div>` : `<div class="text-slate-500">-</div>`}
                     ${projectMetaLine ? `<div class="text-[11px] text-slate-400 mt-1">${escapeInlineHtml(projectMetaLine)}</div>` : ''}
@@ -977,11 +1017,13 @@
 
         select.innerHTML = '';
         if (canViewAll) {
-            const uniqueEmails = new Set(state.team.map(m => m.email));
-            uniqueEmails.add(state.user.email); 
-            uniqueEmails.forEach(email => select.innerHTML += `<option value="${email}">${email}</option>`);
+            const uniqueEmails = new Set(state.team.map(m => m.email).filter(Boolean));
+            uniqueEmails.add(state.user.email);
+            [...uniqueEmails].sort((a, b) => getUserDisplayName(a, '').localeCompare(getUserDisplayName(b, ''), state.lang === 'pt' ? 'pt-BR' : 'en-US')).forEach(email => {
+                select.innerHTML += `<option value="${email}">${escapeInlineHtml(getUserDisplayName(email, email))}</option>`;
+            });
         } else {
-            select.innerHTML = `<option value="${state.user.email}">${state.user.email}</option>`;
+            select.innerHTML = `<option value="${state.user.email}">${escapeInlineHtml(getUserDisplayName(state.user.email, state.user.email))}</option>`;
         }
 
         if (currentValue && Array.from(select.options).some(opt => opt.value === currentValue)) {
@@ -1008,7 +1050,7 @@
         }
 
         const options = [`<option value="all">${window.t('project_filter_all_sellers')}</option>`]
-            .concat(sellers.map(email => `<option value="${email}">${email}</option>`))
+            .concat(sellers.map(email => `<option value="${email}">${escapeInlineHtml(getUserDisplayName(email, email))}</option>`))
             .join('');
 
         box.classList.remove('hidden');
@@ -1397,7 +1439,7 @@
     }
 
     function buildCommissionExpenseFromPayment(pay, project) {
-        const sellerLabel = String(project?.vendedor || '').split('@')[0] || 'seller';
+        const sellerLabel = getUserDisplayName(project?.vendedor, state.lang === 'pt' ? 'Vendedor' : 'Seller');
         return {
             id: `auto-commission-${pay.id}`,
             data: pay?.data || new Date().toISOString().split('T')[0],
@@ -1465,7 +1507,7 @@
         const noReleasedCommission = summary.commLiberada <= 0.009;
         const hasPayments = state.editingPayments.payments.length > 0;
         const projectName = getProjectDisplayName(project);
-        const sellerName = project?.vendedor || '-';
+        const sellerName = getUserDisplayName(project?.vendedor, '-');
 
         let statusTitle = '';
         let statusDesc = '';
@@ -1879,8 +1921,9 @@
         window.renderReport();
     };
 
-    window.editTeamMember = (id, email, password, permObj) => {
+    window.editTeamMember = (id, name, email, password, permObj) => {
         document.getElementById('t-id').value = id; 
+        document.getElementById('t-name').value = name || ''; 
         document.getElementById('t-email').value = email; 
         document.getElementById('t-pass').value = password; 
         
@@ -2516,7 +2559,7 @@
                 <div class="text-left mb-8 space-y-4 relative z-[1]"><h4 class="font-black text-3xl uppercase tracking-tight text-white force-white-text leading-none print:text-black">${p.cliente || 'Sem Nome'}</h4>${finishedBadge}</div>
 
                 <div class="grid grid-cols-2 gap-y-6 gap-x-4 p-6 bg-black/20 rounded-[24px] border border-white/5 mb-10 text-left shadow-inner print:bg-transparent print:border-slate-200">
-                    <div><p class="text-xs font-black text-slate-500 uppercase tracking-widest mb-1.5">${window.t('seller')}</p><p class="text-sm font-bold text-slate-200 truncate print:text-black" title="${p.vendedor}">${p.vendedor?.split('@')[0] || '--'}</p></div>
+                    <div><p class="text-xs font-black text-slate-500 uppercase tracking-widest mb-1.5">${window.t('seller')}</p><p class="text-sm font-bold text-slate-200 truncate print:text-black" title="${escapeInlineHtml(getUserDisplayName(p.vendedor, p.vendedor || "--"))}">${escapeInlineHtml(getUserDisplayName(p.vendedor, '--'))}</p></div>
                     <div><p class="text-xs font-black text-slate-500 uppercase tracking-widest mb-1.5">${window.t('status_obra')}</p><p class="text-sm font-black text-gold uppercase print:text-amber-700">${tStatus(p.status)}</p></div>
                     <div><p class="text-xs font-black text-slate-500 uppercase tracking-widest mb-1.5">${window.t('prop_inv')}</p><p class="text-sm font-bold text-slate-200 print:text-black">${p.numeroInvoice || '---'} <span class="text-slate-600 font-normal mx-1">|</span> ${p.numeroProposta || '---'}</p></div>
                     <div><p class="text-xs font-black text-slate-500 uppercase tracking-widest mb-1.5">${window.t('pay_comm')}</p><p class="text-sm font-bold text-slate-200 print:text-black">${p.metodo || '--'} <span class="text-slate-600 font-normal mx-1">•</span> ${p.percComissao || 0}%</p></div>
@@ -2779,7 +2822,7 @@
             let summaryRows = Object.keys(sellerStats).sort().map(vend => {
                 const stats = sellerStats[vend];
                 let monthsHtml = stats.months.map(mVal => `<td class="p-2 sm:p-3 text-right ${mVal > 0 ? 'text-amber-500 font-bold' : 'text-slate-500 print:text-slate-400'}">${formatCurr(mVal)}</td>`).join('');
-                return `<tr class="border-b border-white/5 hover:bg-white/5 transition-colors print:border-slate-100"><td class="p-2 sm:p-3 font-black uppercase whitespace-nowrap text-slate-200 print:text-slate-800">${vend.split('@')[0]}</td>${monthsHtml}<td class="p-2 sm:p-3 text-right font-black text-emerald-400 print:text-emerald-600 bg-black/20 print:bg-slate-50">${formatCurr(stats.total)}</td></tr>`;
+                return `<tr class="border-b border-white/5 hover:bg-white/5 transition-colors print:border-slate-100"><td class="p-2 sm:p-3 font-black uppercase whitespace-nowrap text-slate-200 print:text-slate-800">${escapeInlineHtml(getUserDisplayName(vend, vend))}</td>${monthsHtml}<td class="p-2 sm:p-3 text-right font-black text-emerald-400 print:text-emerald-600 bg-black/20 print:bg-slate-50">${formatCurr(stats.total)}</td></tr>`;
             }).join('');
             let summaryHeaderMonths = monthNames.map(m => `<th class="p-2 sm:p-3 text-right">${m}</th>`).join('');
 
@@ -2789,7 +2832,7 @@
                 if (coProjects.length === 0) return '';
                 const tableRows = coProjects.map(({p, f}) => {
                     const profitCol = canViewCosts ? `<td class="p-3 sm:p-4 text-right font-black text-gold print:text-amber-700">${formatCurr(f.totalPaid)}</td><td class="p-3 sm:p-4 text-right font-black ${f.lucroBruto >= 0 ? 'text-cyan-400 print:text-cyan-600' : 'text-red-400 print:text-red-500'}">${formatCurr(f.lucroBruto)}</td><td class="p-3 sm:p-4 text-right font-black ${f.margemLucro >= 0 ? 'text-indigo-400 print:text-indigo-600' : 'text-red-400 print:text-red-500'}">${f.margemLucro.toFixed(1)}%</td>` : `<td class="p-3 sm:p-4 text-right font-black text-gold print:text-amber-700">${formatCurr(f.totalPaid)}</td>`;
-                    return `<tr class="border-b border-white/5 text-[10px] sm:text-xs text-left text-slate-300 print:text-slate-800 hover:bg-white/5 transition-colors print:border-slate-100"><td class="p-3 sm:p-4 font-bold text-[9px] sm:text-[10px] text-slate-400 print:text-slate-500">${p.numeroInvoice || '-'} / ${p.numeroProposta || '-'}</td><td class="p-3 sm:p-4 font-black uppercase text-white print:text-black"><div class="flex flex-col"><span>${p.cliente || ''}</span><span class="text-[8px] sm:text-[9px] font-bold text-slate-500 print:text-slate-400 mt-0.5">${tStatus(p.status)}</span></div></td><td class="p-3 sm:p-4 font-bold text-slate-300 print:text-slate-600">${p.vendedor?.split('@')[0] || ''}</td><td class="p-3 sm:p-4 text-right">${formatCurr(p.valorTotal)}</td><td class="p-3 sm:p-4 text-right font-black text-emerald-400 print:text-emerald-600">${formatCurr(f.totalRecebido)}</td><td class="p-3 sm:p-4 text-right font-black text-amber-400 print:text-amber-600">${formatCurr(f.commLiberada)}</td>${profitCol}</tr>`;
+                    return `<tr class="border-b border-white/5 text-[10px] sm:text-xs text-left text-slate-300 print:text-slate-800 hover:bg-white/5 transition-colors print:border-slate-100"><td class="p-3 sm:p-4 font-bold text-[9px] sm:text-[10px] text-slate-400 print:text-slate-500">${p.numeroInvoice || '-'} / ${p.numeroProposta || '-'}</td><td class="p-3 sm:p-4 font-black uppercase text-white print:text-black"><div class="flex flex-col"><span>${p.cliente || ''}</span><span class="text-[8px] sm:text-[9px] font-bold text-slate-500 print:text-slate-400 mt-0.5">${tStatus(p.status)}</span></div></td><td class="p-3 sm:p-4 font-bold text-slate-300 print:text-slate-600">${escapeInlineHtml(getUserDisplayName(p.vendedor, ''))}</td><td class="p-3 sm:p-4 text-right">${formatCurr(p.valorTotal)}</td><td class="p-3 sm:p-4 text-right font-black text-emerald-400 print:text-emerald-600">${formatCurr(f.totalRecebido)}</td><td class="p-3 sm:p-4 text-right font-black text-amber-400 print:text-amber-600">${formatCurr(f.commLiberada)}</td>${profitCol}</tr>`;
                 }).join('');
                 return `<div class="mb-10"><h4 class="text-sm font-black text-slate-200 print:text-slate-700 bg-black/40 print:bg-slate-100 inline-block px-4 py-2 rounded-t-xl uppercase tracking-widest border border-b-0 border-white/5 print:border-slate-200">${companyLabel}</h4><div class="overflow-x-auto print:overflow-visible border border-white/5 print:border-slate-200 rounded-xl rounded-tl-none print:border-none shadow-sm"><table class="w-full"><thead class="bg-black/20 print:bg-slate-50 border-b border-white/5 print:border-slate-200 print:bg-transparent"><tr class="font-black uppercase text-[8px] sm:text-[9px] text-slate-400 print:text-slate-500 text-left tracking-widest"><th class="p-3 sm:p-4">${window.t('prop_inv')}</th><th class="p-3 sm:p-4">${window.t('f_client')}</th><th class="p-3 sm:p-4">${window.t('f_seller')}</th><th class="p-3 sm:p-4 text-right">${window.t('f_gross')}</th><th class="p-3 sm:p-4 text-right bg-emerald-500/10 print:bg-emerald-50 text-emerald-400 print:text-emerald-700 print:bg-transparent">Recebido</th><th class="p-3 sm:p-4 text-right bg-amber-500/10 print:bg-amber-50 text-amber-400 print:text-amber-700 print:bg-transparent">${window.t('comm_released')}</th><th class="p-3 sm:p-4 text-right bg-gold/10 print:bg-amber-50 text-gold print:text-amber-700 print:bg-transparent">${window.t('paid_seller')}</th>${canViewCosts ? `<th class="p-3 sm:p-4 text-right bg-cyan-950/20 print:bg-cyan-50 text-cyan-400 print:text-cyan-700 print:bg-transparent">${window.t('real_profit')}</th><th class="p-3 sm:p-4 text-right bg-indigo-900/20 print:bg-indigo-50 text-indigo-400 print:text-indigo-700 print:bg-transparent">${window.t('margin')}</th>` : ''}</tr></thead><tbody>${tableRows}</tbody></table></div></div>`;
             };
@@ -2828,15 +2871,15 @@
             
             if (state.reportActiveKpi === 'receita') {
                 kpiTitle = `Detalhamento: ${window.t('gross_revenue')}`;
-                sRows = enrichedProjects.map(({p}) => `<tr class="border-b border-white/5 print:border-slate-100 text-[10px] sm:text-xs text-left text-slate-300 print:text-slate-800 hover:bg-white/5 transition-colors"><td class="p-3 sm:p-4 font-bold text-slate-400 print:text-slate-500">${p.numeroInvoice || '-'} / ${p.numeroProposta || '-'}</td><td class="p-3 sm:p-4 font-black uppercase text-white print:text-black"><div class="flex flex-col"><span>${p.cliente || ''}</span><span class="text-[8px] sm:text-[9px] font-bold text-slate-500 print:text-slate-400 mt-0.5">${tStatus(p.status)}</span></div></td><td class="p-3 sm:p-4 font-bold text-slate-300 print:text-slate-600">${p.vendedor?.split('@')[0] || ''}</td><td class="p-3 sm:p-4 text-right font-black text-slate-100 print:text-slate-800 text-sm">${formatCurr(p.valorTotal)}</td></tr>`).join('');
+                sRows = enrichedProjects.map(({p}) => `<tr class="border-b border-white/5 print:border-slate-100 text-[10px] sm:text-xs text-left text-slate-300 print:text-slate-800 hover:bg-white/5 transition-colors"><td class="p-3 sm:p-4 font-bold text-slate-400 print:text-slate-500">${p.numeroInvoice || '-'} / ${p.numeroProposta || '-'}</td><td class="p-3 sm:p-4 font-black uppercase text-white print:text-black"><div class="flex flex-col"><span>${p.cliente || ''}</span><span class="text-[8px] sm:text-[9px] font-bold text-slate-500 print:text-slate-400 mt-0.5">${tStatus(p.status)}</span></div></td><td class="p-3 sm:p-4 font-bold text-slate-300 print:text-slate-600">${escapeInlineHtml(getUserDisplayName(p.vendedor, ''))}</td><td class="p-3 sm:p-4 text-right font-black text-slate-100 print:text-slate-800 text-sm">${formatCurr(p.valorTotal)}</td></tr>`).join('');
                 specificTableHTML = `<table class="w-full"><thead class="bg-black/20 print:bg-slate-100 border-b border-white/5 print:border-slate-200 print:bg-transparent"><tr class="font-black uppercase text-[8px] sm:text-[9px] text-slate-400 print:text-slate-500 text-left tracking-widest"><th class="p-3 sm:p-4">${window.t('prop_inv')}</th><th class="p-3 sm:p-4">${window.t('f_client')}</th><th class="p-3 sm:p-4">${window.t('f_seller')}</th><th class="p-3 sm:p-4 text-right">${window.t('f_gross')}</th></tr></thead><tbody>${sRows || `<tr><td colspan="4" class="p-6 text-center text-slate-500 text-xs italic">${window.t('no_active_works')}</td></tr>`}</tbody></table>`;
             } else if (state.reportActiveKpi === 'entradas') {
                 kpiTitle = `Detalhamento: ${window.t('entries')}`;
-                sRows = enrichedProjects.filter(({f}) => f.totalRecebido > 0).map(({p, f}) => `<tr class="border-b border-white/5 print:border-slate-100 text-[10px] sm:text-xs text-left text-slate-300 print:text-slate-800 hover:bg-white/5 transition-colors"><td class="p-3 sm:p-4 font-bold text-slate-400 print:text-slate-500">${p.numeroInvoice || '-'} / ${p.numeroProposta || '-'}</td><td class="p-3 sm:p-4 font-black uppercase text-white print:text-black"><div class="flex flex-col"><span>${p.cliente || ''}</span><span class="text-[8px] sm:text-[9px] font-bold text-slate-500 print:text-slate-400 mt-0.5">${tStatus(p.status)}</span></div></td><td class="p-3 sm:p-4 font-bold text-slate-300 print:text-slate-600">${p.vendedor?.split('@')[0] || ''}</td><td class="p-3 sm:p-4 text-right text-slate-400 print:text-slate-500">${formatCurr(p.valorTotal)}</td><td class="p-3 sm:p-4 text-right font-black text-emerald-400 print:text-emerald-600 text-sm">${formatCurr(f.totalRecebido)}</td></tr>`).join('');
+                sRows = enrichedProjects.filter(({f}) => f.totalRecebido > 0).map(({p, f}) => `<tr class="border-b border-white/5 print:border-slate-100 text-[10px] sm:text-xs text-left text-slate-300 print:text-slate-800 hover:bg-white/5 transition-colors"><td class="p-3 sm:p-4 font-bold text-slate-400 print:text-slate-500">${p.numeroInvoice || '-'} / ${p.numeroProposta || '-'}</td><td class="p-3 sm:p-4 font-black uppercase text-white print:text-black"><div class="flex flex-col"><span>${p.cliente || ''}</span><span class="text-[8px] sm:text-[9px] font-bold text-slate-500 print:text-slate-400 mt-0.5">${tStatus(p.status)}</span></div></td><td class="p-3 sm:p-4 font-bold text-slate-300 print:text-slate-600">${escapeInlineHtml(getUserDisplayName(p.vendedor, ''))}</td><td class="p-3 sm:p-4 text-right text-slate-400 print:text-slate-500">${formatCurr(p.valorTotal)}</td><td class="p-3 sm:p-4 text-right font-black text-emerald-400 print:text-emerald-600 text-sm">${formatCurr(f.totalRecebido)}</td></tr>`).join('');
                 specificTableHTML = `<table class="w-full"><thead class="bg-black/20 print:bg-slate-100 border-b border-white/5 print:border-slate-200 print:bg-transparent"><tr class="font-black uppercase text-[8px] sm:text-[9px] text-slate-400 print:text-slate-500 text-left tracking-widest"><th class="p-3 sm:p-4">${window.t('prop_inv')}</th><th class="p-3 sm:p-4">${window.t('f_client')}</th><th class="p-3 sm:p-4">${window.t('f_seller')}</th><th class="p-3 sm:p-4 text-right">${window.t('f_gross')}</th><th class="p-3 sm:p-4 text-right">Total Recebido</th></tr></thead><tbody>${sRows || `<tr><td colspan="5" class="p-6 text-center text-slate-500 text-xs italic">Nenhum recebimento encontrado.</td></tr>`}</tbody></table>`;
             } else if (state.reportActiveKpi === 'fluxo') {
                 kpiTitle = `Detalhamento: ${window.t('to_receive')}`;
-                sRows = enrichedProjects.filter(({p, f}) => (p.valorTotal - f.totalRecebido) > 0).map(({p, f}) => `<tr class="border-b border-white/5 print:border-slate-100 text-[10px] sm:text-xs text-left text-slate-300 print:text-slate-800 hover:bg-white/5 transition-colors"><td class="p-3 sm:p-4 font-bold text-slate-400 print:text-slate-500">${p.numeroInvoice || '-'} / ${p.numeroProposta || '-'}</td><td class="p-3 sm:p-4 font-black uppercase text-white print:text-black"><div class="flex flex-col"><span>${p.cliente || ''}</span><span class="text-[8px] sm:text-[9px] font-bold text-slate-500 print:text-slate-400 mt-0.5">${tStatus(p.status)}</span></div></td><td class="p-3 sm:p-4 font-bold text-slate-300 print:text-slate-600">${p.vendedor?.split('@')[0] || ''}</td><td class="p-3 sm:p-4 text-right text-slate-400 print:text-slate-500">${formatCurr(p.valorTotal)}</td><td class="p-3 sm:p-4 text-right text-emerald-400 print:text-emerald-600">${formatCurr(f.totalRecebido)}</td><td class="p-3 sm:p-4 text-right font-black text-amber-400 print:text-amber-500 text-sm">${formatCurr(p.valorTotal - f.totalRecebido)}</td></tr>`).join('');
+                sRows = enrichedProjects.filter(({p, f}) => (p.valorTotal - f.totalRecebido) > 0).map(({p, f}) => `<tr class="border-b border-white/5 print:border-slate-100 text-[10px] sm:text-xs text-left text-slate-300 print:text-slate-800 hover:bg-white/5 transition-colors"><td class="p-3 sm:p-4 font-bold text-slate-400 print:text-slate-500">${p.numeroInvoice || '-'} / ${p.numeroProposta || '-'}</td><td class="p-3 sm:p-4 font-black uppercase text-white print:text-black"><div class="flex flex-col"><span>${p.cliente || ''}</span><span class="text-[8px] sm:text-[9px] font-bold text-slate-500 print:text-slate-400 mt-0.5">${tStatus(p.status)}</span></div></td><td class="p-3 sm:p-4 font-bold text-slate-300 print:text-slate-600">${escapeInlineHtml(getUserDisplayName(p.vendedor, ''))}</td><td class="p-3 sm:p-4 text-right text-slate-400 print:text-slate-500">${formatCurr(p.valorTotal)}</td><td class="p-3 sm:p-4 text-right text-emerald-400 print:text-emerald-600">${formatCurr(f.totalRecebido)}</td><td class="p-3 sm:p-4 text-right font-black text-amber-400 print:text-amber-500 text-sm">${formatCurr(p.valorTotal - f.totalRecebido)}</td></tr>`).join('');
                 specificTableHTML = `<table class="w-full"><thead class="bg-black/20 print:bg-slate-100 border-b border-white/5 print:border-slate-200 print:bg-transparent"><tr class="font-black uppercase text-[8px] sm:text-[9px] text-slate-400 print:text-slate-500 text-left tracking-widest"><th class="p-3 sm:p-4">${window.t('prop_inv')}</th><th class="p-3 sm:p-4">${window.t('f_client')}</th><th class="p-3 sm:p-4">${window.t('f_seller')}</th><th class="p-3 sm:p-4 text-right">${window.t('f_gross')}</th><th class="p-3 sm:p-4 text-right">Recebido</th><th class="p-3 sm:p-4 text-right">${window.t('missing_receive')}</th></tr></thead><tbody>${sRows || `<tr><td colspan="6" class="p-6 text-center text-slate-500 text-xs italic">Nenhum saldo pendente.</td></tr>`}</tbody></table>`;
             } else if (state.reportActiveKpi === 'lucro') {
                 kpiTitle = `Detalhamento: ${window.t('est_profit')} e ${window.t('margin')}`;
@@ -2851,7 +2894,7 @@
                 };
                 const targetStatus = targetStatusMap[state.reportActiveKpi];
                 kpiTitle = `Funil: ${tStatus(targetStatus).replace('✅ ', '')}`;
-                sRows = enrichedProjects.filter(({p}) => p.status === targetStatus).map(({p, f}) => `<tr class="border-b border-white/5 print:border-slate-100 text-[10px] sm:text-xs text-left text-slate-300 print:text-slate-800 hover:bg-white/5 transition-colors"><td class="p-3 sm:p-4 font-bold text-slate-400 print:text-slate-500">${p.numeroInvoice || '-'} / ${p.numeroProposta || '-'}</td><td class="p-3 sm:p-4 font-black uppercase text-white print:text-black"><div class="flex flex-col"><span>${p.cliente || ''}</span><span class="text-[8px] sm:text-[9px] font-bold text-slate-500 print:text-slate-400 mt-0.5">${tStatus(p.status)}</span></div></td><td class="p-3 sm:p-4 font-bold text-slate-300 print:text-slate-600">${p.vendedor?.split('@')[0] || ''}</td><td class="p-3 sm:p-4 text-right font-black text-slate-100 print:text-slate-800 text-sm">${formatCurr(p.valorTotal)}</td></tr>`).join('');
+                sRows = enrichedProjects.filter(({p}) => p.status === targetStatus).map(({p, f}) => `<tr class="border-b border-white/5 print:border-slate-100 text-[10px] sm:text-xs text-left text-slate-300 print:text-slate-800 hover:bg-white/5 transition-colors"><td class="p-3 sm:p-4 font-bold text-slate-400 print:text-slate-500">${p.numeroInvoice || '-'} / ${p.numeroProposta || '-'}</td><td class="p-3 sm:p-4 font-black uppercase text-white print:text-black"><div class="flex flex-col"><span>${p.cliente || ''}</span><span class="text-[8px] sm:text-[9px] font-bold text-slate-500 print:text-slate-400 mt-0.5">${tStatus(p.status)}</span></div></td><td class="p-3 sm:p-4 font-bold text-slate-300 print:text-slate-600">${escapeInlineHtml(getUserDisplayName(p.vendedor, ''))}</td><td class="p-3 sm:p-4 text-right font-black text-slate-100 print:text-slate-800 text-sm">${formatCurr(p.valorTotal)}</td></tr>`).join('');
                 specificTableHTML = `<table class="w-full"><thead class="bg-black/20 print:bg-slate-100 border-b border-white/5 print:border-slate-200 print:bg-transparent"><tr class="font-black uppercase text-[8px] sm:text-[9px] text-slate-400 print:text-slate-500 text-left tracking-widest"><th class="p-3 sm:p-4">${window.t('prop_inv')}</th><th class="p-3 sm:p-4">${window.t('f_client')}</th><th class="p-3 sm:p-4">${window.t('f_seller')}</th><th class="p-3 sm:p-4 text-right">${window.t('f_gross')}</th></tr></thead><tbody>${sRows || `<tr><td colspan="4" class="p-6 text-center text-slate-500 text-xs italic">Nenhuma obra nesta etapa.</td></tr>`}</tbody></table>`;
             }
 
@@ -2913,7 +2956,7 @@
         applyThemeConfig(); 
         if (u) {
             document.getElementById('auth-screen').classList.add('hidden'); document.getElementById('main-app').classList.remove('hidden');
-            document.getElementById('user-display').innerText = u.email ? u.email.split('@')[0].toUpperCase() : "USR";
+            document.getElementById('user-display').innerText = getUserDisplayName(u.email, 'USR').toUpperCase();
             
             // Check Se é o Super Admin (Mestre)
             state.isSuperAdmin = (u.email.toLowerCase() === SUPER_ADMIN.toLowerCase());
@@ -2946,6 +2989,8 @@
         onSnapshot(collection(db, 'artifacts', appId, 'public', 'data', 'user_credentials'), snap => {
             if (!auth.currentUser) return; 
             const team = snap.docs.map(d => ({ id: d.id, ...d.data() })); state.team = team;
+            const userDisplayEl = document.getElementById('user-display');
+            if (userDisplayEl && auth.currentUser?.email) userDisplayEl.innerText = getUserDisplayName(auth.currentUser.email, 'USR').toUpperCase();
             
             if (state.isSuperAdmin) {
                 // SUPER ADMIN tem passe livre para tudo
@@ -2995,7 +3040,13 @@
                     if(p.tab_new) tabsHTML += ' Nova Obra |';
                     if(p.tab_rep) tabsHTML += ' Relatórios |';
 
-                    return `<div class="glass p-6 rounded-[24px] flex justify-between items-center border-l-8 border-gold shadow-lg transition-all hover:scale-[1.01]"><div class="text-left"><p class="font-black text-slate-100 text-lg flex items-center gap-2 flex-wrap">${u.email} ${tagsHTML}</p><p class="text-[10px] text-slate-400 mt-1 uppercase tracking-widest font-bold">Abas Liberadas: <span class="text-gold">${tabsHTML}</span></p><p class="text-[10px] text-slate-500 mt-1 uppercase tracking-widest">Senha: <span class="text-gold font-bold normal-case">${u.password}</span></p></div><div class="flex gap-2"><button onclick="window.editTeamMember('${u.id}', '${u.email}', '${u.password}', JSON.parse(decodeURIComponent('${tagObj}')))" class="p-2 text-gold hover:bg-gold/10 rounded-lg"><i data-lucide="edit" size="18"></i></button><button onclick="window.deleteTeam('${u.id}')" class="p-2 text-red-500 hover:bg-red-500/10 rounded-lg ${u.email.toLowerCase() === SUPER_ADMIN.toLowerCase() ? 'hidden' : ''}"><i data-lucide="user-minus" size="18"></i></button></div></div>`;
+                    const sellerName = escapeInlineHtml(String(u.name || getUserDisplayName(u.email, u.email)).trim());
+                    const sellerEmail = escapeInlineHtml(String(u.email || '').trim());
+                    const safePassword = escapeInlineHtml(String(u.password || ''));
+                    const encodedName = encodeURIComponent(String(u.name || ''));
+                    const encodedEmail = encodeURIComponent(String(u.email || ''));
+                    const encodedPassword = encodeURIComponent(String(u.password || ''));
+                    return `<div class="glass p-6 rounded-[24px] flex justify-between items-center border-l-8 border-gold shadow-lg transition-all hover:scale-[1.01]"><div class="text-left"><p class="font-black text-slate-100 text-lg flex items-center gap-2 flex-wrap">${sellerName} ${tagsHTML}</p><p class="text-[11px] text-slate-500 mt-1 font-bold normal-case tracking-normal">${sellerEmail}</p><p class="text-[10px] text-slate-400 mt-2 uppercase tracking-widest font-bold">Abas Liberadas: <span class="text-gold">${tabsHTML}</span></p><p class="text-[10px] text-slate-500 mt-1 uppercase tracking-widest">Senha: <span class="text-gold font-bold normal-case">${safePassword}</span></p></div><div class="flex gap-2"><button onclick="window.editTeamMember('${u.id}', decodeURIComponent('${encodedName}'), decodeURIComponent('${encodedEmail}'), decodeURIComponent('${encodedPassword}'), JSON.parse(decodeURIComponent('${tagObj}')))" class="p-2 text-gold hover:bg-gold/10 rounded-lg"><i data-lucide="edit" size="18"></i></button><button onclick="window.deleteTeam('${u.id}')" class="p-2 text-red-500 hover:bg-red-500/10 rounded-lg ${u.email.toLowerCase() === SUPER_ADMIN.toLowerCase() ? 'hidden' : ''}"><i data-lucide="user-minus" size="18"></i></button></div></div>`;
                 }).join('');
                 try { lucide.createIcons(); } catch {}
             }
@@ -3052,12 +3103,14 @@
             e.preventDefault(); if (!auth.currentUser || !state.isSuperAdmin) return;
             
             const id = document.getElementById('t-id').value; 
+            const name = document.getElementById('t-name').value.trim();
             const mail = document.getElementById('t-email').value.trim();
             const pass = document.getElementById('t-pass').value; 
+            if (!name) { window.showModal(window.t('attention'), state.lang === 'pt' ? 'Informe o nome do vendedor.' : 'Enter the seller name.', 'alert'); return; }
             
             // Lê o novo sistema de permissões
             const permData = {
-                email: mail, password: pass, updatedAt: serverTimestamp(),
+                name, email: mail, password: pass, updatedAt: serverTimestamp(),
                 p_smart: document.getElementById('p_smart').checked,
                 p_hvac: document.getElementById('p_hvac').checked,
                 p_global: document.getElementById('p_global').checked,
@@ -3070,9 +3123,9 @@
 
             try {
                 try { const secApp = initializeApp(firebaseConfig, "SecApp_" + Date.now()); const secAuth = getAuth(secApp); await createUserWithEmailAndPassword(secAuth, mail, pass); await signOut(secAuth); await deleteApp(secApp); } catch (authErr) {}
-                if (!id) { await addDoc(collection(db, 'artifacts', appId, 'public', 'data', 'user_credentials'), permData); logAccess(state.user.email, `Adicionou usuário: ${mail}`); } 
-                else { await updateDoc(doc(db, 'artifacts', appId, 'public', 'data', 'user_credentials', id), permData); logAccess(state.user.email, `Atualizou usuário: ${mail}`); }
-                e.target.reset(); document.getElementById('t-id').value = ''; 
+                if (!id) { await addDoc(collection(db, 'artifacts', appId, 'public', 'data', 'user_credentials'), permData); logAccess(state.user.email, `Adicionou usuário: ${name}`); } 
+                else { await updateDoc(doc(db, 'artifacts', appId, 'public', 'data', 'user_credentials', id), permData); logAccess(state.user.email, `Atualizou usuário: ${name}`); }
+                e.target.reset(); document.getElementById('t-id').value = ''; document.getElementById('t-name').value = ''; 
                 document.querySelectorAll('.perm-checkbox').forEach(c => c.checked = false);
                 document.getElementById('p_smart').checked = true; document.getElementById('p_hvac').checked = true; document.getElementById('p_tab_proj').checked = true;
             } catch (err) { window.showModal('Erro', 'Erro ao salvar usuário: ' + err.message, 'error'); }
