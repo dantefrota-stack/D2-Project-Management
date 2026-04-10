@@ -1383,6 +1383,10 @@
             : (short ? `Finished on ${dateLabel}` : `FINISHED ON ${dateLabel}`);
     }
 
+    function canPrintProjectSheet() {
+        return !!(state.isSuperAdmin || state.userPerms.tab_rep);
+    }
+
     function buildProjectPrintSheet(project, fin, moduleTitle) {
         const isPt = state.lang === 'pt';
         const projectTitle = escapeInlineHtml(getProjectPrimaryTitle(project));
@@ -2109,14 +2113,18 @@
     };
 
     window.printReport = () => {
+        if (!canPrintProjectSheet()) return;
+
         const activeModule = document.querySelector('#projects-grid .project-module-shell');
         const activeSheet = activeModule?.querySelector('.project-print-sheet');
-        if (!activeSheet) {
+        const activeProject = state.projects.find(project => project.id === state.focusedProject) || null;
+        const fallbackSheetHtml = activeProject ? buildProjectPrintSheet(activeProject, getFin(activeProject), state.lang === 'pt' ? 'Resumo da Obra' : 'Project Summary') : '';
+        const sheetHtml = activeSheet?.outerHTML || fallbackSheetHtml;
+        if (!sheetHtml) {
             window.print();
             return;
         }
 
-        const activeProject = state.projects.find(project => project.id === state.focusedProject) || null;
         const filenameParts = [];
         const displayName = activeProject ? getProjectDisplayName(activeProject) : '';
         const invoice = String(activeProject?.numeroInvoice || '').trim();
@@ -2190,7 +2198,7 @@
 <title>${safePrintTitle}</title>
 <style>${sheetStyles}</style>
 </head>
-<body>${activeSheet.outerHTML}</body>
+<body>${sheetHtml}</body>
 </html>`);
         printWindow.document.close();
         try { printWindow.document.title = safePrintTitle; } catch (e) {}
@@ -2768,9 +2776,9 @@
                                 ${finishedBadge}
                             </div>
                         </div>
-                        <button onclick="window.printReport()" class="w-full sm:w-auto mt-4 sm:mt-0 flex items-center justify-center gap-2 text-white force-white-text bg-slate-800 hover:bg-slate-700 transition-all font-black text-xs uppercase tracking-widest px-6 py-4 rounded-2xl border border-white/10 shadow-lg force-dark-bg">
+                        ${canPrintProjectSheet() ? `<button onclick="window.printReport()" class="w-full sm:w-auto mt-4 sm:mt-0 flex items-center justify-center gap-2 text-white force-white-text bg-slate-800 hover:bg-slate-700 transition-all font-black text-xs uppercase tracking-widest px-6 py-4 rounded-2xl border border-white/10 shadow-lg force-dark-bg">
                             <i data-lucide="printer" class="w-5 h-5"></i> ${window.t('print_ficha')}
-                        </button>
+                        </button>` : ''}
                     </div>
 
                     <div class="project-legacy-print-header hidden print:block mb-8 border-b border-slate-300 pb-4">
@@ -2839,7 +2847,7 @@
                                 </div>
                                 <div class="mt-3 pt-3 border-t border-white/5">
                                     <p class="compact-kpi-label mb-2">${window.t('status_obra')}</p>
-                                    <p class="text-base sm:text-lg font-black ${compactStatusTone} leading-tight">${tStatus(p.status)}</p>
+                                    <p class="text-base sm:text-lg font-black ${compactStatusTone} leading-tight">${p.status === 'Finalizado' ? getProjectCompletionText(p, true) : tStatus(p.status)}</p>
                                 </div>
                             </div>
                         </div>
@@ -2870,11 +2878,14 @@
                     </div>
                 </div>
 
-                <div class="text-left mb-8 space-y-4 relative z-[1]"><div class="space-y-3"><h4 class="font-black text-3xl uppercase tracking-tight text-white force-white-text leading-none print:text-black">${escapeInlineHtml(getProjectPrimaryTitle(p))}</h4>${renderProjectIdentityBlock(p)}</div>${finishedBadge}</div>
+                <div class="text-left mb-8 space-y-4 relative z-[1]">
+                    <div class="space-y-3"><h4 class="font-black text-3xl uppercase tracking-tight text-white force-white-text leading-none print:text-black">${escapeInlineHtml(getProjectPrimaryTitle(p))}</h4>${renderProjectIdentityBlock(p)}</div>
+                    ${canPrintProjectSheet() ? `<div class="flex justify-start no-print"><button onclick="window.printReport()" class="inline-flex items-center justify-center gap-2 text-white force-white-text bg-slate-800 hover:bg-slate-700 transition-all font-black text-[11px] uppercase tracking-widest px-5 py-3 rounded-2xl border border-white/10 shadow-lg force-dark-bg"><i data-lucide="printer" class="w-4 h-4"></i> ${window.t('print_ficha')}</button></div>` : ''}
+                </div>
 
                 <div class="grid grid-cols-2 gap-y-6 gap-x-4 p-6 bg-black/20 rounded-[24px] border border-white/5 mb-10 text-left shadow-inner print:bg-transparent print:border-slate-200">
                     <div><p class="text-xs font-black text-slate-500 uppercase tracking-widest mb-1.5">${window.t('seller')}</p><p class="text-sm font-bold text-slate-200 truncate print:text-black" title="${escapeInlineHtml(getUserDisplayName(p.vendedor, p.vendedor || "--"))}">${escapeInlineHtml(getUserDisplayName(p.vendedor, '--'))}</p></div>
-                    <div><p class="text-xs font-black text-slate-500 uppercase tracking-widest mb-1.5">${window.t('status_obra')}</p><p class="text-sm font-black text-gold uppercase print:text-amber-700">${tStatus(p.status)}</p></div>
+                    <div><p class="text-xs font-black text-slate-500 uppercase tracking-widest mb-1.5">${window.t('status_obra')}</p><p class="text-sm font-black ${p.status === 'Finalizado' ? 'text-emerald-400 print:text-emerald-700' : 'text-gold print:text-amber-700'} uppercase">${p.status === 'Finalizado' ? getProjectCompletionText(p, true) : tStatus(p.status)}</p></div>
                     <div><p class="text-xs font-black text-slate-500 uppercase tracking-widest mb-1.5">${window.t('prop_inv')}</p><p class="text-sm font-bold text-slate-200 print:text-black">${p.numeroInvoice || '---'} <span class="text-slate-600 font-normal mx-1">|</span> ${p.numeroProposta || '---'}</p></div>
                     <div><p class="text-xs font-black text-slate-500 uppercase tracking-widest mb-1.5">${window.t('pay_comm')}</p><p class="text-sm font-bold text-slate-200 print:text-black">${p.metodo || '--'} <span class="text-slate-600 font-normal mx-1">•</span> ${p.percComissao || 0}%</p></div>
                 </div>
@@ -2891,8 +2902,8 @@
                     </div>
                     <div class="progress-track print:bg-slate-200 ${scheduleAlert.isLate || scheduleAlert.isDueSoon ? 'timeline-alert-pulse' : ''}"><div class="progress-bar-fill print:!bg-black" style="width: ${prog}%; background-color: ${colorHex};"></div></div>
                     <div class="flex justify-between text-xs font-extrabold uppercase mt-2">
-                        <span class="print:text-black">${p.status === 'Finalizado' && p.dataConclusao ? formatProjectDate(p.dataConclusao) : formatProjectDate(p.dataInicio)}</span>
-                        <span class="${p.status === 'Finalizado' ? 'text-emerald-400' : (scheduleAlert.isLate ? 'text-red-500' : (scheduleAlert.isDueSoon ? 'text-amber-400' : 'text-gold'))} print:!text-black">${p.status === 'Finalizado' ? getProjectCompletionText(p, true) : (scheduleAlert.isLate ? window.t('late') : (prog === 100 ? window.t('completed') : (Number.isFinite(e) ? Math.ceil((e - n) / (1000 * 3600 * 24)) : 0) + ' ' + window.t('days_left')))}</span>
+                        <span class="print:text-black">${formatProjectDate(p.dataInicio)}</span>
+                        <span class="${p.status === 'Finalizado' ? 'text-emerald-400' : (scheduleAlert.isLate ? 'text-red-500' : (scheduleAlert.isDueSoon ? 'text-amber-400' : 'text-gold'))} print:!text-black">${p.status === 'Finalizado' && p.dataConclusao ? formatProjectDate(p.dataConclusao) : (scheduleAlert.isLate ? window.t('late') : (prog === 100 ? window.t('completed') : (Number.isFinite(e) ? Math.ceil((e - n) / (1000 * 3600 * 24)) : 0) + ' ' + window.t('days_left')))}</span>
                     </div>
                 </div>
 
