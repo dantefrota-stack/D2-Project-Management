@@ -187,6 +187,14 @@
         .finished-seal-compact .finished-seal-date { font-size:12px; }
         .finished-watermark { position:absolute; top:1.25rem; right:1.4rem; pointer-events:none; font-size:clamp(2.4rem, 7vw, 5rem); line-height:.85; font-weight:900; text-transform:uppercase; letter-spacing:.18em; color:rgba(16,185,129,.08); user-select:none; z-index:0; text-align:right; }
         .finished-watermark-compact { top:1.15rem; right:1.15rem; font-size:clamp(1.9rem, 9vw, 3.4rem); letter-spacing:.16em; color:rgba(16,185,129,.07); }
+        .finished-stamp { position:absolute; top:1.2rem; right:1.25rem; z-index:1; pointer-events:none; display:inline-flex; flex-direction:column; align-items:center; justify-content:center; min-width:9.5rem; padding:.7rem 1rem .6rem; border-radius:1rem; border:2px solid rgba(16,185,129,.4); background:rgba(3,11,23,.38); backdrop-filter:blur(4px); transform:rotate(-8deg); box-shadow:0 10px 24px -18px rgba(16,185,129,.75); }
+        .finished-stamp::before { content:''; position:absolute; inset:.28rem; border-radius:.8rem; border:1px dashed rgba(16,185,129,.22); }
+        .finished-stamp-title { position:relative; font-size:11px; line-height:1; font-weight:900; text-transform:uppercase; letter-spacing:.22em; color:rgba(110,231,183,.96); }
+        .finished-stamp-date { position:relative; margin-top:.28rem; font-size:12px; line-height:1.1; font-weight:800; color:#ecfdf5; }
+        .finished-stamp-compact { top:1.15rem; right:1.1rem; min-width:8.6rem; padding:.6rem .9rem .55rem; border-radius:.95rem; }
+        .finished-stamp-compact .finished-stamp-title { font-size:10px; letter-spacing:.2em; }
+        .finished-stamp-compact .finished-stamp-date { font-size:11px; }
+        @media (max-width: 640px) { .finished-stamp { top:1rem; right:1rem; min-width:8.1rem; padding:.56rem .8rem .5rem; transform:rotate(-7deg); } .finished-stamp-title { font-size:9px; letter-spacing:.18em; } .finished-stamp-date { font-size:10px; } }
         .payment-company-pill { display:inline-flex; flex-wrap:wrap; align-items:center; gap:.55rem; border-radius:1rem; border:1px solid rgba(16,185,129,.24); background:rgba(16,185,129,.10); padding:.85rem 1rem; }
         .payment-company-pill-label { font-size:10px; font-weight:900; text-transform:uppercase; letter-spacing:.16em; color:rgba(167,243,208,.78); }
         .payment-company-pill-value { font-size:14px; font-weight:900; color:#6ee7b7; line-height:1.15; }
@@ -1262,7 +1270,7 @@
     }
 
     function renderFinishedPresentation(project, compact = false) {
-        if (project?.status !== 'Finalizado' || !project?.dataConclusao) return { badge: '', watermark: '' };
+        if (project?.status !== 'Finalizado' || !project?.dataConclusao) return { badge: '', watermark: '', stamp: '' };
         const finalLabel = state.lang === 'pt' ? 'Finalizado' : 'Finished';
         const dateLabel = formatProjectDate(project.dataConclusao);
         const badge = `
@@ -1274,8 +1282,14 @@
                 </div>
             </div>
         `;
-        const watermark = `<div class="finished-watermark ${compact ? 'finished-watermark-compact' : ''}">${state.lang === 'pt' ? 'Finalizado' : 'Finished'}</div>`;
-        return { badge, watermark };
+        const watermark = compact ? '' : `<div class="finished-watermark">${state.lang === 'pt' ? 'Finalizado' : 'Finished'}</div>`;
+        const stamp = `
+            <div class="finished-stamp ${compact ? 'finished-stamp-compact' : ''}">
+                <span class="finished-stamp-title">${finalLabel}</span>
+                <span class="finished-stamp-date">${dateLabel}</span>
+            </div>
+        `;
+        return { badge, watermark, stamp };
     }
 
     function renderAlertChip(label, tone = 'gold', pulse = false) {
@@ -2112,8 +2126,9 @@
             const finishedPresentation = renderFinishedPresentation(p, !isFocused);
             const finishedBadge = finishedPresentation.badge;
             const finishedWatermark = finishedPresentation.watermark;
+            const finishedStamp = finishedPresentation.stamp;
             const timelineBadge = p.status === 'Finalizado'
-                ? renderAlertChip(state.lang === 'pt' ? `Finalizado ${p.dataConclusao ? formatProjectDate(p.dataConclusao) : ''}`.trim() : `Finished ${p.dataConclusao ? formatProjectDate(p.dataConclusao) : ''}`.trim(), 'gold', false)
+                ? ''
                 : (scheduleAlert.isLate
                     ? renderAlertChip(window.t('late'), 'red', true)
                     : (scheduleAlert.isDueSoon ? renderAlertChip(window.t('timeline_due_soon'), 'amber', true) : ''));
@@ -2455,7 +2470,7 @@
                 const quickInvoice = p.numeroInvoice || '---';
                 const quickProposal = p.numeroProposta || '---';
                 grid.innerHTML += `<div class="glass p-5 sm:p-6 rounded-[34px] border-l-[8px] relative shadow-2xl flex flex-col print:border print:border-slate-300 print:shadow-none print:break-inside-avoid ${cardHoverClasses}" style="border-left-color: ${statusBorder}" ${cardClickEvent}>
-                    ${finishedWatermark}
+                    ${finishedStamp}
                     <div class="flex justify-between items-start gap-4 mb-5 relative z-[1]">
                         <span class="px-3 py-2 bg-white/5 border border-white/10 rounded-xl text-[10px] font-black uppercase tracking-widest text-slate-300 shadow-sm">${p.empresa || 'Sem Unidade'} ${p.archived ? '<span class="text-indigo-400 ml-1">(ARQ)</span>' : ''}</span>
                         <div class="flex items-center gap-2 bg-black/20 p-2 px-3 rounded-full border border-white/5 print:hidden shrink-0" onclick="event.stopPropagation()">
@@ -2466,12 +2481,8 @@
                     <div class="space-y-4">
                         <div>
                             <h4 class="compact-card-name text-white force-white-text">${p.cliente || 'Sem Nome'}</h4>
-                            ${finishedBadge ? `<div class="mt-3">${finishedBadge}</div>` : ''}
                         </div>
-                        <div class="flex flex-wrap items-center gap-2">
-                            <span class="compact-status-chip ${compactStatusTone}">${tStatus(p.status)}</span>
-                            ${timelineBadge ? `<span class="shrink-0">${timelineBadge}</span>` : ''}
-                        </div>
+                        ${p.status === 'Finalizado' ? '' : `<div class="flex flex-wrap items-center gap-2"><span class="compact-status-chip ${compactStatusTone}">${tStatus(p.status)}</span>${timelineBadge ? `<span class="shrink-0">${timelineBadge}</span>` : ''}</div>`}
                         <div class="compact-kpi-card">
                             <p class="compact-kpi-label mb-2">${window.t('gross_contract')}</p>
                             <p class="compact-kpi-value">${formatCurr(p.valorTotal)}</p>
