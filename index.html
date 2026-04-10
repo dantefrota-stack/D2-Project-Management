@@ -178,6 +178,18 @@
         .alert-chip-gold { border:1px solid rgba(251,191,36,0.32); background:rgba(251,191,36,0.11); color:#fbbf24; }
         .alert-chip-red { border:1px solid rgba(239,68,68,0.34); background:rgba(239,68,68,0.12); color:#f87171; }
         .alert-chip-amber { border:1px solid rgba(245,158,11,0.34); background:rgba(245,158,11,0.12); color:#fbbf24; }
+        .finished-seal { display:inline-flex; align-items:center; gap:.55rem; border-radius:999px; padding:.72rem 1rem; border:1px solid rgba(16,185,129,.28); background:linear-gradient(135deg, rgba(16,185,129,.18), rgba(16,185,129,.08)); box-shadow:0 10px 28px -18px rgba(16,185,129,.7); }
+        .finished-seal-icon { display:inline-flex; align-items:center; justify-content:center; width:1.9rem; height:1.9rem; border-radius:999px; border:1px solid rgba(16,185,129,.2); background:rgba(16,185,129,.12); color:#6ee7b7; flex-shrink:0; }
+        .finished-seal-title { font-size:11px; font-weight:900; text-transform:uppercase; letter-spacing:.18em; color:#a7f3d0; line-height:1; }
+        .finished-seal-date { font-size:13px; font-weight:800; color:#ecfdf5; line-height:1.2; }
+        .finished-seal-compact { padding:.6rem .85rem; }
+        .finished-seal-compact .finished-seal-title { font-size:10px; }
+        .finished-seal-compact .finished-seal-date { font-size:12px; }
+        .finished-watermark { position:absolute; top:1.25rem; right:1.4rem; pointer-events:none; font-size:clamp(2.4rem, 7vw, 5rem); line-height:.85; font-weight:900; text-transform:uppercase; letter-spacing:.18em; color:rgba(16,185,129,.08); user-select:none; z-index:0; text-align:right; }
+        .finished-watermark-compact { top:1.15rem; right:1.15rem; font-size:clamp(1.9rem, 9vw, 3.4rem); letter-spacing:.16em; color:rgba(16,185,129,.07); }
+        .payment-company-pill { display:inline-flex; flex-wrap:wrap; align-items:center; gap:.55rem; border-radius:1rem; border:1px solid rgba(16,185,129,.24); background:rgba(16,185,129,.10); padding:.85rem 1rem; }
+        .payment-company-pill-label { font-size:10px; font-weight:900; text-transform:uppercase; letter-spacing:.16em; color:rgba(167,243,208,.78); }
+        .payment-company-pill-value { font-size:14px; font-weight:900; color:#6ee7b7; line-height:1.15; }
         .mobile-nav-toggle { display:none; }
         .compact-status-chip { display:inline-flex; align-items:center; gap:.45rem; border-radius:999px; padding:.55rem .85rem; font-size:11px; font-weight:900; text-transform:uppercase; letter-spacing:.12em; border:1px solid rgba(255,255,255,0.08); background:rgba(255,255,255,0.03); }
         .compact-kpi-card { background:rgba(0,0,0,0.22); border:1px solid rgba(255,255,255,0.06); border-radius:22px; padding:1rem 1.1rem; }
@@ -1173,13 +1185,13 @@
         if (companyKey === 'Ambas') return state.lang === 'pt' ? 'Ambas' : 'Both';
         return String(companyKey || '').trim() || (state.lang === 'pt' ? 'Não definida' : 'Not set');
     }
-    function renderProjectDocumentMeta(project, compact = false) {
+    function renderProjectDocumentMeta(project, compact = false, includeCompany = true) {
         const invoice = String(project?.numeroInvoice || '').trim();
         const proposal = String(project?.numeroProposta || '').trim();
         const companyLabel = state.lang === 'pt' ? 'Empresa pagadora' : 'Paying company';
         const companyValue = getCompanyDisplayName(project?.empresa);
-        if (!invoice && !proposal && !companyValue) return '';
-        const wrapperClass = compact ? 'flex flex-wrap gap-3 mt-3' : 'grid grid-cols-1 sm:grid-cols-3 gap-3 mb-6';
+        if (!invoice && !proposal && (!includeCompany || !companyValue)) return '';
+        const wrapperClass = compact ? `flex flex-wrap gap-3 mt-3 ${includeCompany ? '' : 'items-stretch'}`.trim() : `grid grid-cols-1 ${includeCompany ? 'sm:grid-cols-3' : 'sm:grid-cols-2'} gap-3 mb-6`;
         const cardClass = compact
             ? 'min-w-[148px] rounded-2xl border border-white/10 bg-white/5 px-3.5 py-3'
             : 'rounded-2xl border border-white/10 bg-white/5 px-4 py-3';
@@ -1199,7 +1211,7 @@
             <div class="${wrapperClass}">
                 ${invoice ? `<div class="${cardClass}"><span class="${labelClass}">${window.t('invoice_label')}</span><span class="${valueClass}">${escapeInlineHtml(invoice)}</span></div>` : ''}
                 ${proposal ? `<div class="${cardClass}"><span class="${labelClass}">${window.t('proposal_label')}</span><span class="${valueClass}">${escapeInlineHtml(proposal)}</span></div>` : ''}
-                <div class="${companyCardClass}"><span class="${labelClass}">${companyLabel}</span><span class="${companyValueClass}">${escapeInlineHtml(companyValue)}</span></div>
+                ${includeCompany ? `<div class="${companyCardClass}"><span class="${labelClass}">${companyLabel}</span><span class="${companyValueClass}">${escapeInlineHtml(companyValue)}</span></div>` : ''}
             </div>
         `;
     }
@@ -1229,6 +1241,41 @@
             isDueSoon: nowMs <= endMs && daysRemaining <= 3,
             daysRemaining
         };
+    }
+
+
+    function formatProjectDate(dateStr) {
+        if (!dateStr) return '-';
+        try {
+            return new Date(String(dateStr) + 'T12:00:00').toLocaleDateString(state.lang === 'pt' ? 'pt-BR' : 'en-US');
+        } catch (_) {
+            return dateStr;
+        }
+    }
+
+    function getProjectCompletionText(project, short = false) {
+        if (project?.status !== 'Finalizado' || !project?.dataConclusao) return '';
+        const dateLabel = formatProjectDate(project.dataConclusao);
+        return state.lang === 'pt'
+            ? (short ? `Finalizado em ${dateLabel}` : `FINALIZADO EM ${dateLabel}`)
+            : (short ? `Finished on ${dateLabel}` : `FINISHED ON ${dateLabel}`);
+    }
+
+    function renderFinishedPresentation(project, compact = false) {
+        if (project?.status !== 'Finalizado' || !project?.dataConclusao) return { badge: '', watermark: '' };
+        const finalLabel = state.lang === 'pt' ? 'Finalizado' : 'Finished';
+        const dateLabel = formatProjectDate(project.dataConclusao);
+        const badge = `
+            <div class="finished-seal ${compact ? 'finished-seal-compact' : ''}">
+                <span class="finished-seal-icon"><i data-lucide="badge-check" class="w-4 h-4"></i></span>
+                <div class="min-w-0">
+                    <p class="finished-seal-title">${finalLabel}</p>
+                    <p class="finished-seal-date">${dateLabel}</p>
+                </div>
+            </div>
+        `;
+        const watermark = `<div class="finished-watermark ${compact ? 'finished-watermark-compact' : ''}">${state.lang === 'pt' ? 'Finalizado' : 'Finished'}</div>`;
+        return { badge, watermark };
     }
 
     function renderAlertChip(label, tone = 'gold', pulse = false) {
@@ -1484,7 +1531,7 @@
                         <p class="text-[10px] font-black uppercase tracking-[0.28em] text-slate-500 mb-2">${isPT ? 'Resumo executivo do pagamento' : 'Executive payment summary'}</p>
                         <h4 class="text-xl sm:text-2xl font-black text-white force-white-text leading-tight">${projectName}</h4>
                         <p class="text-xs text-slate-400 mt-2">${isPT ? 'Vendedor responsável' : 'Responsible seller'}: <span class="text-slate-200 font-bold">${sellerName}</span></p>
-                        ${renderProjectDocumentMeta(project, true)}
+                        ${renderProjectDocumentMeta(project, true, false)}
                     </div>
                     <div class="inline-flex items-center gap-3 self-start rounded-2xl border ${statusChipClass} px-4 py-3 min-w-[220px]">
                         <div class="w-2.5 h-2.5 rounded-full ${statusDotClass}"></div>
@@ -1540,18 +1587,26 @@
                 </div>
 
                 <div class="mt-4 rounded-[26px] border ${summary.overpaidAmount > 0.009 ? 'border-blue-500/30 bg-blue-500/10' : 'border-gold/20 bg-gold/10'} ${exactDuePulseClass} p-5">
-                    <div class="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-4">
-                        <div class="min-w-0">
-                            <div class="flex items-center gap-3 mb-2">
-                                <p class="text-[10px] font-black uppercase tracking-widest ${summary.overpaidAmount > 0.009 ? 'text-blue-300' : 'text-gold'}">${window.t('pay_exact_due')}</p>
-                                ${renderInfoMiniButton(isPT ? 'Saldo exato a pagar' : 'Exact amount due', exactDueInfo)}
+                    <div class="flex flex-col gap-4">
+                        <div class="flex flex-col lg:flex-row lg:items-end lg:justify-between gap-4">
+                            <div class="min-w-0 flex-1">
+                                <div class="flex items-center gap-3 mb-2">
+                                    <p class="text-[10px] font-black uppercase tracking-widest ${summary.overpaidAmount > 0.009 ? 'text-blue-300' : 'text-gold'}">${window.t('pay_exact_due')}</p>
+                                    ${renderInfoMiniButton(isPT ? 'Saldo exato a pagar' : 'Exact amount due', exactDueInfo)}
+                                </div>
+                                <p class="text-3xl sm:text-4xl font-black ${summary.overpaidAmount > 0.009 ? 'text-blue-300' : 'text-gold'}">${summary.overpaidAmount > 0.009 ? '+ ' + formatCurr(summary.overpaidAmount) : formatCurr(summary.remainingToPay)}</p>
+                                <p class="text-sm mt-2 ${statusTextClass}">${statusDesc}</p>
                             </div>
-                            <p class="text-3xl sm:text-4xl font-black ${summary.overpaidAmount > 0.009 ? 'text-blue-300' : 'text-gold'}">${summary.overpaidAmount > 0.009 ? '+ ' + formatCurr(summary.overpaidAmount) : formatCurr(summary.remainingToPay)}</p>
-                            <p class="text-sm mt-2 ${statusTextClass}">${statusDesc}</p>
+                            <div class="lg:max-w-[320px]">
+                                <div class="rounded-2xl border border-white/10 bg-black/25 px-4 py-4 h-full">
+                                    <p class="text-[10px] font-black uppercase tracking-widest text-slate-500 mb-2">${isPT ? 'Leitura rápida' : 'Quick read'}</p>
+                                    <p class="text-sm text-slate-300">${helperStateText}</p>
+                                </div>
+                            </div>
                         </div>
-                        <div class="rounded-2xl border border-white/10 bg-black/25 px-4 py-4 lg:max-w-[380px]">
-                            <p class="text-[10px] font-black uppercase tracking-widest text-slate-500 mb-2">${isPT ? 'Leitura rápida' : 'Quick read'}</p>
-                            <p class="text-sm text-slate-300">${helperStateText}</p>
+                        <div class="payment-company-pill">
+                            <span class="payment-company-pill-label">${isPT ? 'Empresa pagadora' : 'Paying company'}</span>
+                            <span class="payment-company-pill-value">${escapeInlineHtml(getCompanyDisplayName(project?.empresa))}</span>
                         </div>
                     </div>
                 </div>
@@ -2054,9 +2109,14 @@
             const sellerPaymentAlert = getProjectSellerPaymentAlert(p);
             const scheduleAlert = getProjectScheduleAlert(p);
             const sellerPendingBadge = sellerPaymentAlert.hasPending ? renderAlertChip(window.t('pay_pending_badge'), 'gold', true) : '';
-            const timelineBadge = scheduleAlert.isLate
-                ? renderAlertChip(window.t('late'), 'red', true)
-                : (scheduleAlert.isDueSoon ? renderAlertChip(window.t('timeline_due_soon'), 'amber', true) : '');
+            const finishedPresentation = renderFinishedPresentation(p, !isFocused);
+            const finishedBadge = finishedPresentation.badge;
+            const finishedWatermark = finishedPresentation.watermark;
+            const timelineBadge = p.status === 'Finalizado'
+                ? renderAlertChip(state.lang === 'pt' ? `Finalizado ${p.dataConclusao ? formatProjectDate(p.dataConclusao) : ''}`.trim() : `Finished ${p.dataConclusao ? formatProjectDate(p.dataConclusao) : ''}`.trim(), 'gold', false)
+                : (scheduleAlert.isLate
+                    ? renderAlertChip(window.t('late'), 'red', true)
+                    : (scheduleAlert.isDueSoon ? renderAlertChip(window.t('timeline_due_soon'), 'amber', true) : ''));
             const timelineWrapClass = (scheduleAlert.isLate || scheduleAlert.isDueSoon) ? 'timeline-alert-pulse rounded-2xl p-3 -mx-3' : '';
 
             let balText = window.t('balance_pay'); let balColor = "text-red-400"; let balDisplay = formatCurr(f.balance);
@@ -2101,7 +2161,7 @@
                             </div>
                             ${getCommissionContextNote(p, f) ? `<div class="rounded-2xl border border-cyan-500/20 bg-cyan-500/10 px-5 py-4 text-sm text-cyan-100 print:bg-slate-50 print:border-slate-300 print:text-black">${getCommissionContextNote(p, f)}</div>` : ''}
 
-                            <div class="space-y-4">
+                            <div class="space-y-4 relative z-[1]">
                                 <div class="flex justify-between items-center bg-emerald-500/10 p-4 px-5 rounded-2xl border border-emerald-500/20 print:bg-emerald-50 print:border-emerald-200">
                                     <p class="text-xs sm:text-sm font-black text-emerald-400 uppercase tracking-widest print:text-emerald-800">${window.t('client_receipts')}</p>
                                     <div class="flex items-center gap-4">
@@ -2125,6 +2185,7 @@
                                     <div class="flex flex-wrap items-center gap-3">
                                         <p class="text-xs sm:text-sm font-black text-gold uppercase tracking-widest print:text-amber-800">${window.t('seller_payments')}</p>
                                         ${sellerPendingBadge}
+                                        <span class="inline-flex items-center rounded-full border border-emerald-500/20 bg-emerald-500/10 px-3 py-1 text-[10px] font-black uppercase tracking-widest text-emerald-300">${state.lang === 'pt' ? 'Empresa pagadora' : 'Paying company'}: <span class="ml-2 text-emerald-200 normal-case tracking-normal">${escapeInlineHtml(getCompanyDisplayName(p.empresa))}</span></span>
                                     </div>
                                     ${state.userPerms.fin ? `<button onclick="window.openEditPaymentModal('${p.id}')" class="flex items-center gap-2 text-[10px] font-black text-white force-white-text hover:text-gold transition-colors no-print px-4 py-2 bg-slate-800 rounded-xl shadow-md border border-gold/30 force-dark-bg uppercase tracking-widest"><i data-lucide="settings-2" class="w-4 h-4"></i> ${window.t('btn_manage')}</button>` : ''}
                                 </div>
@@ -2340,14 +2401,18 @@
 
                 grid.innerHTML += `
                 <div class="glass p-6 md:p-10 rounded-[40px] border-l-[8px] relative shadow-2xl flex flex-col w-full print:border print:border-none print:shadow-none animate-fade-in mt-6" style="border-left-color: ${p.status === 'Finalizado' ? '#10b981' : '#f59e0b'}">
-                    <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-8 border-b border-white/10 pb-6 gap-6 no-print">
+                    ${finishedWatermark}
+                    <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-8 border-b border-white/10 pb-6 gap-6 no-print relative z-[1]">
                         <div class="flex flex-col sm:flex-row items-start sm:items-center gap-4 w-full sm:w-auto">
                             <button onclick="window.closeProjectModule()" class="p-4 w-full sm:w-auto bg-slate-800 hover:bg-slate-700 rounded-2xl transition-all border border-white/10 shadow-lg flex items-center justify-center gap-3 text-xs font-black uppercase text-white force-white-text force-dark-bg">
                                 <i data-lucide="arrow-left" class="w-5 h-5"></i> ${window.t('back')}
                             </button>
-                            <div class="mt-2 sm:mt-0">
-                                <h4 class="font-black text-2xl sm:text-3xl uppercase tracking-tight text-white force-white-text leading-none truncate max-w-full sm:max-w-md">${p.cliente || 'Sem Nome'}</h4>
-                                <p class="text-xs sm:text-sm font-black text-gold uppercase tracking-widest mt-2">${moduleTitle}</p>
+                            <div class="mt-2 sm:mt-0 space-y-3">
+                                <div>
+                                    <h4 class="font-black text-2xl sm:text-3xl uppercase tracking-tight text-white force-white-text leading-none truncate max-w-full sm:max-w-md">${p.cliente || 'Sem Nome'}</h4>
+                                    <p class="text-xs sm:text-sm font-black text-gold uppercase tracking-widest mt-2">${moduleTitle}</p>
+                                </div>
+                                ${finishedBadge}
                             </div>
                         </div>
                         <button onclick="window.printReport()" class="w-full sm:w-auto mt-4 sm:mt-0 flex items-center justify-center gap-2 text-white force-white-text bg-slate-800 hover:bg-slate-700 transition-all font-black text-xs uppercase tracking-widest px-6 py-4 rounded-2xl border border-white/10 shadow-lg force-dark-bg">
@@ -2378,17 +2443,20 @@
             const cardHoverClasses = isFocused ? '' : 'project-card clickable cursor-pointer';
 
             if (!isFocused) {
-                const dueLabel = scheduleAlert.isLate
-                    ? window.t('late')
-                    : (scheduleAlert.isDueSoon
-                        ? window.t('timeline_due_soon')
-                        : (Number.isFinite(e) ? Math.ceil((e - n) / (1000 * 3600 * 24)) + ' ' + window.t('days_left') : '-'));
+                const dueLabel = p.status === 'Finalizado'
+                    ? getProjectCompletionText(p, true)
+                    : (scheduleAlert.isLate
+                        ? window.t('late')
+                        : (scheduleAlert.isDueSoon
+                            ? window.t('timeline_due_soon')
+                            : (Number.isFinite(e) ? Math.ceil((e - n) / (1000 * 3600 * 24)) + ' ' + window.t('days_left') : '-')));
                 const compactStatusTone = p.status === 'Finalizado' ? 'text-emerald-400' : (scheduleAlert.isLate ? 'text-red-400' : (scheduleAlert.isDueSoon ? 'text-amber-400' : 'text-gold'));
                 const statusBorder = p.status === 'Finalizado' ? '#10b981' : (scheduleAlert.isLate ? '#ef4444' : '#f59e0b');
                 const quickInvoice = p.numeroInvoice || '---';
                 const quickProposal = p.numeroProposta || '---';
                 grid.innerHTML += `<div class="glass p-5 sm:p-6 rounded-[34px] border-l-[8px] relative shadow-2xl flex flex-col print:border print:border-slate-300 print:shadow-none print:break-inside-avoid ${cardHoverClasses}" style="border-left-color: ${statusBorder}" ${cardClickEvent}>
-                    <div class="flex justify-between items-start gap-4 mb-5">
+                    ${finishedWatermark}
+                    <div class="flex justify-between items-start gap-4 mb-5 relative z-[1]">
                         <span class="px-3 py-2 bg-white/5 border border-white/10 rounded-xl text-[10px] font-black uppercase tracking-widest text-slate-300 shadow-sm">${p.empresa || 'Sem Unidade'} ${p.archived ? '<span class="text-indigo-400 ml-1">(ARQ)</span>' : ''}</span>
                         <div class="flex items-center gap-2 bg-black/20 p-2 px-3 rounded-full border border-white/5 print:hidden shrink-0" onclick="event.stopPropagation()">
                             <span class="status-badge ${f.statusColor}" title="Status Financeiro"></span>
@@ -2398,6 +2466,7 @@
                     <div class="space-y-4">
                         <div>
                             <h4 class="compact-card-name text-white force-white-text">${p.cliente || 'Sem Nome'}</h4>
+                            ${finishedBadge ? `<div class="mt-3">${finishedBadge}</div>` : ''}
                         </div>
                         <div class="flex flex-wrap items-center gap-2">
                             <span class="compact-status-chip ${compactStatusTone}">${tStatus(p.status)}</span>
@@ -2424,7 +2493,7 @@
                             </div>
                             <div class="progress-track"><div class="progress-bar-fill" style="width:${prog}%; background-color:${colorHex};"></div></div>
                             <div class="flex justify-between text-[11px] font-extrabold uppercase gap-3">
-                                <span class="text-slate-300">${(p.status === 'Finalizado' && p.dataConclusao ? p.dataConclusao : p.dataInicio) ? new Date(((p.status === 'Finalizado' && p.dataConclusao ? p.dataConclusao : p.dataInicio)) + 'T12:00:00').toLocaleDateString(state.lang === 'pt' ? 'pt-BR' : 'en-US') : '-'}</span>
+                                <span class="text-slate-300">${p.status === 'Finalizado' && p.dataConclusao ? formatProjectDate(p.dataConclusao) : formatProjectDate(p.dataInicio)}</span>
                                 <span class="${compactStatusTone}">${dueLabel}</span>
                             </div>
                         </div>
@@ -2435,8 +2504,8 @@
             }
 
             let cardHTML = `<div class="glass p-6 md:p-8 rounded-[40px] border-l-[8px] relative shadow-2xl flex flex-col h-full print:border print:border-slate-300 print:shadow-none print:break-inside-avoid ${cardHoverClasses}" style="border-left-color: ${p.status === 'Finalizado' ? '#10b981' : '#f59e0b'}" ${cardClickEvent}>
-                
-                <div class="flex justify-between items-start mb-6">
+                ${finishedWatermark}
+                <div class="flex justify-between items-start mb-6 relative z-[1]">
                     <span class="px-4 py-2 bg-white/5 border border-white/10 rounded-xl text-[10px] font-black uppercase tracking-widest text-slate-300 shadow-sm print:bg-slate-100 print:text-slate-800">${p.empresa || 'Sem Unidade'} ${p.archived ? '<span class="text-indigo-400 ml-1">(ARQUIVADA)</span>' : ''}</span>
                     <div class="flex items-center gap-3 bg-black/20 p-2 px-4 rounded-full border border-white/5 print:hidden">
                         <span class="status-badge ${f.statusColor}" title="Status Financeiro"></span>
@@ -2444,7 +2513,7 @@
                     </div>
                 </div>
 
-                <div class="text-left mb-8"><h4 class="font-black text-3xl uppercase tracking-tight text-white force-white-text leading-none print:text-black">${p.cliente || 'Sem Nome'}</h4></div>
+                <div class="text-left mb-8 space-y-4 relative z-[1]"><h4 class="font-black text-3xl uppercase tracking-tight text-white force-white-text leading-none print:text-black">${p.cliente || 'Sem Nome'}</h4>${finishedBadge}</div>
 
                 <div class="grid grid-cols-2 gap-y-6 gap-x-4 p-6 bg-black/20 rounded-[24px] border border-white/5 mb-10 text-left shadow-inner print:bg-transparent print:border-slate-200">
                     <div><p class="text-xs font-black text-slate-500 uppercase tracking-widest mb-1.5">${window.t('seller')}</p><p class="text-sm font-bold text-slate-200 truncate print:text-black" title="${p.vendedor}">${p.vendedor?.split('@')[0] || '--'}</p></div>
@@ -2465,8 +2534,8 @@
                     </div>
                     <div class="progress-track print:bg-slate-200 ${scheduleAlert.isLate || scheduleAlert.isDueSoon ? 'timeline-alert-pulse' : ''}"><div class="progress-bar-fill print:!bg-black" style="width: ${prog}%; background-color: ${colorHex};"></div></div>
                     <div class="flex justify-between text-xs font-extrabold uppercase mt-2">
-                        <span class="print:text-black">${(p.status === 'Finalizado' && p.dataConclusao ? p.dataConclusao : p.dataInicio) ? new Date(((p.status === 'Finalizado' && p.dataConclusao ? p.dataConclusao : p.dataInicio)) + 'T12:00:00').toLocaleDateString(state.lang === 'pt' ? 'pt-BR' : 'en-US') : '-'}</span>
-                        <span class="${scheduleAlert.isLate ? 'text-red-500' : (scheduleAlert.isDueSoon ? 'text-amber-400' : 'text-gold')} print:!text-black">${scheduleAlert.isLate ? window.t('late') : (prog === 100 ? window.t('completed') : (Number.isFinite(e) ? Math.ceil((e - n) / (1000 * 3600 * 24)) : 0) + ' ' + window.t('days_left'))}</span>
+                        <span class="print:text-black">${p.status === 'Finalizado' && p.dataConclusao ? formatProjectDate(p.dataConclusao) : formatProjectDate(p.dataInicio)}</span>
+                        <span class="${p.status === 'Finalizado' ? 'text-emerald-400' : (scheduleAlert.isLate ? 'text-red-500' : (scheduleAlert.isDueSoon ? 'text-amber-400' : 'text-gold'))} print:!text-black">${p.status === 'Finalizado' ? getProjectCompletionText(p, true) : (scheduleAlert.isLate ? window.t('late') : (prog === 100 ? window.t('completed') : (Number.isFinite(e) ? Math.ceil((e - n) / (1000 * 3600 * 24)) : 0) + ' ' + window.t('days_left')))}</span>
                     </div>
                 </div>
 
