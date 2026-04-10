@@ -185,16 +185,11 @@
         .finished-seal-compact { padding:.6rem .85rem; }
         .finished-seal-compact .finished-seal-title { font-size:10px; }
         .finished-seal-compact .finished-seal-date { font-size:12px; }
-        .finished-watermark { position:absolute; top:1.25rem; right:1.4rem; pointer-events:none; font-size:clamp(2.4rem, 7vw, 5rem); line-height:.85; font-weight:900; text-transform:uppercase; letter-spacing:.18em; color:rgba(16,185,129,.08); user-select:none; z-index:0; text-align:right; }
-        .finished-watermark-compact { top:1.15rem; right:1.15rem; font-size:clamp(1.9rem, 9vw, 3.4rem); letter-spacing:.16em; color:rgba(16,185,129,.07); }
-        .finished-stamp { position:absolute; top:1.2rem; right:1.25rem; z-index:1; pointer-events:none; display:inline-flex; flex-direction:column; align-items:center; justify-content:center; min-width:9.5rem; padding:.7rem 1rem .6rem; border-radius:1rem; border:2px solid rgba(16,185,129,.4); background:rgba(3,11,23,.38); backdrop-filter:blur(4px); transform:rotate(-8deg); box-shadow:0 10px 24px -18px rgba(16,185,129,.75); }
-        .finished-stamp::before { content:''; position:absolute; inset:.28rem; border-radius:.8rem; border:1px dashed rgba(16,185,129,.22); }
-        .finished-stamp-title { position:relative; font-size:11px; line-height:1; font-weight:900; text-transform:uppercase; letter-spacing:.22em; color:rgba(110,231,183,.96); }
-        .finished-stamp-date { position:relative; margin-top:.28rem; font-size:12px; line-height:1.1; font-weight:800; color:#ecfdf5; }
-        .finished-stamp-compact { top:1.15rem; right:1.1rem; min-width:8.6rem; padding:.6rem .9rem .55rem; border-radius:.95rem; }
-        .finished-stamp-compact .finished-stamp-title { font-size:10px; letter-spacing:.2em; }
-        .finished-stamp-compact .finished-stamp-date { font-size:11px; }
-        @media (max-width: 640px) { .finished-stamp { top:1rem; right:1rem; min-width:8.1rem; padding:.56rem .8rem .5rem; transform:rotate(-7deg); } .finished-stamp-title { font-size:9px; letter-spacing:.18em; } .finished-stamp-date { font-size:10px; } }
+        .finished-watermark { position:absolute; inset:0; pointer-events:none; display:flex; align-items:center; justify-content:center; font-size:clamp(3rem, 8vw, 5.8rem); line-height:.9; font-weight:900; text-transform:uppercase; letter-spacing:.22em; color:rgba(16,185,129,.065); user-select:none; z-index:0; text-align:center; transform:rotate(-15deg); }
+        .finished-watermark span { display:inline-block; padding:0 .6rem; }
+        .finished-watermark-compact { font-size:clamp(2.8rem, 10vw, 4.6rem); color:rgba(16,185,129,.055); transform:rotate(-17deg); }
+        .finished-stamp { display:none !important; }
+        .finished-stamp-compact { display:none !important; }
         .payment-company-pill { display:inline-flex; flex-wrap:wrap; align-items:center; gap:.55rem; border-radius:1rem; border:1px solid rgba(16,185,129,.24); background:rgba(16,185,129,.10); padding:.85rem 1rem; }
         .payment-company-pill-label { font-size:10px; font-weight:900; text-transform:uppercase; letter-spacing:.16em; color:rgba(167,243,208,.78); }
         .payment-company-pill-value { font-size:14px; font-weight:900; color:#6ee7b7; line-height:1.15; }
@@ -1273,8 +1268,8 @@
         if (project?.status !== 'Finalizado' || !project?.dataConclusao) return { badge: '', watermark: '', stamp: '' };
         const finalLabel = state.lang === 'pt' ? 'Finalizado' : 'Finished';
         const dateLabel = formatProjectDate(project.dataConclusao);
-        const badge = `
-            <div class="finished-seal ${compact ? 'finished-seal-compact' : ''}">
+        const badge = compact ? '' : `
+            <div class="finished-seal">
                 <span class="finished-seal-icon"><i data-lucide="badge-check" class="w-4 h-4"></i></span>
                 <div class="min-w-0">
                     <p class="finished-seal-title">${finalLabel}</p>
@@ -1282,14 +1277,8 @@
                 </div>
             </div>
         `;
-        const watermark = compact ? '' : `<div class="finished-watermark">${state.lang === 'pt' ? 'Finalizado' : 'Finished'}</div>`;
-        const stamp = `
-            <div class="finished-stamp ${compact ? 'finished-stamp-compact' : ''}">
-                <span class="finished-stamp-title">${finalLabel}</span>
-                <span class="finished-stamp-date">${dateLabel}</span>
-            </div>
-        `;
-        return { badge, watermark, stamp };
+        const watermark = `<div class="finished-watermark ${compact ? 'finished-watermark-compact' : ''}"><span>${finalLabel}</span></div>`;
+        return { badge, watermark, stamp: '' };
     }
 
     function renderAlertChip(label, tone = 'gold', pulse = false) {
@@ -2459,7 +2448,7 @@
 
             if (!isFocused) {
                 const dueLabel = p.status === 'Finalizado'
-                    ? getProjectCompletionText(p, true)
+                    ? formatProjectDate(p.dataConclusao)
                     : (scheduleAlert.isLate
                         ? window.t('late')
                         : (scheduleAlert.isDueSoon
@@ -2504,8 +2493,8 @@
                             </div>
                             <div class="progress-track"><div class="progress-bar-fill" style="width:${prog}%; background-color:${colorHex};"></div></div>
                             <div class="flex justify-between text-[11px] font-extrabold uppercase gap-3">
-                                <span class="text-slate-300">${p.status === 'Finalizado' && p.dataConclusao ? formatProjectDate(p.dataConclusao) : formatProjectDate(p.dataInicio)}</span>
-                                <span class="${compactStatusTone}">${dueLabel}</span>
+                                <span class="text-slate-300">${formatProjectDate(p.dataInicio)}</span>
+                                <span class="${compactStatusTone}">${p.status === 'Finalizado' && p.dataConclusao ? formatProjectDate(p.dataConclusao) : dueLabel}</span>
                             </div>
                         </div>
                     </div>
