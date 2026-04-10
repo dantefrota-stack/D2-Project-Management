@@ -1398,6 +1398,16 @@
         const startDate = formatProjectDate(project?.dataInicio);
         const dueDate = formatProjectDate(project?.dataEntrega);
         const completionDate = project?.status === 'Finalizado' ? formatProjectDate(project?.dataConclusao) : '—';
+        const receiptMethodSet = Array.from(new Set((Array.isArray(project?.recebimentos) ? project.recebimentos : [])
+            .map(r => getReceiptEffectiveMethod(r, project))
+            .filter(Boolean)));
+        const effectiveMethod = receiptMethodSet.length
+            ? receiptMethodSet.join(' / ')
+            : (String(project?.metodo || '').trim() || '—');
+        const commissionRate = Number(project?.percComissao || 0);
+        const methodCommissionSummary = commissionRate > 0 || effectiveMethod !== '—'
+            ? `${escapeInlineHtml(effectiveMethod)} • ${commissionRate.toFixed(1)}%`
+            : (isPt ? 'Não definido' : 'Not defined');
         const budgetDefined = Number(fin?.orcamento || 0) > 0;
         const budgetRemaining = roundMoney(Number(fin?.budgetRemaining || 0));
         const isOverBudget = budgetDefined && budgetRemaining < -0.009;
@@ -1463,7 +1473,7 @@
                             <div class="sheet-info-item"><span class="sheet-info-label">${isPt ? 'Início' : 'Start date'}</span><span class="sheet-info-value">${startDate}</span></div>
                             <div class="sheet-info-item"><span class="sheet-info-label">${isPt ? 'Prazo' : 'Due date'}</span><span class="sheet-info-value">${dueDate}</span></div>
                             <div class="sheet-info-item"><span class="sheet-info-label">${isPt ? 'Conclusão' : 'Completion date'}</span><span class="sheet-info-value">${completionDate}</span></div>
-                            <div class="sheet-info-item"><span class="sheet-info-label">${isPt ? 'Método / % comissão' : 'Method / commission %'}</span><span class="sheet-info-value">${escapeInlineHtml(String(project?.formaPagamento || '—'))} • ${Number(project?.percentualComissao || 0).toFixed(1)}%</span></div>
+                            <div class="sheet-info-item"><span class="sheet-info-label">${isPt ? 'Recebimento / % comissão' : 'Payment method / commission %'}</span><span class="sheet-info-value">${methodCommissionSummary}</span></div>
                         </div>
                     </div>
                 </div>
