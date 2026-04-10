@@ -152,6 +152,54 @@
             /* Força a cor branca nos badges do funil durante a impressão */
             .print-force-white { color: #ffffff !important; }
             .funnel-value { color: #0f172a !important; }
+
+            /* Ficha de impressão enxuta para módulos da obra */
+            .project-module-shell { background: #ffffff !important; border: none !important; box-shadow: none !important; padding: 0 !important; margin: 0 !important; }
+            .project-module-shell > .module-body,
+            .project-module-shell > .project-legacy-print-header,
+            .project-module-shell > .project-watermark-print {
+                display: none !important;
+            }
+            .project-module-shell > .project-print-sheet { display: block !important; }
+            .project-print-sheet {
+                display: block !important;
+                color: #0f172a !important;
+                font-family: Inter, Arial, sans-serif;
+            }
+            .project-print-sheet * { color: inherit; }
+            .project-print-sheet .sheet-header {
+                display: flex; align-items: center; justify-content: space-between; gap: 14px;
+                border-bottom: 2px solid #cbd5e1; padding-bottom: 10px; margin-bottom: 14px;
+            }
+            .project-print-sheet .sheet-logo { height: 42px; width: auto; }
+            .project-print-sheet .sheet-title { font-size: 24px; line-height: 1.05; font-weight: 900; text-transform: uppercase; letter-spacing: -0.03em; }
+            .project-print-sheet .sheet-subtitle { font-size: 11px; font-weight: 800; text-transform: uppercase; letter-spacing: 0.16em; color: #475569 !important; margin-top: 4px; }
+            .project-print-sheet .sheet-summary { display: grid; grid-template-columns: 1.1fr 1fr; gap: 12px; margin-bottom: 12px; }
+            .project-print-sheet .sheet-card { border: 1px solid #cbd5e1; border-radius: 14px; padding: 10px 12px; background: #ffffff !important; page-break-inside: avoid; }
+            .project-print-sheet .sheet-card-highlight { border-color: #94a3b8; background: #f8fafc !important; }
+            .project-print-sheet .sheet-section-title { font-size: 10px; font-weight: 900; text-transform: uppercase; letter-spacing: 0.18em; color: #64748b !important; margin-bottom: 8px; }
+            .project-print-sheet .sheet-card-title { font-size: 16px; line-height: 1.2; font-weight: 900; margin-bottom: 6px; }
+            .project-print-sheet .sheet-card-copy { font-size: 11px; line-height: 1.45; color: #475569 !important; }
+            .project-print-sheet .sheet-info-grid { display: grid; grid-template-columns: repeat(2, minmax(0,1fr)); gap: 8px; }
+            .project-print-sheet .sheet-info-item { border: 1px solid #e2e8f0; border-radius: 12px; padding: 8px 10px; min-height: 56px; }
+            .project-print-sheet .sheet-info-label { display:block; font-size: 9px; font-weight: 900; text-transform: uppercase; letter-spacing: 0.16em; color: #64748b !important; margin-bottom: 5px; }
+            .project-print-sheet .sheet-info-value { display:block; font-size: 13px; line-height: 1.25; font-weight: 800; word-break: break-word; }
+            .project-print-sheet .sheet-metrics { display: grid; grid-template-columns: repeat(3, minmax(0,1fr)); gap: 8px; margin-bottom: 12px; }
+            .project-print-sheet .sheet-metric { border: 1px solid #e2e8f0; border-radius: 12px; padding: 8px 10px; min-height: 62px; }
+            .project-print-sheet .sheet-metric-label { display:block; font-size: 9px; font-weight: 900; text-transform: uppercase; letter-spacing: 0.16em; color: #64748b !important; margin-bottom: 6px; }
+            .project-print-sheet .sheet-metric-value { display:block; font-size: 16px; line-height: 1.1; font-weight: 900; word-break: break-word; }
+            .project-print-sheet .sheet-metric-value.small { font-size: 14px; }
+            .project-print-sheet .sheet-metric-value.positive { color: #047857 !important; }
+            .project-print-sheet .sheet-metric-value.negative { color: #b91c1c !important; }
+            .project-print-sheet .sheet-metric-value.warn { color: #b45309 !important; }
+            .project-print-sheet .sheet-columns { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+            .project-print-sheet .sheet-list { list-style: none; padding: 0; margin: 0; }
+            .project-print-sheet .sheet-list li { display: flex; justify-content: space-between; gap: 12px; padding: 7px 0; border-bottom: 1px solid #e2e8f0; font-size: 11px; }
+            .project-print-sheet .sheet-list li:last-child { border-bottom: none; }
+            .project-print-sheet .sheet-list-label { color: #334155 !important; font-weight: 700; }
+            .project-print-sheet .sheet-list-value { font-weight: 900; white-space: nowrap; }
+            .project-print-sheet .sheet-note { margin-top: 10px; padding: 10px 12px; border-radius: 12px; background: #f8fafc !important; border: 1px solid #e2e8f0; font-size: 11px; line-height: 1.45; color: #475569 !important; }
+            .project-print-sheet .sheet-footer { margin-top: 10px; padding-top: 8px; border-top: 1px solid #cbd5e1; font-size: 10px; color: #64748b !important; display: flex; justify-content: space-between; gap: 10px; }
         }
 
         .flag-btn { border: 1px solid rgba(15,23,42,0.12); border-radius: 14px; padding: 10px; transition: .2s; background: #fff; }
@@ -1335,6 +1383,119 @@
             : (short ? `Finished on ${dateLabel}` : `FINISHED ON ${dateLabel}`);
     }
 
+    function buildProjectPrintSheet(project, fin, moduleTitle) {
+        const isPt = state.lang === 'pt';
+        const projectTitle = escapeInlineHtml(getProjectPrimaryTitle(project));
+        const secondaryMeta = getProjectSecondaryMeta(project).map(item => escapeInlineHtml(item));
+        const projectReference = secondaryMeta.join(' • ');
+        const sellerName = escapeInlineHtml(getUserDisplayName(project?.vendedor, '—'));
+        const companyName = escapeInlineHtml(getCompanyDisplayName(project?.empresa));
+        const invoice = escapeInlineHtml(String(project?.numeroInvoice || '—').trim() || '—');
+        const proposal = escapeInlineHtml(String(project?.numeroProposta || '—').trim() || '—');
+        const address = escapeInlineHtml(String(project?.endereco || '—').trim() || '—');
+        const projectName = escapeInlineHtml(String(project?.nomeProjeto || project?.nomeObra || '—').trim() || '—');
+        const statusLabel = escapeInlineHtml(tStatus(project?.status || '-'));
+        const startDate = formatProjectDate(project?.dataInicio);
+        const dueDate = formatProjectDate(project?.dataEntrega);
+        const completionDate = project?.status === 'Finalizado' ? formatProjectDate(project?.dataConclusao) : '—';
+        const budgetDefined = Number(fin?.orcamento || 0) > 0;
+        const budgetRemaining = roundMoney(Number(fin?.budgetRemaining || 0));
+        const isOverBudget = budgetDefined && budgetRemaining < -0.009;
+        const budgetStatus = !budgetDefined
+            ? (isPt ? 'Budget não definido' : 'Budget not defined')
+            : (isOverBudget ? (isPt ? 'Acima do budget' : 'Over budget') : (isPt ? 'Dentro do budget' : 'Within budget'));
+        const budgetRemainingLabel = isOverBudget ? (isPt ? 'Acima do Budget' : 'Over Budget') : (isPt ? 'Disponível no Budget' : 'Budget Remaining');
+        const categories = Object.entries(fin?.gastosPorCategoria || {})
+            .filter(([, value]) => Number(value) > 0.004)
+            .sort((a, b) => Number(b[1]) - Number(a[1]));
+        const categoryLines = (categories.length ? categories : [[isPt ? 'Sem lançamentos' : 'No expenses', 0]])
+            .slice(0, 6)
+            .map(([label, value]) => `<li><span class="sheet-list-label">${escapeInlineHtml(label)}</span><span class="sheet-list-value">${formatCurr(value)}</span></li>`)
+            .join('');
+        const metric = (label, value, tone = '', small = false) => `
+            <div class="sheet-metric">
+                <span class="sheet-metric-label">${label}</span>
+                <span class="sheet-metric-value${small ? ' small' : ''}${tone ? ` ${tone}` : ''}">${value}</span>
+            </div>`;
+        const metricsHTML = [
+            metric(isPt ? 'Valor da Obra' : 'Contract Value', formatCurr(project?.valorTotal || 0)),
+            metric(isPt ? 'Orçamento (Budget)' : 'Budget', budgetDefined ? formatCurr(fin?.orcamento || 0) : '—'),
+            metric(isPt ? 'Despesas Totais' : 'Total Expenses', formatCurr(fin?.totalDespesas || 0), Number(fin?.totalDespesas || 0) > 0 ? 'negative' : ''),
+            metric(budgetRemainingLabel, formatCurr(Math.abs(budgetRemaining)), isOverBudget ? 'negative' : 'positive'),
+            metric(isPt ? 'Recebido do Cliente' : 'Client Received', formatCurr(fin?.totalRecebido || 0), 'positive'),
+            metric(isPt ? 'Saldo Cliente a Receber' : 'Client Outstanding', formatCurr(fin?.clientOutstanding || 0), Number(fin?.clientOutstanding || 0) > 0 ? 'warn' : ''),
+            metric(isPt ? 'Comissão Projetada' : 'Projected Commission', formatCurr(fin?.commTotalProjetada || 0), '', true),
+            metric(isPt ? 'Pago ao Vendedor' : 'Seller Paid', formatCurr(fin?.totalPaid || 0), '', true),
+            metric(isPt ? 'Comissão Restante' : 'Commission Remaining', formatCurr(fin?.commRemainingProjected || 0), Number(fin?.commRemainingProjected || 0) > 0 ? 'warn' : '', true),
+            metric(isPt ? '% do Budget Usado' : '% Budget Used', budgetDefined ? `${Number(fin?.budgetSpentPerc || 0).toFixed(1)}%` : '—', budgetDefined && Number(fin?.budgetSpentPerc || 0) >= 100 ? 'negative' : ''),
+            metric(isPt ? 'Lucro Atual' : 'Current Profit', formatCurr(fin?.lucroBruto || 0), Number(fin?.lucroBruto || 0) >= 0 ? 'positive' : 'negative'),
+            metric(isPt ? 'Margem Atual' : 'Current Margin', `${Number(fin?.margemLucro || 0).toFixed(1)}%`, Number(fin?.margemLucro || 0) >= 0 ? 'positive' : 'negative')
+        ].join('');
+        const footerLeft = isPt ? `Gerado em ${new Date().toLocaleDateString('pt-BR')} às ${new Date().toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit' })}` : `Generated on ${new Date().toLocaleDateString('en-US')} at ${new Date().toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit' })}`;
+        const footerRight = isPt ? `Relatório resumido • ${escapeInlineHtml(moduleTitle)}` : `Summary report • ${escapeInlineHtml(moduleTitle)}`;
+        return `
+            <div class="project-print-sheet hidden">
+                <div class="sheet-header">
+                    <div>
+                        <img src="logo-D2-Group-preto.png" class="sheet-logo" alt="D2 Group">
+                    </div>
+                    <div style="flex:1; min-width:0; text-align:right;">
+                        <h1 class="sheet-title">${projectTitle}</h1>
+                        <p class="sheet-subtitle">${escapeInlineHtml(moduleTitle)} • ${companyName}</p>
+                    </div>
+                </div>
+                <div class="sheet-summary">
+                    <div class="sheet-card sheet-card-highlight">
+                        <div class="sheet-section-title">${isPt ? 'Resumo da obra' : 'Project summary'}</div>
+                        <div class="sheet-card-title">${projectTitle}</div>
+                        <div class="sheet-card-copy">${projectReference || (isPt ? 'Sem complemento cadastrado.' : 'No secondary project reference added.')}</div>
+                        <div class="sheet-note">${isPt ? 'Status atual' : 'Current status'}: <strong>${statusLabel}</strong> • ${isPt ? 'Saúde do budget' : 'Budget health'}: <strong>${budgetStatus}</strong></div>
+                    </div>
+                    <div class="sheet-card">
+                        <div class="sheet-section-title">${isPt ? 'Dados principais' : 'Core details'}</div>
+                        <div class="sheet-info-grid">
+                            <div class="sheet-info-item"><span class="sheet-info-label">${isPt ? 'Projeto / referência' : 'Project / reference'}</span><span class="sheet-info-value">${projectName}</span></div>
+                            <div class="sheet-info-item"><span class="sheet-info-label">${isPt ? 'Endereço' : 'Address'}</span><span class="sheet-info-value">${address}</span></div>
+                            <div class="sheet-info-item"><span class="sheet-info-label">${isPt ? 'Vendedor responsável' : 'Responsible seller'}</span><span class="sheet-info-value">${sellerName}</span></div>
+                            <div class="sheet-info-item"><span class="sheet-info-label">${isPt ? 'Empresa pagadora' : 'Paying company'}</span><span class="sheet-info-value">${companyName}</span></div>
+                            <div class="sheet-info-item"><span class="sheet-info-label">Invoice</span><span class="sheet-info-value">${invoice}</span></div>
+                            <div class="sheet-info-item"><span class="sheet-info-label">${isPt ? 'Proposta' : 'Proposal'}</span><span class="sheet-info-value">${proposal}</span></div>
+                            <div class="sheet-info-item"><span class="sheet-info-label">${isPt ? 'Início' : 'Start date'}</span><span class="sheet-info-value">${startDate}</span></div>
+                            <div class="sheet-info-item"><span class="sheet-info-label">${isPt ? 'Prazo' : 'Due date'}</span><span class="sheet-info-value">${dueDate}</span></div>
+                            <div class="sheet-info-item"><span class="sheet-info-label">${isPt ? 'Conclusão' : 'Completion date'}</span><span class="sheet-info-value">${completionDate}</span></div>
+                            <div class="sheet-info-item"><span class="sheet-info-label">${isPt ? 'Método / % comissão' : 'Method / commission %'}</span><span class="sheet-info-value">${escapeInlineHtml(String(project?.formaPagamento || '—'))} • ${Number(project?.percentualComissao || 0).toFixed(1)}%</span></div>
+                        </div>
+                    </div>
+                </div>
+                <div class="sheet-card" style="margin-bottom:12px;">
+                    <div class="sheet-section-title">${isPt ? 'Resumo financeiro' : 'Financial summary'}</div>
+                    <div class="sheet-metrics">${metricsHTML}</div>
+                </div>
+                <div class="sheet-columns">
+                    <div class="sheet-card">
+                        <div class="sheet-section-title">${isPt ? 'Distribuição de gastos por categoria' : 'Expense breakdown by category'}</div>
+                        <ul class="sheet-list">${categoryLines}</ul>
+                    </div>
+                    <div class="sheet-card">
+                        <div class="sheet-section-title">${isPt ? 'Leitura rápida' : 'Quick read'}</div>
+                        <ul class="sheet-list">
+                            <li><span class="sheet-list-label">${isPt ? 'Budget' : 'Budget'}</span><span class="sheet-list-value">${budgetStatus}</span></li>
+                            <li><span class="sheet-list-label">${budgetRemainingLabel}</span><span class="sheet-list-value">${formatCurr(Math.abs(budgetRemaining))}</span></li>
+                            <li><span class="sheet-list-label">${isPt ? 'Recebido / Total da obra' : 'Received / contract value'}</span><span class="sheet-list-value">${formatCurr(fin?.totalRecebido || 0)} / ${formatCurr(project?.valorTotal || 0)}</span></li>
+                            <li><span class="sheet-list-label">${isPt ? 'Comissão paga / projetada' : 'Commission paid / projected'}</span><span class="sheet-list-value">${formatCurr(fin?.totalPaid || 0)} / ${formatCurr(fin?.commTotalProjetada || 0)}</span></li>
+                            <li><span class="sheet-list-label">${isPt ? 'Lançamentos de custo' : 'Cost entries'}</span><span class="sheet-list-value">${Number(fin?.despesasMetricas?.length || 0)}</span></li>
+                            <li><span class="sheet-list-label">${isPt ? 'Margem atual' : 'Current margin'}</span><span class="sheet-list-value">${Number(fin?.margemLucro || 0).toFixed(1)}%</span></li>
+                        </ul>
+                    </div>
+                </div>
+                <div class="sheet-footer">
+                    <span>${footerLeft}</span>
+                    <span>${footerRight}</span>
+                </div>
+            </div>
+        `;
+    }
+
     function renderFinishedPresentation(project, compact = false) {
         if (project?.status !== 'Finalizado' || !project?.dataConclusao) return { badge: '', watermark: '', stamp: '' };
         const finalLabel = state.lang === 'pt' ? 'Finalizado' : 'Finished';
@@ -2476,8 +2637,8 @@
                 }
 
                 grid.innerHTML += `
-                <div class="glass p-6 md:p-10 rounded-[40px] border-l-[8px] relative shadow-2xl flex flex-col w-full print:border print:border-none print:shadow-none animate-fade-in mt-6" style="border-left-color: ${p.status === 'Finalizado' ? '#10b981' : '#f59e0b'}">
-                    ${finishedWatermark}
+                <div class="glass project-module-shell p-6 md:p-10 rounded-[40px] border-l-[8px] relative shadow-2xl flex flex-col w-full print:border print:border-none print:shadow-none animate-fade-in mt-6" style="border-left-color: ${p.status === 'Finalizado' ? '#10b981' : '#f59e0b'}">
+                    <div class="project-watermark-print">${finishedWatermark}</div>
                     <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-8 border-b border-white/10 pb-6 gap-6 no-print relative z-[1]">
                         <div class="flex flex-col sm:flex-row items-start sm:items-center gap-4 w-full sm:w-auto">
                             <button onclick="window.closeProjectModule()" class="p-4 w-full sm:w-auto bg-slate-800 hover:bg-slate-700 rounded-2xl transition-all border border-white/10 shadow-lg flex items-center justify-center gap-3 text-xs font-black uppercase text-white force-white-text force-dark-bg">
@@ -2496,12 +2657,13 @@
                         </button>
                     </div>
 
-                    <div class="hidden print:block mb-8 border-b border-slate-300 pb-4">
+                    <div class="project-legacy-print-header hidden print:block mb-8 border-b border-slate-300 pb-4">
                         <div class="mb-4"><img src="logo-D2-Group-preto.png" class="h-12"></div>
                         <h4 class="font-black text-3xl uppercase tracking-tight text-black leading-none">${escapeInlineHtml(getProjectPrimaryTitle(p))}</h4>
                         <p class="text-sm font-bold text-slate-500 uppercase tracking-widest mt-2">${p.empresa} | Módulo: ${moduleTitle}</p>
                     </div>
 
+                    ${buildProjectPrintSheet(p, f, moduleTitle)}
                     <div class="module-body animate-fade-in w-full">
                         ${moduleContent}
                     </div>
