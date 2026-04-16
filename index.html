@@ -1155,7 +1155,8 @@
         try {
             const action = currentArchivedStatus ? "Desarquivou" : "Arquivou";
             await updateDoc(doc(db, 'artifacts', appId, 'public', 'data', 'projects', id), { archived: !currentArchivedStatus });
-            logAccess(state.user.email, `${action} a obra ID: ${id}`);
+            const projectMeta = getProjectLogMeta(state.projects.find(x => x.id === id));
+            logAccess(state.user.email, `${action} a obra ID: ${id}`, projectMeta);
             if (state.focusedProject === id) window.closeProjectDetails();
         } catch (e) { console.error(e); }
     };
@@ -1175,7 +1176,7 @@
 
         try {
             await updateDoc(doc(db, 'artifacts', appId, 'public', 'data', 'projects', projectId), { despesas: arrayUnion(newExpense) });
-            logAccess(state.user.email, `Registrou despesa de $${val} (${cat})`, { projectId, projectName: getProjectDisplayName(p), projectInvoice: String(p?.numeroInvoice || '').trim(), projectProposal: String(p?.numeroProposta || '').trim() });
+            logAccess(state.user.email, `Registrou despesa de $${val} (${cat})`, getProjectLogMeta(p));
         } catch (e) { console.error("Erro ao adicionar despesa:", e); }
     };
 
@@ -1189,7 +1190,7 @@
 
             try {
                 await updateDoc(doc(db, 'artifacts', appId, 'public', 'data', 'projects', projectId), { despesas: updatedExpenses });
-                logAccess(state.user.email, `Excluiu despesa de $${expenseVal} (${expenseDesc})`, { projectId, projectName: getProjectDisplayName(p), projectInvoice: String(p?.numeroInvoice || '').trim(), projectProposal: String(p?.numeroProposta || '').trim() });
+                logAccess(state.user.email, `Excluiu despesa de $${expenseVal} (${expenseDesc})`, getProjectLogMeta(p));
             } catch (e) { console.error("Erro ao remover despesa:", e); window.showModal(window.t('error'), 'Falha ao excluir despesa.', 'error'); }
         });
     };
@@ -1278,17 +1279,34 @@
         let proposal = String(log?.projectProposal || '').trim();
         let actionText = String(log?.action || '-').trim();
 
-        const idMatch = actionText.match(/na obra ID:\s*([A-Za-z0-9_-]+)/i) || actionText.match(/project ID:\s*([A-Za-z0-9_-]+)/i);
+        const idMatch = actionText.match(/(?:na|a) obra ID:\s*([A-Za-z0-9_-]+)/i) || actionText.match(/project ID:\s*([A-Za-z0-9_-]+)/i);
         if (!projectId && idMatch) projectId = idMatch[1];
 
-        const project = projectId ? state.projects.find(p => p.id === projectId) : null;
+        let project = projectId ? state.projects.find(p => p.id === projectId) : null;
+        if (!project && !projectName) {
+            const nameMatch = actionText.match(/(?:Editou a obra|Registrou nova obra|Excluiu a obra|Abriu a obra|Arquivou a obra|Desarquivou a obra):\s*(.+)$/i)
+                || actionText.match(/(?:Edited project|Registered new project|Deleted project|Opened project|Archived project|Unarchived project):\s*(.+)$/i);
+            const actionProjectName = String(nameMatch?.[1] || '').trim();
+            if (actionProjectName) {
+                project = state.projects.find(p => {
+                    const display = getProjectDisplayName(p).toLowerCase();
+                    const client = String(p?.cliente || '').trim().toLowerCase();
+                    const ref = String(p?.nomeProjeto || p?.nomeObra || '').trim().toLowerCase();
+                    const target = actionProjectName.toLowerCase();
+                    return display === target || client === target || ref === target;
+                }) || null;
+                projectName = actionProjectName;
+            }
+        }
+
         if (project) {
             projectName = projectName || getProjectDisplayName(project);
             invoice = invoice || String(project.numeroInvoice || '').trim();
             proposal = proposal || String(project.numeroProposta || '').trim();
+            projectId = projectId || String(project.id || '').trim();
         }
 
-        actionText = actionText.replace(/\s*na obra ID:\s*[A-Za-z0-9_-]+/ig, '').replace(/\s*project ID:\s*[A-Za-z0-9_-]+/ig, '').trim();
+        actionText = actionText.replace(/\s*(?:na|a) obra ID:\s*[A-Za-z0-9_-]+/ig, '').replace(/\s*project ID:\s*[A-Za-z0-9_-]+/ig, '').trim();
 
         return {
             projectId,
@@ -1306,6 +1324,16 @@
         if (companyKey === 'HVAC') return 'D2 HVAC Solutions';
         if (companyKey === 'Ambas') return state.lang === 'pt' ? 'Ambas' : 'Both';
         return String(companyKey || '').trim() || (state.lang === 'pt' ? 'Não definida' : 'Not set');
+    }
+
+    function getProjectLogMeta(project) {
+        if (!project) return {};
+        return {
+            projectId: String(project?.id || '').trim(),
+            projectName: getProjectDisplayName(project),
+            projectInvoice: String(project?.numeroInvoice || '').trim(),
+            projectProposal: String(project?.numeroProposta || '').trim()
+        };
     }
     function renderProjectDocumentMeta(project, compact = false, includeCompany = true) {
         const invoice = String(project?.numeroInvoice || '').trim();
@@ -1692,6 +1720,7 @@
         const p = state.projects.find(x => x.id === projectId);
         if (!p) return;
         state.editingPayments = { projectId, payments: normalizePaymentEntries(p.pagamentosEfetuados || []) };
+        logAccess(state.user?.email, `Abriu pagamentos do vendedor: ${getProjectDisplayName(p)}`, getProjectLogMeta(p));
         window.renderPaymentEditList();
         document.getElementById('edit-payment-modal').classList.add('active');
     };
@@ -1779,6 +1808,7 @@
                     <div>
                         <p class="text-[10px] font-black uppercase tracking-[0.28em] text-slate-500 mb-2">${isPT ? 'Resumo executivo do pagamento' : 'Executive payment summary'}</p>
                         <h4 class="text-xl sm:text-2xl font-black text-white force-white-text leading-tight">${projectName}</h4>
+                        ${renderProjectIdentityBlock(project, true)}
                         <p class="text-xs text-slate-400 mt-2">${isPT ? 'Vendedor responsável' : 'Responsible seller'}: <span class="text-slate-200 font-bold">${sellerName}</span></p>
                         ${renderProjectDocumentMeta(project, true, false)}
                     </div>
@@ -1933,6 +1963,7 @@
                 pagamentosEfetuados: normalizedPayments,
                 despesas: syncedExpenses
             });
+            logAccess(state.user?.email, `Salvou pagamentos do vendedor: ${getProjectDisplayName(project)}`, getProjectLogMeta(project));
             window.closeEditPaymentModal();
         } catch (e) {
             window.showModal(window.t('error'), 'Erro ao salvar pagamentos: ' + e.message, 'error');
@@ -1946,6 +1977,7 @@
             projectId,
             recs: (p.recebimentos || []).map(r => ({ ...r, metodo: getReceiptEffectiveMethod(r, p), _isNew: false }))
         };
+        logAccess(state.user?.email, `Abriu recebimentos do cliente: ${getProjectDisplayName(p)}`, getProjectLogMeta(p));
         window.renderRecEditList();
         document.getElementById('edit-rec-modal').classList.add('active');
     };
@@ -2015,6 +2047,8 @@
                     <div>
                         <p class="text-[10px] font-black uppercase tracking-[0.28em] text-slate-500 mb-2">${isPT ? 'Recebimentos reais do cliente' : 'Actual client receipts'}</p>
                         <h4 class="text-xl sm:text-2xl font-black text-white force-white-text leading-tight">${getProjectDisplayName(project)}</h4>
+                        ${renderProjectIdentityBlock(project, true)}
+                        ${renderProjectDocumentMeta(project, true, false)}
                         <p class="text-xs text-slate-400 mt-2">${isPT ? 'Use a forma real de cada parcela para calcular corretamente as deduções de cartão.' : 'Use the real method of each installment to calculate card deductions correctly.'}</p>
                     </div>
                     <div class="inline-flex items-center gap-2 self-start rounded-2xl border border-emerald-500/20 bg-emerald-500/10 px-4 py-3 text-emerald-300 text-[11px] font-black uppercase tracking-widest">
@@ -2078,7 +2112,9 @@
         }
         const payload = state.editingRecs.recs.map(r => ({ data: r.data || '', valor: roundMoney(r.valor || 0), metodo: getReceiptEffectiveMethod(r) }));
         try {
+            const project = state.projects.find(x => x.id === state.editingRecs.projectId);
             await updateDoc(doc(db, 'artifacts', appId, 'public', 'data', 'projects', state.editingRecs.projectId), { recebimentos: payload });
+            logAccess(state.user?.email, `Salvou recebimentos do cliente: ${getProjectDisplayName(project)}`, getProjectLogMeta(project));
             window.closeEditRecModal();
         } catch (e) {
             window.showModal(window.t('error'), 'Erro ao salvar: ' + e.message, 'error');
@@ -2089,6 +2125,8 @@
     window.openProjectDetails = (id) => { 
         state.focusedProject = id; 
         state.activeModule = null; 
+        const project = state.projects.find(x => x.id === id);
+        logAccess(state.user?.email, `Abriu a obra: ${getProjectDisplayName(project)}`, getProjectLogMeta(project));
         window.renderProjects(); 
         window.scrollTo({ top: 0, behavior: 'smooth' }); 
     };
@@ -2102,6 +2140,9 @@
 
     window.openProjectModule = (moduleName) => {
         state.activeModule = moduleName;
+        const project = state.projects.find(x => x.id === state.focusedProject);
+        const moduleLabel = moduleName === 'commissions' ? 'Comissões e Finanças' : (moduleName === 'costs' ? 'Gestão de Custos' : moduleName);
+        logAccess(state.user?.email, `Acessou módulo ${moduleLabel} na obra: ${getProjectDisplayName(project)}`, getProjectLogMeta(project));
         window.renderProjects();
         window.scrollTo({ top: 0, behavior: 'smooth' });
     };
@@ -2257,7 +2298,7 @@
     window.deleteP = (id) => {
         const p = state.projects.find(x => x.id === id);
         if (!state.isSuperAdmin) {
-            logAccess(state.user.email, `Tentativa bloqueada de exclusão da obra: ${p?.cliente || id}`);
+            logAccess(state.user.email, `Tentativa bloqueada de exclusão da obra: ${getProjectDisplayName(p) || id}`, getProjectLogMeta(p));
             window.showModal(window.t('modal_access_denied'), window.t('modal_access_denied_msg'), 'error');
             return;
         }
@@ -2265,7 +2306,7 @@
         window.showModal(window.t('modal_del_proj_title'), window.t('modal_del_proj_msg'), 'confirm', async () => {
             try {
                 await deleteDoc(doc(db, 'artifacts', appId, 'public', 'data', 'projects', id));
-                logAccess(state.user.email, `Excluiu a obra: ${p?.cliente || id}`);
+                logAccess(state.user.email, `Excluiu a obra: ${getProjectDisplayName(p) || id}`, getProjectLogMeta(p));
                 if (state.focusedProject === id) window.closeProjectDetails();
             } catch(e) { console.error(e); }
         });
@@ -3418,8 +3459,8 @@
             };
 
             try {
-                if (id) { await updateDoc(doc(db, 'artifacts', appId, 'public', 'data', 'projects', id), d); logAccess(state.user.email, `Editou a obra: ${d.cliente}`); } 
-                else { await addDoc(collection(db, 'artifacts', appId, 'public', 'data', 'projects'), { ...d, archived: false, createdAt: serverTimestamp(), pagamentosEfetuados: [], recebimentos: [], despesas: [] }); logAccess(state.user.email, `Registrou nova obra: ${d.cliente}`); }
+                if (id) { await updateDoc(doc(db, 'artifacts', appId, 'public', 'data', 'projects', id), d); logAccess(state.user.email, `Editou a obra: ${getProjectDisplayName(d)}`, { projectId: id, projectName: getProjectDisplayName(d), projectInvoice: String(d.numeroInvoice || '').trim(), projectProposal: String(d.numeroProposta || '').trim() }); } 
+                else { const createdRef = await addDoc(collection(db, 'artifacts', appId, 'public', 'data', 'projects'), { ...d, archived: false, createdAt: serverTimestamp(), pagamentosEfetuados: [], recebimentos: [], despesas: [] }); logAccess(state.user.email, `Registrou nova obra: ${getProjectDisplayName(d)}`, { projectId: createdRef.id, projectName: getProjectDisplayName(d), projectInvoice: String(d.numeroInvoice || '').trim(), projectProposal: String(d.numeroProposta || '').trim() }); }
                 e.target.reset(); document.getElementById('edit-id').value = ''; document.getElementById('f-vendedor').value = auth.currentUser.email; window.showView('projects');
             } catch (err) { console.error(err); }
         };
