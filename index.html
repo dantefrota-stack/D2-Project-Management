@@ -29,19 +29,26 @@
         .app-body-light .glass { background: #ffffff !important; border-color: #e2e8f0 !important; color: #0f172a !important; box-shadow: 0 10px 30px -10px rgba(0,0,0,0.1) !important;}
         
         /* Proteção Inteligente Modo Claro */
-        .app-body-light .glass .text-white:not(.kpi-card *):not(.force-white-text) { color: #0f172a !important; }
+        .app-body-light .glass .text-white:not(.kpi-card *):not(.force-white-text):not(.force-dark-bg):not(.force-dark-bg *) { color: #0f172a !important; }
         .force-white-text { color: #ffffff !important; }
         
-        .app-body-light .glass .text-slate-200:not(.kpi-card *) { color: #334155 !important; }
-        .app-body-light .glass .text-slate-300:not(.kpi-card *) { color: #334155 !important; }
-        .app-body-light .glass .text-slate-400:not(.kpi-card *) { color: #475569 !important; }
-        .app-body-light .glass .text-slate-500:not(.kpi-card *) { color: #64748b !important; }
-        .app-body-light .glass .text-gold:not(.kpi-card *) { color: #b45309 !important; } 
-        .app-body-light .glass .text-emerald-400:not(.kpi-card *), .app-body-light .glass .text-emerald-500:not(.kpi-card *) { color: #059669 !important; } 
-        .app-body-light .glass .text-cyan-400:not(.kpi-card *), .app-body-light .glass .text-cyan-300:not(.kpi-card *) { color: #0284c7 !important; } 
-        .app-body-light .glass .text-red-400:not(.kpi-card *), .app-body-light .glass .text-red-500:not(.kpi-card *) { color: #dc2626 !important; } 
-        .app-body-light .glass .text-amber-400:not(.kpi-card *), .app-body-light .glass .text-amber-500:not(.kpi-card *) { color: #d97706 !important; }
-        .app-body-light .glass .text-indigo-400:not(.kpi-card *), .app-body-light .glass .text-indigo-500:not(.kpi-card *) { color: #4f46e5 !important; }
+        .app-body-light .glass .text-slate-200:not(.force-dark-bg):not(.force-dark-bg *), 
+        .app-body-light .glass .text-slate-300:not(.force-dark-bg):not(.force-dark-bg *) { color: #334155 !important; }
+        .app-body-light .glass .text-slate-400:not(.force-dark-bg):not(.force-dark-bg *) { color: #475569 !important; }
+        .app-body-light .glass .text-slate-500:not(.force-dark-bg):not(.force-dark-bg *) { color: #64748b !important; }
+        .app-body-light .glass .text-gold:not(.force-dark-bg):not(.force-dark-bg *) { color: #b45309 !important; } 
+        .app-body-light .glass .text-emerald-400:not(.force-dark-bg):not(.force-dark-bg *), 
+        .app-body-light .glass .text-emerald-500:not(.force-dark-bg):not(.force-dark-bg *) { color: #059669 !important; } 
+        .app-body-light .glass .text-cyan-400:not(.force-dark-bg):not(.force-dark-bg *), 
+        .app-body-light .glass .text-cyan-300:not(.force-dark-bg):not(.force-dark-bg *) { color: #0284c7 !important; } 
+        .app-body-light .glass .text-red-400:not(.force-dark-bg):not(.force-dark-bg *), 
+        .app-body-light .glass .text-red-500:not(.force-dark-bg):not(.force-dark-bg *) { color: #dc2626 !important; } 
+        .app-body-light .glass .text-amber-400:not(.force-dark-bg):not(.force-dark-bg *), 
+        .app-body-light .glass .text-amber-500:not(.force-dark-bg):not(.force-dark-bg *) { color: #d97706 !important; }
+        .app-body-light .glass .text-indigo-400:not(.force-dark-bg):not(.force-dark-bg *), 
+        .app-body-light .glass .text-indigo-500:not(.force-dark-bg):not(.force-dark-bg *) { color: #4f46e5 !important; }
+        .app-body-light .text-lime-500, .app-body-light .text-lime-400 { color: #4d7c0f !important; } 
+        .app-body-light .text-lime-600\/70 { color: rgba(77, 124, 15, 0.8) !important; } 
         
         /* Ajustes Estruturais Light Mode */
         .app-body-light .bg-black\/20, .app-body-light .bg-black\/30, .app-body-light .bg-black\/40 { background-color: #f1f5f9 !important; border-color: #cbd5e1 !important; }
@@ -230,14 +237,14 @@
         </nav>
 
         <div id="view-projects" class="w-full hidden">
-            <!-- PAINEL DE FILTROS COMPLETOS -->
+            <!-- PAINEL DE FILTROS COMPLETOS (Busca e Vendedores) -->
             <div id="projects-filters" class="flex flex-col gap-6 mb-8 no-print">
                 <div class="flex flex-col md:flex-row gap-4 w-full">
                     <div class="flex-1 text-left">
                         <label class="text-[10px] font-black uppercase text-slate-500 tracking-widest mb-1.5 block ml-1" data-i18n="quick_search">Busca Rápida</label>
                         <div class="relative">
                             <i data-lucide="search" class="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400"></i>
-                            <input type="text" id="search-input" oninput="window.renderProjects()" class="modern-input !pl-10" placeholder="Buscar por cliente, projeto, invoice..." data-i18n-placeholder="search_placeholder">
+                            <input type="text" id="search-input" oninput="window.renderProjects()" class="modern-input !pl-10" placeholder="Buscar por cliente, projeto, endereço, invoice, proposta..." data-i18n-placeholder="search_placeholder">
                         </div>
                     </div>
                     <div class="w-full md:w-64 text-left">
@@ -256,12 +263,15 @@
                     </div>
                 </div>
             </div>
+            
             <div id="projects-grid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 text-left"></div>
         </div>
 
+        <!-- Formulário Nova Obra -->
         <div id="view-new" class="hidden max-w-3xl mx-auto glass p-6 sm:p-10 rounded-[40px] text-left shadow-2xl border border-white/5 animate-fade-in">
             <h3 class="text-3xl font-black mb-10 flex items-center gap-4 uppercase tracking-tighter text-white">
-                <span class="w-3 h-10 bg-gold rounded-full"></span><span id="form-title" data-i18n="form_new_title">Registrar Obra</span>
+                <span class="w-3 h-10 bg-gold rounded-full"></span>
+                <span id="form-title" data-i18n="form_new_title">Registrar Obra</span>
             </h3>
             <form id="project-form" class="grid grid-cols-1 md:grid-cols-2 gap-6 sm:gap-8 text-left">
                 <input type="hidden" id="edit-id">
@@ -392,7 +402,7 @@
     };
 
     const translations = {
-        pt: { admin_panel:"Gestão Corporativa",nav_proj:"Projetos",nav_new:"Nova Obra",nav_rep:"Relatórios",nav_users:"Equipe",form_new_title:"Registrar Obra",team_title:"Gestão de Equipe",btn_team:"Salvar e Autorizar Acesso",filter_both:"AMBAS",filter_active:"ATIVAS",filter_archived:"ARQUIVADAS",filter_all:"TODAS",lbl_email:"E-mail Corporativo",lbl_pass:"Senha de Acesso",btn_login:"Acessar Sistema",f_prop:"Nº Proposta",f_inv:"Nº Invoice",f_unit:"Unidade Responsável",f_client:"Cliente",f_seller:"Vendedor",f_gross:"Valor Contrato Bruto",f_budget:"Orçamento Custo",f_comm_perc:"% Comissão",f_pay_method:"Forma Pagt.",f_start:"Início",f_end:"Entrega",f_status:"Status",btn_save:"Salvar Registro",btn_cancel:"Cancelar",team_email:"E-mail",team_pass:"Senha",team_scope:"Visibilidade e Escopo",team_tabs:"Acesso às Abas",team_perms:"Permissões de Escrita",seller:"Vendedor",status_obra:"Status",prop_inv:"Proposta / Invoice",pay_comm:"Pagamento • % Comissão",timeline:"Timeline",days_left:"DIAS",completed:"CONCLUÍDA",late:"ATRASADA",gross_contract:"Valor Contrato Bruto",client:"Cliente",commission:"Comissão",paid_100:"100% PAGO",paid_perc:"% PAGO",pending:"PENDENTE",click_to_open:"CLIQUE NO CARD PARA ABRIR",comm_finances:"Comissões e Finanças",cost_management:"Gestão de Custos",comm_projected:"Comissão Projetada",comm_released:"Comissão Liberada",paid_seller:"Pago ao Vendedor",balance_pay:"SALDO A PAGAR",balance_over:"PAGO A MAIOR",balance_paid:"TOTALMENTE PAGO",client_receipts:"Recebimentos do Cliente",no_receipts:"Nenhum recebimento.",seller_payments:"Pagamentos ao Vendedor",no_payments:"Nenhum pagamento.",back:"Voltar",print_ficha:"Imprimir Ficha",budget:"Orçamento (Budget)",total_expenses:"Despesas Totais",real_profit:"Lucro Real",margin:"Margem",budget_vs_spent:"Orçamento vs Gasto",dist_category:"Distribuição por Categoria",reg_expense:"Registrar Nova Despesa",add_table:"Add",expense_history:"Histórico de Gastos",no_expenses:"Nenhuma despesa lançada.",desc_expense:"Descrição do gasto",rep_title:"Relatório Executivo Geral",rep_title_company:"Relatório Executivo - ",date:"Data",exec_vision:"Visão Executiva Institucional",gross_revenue:"Receita Bruta",entries:"Entradas",to_receive:"A Receber",est_profit:"Lucro Estimado",global_margin:"Margem Global",see_works:"Ver Obras ➔",see_received:"Ver Recebidos ➔",see_pending:"Ver Pendentes ➔",see_details:"Ver Detalhes ➔",see_summary:"Ver Resumo ➔",active_funnel:"Funil de Operações Ativas",comm_paid_month:"Comissões Pagas por Mês",total_year:"Total Ano",no_data_year:"Nenhum dado.",detailed_struct:"Detalhamento Estruturado",no_active_works:"Nenhuma obra encontrada.",print_full_rep:"Imprimir Relatório Completo",print_view:"Imprimir Visão",missing_receive:"Falta Receber",status_appr:"✅ Aprovado",status_wait:"Aguardando Início",status_exec:"Em Execução",status_fin:"Finalizado",funnel_appr:"Aprovados",funnel_wait:"Aguardando Início",funnel_exec:"Em Execução",funnel_fin:"Concluídas",cancel:"Cancelar",confirm:"Confirmar",understood:"Entendido",attention:"Atenção",error:"Erro",modal_del_exp_title:"Excluir Despesa",modal_del_exp_msg:"Deseja remover:",modal_del_pay_title:"Confirmar Exclusão",modal_del_pay_msg:"Remover pagamento?",modal_del_rec_msg:"Remover recebimento?",modal_del_team_title:"Remover Acesso",modal_del_team_msg:"Remover acesso deste membro?",modal_del_proj_title:"Excluir Obra",modal_del_proj_msg:"Excluir esta obra permanentemente?",modal_access_denied:"Acesso Negado",modal_access_denied_msg:"Apenas administrador.",perm_insert_fin:"Inserir Receb./Pagtos.",team_viewall:"Ver Outros",team_viewcosts:"Acesso a Custos e Margem",clear_history:"Limpar",modal_total_launched:"Total Lançado",modal_balance_seller:"Saldo P/ Vendedor",modal_gross_contract:"Valor da Obra",modal_client_paid:"Pago pelo Cliente",delivered_late:"ENTREGA ATRASADA",delivered_early:"ENTREGA ADIANTADA",on_time:"NO PRAZO",days:"DIAS",late_days:"ATRASADA",quick_search:"Busca Rápida",filter_seller:"Filtro Vendedor",all_sellers:"Todos os Vendedores",search_placeholder:"Buscar por cliente, projeto, invoice..." },
+        pt: { admin_panel:"Gestão Corporativa",nav_proj:"Projetos",nav_new:"Nova Obra",nav_rep:"Relatórios",nav_users:"Equipe",form_new_title:"Registrar Obra",team_title:"Gestão de Equipe",btn_team:"Salvar e Autorizar Acesso",filter_both:"AMBAS",filter_active:"ATIVAS",filter_archived:"ARQUIVADAS",filter_all:"TODAS",lbl_email:"E-mail Corporativo",lbl_pass:"Senha de Acesso",btn_login:"Acessar Sistema",f_prop:"Nº Proposta",f_inv:"Nº Invoice",f_unit:"Unidade Responsável",f_client:"Cliente",f_seller:"Vendedor",f_gross:"Valor Contrato Bruto",f_budget:"Orçamento Custo",f_comm_perc:"% Comissão",f_pay_method:"Forma Pagt.",f_start:"Início",f_end:"Entrega",f_status:"Status",btn_save:"Salvar Registro",btn_cancel:"Cancelar",team_email:"E-mail",team_pass:"Senha",team_scope:"Visibilidade e Escopo",team_tabs:"Acesso às Abas",team_perms:"Permissões de Escrita",seller:"Vendedor",status_obra:"Status",prop_inv:"Proposta / Invoice",pay_comm:"Pagamento • % Comissão",timeline:"Timeline",days_left:"DIAS",completed:"CONCLUÍDA",late:"ATRASADA",gross_contract:"Valor Contrato Bruto",client:"Cliente",commission:"Comissão",paid_100:"100% PAGO",paid_perc:"% PAGO",pending:"PENDENTE",click_to_open:"CLIQUE NO CARD PARA ABRIR",comm_finances:"Comissões e Finanças",cost_management:"Gestão de Custos",comm_projected:"Comissão Projetada",comm_released:"Comissão Liberada",paid_seller:"Pago ao Vendedor",balance_pay:"SALDO A PAGAR",balance_over:"PAGO A MAIOR",balance_paid:"TOTALMENTE PAGO",client_receipts:"Recebimentos do Cliente",no_receipts:"Nenhum recebimento.",seller_payments:"Pagamentos ao Vendedor",no_payments:"Nenhum pagamento.",back:"Voltar",print_ficha:"Imprimir Ficha",budget:"Orçamento (Budget)",total_expenses:"Despesas Totais",real_profit:"Lucro Real",margin:"Margem",budget_vs_spent:"Orçamento vs Gasto",dist_category:"Distribuição por Categoria",reg_expense:"Registrar Nova Despesa",add_table:"Add",expense_history:"Histórico de Gastos",no_expenses:"Nenhuma despesa lançada.",desc_expense:"Descrição do gasto",rep_title:"Relatório Executivo Geral",rep_title_company:"Relatório Executivo - ",date:"Data",exec_vision:"Visão Executiva Institucional",gross_revenue:"Receita Bruta",entries:"Entradas",to_receive:"A Receber",est_profit:"Lucro Estimado",global_margin:"Margem Global",see_works:"Ver Obras ➔",see_received:"Ver Recebidos ➔",see_pending:"Ver Pendentes ➔",see_details:"Ver Detalhes ➔",see_summary:"Ver Resumo ➔",active_funnel:"Funil de Operações Ativas",comm_paid_month:"Comissões Pagas por Mês",total_year:"Total Ano",no_data_year:"Nenhum dado.",detailed_struct:"Detalhamento Estruturado",no_active_works:"Nenhuma obra encontrada.",print_full_rep:"Imprimir Relatório Completo",print_view:"Imprimir Visão",missing_receive:"Falta Receber",status_appr:"✅ Aprovado",status_wait:"Aguardando Início",status_exec:"Em Execução",status_fin:"Finalizado",funnel_appr:"Aprovados",funnel_wait:"Aguardando Início",funnel_exec:"Em Execução",funnel_fin:"Concluídas",cancel:"Cancelar",confirm:"Confirmar",understood:"Entendido",attention:"Ação Necessária",error:"Erro",modal_del_exp_title:"Excluir Despesa",modal_del_exp_msg:"Deseja remover:",modal_del_pay_title:"Confirmar Exclusão",modal_del_pay_msg:"Remover pagamento?",modal_del_rec_msg:"Remover recebimento?",modal_del_team_title:"Remover Acesso",modal_del_team_msg:"Remover acesso deste membro?",modal_del_proj_title:"Excluir Obra",modal_del_proj_msg:"Excluir esta obra permanentemente?",modal_access_denied:"Acesso Negado",modal_access_denied_msg:"Apenas administrador.",perm_insert_fin:"Inserir Receb./Pagtos.",team_viewall:"Ver Outros",team_viewcosts:"Acesso a Custos e Margem",clear_history:"Limpar",modal_total_launched:"Total Lançado",modal_balance_seller:"Saldo P/ Vendedor",modal_gross_contract:"Valor da Obra",modal_client_paid:"Pago pelo Cliente",delivered_late:"ENTREGA ATRASADA",delivered_early:"ENTREGA ADIANTADA",on_time:"NO PRAZO",days:"DIAS",late_days:"ATRASADA",quick_search:"Busca Rápida",filter_seller:"Filtro Vendedor",all_sellers:"Todos os Vendedores",search_placeholder:"Buscar por cliente, projeto, invoice..." },
         en: { admin_panel:"Corporate Mgmt",nav_proj:"Projects",nav_new:"New Entry",nav_rep:"Reports",nav_users:"Team",form_new_title:"Register Project",team_title:"Team Management",btn_team:"Authorize Access",filter_both:"BOTH",filter_active:"ACTIVE",filter_archived:"ARCHIVED",filter_all:"ALL",lbl_email:"Corporate Email",lbl_pass:"Password",btn_login:"Access System",f_prop:"Proposal No.",f_inv:"Invoice No.",f_unit:"Unit",f_client:"Client",f_seller:"Seller",f_gross:"Gross Contract",f_budget:"Budget",f_comm_perc:"% Commission",f_pay_method:"Pay Method",f_start:"Start Date",f_end:"Delivery",f_status:"Status",btn_save:"Save",btn_cancel:"Cancel",team_email:"Email",team_pass:"Password",team_scope:"Visibility",team_tabs:"Tabs Access",team_perms:"Permissions",seller:"Seller",status_obra:"Status",prop_inv:"Proposal/Invoice",pay_comm:"Payment • % Comm",timeline:"Timeline",days_left:"DAYS LEFT",completed:"COMPLETED",late:"LATE",gross_contract:"Gross Value",client:"Client",commission:"Commission",paid_100:"100% PAID",paid_perc:"% PAID",pending:"PENDING",click_to_open:"CLICK TO OPEN",comm_finances:"Commissions",cost_management:"Cost Mgmt",comm_projected:"Projected Comm",comm_released:"Released Comm",paid_seller:"Paid to Seller",balance_pay:"BALANCE TO PAY",balance_over:"OVERPAID",balance_paid:"FULLY PAID",client_receipts:"Client Receipts",no_receipts:"No receipts.",seller_payments:"Seller Payments",no_payments:"No payments.",back:"Back",print_ficha:"Print",budget:"Budget",total_expenses:"Total Expenses",real_profit:"Real Profit",margin:"Margin",budget_vs_spent:"Budget vs Spent",dist_category:"Category Distribution",reg_expense:"New Expense",add_table:"Add",expense_history:"Expense History",no_expenses:"No expenses.",desc_expense:"Description",rep_title:"Executive Report",rep_title_company:"Executive Report - ",date:"Date",exec_vision:"Executive Vision",gross_revenue:"Gross Revenue",entries:"Entries",to_receive:"To Receive",est_profit:"Est Profit",global_margin:"Global Margin",see_works:"See Works ➔",see_received:"See Received ➔",see_pending:"See Pending ➔",see_details:"See Details ➔",see_summary:"See Summary ➔",active_funnel:"Active Funnel",comm_paid_month:"Comm Paid by Month",total_year:"Total Year",no_data_year:"No data.",detailed_struct:"Detailed Structure",no_active_works:"No works found.",print_full_rep:"Print Report",print_view:"Print View",missing_receive:"Pending",status_appr:"✅ Approved",status_wait:"Waiting Start",status_exec:"In Execution",status_fin:"Finished",funnel_appr:"Approved",funnel_wait:"Waiting",funnel_exec:"Execution",funnel_fin:"Completed",cancel:"Cancel",confirm:"Confirm",understood:"Understood",attention:"Attention",error:"Error",modal_del_exp_title:"Delete Expense",modal_del_exp_msg:"Remove:",modal_del_pay_title:"Delete Payment",modal_del_pay_msg:"Remove payment?",modal_del_rec_msg:"Remove receipt?",modal_del_team_title:"Remove Access",modal_del_team_msg:"Remove member?",modal_del_proj_title:"Delete Project",modal_del_proj_msg:"Delete permanently?",modal_access_denied:"Access Denied",modal_access_denied_msg:"Admin only.",perm_insert_fin:"Insert Finances",team_viewall:"View All Sellers",team_viewcosts:"Cost Access",clear_history:"Clear",modal_total_launched:"Total Launched",modal_balance_seller:"Seller Balance",modal_gross_contract:"Project Value",modal_client_paid:"Paid by Client",delivered_late:"DELIVERED LATE",delivered_early:"DELIVERED EARLY",on_time:"ON TIME",days:"DAYS",late_days:"LATE",quick_search:"Quick Search",filter_seller:"Seller Filter",all_sellers:"All Sellers",search_placeholder:"Search client, project, invoice..." }
     };
     
@@ -435,7 +445,7 @@
         window._tempOnConfirm = onConfirm; 
         if (type === 'confirm') {
             iconContainer.innerHTML = '<i data-lucide="help-circle" class="w-12 h-12 text-gold"></i>';
-            btnContainer.innerHTML = `<button onclick="window.closeCustomModal()" class="flex-1 px-4 py-3 bg-slate-700 text-white force-white-text rounded-xl font-bold hover:bg-slate-600 transition-colors text-xs uppercase tracking-widest shadow-lg">${window.t('cancel')}</button><button onclick="window.currentConfirmCallback()" class="flex-1 px-4 py-3 bg-red-600 text-white force-white-text font-black rounded-xl hover:bg-red-500 transition-colors text-xs uppercase tracking-widest shadow-lg shadow-red-500/20">${window.t('confirm')}</button>`;
+            btnContainer.innerHTML = `<button onclick="window.closeCustomModal()" class="flex-1 px-4 py-3 bg-slate-700 text-white force-white-text rounded-xl font-bold hover:bg-slate-600 transition-colors text-xs uppercase tracking-widest shadow-lg">${window.t('cancel')}</button><button onclick="window.currentConfirmCallback()" class="flex-1 px-4 py-3 bg-red-600 text-white force-white-text font-black rounded-xl hover:bg-red-50 transition-colors text-xs uppercase tracking-widest shadow-lg shadow-red-500/20">${window.t('confirm')}</button>`;
         } else if (type === 'error') {
             iconContainer.innerHTML = '<i data-lucide="alert-circle" class="w-12 h-12 text-red-500"></i>';
             btnContainer.innerHTML = `<button onclick="window.closeCustomModal()" class="w-full px-6 py-3 bg-slate-800 text-white force-white-text font-black rounded-xl hover:bg-slate-700 transition-colors text-xs uppercase tracking-widest shadow-lg">OK</button>`;
@@ -933,14 +943,14 @@
                                 </div>
                                 ${state.userPerms.fin ? `
                                 <div class="mt-auto pt-4 border-t border-emerald-500/20 no-print">
-                                    <div class="flex flex-wrap gap-2 items-center">
-                                        <div class="flex-1 min-w-[130px]">
+                                    <div class="flex flex-wrap gap-3 items-center">
+                                        <div class="flex-1 min-w-[120px]">
                                             <input type="date" id="rec-date-${p.id}" class="modern-input !bg-black/40 !border-emerald-500/30 !py-2 !text-xs w-full">
                                         </div>
-                                        <div class="flex-[2] min-w-[100px]">
+                                        <div class="flex-1 min-w-[100px]">
                                             <input type="number" id="rec-val-${p.id}" placeholder="$ Valor" step="0.01" class="modern-input !bg-black/40 !border-emerald-500/30 !py-2 !text-xs w-full text-emerald-400 font-bold">
                                         </div>
-                                        <div class="flex-[2] min-w-[100px]">
+                                        <div class="flex-1 min-w-[110px]">
                                             <select id="rec-met-${p.id}" class="modern-input !bg-black/40 !border-emerald-500/30 !py-2 !text-xs w-full !px-2">
                                                 <option value="Zelle">Zelle</option><option value="Wire Transfer">Wire</option><option value="Dinheiro">Cash</option><option value="CC">Cartão (CC)</option>
                                             </select>
@@ -964,8 +974,8 @@
                                 </div>
                                 ${state.userPerms.fin ? `
                                 <div class="mt-auto pt-4 border-t border-gold/20 no-print">
-                                    <div class="flex flex-wrap gap-2 items-center">
-                                        <div class="flex-1 min-w-[130px]">
+                                    <div class="flex flex-wrap gap-3 items-center">
+                                        <div class="flex-1 min-w-[120px]">
                                             <input type="date" id="pay-date-${p.id}" class="modern-input !bg-black/40 !border-gold/30 !py-2 !text-xs w-full">
                                         </div>
                                         <div class="flex-[2] min-w-[110px]">
@@ -1017,6 +1027,7 @@
                     unifiedHTML += `
                         <div class="border-t border-cyan-500/20 pt-8 mt-8">
                             <h3 class="text-xl font-black text-cyan-400 uppercase mb-6 flex items-center gap-2"><i data-lucide="calculator" class="w-5 h-5"></i> ${window.t('cost_management')}</h3>
+                            
                             <div class="grid grid-cols-2 print:grid-cols-4 sm:grid-cols-4 gap-4 sm:gap-6 mb-10 print:mb-6">
                                 <div class="bg-black/40 p-5 rounded-[24px] border border-white/5 shadow-inner print:bg-transparent print:border-slate-300 print:p-3 print:rounded-xl force-dark-bg">
                                     <p class="text-[10px] font-black uppercase text-slate-400 mb-2 tracking-widest print:text-slate-600 print:text-[8px]">${window.t('budget')}</p>
@@ -1242,19 +1253,25 @@
             }).join('');
             let summaryHeaderMonths = monthNames.map(m => `<th class="p-2 sm:p-3 text-right">${m}</th>`).join('');
 
-            const buildGroupedTable = (companyName) => {
-                const coProjects = enrichedProjects.filter(({p}) => p.empresa === companyName);
+            const buildGroupedTable = (dbCompanyName) => {
+                const coProjects = enrichedProjects.filter(({p}) => p.empresa === dbCompanyName);
                 if (coProjects.length === 0) return '';
+                
+                const displayTitle = dbCompanyName === 'Smart Home' ? 'D2 Smart Home' : 'D2 HVAC Solutions';
+
                 const tableRows = coProjects.map(({p, f}) => {
                     const profitCol = canViewCosts ? `<td class="p-3 sm:p-4 text-right font-black ${f.lucroBruto >= 0 ? 'text-cyan-400 print:text-cyan-600' : 'text-red-400 print:text-red-500'}">${formatCurr(f.lucroBruto)}</td><td class="p-3 sm:p-4 text-right font-black ${f.margemLucro >= 0 ? 'text-indigo-400 print:text-indigo-600' : 'text-red-400 print:text-red-500'}">${f.margemLucro.toFixed(1)}%</td>` : '';
                     return `<tr class="border-b border-white/5 text-[10px] sm:text-xs text-left text-slate-300 print:text-slate-800 hover:bg-white/5 transition-colors print:border-slate-100"><td class="p-3 sm:p-4 font-bold text-[9px] sm:text-[10px] text-slate-400 print:text-slate-500">${p.numeroProposta || '-'} / ${p.numeroInvoice || '-'}</td><td class="p-3 sm:p-4 font-black uppercase text-white print:text-black"><div class="flex flex-col"><span>${p.cliente || ''}</span><span class="text-[8px] sm:text-[9px] font-bold text-slate-500 print:text-slate-400 mt-0.5">${tStatus(p.status)}</span></div></td><td class="p-3 sm:p-4 font-bold text-slate-300 print:text-slate-600">${p.vendedor?.split('@')[0] || ''}</td><td class="p-3 sm:p-4 text-right">${formatCurr(p.valorTotal)}</td><td class="p-3 sm:p-4 text-right font-black text-emerald-400 print:text-emerald-600">${formatCurr(f.totalRecebido)}</td><td class="p-3 sm:p-4 text-right font-black text-amber-400 print:text-amber-600">${formatCurr(f.commLiberada)}</td>${profitCol}</tr>`;
                 }).join('');
-                return `<div class="mb-10"><h4 class="text-sm font-black text-slate-200 print:text-slate-700 bg-black/40 print:bg-slate-100 inline-block px-4 py-2 rounded-t-xl uppercase tracking-widest border border-b-0 border-white/5 print:border-slate-200">${companyName}</h4><div class="overflow-x-auto print:overflow-visible border border-white/5 print:border-slate-200 rounded-xl rounded-tl-none print:border-none shadow-sm"><table class="w-full"><thead class="bg-black/20 print:bg-slate-50 border-b border-white/5 print:border-slate-200 print:bg-transparent"><tr class="font-black uppercase text-[8px] sm:text-[9px] text-slate-400 print:text-slate-500 text-left tracking-widest"><th class="p-3 sm:p-4">${window.t('prop_inv')}</th><th class="p-3 sm:p-4">${window.t('f_client')}</th><th class="p-3 sm:p-4">${window.t('f_seller')}</th><th class="p-3 sm:p-4 text-right">${window.t('f_gross')}</th><th class="p-3 sm:p-4 text-right bg-emerald-500/10 print:bg-emerald-50 text-emerald-400 print:text-emerald-700 print:bg-transparent">Recebido</th><th class="p-3 sm:p-4 text-right bg-amber-500/10 print:bg-amber-50 text-amber-400 print:text-amber-700 print:bg-transparent">${window.t('comm_released')}</th>${canViewCosts ? `<th class="p-3 sm:p-4 text-right bg-cyan-900/20 print:bg-cyan-50 text-cyan-400 print:text-cyan-700 print:bg-transparent">${window.t('real_profit')}</th><th class="p-3 sm:p-4 text-right bg-indigo-900/20 print:bg-indigo-50 text-indigo-400 print:text-indigo-700 print:bg-transparent">${window.t('margin')}</th>` : ''}</tr></thead><tbody>${tableRows}</tbody></table></div></div>`;
+                return `<div class="mb-10"><h4 class="text-sm font-black text-slate-200 print:text-slate-700 bg-black/40 print:bg-slate-100 inline-block px-4 py-2 rounded-t-xl uppercase tracking-widest border border-b-0 border-white/5 print:border-slate-200">${displayTitle}</h4><div class="overflow-x-auto print:overflow-visible border border-white/5 print:border-slate-200 rounded-xl rounded-tl-none print:border-none shadow-sm"><table class="w-full"><thead class="bg-black/20 print:bg-slate-50 border-b border-white/5 print:border-slate-200 print:bg-transparent"><tr class="font-black uppercase text-[8px] sm:text-[9px] text-slate-400 print:text-slate-500 text-left tracking-widest"><th class="p-3 sm:p-4">${window.t('prop_inv')}</th><th class="p-3 sm:p-4">${window.t('f_client')}</th><th class="p-3 sm:p-4">${window.t('f_seller')}</th><th class="p-3 sm:p-4 text-right">${window.t('f_gross')}</th><th class="p-3 sm:p-4 text-right bg-emerald-500/10 print:bg-emerald-50 text-emerald-400 print:text-emerald-700 print:bg-transparent">Recebido</th><th class="p-3 sm:p-4 text-right bg-amber-500/10 print:bg-amber-50 text-amber-400 print:text-amber-700 print:bg-transparent">${window.t('comm_released')}</th>${canViewCosts ? `<th class="p-3 sm:p-4 text-right bg-cyan-900/20 print:bg-cyan-50 text-cyan-400 print:text-cyan-700 print:bg-transparent">${window.t('real_profit')}</th><th class="p-3 sm:p-4 text-right bg-indigo-900/20 print:bg-indigo-50 text-indigo-400 print:text-indigo-700 print:bg-transparent">${window.t('margin')}</th>` : ''}</tr></thead><tbody>${tableRows}</tbody></table></div></div>`;
             };
 
             let detailedTablesHTML = '';
-            if (state.company === 'Ambas') { detailedTablesHTML += buildGroupedTable('D2 Smart Home') + buildGroupedTable('D2 HVAC Solutions'); } 
-            else { detailedTablesHTML += buildGroupedTable(state.company === 'Smart Home' ? 'D2 Smart Home' : 'D2 HVAC Solutions'); }
+            if (state.company === 'Ambas') { 
+                detailedTablesHTML += buildGroupedTable('Smart Home') + buildGroupedTable('HVAC'); 
+            } else { 
+                detailedTablesHTML += buildGroupedTable(state.company); 
+            }
             if(!detailedTablesHTML) detailedTablesHTML = `<p class="p-6 text-center text-slate-500 text-xs italic">${window.t('no_active_works')}</p>`;
 
             bottomHTML = `
