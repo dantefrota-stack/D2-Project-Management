@@ -225,20 +225,19 @@
             <button onclick="window.showView('projects')" class="tab-btn pb-4 font-black uppercase tracking-[0.2em] tab-active hidden" id="tab-projects" data-i18n="nav_proj">Projetos</button>
             <button onclick="window.cancelEdit(); window.showView('new')" class="tab-btn pb-4 font-black uppercase tracking-[0.2em] editor-only hidden" id="tab-new" data-i18n="nav_new">Nova Obra</button>
             <button onclick="window.showView('reports')" class="tab-btn pb-4 font-black uppercase tracking-[0.2em] hidden" id="tab-reports" data-i18n="nav_rep">Relatórios</button>
-            
             <button onclick="window.showView('users')" class="tab-btn pb-4 font-black uppercase tracking-[0.2em] hidden text-gold" id="tab-users" data-i18n="nav_users">Equipe</button>
             <button onclick="window.showView('logs')" class="tab-btn pb-4 font-black uppercase tracking-[0.2em] hidden text-gold" id="tab-logs">📋 Logs</button>
         </nav>
 
         <div id="view-projects" class="w-full hidden">
-            <!-- PAINEL DE FILTROS COMPLETOS (Busca e Vendedores) -->
+            <!-- PAINEL DE FILTROS COMPLETOS -->
             <div id="projects-filters" class="flex flex-col gap-6 mb-8 no-print">
                 <div class="flex flex-col md:flex-row gap-4 w-full">
                     <div class="flex-1 text-left">
                         <label class="text-[10px] font-black uppercase text-slate-500 tracking-widest mb-1.5 block ml-1" data-i18n="quick_search">Busca Rápida</label>
                         <div class="relative">
                             <i data-lucide="search" class="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400"></i>
-                            <input type="text" id="search-input" oninput="window.renderProjects()" class="modern-input !pl-10" placeholder="Buscar por cliente, projeto, endereço, invoice, proposta..." data-i18n-placeholder="search_placeholder">
+                            <input type="text" id="search-input" oninput="window.renderProjects()" class="modern-input !pl-10" placeholder="Buscar por cliente, projeto, invoice..." data-i18n-placeholder="search_placeholder">
                         </div>
                     </div>
                     <div class="w-full md:w-64 text-left">
@@ -249,9 +248,7 @@
                     </div>
                 </div>
                 <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
-                    <div class="flex gap-3 flex-wrap" id="dynamic-unit-pills-proj">
-                        <!-- Injetado dinamicamente via applyPermissions -->
-                    </div>
+                    <div class="flex gap-3 flex-wrap" id="dynamic-unit-pills-proj"></div>
                     <div class="flex gap-2 flex-wrap">
                         <button onclick="window.setArchiveFilter(false)" id="filter-active" class="filter-pill active" data-i18n="filter_active">ATIVAS</button>
                         <button onclick="window.setArchiveFilter(true)" id="filter-archived" class="filter-pill" data-i18n="filter_archived">ARQUIVADAS <i data-lucide="archive" class="inline w-3 h-3 ml-1 mb-0.5"></i></button>
@@ -259,88 +256,28 @@
                     </div>
                 </div>
             </div>
-            
             <div id="projects-grid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 text-left"></div>
         </div>
 
-        <!-- Formulário Nova Obra -->
         <div id="view-new" class="hidden max-w-3xl mx-auto glass p-6 sm:p-10 rounded-[40px] text-left shadow-2xl border border-white/5 animate-fade-in">
             <h3 class="text-3xl font-black mb-10 flex items-center gap-4 uppercase tracking-tighter text-white">
-                <span class="w-3 h-10 bg-gold rounded-full"></span>
-                <span id="form-title" data-i18n="form_new_title">Registrar Obra</span>
+                <span class="w-3 h-10 bg-gold rounded-full"></span><span id="form-title" data-i18n="form_new_title">Registrar Obra</span>
             </h3>
             <form id="project-form" class="grid grid-cols-1 md:grid-cols-2 gap-6 sm:gap-8 text-left">
                 <input type="hidden" id="edit-id">
-
-                <div class="col-span-2 md:col-span-1 space-y-2">
-                    <label class="text-xs font-black uppercase text-slate-500 ml-1 tracking-widest" data-i18n="f_prop">Nº Proposta</label>
-                    <input type="text" id="f-proposta" class="modern-input" placeholder="Ex: PROP-2026-001">
-                </div>
-                <div class="col-span-2 md:col-span-1 space-y-2">
-                    <label class="text-xs font-black uppercase text-slate-500 ml-1 tracking-widest" data-i18n="f_inv">Nº Invoice</label>
-                    <input type="text" id="f-invoice" class="modern-input" placeholder="Ex: INV-2026-001">
-                </div>
-
-                <div class="col-span-2 space-y-2">
-                    <label class="text-xs font-black uppercase text-slate-500 ml-1 tracking-widest" data-i18n="f_unit">Unidade Responsável</label>
-                    <select id="f-empresa" class="modern-input !pr-10">
-                        <option value="Smart Home">D2 Smart Home</option>
-                        <option value="HVAC">D2 HVAC Solutions</option>
-                    </select>
-                </div>
+                <div class="col-span-2 md:col-span-1 space-y-2"><label class="text-xs font-black uppercase text-slate-500 ml-1 tracking-widest" data-i18n="f_prop">Nº Proposta</label><input type="text" id="f-proposta" class="modern-input" placeholder="Ex: PROP-2026-001"></div>
+                <div class="col-span-2 md:col-span-1 space-y-2"><label class="text-xs font-black uppercase text-slate-500 ml-1 tracking-widest" data-i18n="f_inv">Nº Invoice</label><input type="text" id="f-invoice" class="modern-input" placeholder="Ex: INV-2026-001"></div>
+                <div class="col-span-2 space-y-2"><label class="text-xs font-black uppercase text-slate-500 ml-1 tracking-widest" data-i18n="f_unit">Unidade Responsável</label><select id="f-empresa" class="modern-input !pr-10"><option value="Smart Home">D2 Smart Home</option><option value="HVAC">D2 HVAC Solutions</option></select></div>
                 <div class="col-span-2 md:col-span-1 space-y-2"><label class="text-xs font-black uppercase text-slate-500 ml-1 tracking-widest" data-i18n="f_client">Cliente</label><input type="text" id="f-cliente" required class="modern-input"></div>
                 <div class="col-span-2 md:col-span-1 space-y-2"><label class="text-xs font-black uppercase text-slate-500 ml-1 tracking-widest" data-i18n="f_seller">Vendedor</label><select id="f-vendedor" required class="modern-input !pr-10"></select></div>
-                
-                <div class="space-y-2">
-                    <label class="text-xs font-black uppercase text-slate-500 ml-1 tracking-widest" data-i18n="f_gross">Valor Contrato Bruto</label>
-                    <div class="relative"><span class="absolute left-4 top-1/2 -translate-y-1/2 font-bold text-gold">$</span><input type="number" id="f-valor" step="0.01" required class="modern-input !pl-8"></div>
-                </div>
-                <div class="space-y-2">
-                    <label class="text-xs font-black uppercase text-cyan-400 ml-1 tracking-widest" data-i18n="f_budget">Orçamento Custo (Budget)</label>
-                    <div class="relative"><span class="absolute left-4 top-1/2 -translate-y-1/2 font-bold text-cyan-400">$</span><input type="number" id="f-orcamento" step="0.01" placeholder="Opcional" class="modern-input !pl-8 border-cyan-500/20 focus:border-cyan-500"></div>
-                </div>
-
-                <div class="space-y-2">
-                    <label class="text-xs font-black uppercase text-slate-500 ml-1 tracking-widest" data-i18n="f_comm_perc">% Comissão</label>
-                    <div class="relative"><input type="number" id="f-comm" value="5" class="modern-input !pr-10"><span class="absolute right-4 top-1/2 -translate-y-1/2 font-bold text-gold">%</span></div>
-                </div>
-                <div class="space-y-2">
-                    <label class="text-xs font-black uppercase text-slate-500 ml-1 tracking-widest" data-i18n="f_pay_method">Forma Pagt. Prevista</label>
-                    <select id="f-metodo" class="modern-input !pr-10">
-                        <option value="Zelle">Zelle</option>
-                        <option value="Wire Transfer">Wire Transfer</option>
-                        <option value="Dinheiro">Dinheiro (Cash)</option>
-                        <option value="CC">Cartão de Crédito (Dedução 3% Net)</option>
-                    </select>
-                </div>
-
-                <div class="space-y-2">
-                    <label class="text-xs font-black uppercase text-slate-500 ml-1 tracking-widest" data-i18n="f_start">Início</label>
-                    <div class="date-container" onclick="this.querySelector('input').showPicker()">
-                        <input type="date" id="f-inicio" required class="modern-input relative !pr-10">
-                        <i data-lucide="calendar" class="calendar-icon-overlay w-5 h-5"></i>
-                    </div>
-                </div>
-                <div class="space-y-2">
-                    <label class="text-xs font-black uppercase text-slate-500 ml-1 tracking-widest" data-i18n="f_end">Entrega</label>
-                    <div class="date-container" onclick="this.querySelector('input').showPicker()">
-                        <input type="date" id="f-entrega" required class="modern-input relative !pr-10">
-                        <i data-lucide="calendar" class="calendar-icon-overlay w-5 h-5"></i>
-                    </div>
-                </div>
-                <div class="col-span-2 space-y-2">
-                    <label class="text-xs font-black uppercase text-slate-500 ml-1 tracking-widest" data-i18n="f_status">Status</label>
-                    <select id="f-status" class="modern-input !pr-10">
-                        <option value="✅ Aprovado">✅ Aprovado</option>
-                        <option value="Aguardando Início">Aguardando Início</option>
-                        <option value="Em Execução">Em Execução</option>
-                        <option value="Finalizado">Finalizado</option>
-                    </select>
-                </div>
-                <div class="col-span-2 flex flex-col sm:flex-row gap-6 mt-10">
-                    <button type="submit" class="flex-1 btn-premium-gold shadow-xl" data-i18n="btn_save">Salvar Registro</button>
-                    <button type="button" onclick="window.cancelEdit(); window.showView('projects')" class="px-10 py-4 text-slate-500 uppercase font-black text-sm hover:text-white transition-all" data-i18n="btn_cancel">Cancelar</button>
-                </div>
+                <div class="space-y-2"><label class="text-xs font-black uppercase text-slate-500 ml-1 tracking-widest" data-i18n="f_gross">Valor Contrato Bruto</label><div class="relative"><span class="absolute left-4 top-1/2 -translate-y-1/2 font-bold text-gold">$</span><input type="number" id="f-valor" step="0.01" required class="modern-input !pl-8"></div></div>
+                <div class="space-y-2"><label class="text-xs font-black uppercase text-cyan-400 ml-1 tracking-widest" data-i18n="f_budget">Orçamento Custo</label><div class="relative"><span class="absolute left-4 top-1/2 -translate-y-1/2 font-bold text-cyan-400">$</span><input type="number" id="f-orcamento" step="0.01" placeholder="Opcional" class="modern-input !pl-8 border-cyan-500/20 focus:border-cyan-500"></div></div>
+                <div class="space-y-2"><label class="text-xs font-black uppercase text-slate-500 ml-1 tracking-widest" data-i18n="f_comm_perc">% Comissão</label><div class="relative"><input type="number" id="f-comm" value="5" class="modern-input !pr-10"><span class="absolute right-4 top-1/2 -translate-y-1/2 font-bold text-gold">%</span></div></div>
+                <div class="space-y-2"><label class="text-xs font-black uppercase text-slate-500 ml-1 tracking-widest" data-i18n="f_pay_method">Forma Pagt.</label><select id="f-metodo" class="modern-input !pr-10"><option value="Zelle">Zelle</option><option value="Wire Transfer">Wire</option><option value="Dinheiro">Cash</option><option value="CC">Cartão de Crédito</option></select></div>
+                <div class="space-y-2"><label class="text-xs font-black uppercase text-slate-500 ml-1 tracking-widest" data-i18n="f_start">Início</label><div class="date-container" onclick="this.querySelector('input').showPicker()"><input type="date" id="f-inicio" required class="modern-input relative !pr-10"><i data-lucide="calendar" class="calendar-icon-overlay w-5 h-5"></i></div></div>
+                <div class="space-y-2"><label class="text-xs font-black uppercase text-slate-500 ml-1 tracking-widest" data-i18n="f_end">Entrega</label><div class="date-container" onclick="this.querySelector('input').showPicker()"><input type="date" id="f-entrega" required class="modern-input relative !pr-10"><i data-lucide="calendar" class="calendar-icon-overlay w-5 h-5"></i></div></div>
+                <div class="col-span-2 space-y-2"><label class="text-xs font-black uppercase text-slate-500 ml-1 tracking-widest" data-i18n="f_status">Status</label><select id="f-status" class="modern-input !pr-10"><option value="✅ Aprovado">✅ Aprovado</option><option value="Aguardando Início">Aguardando Início</option><option value="Em Execução">Em Execução</option><option value="Finalizado">Finalizado</option></select></div>
+                <div class="col-span-2 flex flex-col sm:flex-row gap-6 mt-10"><button type="submit" class="flex-1 btn-premium-gold shadow-xl" data-i18n="btn_save">Salvar Registro</button><button type="button" onclick="window.cancelEdit(); window.showView('projects')" class="px-10 py-4 text-slate-500 uppercase font-black text-sm hover:text-white transition-all" data-i18n="btn_cancel">Cancelar</button></div>
             </form>
         </div>
 
@@ -349,46 +286,40 @@
                 <h3 class="text-2xl font-black text-gold mb-8 uppercase tracking-tighter" data-i18n="team_title">Gestão de Equipe</h3>
                 <form id="team-form" class="space-y-6">
                     <input type="hidden" id="t-id">
-
                     <div class="grid grid-cols-1 sm:grid-cols-2 gap-6">
                         <div class="space-y-1"><label class="label-auth text-xs" data-i18n="team_email">E-mail</label><input type="email" id="t-email" required class="modern-input"></div>
                         <div class="space-y-1 relative">
                             <label class="label-auth text-xs" data-i18n="team_pass">Senha</label>
                             <input type="password" id="t-pass" required class="modern-input !pr-10">
-                            <button type="button" onclick="window.togglePassword('t-pass', 'eye-team-btn')" class="password-toggle" id="eye-team-btn" style="top:70%"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg></button>
+                            <button type="button" onclick="window.togglePassword('t-pass', 'eye-team-btn')" class="password-toggle" id="eye-team-btn" style="top:70%"><i data-lucide="eye" class="w-5 h-5"></i></button>
                         </div>
                     </div>
-
-                    <!-- PAINEL DE CONTROLE DE ACESSO GRANULAR -->
                     <div class="space-y-6 mt-8 pt-8 border-t border-white/10">
                         <div>
                             <p class="text-[10px] font-black uppercase text-gold tracking-widest mb-3" data-i18n="team_scope">Visibilidade e Escopo</p>
                             <div class="grid grid-cols-1 sm:grid-cols-3 gap-3">
-                                <label class="perm-box"><input type="checkbox" id="p_smart" class="perm-checkbox"><span class="perm-label">D2 Smart Home</span></label>
-                                <label class="perm-box"><input type="checkbox" id="p_hvac" class="perm-checkbox"><span class="perm-label">D2 HVAC</span></label>
-                                <label class="perm-box border-indigo-500/30"><input type="checkbox" id="p_global" class="perm-checkbox accent-indigo-500"><span class="perm-label text-indigo-400" data-i18n="team_viewall">Ver Outros Vendedores</span></label>
+                                <label class="perm-box"><input type="checkbox" id="p_smart" class="perm-checkbox"><span class="perm-label">Smart Home</span></label>
+                                <label class="perm-box"><input type="checkbox" id="p_hvac" class="perm-checkbox"><span class="perm-label">HVAC</span></label>
+                                <label class="perm-box border-indigo-500/30"><input type="checkbox" id="p_global" class="perm-checkbox accent-indigo-500"><span class="perm-label text-indigo-400" data-i18n="team_viewall">Ver Todos</span></label>
                             </div>
                         </div>
-
                         <div>
                             <p class="text-[10px] font-black uppercase text-gold tracking-widest mb-3" data-i18n="team_tabs">Acesso às Abas</p>
                             <div class="grid grid-cols-1 sm:grid-cols-3 gap-3">
-                                <label class="perm-box"><input type="checkbox" id="p_tab_proj" class="perm-checkbox" checked><span class="perm-label" data-i18n="nav_proj">Aba Projetos</span></label>
-                                <label class="perm-box"><input type="checkbox" id="p_tab_new" class="perm-checkbox"><span class="perm-label" data-i18n="nav_new">Aba Nova Obra</span></label>
-                                <label class="perm-box"><input type="checkbox" id="p_tab_rep" class="perm-checkbox"><span class="perm-label" data-i18n="nav_rep">Aba Relatórios</span></label>
+                                <label class="perm-box"><input type="checkbox" id="p_tab_proj" class="perm-checkbox" checked><span class="perm-label" data-i18n="nav_proj">Projetos</span></label>
+                                <label class="perm-box"><input type="checkbox" id="p_tab_new" class="perm-checkbox"><span class="perm-label" data-i18n="nav_new">Nova Obra</span></label>
+                                <label class="perm-box"><input type="checkbox" id="p_tab_rep" class="perm-checkbox"><span class="perm-label" data-i18n="nav_rep">Relatórios</span></label>
                             </div>
                         </div>
-
                         <div>
                             <p class="text-[10px] font-black uppercase text-gold tracking-widest mb-3" data-i18n="team_perms">Permissões de Escrita</p>
                             <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
                                 <label class="perm-box border-emerald-500/30"><input type="checkbox" id="p_fin" class="perm-checkbox accent-emerald-500"><span class="perm-label text-emerald-400" data-i18n="perm_insert_fin">Inserir Receb./Pagtos.</span></label>
-                                <label class="perm-box border-cyan-500/30"><input type="checkbox" id="p_costs" class="perm-checkbox accent-cyan-500"><span class="perm-label text-cyan-400" data-i18n="team_viewcosts">Acesso a Custos e Margem</span></label>
+                                <label class="perm-box border-cyan-500/30"><input type="checkbox" id="p_costs" class="perm-checkbox accent-cyan-500"><span class="perm-label text-cyan-400" data-i18n="team_viewcosts">Custos e Margem</span></label>
                             </div>
                         </div>
                     </div>
-                    
-                    <button type="submit" id="btn-save-team" class="btn-premium-gold shadow-xl mt-6" data-i18n="btn_team">Salvar e Autorizar Acesso</button>
+                    <button type="submit" id="btn-save-team" class="btn-premium-gold shadow-xl mt-6" data-i18n="btn_team">Salvar Acesso</button>
                 </form>
             </div>
             <div id="users-list" class="flex flex-col gap-4 text-left max-w-7xl mx-auto mt-10"></div>
@@ -398,7 +329,7 @@
             <div class="glass p-6 sm:p-8 rounded-[32px] border border-white/5">
                 <div class="flex justify-between items-center mb-6">
                     <h3 class="text-2xl font-black text-gold uppercase tracking-tighter">📋 Logs de Auditoria</h3>
-                    <button onclick="window.clearLogs()" class="text-[10px] font-bold text-red-500 hover:text-red-400 uppercase tracking-widest border border-red-500/20 px-4 py-2 rounded-xl transition-all" data-i18n="clear_history">Limpar Histórico</button>
+                    <button onclick="window.clearLogs()" class="text-[10px] font-bold text-red-500 hover:text-red-400 uppercase tracking-widest border border-red-500/20 px-4 py-2 rounded-xl transition-all" data-i18n="clear_history">Limpar</button>
                 </div>
                 <div class="overflow-x-auto">
                     <table class="w-full text-left" id="logs-table">
@@ -406,7 +337,7 @@
                             <tr>
                                 <th class="py-4 px-4 text-xs font-black uppercase text-slate-500" data-i18n="date">Data/Hora</th>
                                 <th class="py-4 px-4 text-xs font-black uppercase text-slate-500">Usuário</th>
-                                <th class="py-4 px-4 text-xs font-black uppercase text-slate-500">Ação / Operação</th>
+                                <th class="py-4 px-4 text-xs font-black uppercase text-slate-500">Ação</th>
                             </tr>
                         </thead>
                         <tbody id="logs-body"></tbody>
@@ -780,12 +711,17 @@
         const recebimentos = Array.isArray(p?.recebimentos) ? p.recebimentos : [];
         let totalRecebido = 0; let commLiberada = 0;
         recebimentos.forEach(r => { const rVal = Number(r.valor || 0); totalRecebido += rVal; const rBase = (r.metodo === 'CC') ? rVal * 0.97 : rVal; commLiberada += rBase * percComissao; });
+        
         const pays = Array.isArray(p?.pagamentosEfetuados) ? p.pagamentosEfetuados : [];
         const totalPaid = pays.reduce((a, c) => a + Number(c?.valor || 0), 0); const balance = commLiberada - totalPaid;
         let statusColor = "bg-red-500"; if (balance < 0) statusColor = "bg-blue-500"; else if (balance === 0 && commLiberada > 0) statusColor = "bg-emerald-500"; else if (totalPaid > 0) statusColor = "bg-orange-500"; 
+        
         const despesas = Array.isArray(p?.despesas) ? p.despesas : [];
-        let totalDespesas = 0; let gastosPorCategoria = { 'Materiais': 0, 'Mão-de-obra': 0, 'Equipamentos': 0, 'Licenças': 0, 'Outros': 0 };
+        let totalDespesas = 0; let gastosPorCategoria = { 'Materiais': 0, 'Mão-de-obra': 0, 'Equipamentos': 0, 'Licenças': 0, 'Comissões': 0, 'Outros': 0 };
         despesas.forEach(d => { const val = Number(d.valor || 0); totalDespesas += val; if (gastosPorCategoria[d.categoria] !== undefined) { gastosPorCategoria[d.categoria] += val; } else { gastosPorCategoria['Outros'] += val; } });
+        
+        pays.forEach(pay => { const val = Number(pay?.valor || 0); totalDespesas += val; gastosPorCategoria['Comissões'] += val; });
+
         const lucroBruto = valorTotal - totalDespesas; const margemLucro = valorTotal > 0 ? (lucroBruto / valorTotal) * 100 : 0;
         return { baseProjetada, commTotalProjetada, totalRecebido, commLiberada, totalPaid, balance, statusColor, globalIsCC, orcamento, totalDespesas, lucroBruto, margemLucro, gastosPorCategoria };
     };
@@ -1001,15 +937,15 @@
                                         <div class="flex-1 min-w-[130px]">
                                             <input type="date" id="rec-date-${p.id}" class="modern-input !bg-black/40 !border-emerald-500/30 !py-2 !text-xs w-full">
                                         </div>
-                                        <div class="flex-1 min-w-[100px]">
+                                        <div class="flex-[2] min-w-[100px]">
                                             <input type="number" id="rec-val-${p.id}" placeholder="$ Valor" step="0.01" class="modern-input !bg-black/40 !border-emerald-500/30 !py-2 !text-xs w-full text-emerald-400 font-bold">
                                         </div>
-                                        <div class="flex-1 min-w-[110px]">
+                                        <div class="flex-[2] min-w-[100px]">
                                             <select id="rec-met-${p.id}" class="modern-input !bg-black/40 !border-emerald-500/30 !py-2 !text-xs w-full !px-2">
                                                 <option value="Zelle">Zelle</option><option value="Wire Transfer">Wire</option><option value="Dinheiro">Cash</option><option value="CC">Cartão (CC)</option>
                                             </select>
                                         </div>
-                                        <div class="w-full lg:w-auto flex-none mt-2 lg:mt-0">
+                                        <div class="w-full sm:w-auto flex-none">
                                             <button onclick="window.addRecebimento('${p.id}')" class="bg-emerald-600 hover:bg-emerald-500 text-white force-white-text px-6 py-2 rounded-xl font-black text-[10px] uppercase tracking-widest transition-colors shadow-lg force-dark-bg w-full h-[36px]">Add</button>
                                         </div>
                                     </div>
@@ -1035,7 +971,7 @@
                                         <div class="flex-[2] min-w-[110px]">
                                             <input type="number" id="pay-val-${p.id}" placeholder="$ Valor Pagar" step="0.01" class="modern-input !bg-black/40 !border-gold/30 !py-2 !text-xs w-full text-gold font-bold">
                                         </div>
-                                        <div class="w-full lg:w-auto flex-none mt-2 lg:mt-0">
+                                        <div class="w-full sm:w-auto flex-none">
                                             <button onclick="window.addPayment('${p.id}')" class="bg-slate-800 border border-gold/40 hover:bg-slate-700 text-white force-white-text px-8 py-2 rounded-xl font-black text-[10px] uppercase tracking-widest transition-colors shadow-lg force-dark-bg w-full h-[36px]">Pagar</button>
                                         </div>
                                     </div>
@@ -1052,7 +988,19 @@
                     const profitColor = f.lucroBruto >= 0 ? 'text-emerald-500' : 'text-red-500';
                     const marginColor = f.margemLucro >= 0 ? 'text-emerald-400' : 'text-red-400';
                     
-                    const expensesList = (p.despesas || []).sort((a,b) => new Date(b.data) - new Date(a.data)).map(exp => `
+                    const allExpenses = [];
+                    (p.despesas || []).forEach(exp => allExpenses.push({ ...exp, isComm: false }));
+                    (p.pagamentosEfetuados || []).forEach((pay, idx) => allExpenses.push({ id: `comm_${idx}`, data: pay.data, descricao: `COMISSÃO PAGA - ${p.vendedor ? p.vendedor.split('@')[0].toUpperCase() : 'VENDEDOR'}`, categoria: 'Comissões', valor: pay.valor, isComm: true, payIndex: idx }));
+                    allExpenses.sort((a, b) => new Date(b.data || 0) - new Date(a.data || 0));
+
+                    const expensesList = allExpenses.map(exp => {
+                        let btn = '';
+                        if (exp.isComm && state.userPerms.fin) {
+                            btn = `<button onclick="window.deletePagamento('${p.id}', ${exp.payIndex})" class="p-3 text-red-500/70 hover:text-red-400 hover:bg-red-500/10 rounded-xl transition-colors no-print"><i data-lucide="trash-2" class="w-5 h-5"></i></button>`;
+                        } else if (!exp.isComm && state.userPerms.costs) {
+                            btn = `<button onclick="window.deleteExpense('${p.id}', '${exp.id}', '${exp.descricao.replace(/'/g,"\\'")}', ${exp.valor})" class="p-3 text-red-500/70 hover:text-red-400 hover:bg-red-500/10 rounded-xl transition-colors no-print"><i data-lucide="trash-2" class="w-5 h-5"></i></button>`;
+                        }
+                        return `
                         <div class="flex justify-between items-center text-sm py-4 border-b border-cyan-500/10 last:border-0 hover:bg-white/5 transition-colors px-3 rounded-lg print:border-slate-200">
                             <div class="flex-1 flex flex-col sm:flex-row sm:items-center gap-1.5 sm:gap-4">
                                 <span class="text-slate-400 print:text-slate-600 font-bold text-xs">${exp.data ? new Date(exp.data + 'T12:00:00').toLocaleDateString(state.lang === 'pt' ? 'pt-BR' : 'en-US') : '-'}</span>
@@ -1061,10 +1009,10 @@
                             </div>
                             <div class="flex items-center gap-4">
                                 <span class="font-black text-gold text-lg print:text-black">${formatCurr(exp.valor)}</span>
-                                <button onclick="window.deleteExpense('${p.id}', '${exp.id}', '${exp.descricao.replace(/'/g,"\\'")}', ${exp.valor})" class="p-3 text-red-500/70 hover:text-red-400 hover:bg-red-500/10 rounded-xl transition-colors no-print"><i data-lucide="trash-2" class="w-5 h-5"></i></button>
+                                ${btn}
                             </div>
-                        </div>
-                    `).join('') || `<p class="text-sm italic text-cyan-300/50 text-center py-8">${window.t('no_expenses')}</p>`;
+                        </div>`;
+                    }).join('') || `<p class="text-sm italic text-cyan-300/50 text-center py-8">${window.t('no_expenses')}</p>`;
 
                     unifiedHTML += `
                         <div class="border-t border-cyan-500/20 pt-8 mt-8">
