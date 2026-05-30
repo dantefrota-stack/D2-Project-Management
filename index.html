@@ -11,8 +11,6 @@
     <style>
         :root { --gold: #fbbf24; --gold-dark: #b45309; --d2-blue: #0f172a; }
         body { font-family: 'Inter', sans-serif; transition: background-color 0.3s, color 0.3s; margin: 0; }
-
-        /* Design Login */
         .auth-body { background-color: #f1f5f9; color: #0f172a; display: flex; align-items: center; justify-content: center; min-height: 100vh; }
         .auth-card { background: white; border-radius: 40px; width: 100%; max-width: 440px; padding: 48px; box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.1); text-align: center; }
         .logo-box { background: var(--d2-blue); border-radius: 20px; padding: 20px; display: inline-block; margin-bottom: 24px; }
@@ -22,61 +20,39 @@
         .btn-access { width: 100%; background: var(--d2-blue); color: white; padding: 18px; border-radius: 14px; font-weight: 800; text-transform: uppercase; letter-spacing: 0.1em; transition: all 0.3s; margin-top: 10px; border: none; cursor: pointer; font-size: 14px; }
         .btn-access:hover { transform: translateY(-2px); box-shadow: 0 10px 20px rgba(15, 23, 42, 0.2); }
 
-        /* Temas Base */
         .app-body-dark { background-color: #030508; color: #f1f5f9; }
         .app-body-light { background-color: #f8fafc; color: #0f172a; }
-        
         .app-body-light .glass { background: #ffffff !important; border-color: #e2e8f0 !important; color: #0f172a !important; box-shadow: 0 10px 30px -10px rgba(0,0,0,0.1) !important;}
-        
-        /* Proteção Inteligente Modo Claro */
-        .app-body-light .glass .text-white:not(.kpi-card *):not(.force-white-text):not(.force-dark-bg):not(.force-dark-bg *) { color: #0f172a !important; }
+        .app-body-light .glass .text-white:not(.kpi-card *):not(.force-white-text):not(.force-dark-bg) { color: #0f172a !important; }
         .force-white-text { color: #ffffff !important; }
         
-        .app-body-light .glass .text-slate-200:not(.force-dark-bg):not(.force-dark-bg *), 
-        .app-body-light .glass .text-slate-300:not(.force-dark-bg):not(.force-dark-bg *) { color: #334155 !important; }
-        .app-body-light .glass .text-slate-400:not(.force-dark-bg):not(.force-dark-bg *) { color: #475569 !important; }
-        .app-body-light .glass .text-slate-500:not(.force-dark-bg):not(.force-dark-bg *) { color: #64748b !important; }
-        .app-body-light .glass .text-gold:not(.force-dark-bg):not(.force-dark-bg *) { color: #b45309 !important; } 
-        .app-body-light .glass .text-emerald-400:not(.force-dark-bg):not(.force-dark-bg *), 
-        .app-body-light .glass .text-emerald-500:not(.force-dark-bg):not(.force-dark-bg *) { color: #059669 !important; } 
-        .app-body-light .glass .text-cyan-400:not(.force-dark-bg):not(.force-dark-bg *), 
-        .app-body-light .glass .text-cyan-300:not(.force-dark-bg):not(.force-dark-bg *) { color: #0284c7 !important; } 
-        .app-body-light .glass .text-red-400:not(.force-dark-bg):not(.force-dark-bg *), 
-        .app-body-light .glass .text-red-500:not(.force-dark-bg):not(.force-dark-bg *) { color: #dc2626 !important; } 
-        .app-body-light .glass .text-amber-400:not(.force-dark-bg):not(.force-dark-bg *), 
-        .app-body-light .glass .text-amber-500:not(.force-dark-bg):not(.force-dark-bg *) { color: #d97706 !important; }
-        .app-body-light .glass .text-indigo-400:not(.force-dark-bg):not(.force-dark-bg *), 
-        .app-body-light .glass .text-indigo-500:not(.force-dark-bg):not(.force-dark-bg *) { color: #4f46e5 !important; }
-        .app-body-light .text-lime-500, .app-body-light .text-lime-400 { color: #4d7c0f !important; } 
-        .app-body-light .text-lime-600\/70 { color: rgba(77, 124, 15, 0.8) !important; } 
+        .app-body-light .glass .text-slate-200:not(.force-dark-bg), .app-body-light .glass .text-slate-300:not(.force-dark-bg) { color: #334155 !important; }
+        .app-body-light .glass .text-slate-400:not(.force-dark-bg) { color: #475569 !important; }
+        .app-body-light .glass .text-slate-500:not(.force-dark-bg) { color: #64748b !important; }
+        .app-body-light .glass .text-gold:not(.force-dark-bg) { color: #b45309 !important; } 
+        .app-body-light .glass .text-emerald-400:not(.force-dark-bg), .app-body-light .glass .text-emerald-500:not(.force-dark-bg) { color: #059669 !important; } 
+        .app-body-light .glass .text-cyan-400:not(.force-dark-bg), .app-body-light .glass .text-cyan-300:not(.force-dark-bg) { color: #0284c7 !important; } 
+        .app-body-light .glass .text-red-400:not(.force-dark-bg), .app-body-light .glass .text-red-500:not(.force-dark-bg) { color: #dc2626 !important; } 
+        .app-body-light .glass .text-amber-400:not(.force-dark-bg), .app-body-light .glass .text-amber-500:not(.force-dark-bg) { color: #d97706 !important; }
+        .app-body-light .glass .text-indigo-400:not(.force-dark-bg), .app-body-light .glass .text-indigo-500:not(.force-dark-bg) { color: #4f46e5 !important; }
         
-        /* Ajustes Estruturais Light Mode */
         .app-body-light .bg-black\/20, .app-body-light .bg-black\/30, .app-body-light .bg-black\/40 { background-color: #f1f5f9 !important; border-color: #cbd5e1 !important; }
         .app-body-light .bg-white\/5 { background-color: #ffffff !important; border-color: #e2e8f0 !important; }
         .app-body-light .hover\:bg-white\/5:hover { background-color: #f8fafc !important; }
         .app-body-light .bg-cyan-950\/20 { background-color: #f0f9ff !important; border-color: #bae6fd !important; }
-        .app-body-light .bg-emerald-500\/10 { background-color: #ecfdf5 !important; border-color: #a7f3d0 !important; }
-        .app-body-light .bg-emerald-950\/10 { background-color: #ecfdf5 !important; border-color: #a7f3d0 !important; }
-        .app-body-light .bg-gold\/5 { background-color: #fffbeb !important; border-color: #fde68a !important; }
-        .app-body-light .bg-gold\/10 { background-color: #fef3c7 !important; border-color: #fde68a !important; }
+        .app-body-light .bg-emerald-500\/10, .app-body-light .bg-emerald-950\/10 { background-color: #ecfdf5 !important; border-color: #a7f3d0 !important; }
+        .app-body-light .bg-gold\/5, .app-body-light .bg-gold\/10 { background-color: #fffbeb !important; border-color: #fde68a !important; }
         .app-body-light .border-white\/5, .app-body-light .border-white\/10 { border-color: #e2e8f0 !important; }
         .app-body-light header { background-color: #ffffff !important; border-bottom-color: #e2e8f0 !important; }
         
-        /* Dashboard KPI Cards (Blindados contra Light Mode) */
         .kpi-card { background-color: #1e293b !important; border: 1px solid #334155 !important; }
         .kpi-card.kpi-emerald { background-color: #059669 !important; border-color: #047857 !important; }
-        .kpi-card .kpi-label { color: #94a3b8 !important; }
-        .kpi-card.kpi-emerald .kpi-label { color: #d1fae5 !important; }
-        .kpi-card .text-white { color: #ffffff !important; }
         .app-body-light .kpi-card.active { background-color: #f8fafc !important; border-color: #94a3b8 !important; }
         
         .modern-input { width: 100%; padding: 14px 16px; border-radius: 12px; border: 1px solid rgba(148, 163, 184, 0.2); background: rgba(0,0,0,0.5); color: inherit; outline: none; transition: all 0.2s; font-size: 16px; }
         .app-body-light .modern-input { background: #fff !important; border: 1px solid #cbd5e1 !important; color: #0f172a !important; }
 
         .password-toggle { position: absolute; right: 12px; top: 50%; transform: translateY(-50%); z-index: 100; color: var(--gold); cursor: pointer; background: rgba(0,0,0,0.2); border-radius: 8px; padding: 6px; display: flex; align-items: center; justify-content: center; border: none; }
-        .password-toggle svg { width: 18px; height: 18px; stroke-width: 2.5; }
-
-        /* Filtros Pílula */
         .unit-pill { padding: 10px 20px; border-radius: 20px; font-size: 12px; font-weight: 800; border: 1px solid rgba(255,255,255,0.1); cursor: pointer; transition: 0.2s; color: #64748b; background: transparent; }
         .unit-pill.active { background: var(--gold) !important; color: #000 !important; border-color: var(--gold) !important; }
         .app-body-light .unit-pill { border-color: #cbd5e1; }
@@ -87,7 +63,6 @@
         .app-body-light .filter-pill { border-color: #cbd5e1; background: #fff; }
         .app-body-light .filter-pill.active { background: #0f172a; color: #fff; border-color: #0f172a; }
 
-        /* Permissões UI */
         .perm-box { display: flex; align-items: center; gap: 0.75rem; padding: 1rem; background: rgba(0,0,0,0.3); border: 1px solid rgba(255,255,255,0.05); border-radius: 1rem; cursor: pointer; transition: all 0.2s; }
         .app-body-light .perm-box { background: #f8fafc; border-color: #e2e8f0; }
         .perm-box:hover { background: rgba(0,0,0,0.5); border-color: rgba(251,191,36,0.3); }
@@ -99,7 +74,6 @@
         .btn-premium-gold { background: linear-gradient(135deg, var(--gold) 0%, var(--gold-dark) 100%); color: #000; font-weight: 900; padding: 16px; border-radius: 14px; text-transform: uppercase; letter-spacing: 0.1em; border: none; width: 100%; cursor: pointer; transition: all 0.3s; text-align: center; font-size: 14px; }
         .btn-premium-gold:hover { transform: translateY(-1px); box-shadow: 0 4px 15px rgba(251, 191, 36, 0.4); }
 
-        input[type="date"] { position: relative; } 
         input[type="date"]::-webkit-calendar-picker-indicator { background: transparent; bottom: 0; color: transparent; cursor: pointer; height: auto; left: 0; position: absolute; right: 0; top: 0; width: auto; z-index: 20; }
         .date-container { position: relative; display: flex; align-items: center; width: 100%; }
         .calendar-icon-overlay { position: absolute; right: 14px; pointer-events: none; color: var(--gold); z-index: 10; }
@@ -110,7 +84,6 @@
 
         .glass { background: rgba(255, 255, 255, 0.03); backdrop-filter: blur(12px); border: 1px solid rgba(255, 255, 255, 0.1); }
         .scrollbar-hide::-webkit-scrollbar { display: none; }
-        
         .modal-overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.8); backdrop-filter: blur(6px); z-index: 1000; display: none; align-items: center; justify-content: center; padding: 1rem; overflow-y: auto;}
         .modal-overlay.active { display: flex; }
         .modal-content { background: #0f172a; border-radius: 24px; padding: 32px; max-width: 600px; width: 100%; border: 1px solid rgba(255,255,255,0.1); box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5); }
@@ -118,29 +91,57 @@
 
         @keyframes fadeIn { from { opacity: 0; transform: translateY(15px); } to { opacity: 1; transform: translateY(0); } }
         .animate-fade-in { animation: fadeIn 0.4s cubic-bezier(0.16, 1, 0.3, 1) forwards; }
-        
         .project-card { transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1); cursor: pointer; }
         .project-card:hover { transform: translateY(-4px); box-shadow: 0 20px 40px -10px rgba(0,0,0,0.5); border-color: rgba(251, 191, 36, 0.3); }
 
-        /* Estilos de Impressão */
+        /* Estilos de Impressão de Alta Performance (Sem Textos Invisíveis) */
         @media print { 
-            @page { size: letter; margin: 10mm; }
+            @page { size: A4 landscape; margin: 8mm; }
             .no-print { display: none !important; } 
-            body, .app-body-dark, .app-body-light { background: #fff !important; color: #0f172a !important; -webkit-print-color-adjust: exact; print-color-adjust: exact; }
-            .glass { background: #fff !important; border: 1px solid #cbd5e1 !important; box-shadow: none !important; filter: none !important; backdrop-filter: none !important; page-break-inside: avoid; }
-            .text-white, .text-slate-200, .text-slate-300, .text-slate-400, .force-white-text { color: #0f172a !important; }
-            .text-gold { color: #b45309 !important; font-weight: 900 !important; } 
-            .bg-slate-900, .bg-slate-800, .bg-black\/40, .bg-black\/20 { background: #f8fafc !important; border-color: #cbd5e1 !important; color: #0f172a !important; }
-            .bg-emerald-600 { background: #059669 !important; color: #ffffff !important; }
-            .bg-emerald-600 .text-white { color: #ffffff !important; }
+            
+            body, .app-body-dark, .app-body-light, #main-app, main { 
+                background: #ffffff !important; 
+                color: #0f172a !important; 
+                -webkit-print-color-adjust: exact !important; 
+                print-color-adjust: exact !important; 
+            }
+            .glass { background: transparent !important; border: none !important; box-shadow: none !important; filter: none !important; backdrop-filter: none !important; }
+            
+            /* Converte caixas escuras para branco puro com borda */
+            .bg-slate-900, .bg-slate-800, .bg-slate-700, .bg-black\/40, .bg-black\/20, .bg-black\/30, .bg-cyan-950\/20, .bg-emerald-950\/10 { 
+                background: #ffffff !important; border: 1px solid #cbd5e1 !important; box-shadow: none !important; 
+            }
+            .bg-emerald-500\/10 { background: #ecfdf5 !important; border-color: #a7f3d0 !important; }
+            .bg-gold\/5, .bg-amber-500\/10 { background: #fffbeb !important; border-color: #fde68a !important; }
+
+            .kpi-card { background: #f8fafc !important; border: 1px solid #cbd5e1 !important; }
+            .kpi-card[class*="bg-emerald"] { background: #ecfdf5 !important; border: 2px solid #059669 !important; }
+
+            /* BLINDAGEM MÁXIMA PARA NÃO SUMIR VALORES: Força todas as fontes para tons escuros */
+            h1, h2, h3, h4, h5, h6, p, span, div, th, td, a, li, ul, 
+            .text-white, .force-white-text, .text-slate-100, .text-slate-200, .text-slate-300, .text-slate-400, .text-slate-500 { color: #0f172a !important; }
+            
+            /* Tons Vivos Escurecidos (Mantém contraste para leitura) */
+            .text-gold, .text-amber-400, .text-amber-500 { color: #b45309 !important; font-weight: 800 !important; } 
+            .text-emerald-400, .text-emerald-500 { color: #059669 !important; font-weight: 800 !important; }
+            .text-red-400, .text-red-500 { color: #dc2626 !important; font-weight: 800 !important; }
+            .text-cyan-400, .text-cyan-500 { color: #0891b2 !important; font-weight: 800 !important; }
+            .text-indigo-400, .text-indigo-500 { color: #4338ca !important; font-weight: 800 !important; }
+            
             canvas { max-width: 100% !important; max-height: 250px !important; page-break-inside: avoid; }
-            .overflow-x-auto { overflow: visible !important; } 
+            
+            /* Ajuste elástico e redução em tabelas longas (12 Meses) */
+            .overflow-x-auto, .max-h-\[40vh\], .max-h-64, .max-h-96 { overflow: visible !important; max-height: none !important; width: 100% !important; } 
+            table { width: 100% !important; border-collapse: collapse !important; table-layout: auto !important; }
+            th, td { padding: 4px 6px !important; font-size: 8.5px !important; white-space: normal !important; word-wrap: break-word !important; border-bottom: 1px solid #e2e8f0 !important; }
             tr { page-break-inside: avoid !important; }
-            #report-output .grid { display: grid !important; }
+            
+            #report-output .grid, #projects-grid { gap: 10px !important; }
             body.printing-kpi .hide-on-kpi-print { display: none !important; }
             body.printing-kpi .full-report-only { display: none !important; }
-            .print-force-white { color: #ffffff !important; }
-            .funnel-value { color: #0f172a !important; }
+            
+            .max-w-7xl, .max-w-4xl, .max-w-3xl, .max-w-2xl { max-width: 100% !important; margin: 0 !important; }
+            ::-webkit-scrollbar { display: none !important; }
         }
 
         .flag-btn { border: 1px solid rgba(15,23,42,0.12); border-radius: 14px; padding: 10px; transition: .2s; background: #fff; }
@@ -157,36 +158,25 @@
 </head>
 <body class="auth-body">
 
-<!-- Login Screen -->
 <div id="auth-screen" class="fixed inset-0 z-[2000] flex items-center justify-center p-6">
     <div class="auth-card">
         <div class="logo-box">
              <img src="logo-D2-Group-preto.png" alt="D2 Group" class="h-10 brightness-0 invert" onerror="this.onerror=null; this.src='https://via.placeholder.com/150x40?text=D2+Group'">
         </div>
         <h2 class="text-xs font-black tracking-[0.3em] mb-10 text-slate-400 uppercase" data-i18n="login_title">D2 Project Management Portal</h2>
-
         <form id="login-form" class="space-y-6 text-left mb-6">
             <div id="login-error-msg" class="hidden p-4 bg-red-50 border border-red-100 rounded-xl text-red-600 text-xs font-bold text-center uppercase tracking-widest leading-relaxed"></div>
-            <div id="login-hint-msg" class="hidden p-4 bg-amber-50 border border-amber-100 rounded-xl text-amber-700 text-xs font-bold text-center uppercase tracking-widest leading-relaxed"></div>
-
             <div>
                 <label class="label-auth" data-i18n="lbl_email">E-mail Corporativo</label>
                 <input type="email" id="email" required class="auth-input" placeholder="usuario@allcablingtech.com">
             </div>
-
             <div class="relative">
                 <label class="label-auth" data-i18n="lbl_pass">Senha de Acesso</label>
                 <input type="password" id="password" required class="auth-input !pr-10" placeholder="••••••••">
-                <button type="button" onclick="window.togglePassword('password', 'eye-login-btn')" class="password-toggle !text-slate-400" id="eye-login-btn" style="top: 70%;">
-                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>
-                </button>
+                <button type="button" onclick="window.togglePassword('password', 'eye-login-btn')" class="password-toggle !text-slate-400" id="eye-login-btn" style="top: 70%;"><i data-lucide="eye" class="w-5 h-5"></i></button>
             </div>
-
-            <button type="submit" id="btn-entrar" class="btn-access">
-                <span data-i18n="btn_login">Acessar Sistema</span>
-            </button>
+            <button type="submit" id="btn-entrar" class="btn-access"><span data-i18n="btn_login">Acessar Sistema</span></button>
         </form>
-
         <div class="mt-8 flex justify-center gap-4">
             <button onclick="window.setLang('pt')" class="flag-btn active" id="l-pt"><img src="https://flagcdn.com/w80/br.png" class="w-6" onerror="this.style.display='none'"></button>
             <button onclick="window.setLang('en')" class="flag-btn" id="l-en"><img src="https://flagcdn.com/w80/us.png" class="w-6" onerror="this.style.display='none'"></button>
@@ -194,7 +184,6 @@
     </div>
 </div>
 
-<!-- Modal Global de Alertas e Confirmações do Sistema -->
 <div id="custom-modal" class="modal-overlay" style="z-index: 9999;">
     <div class="modal-content animate-fade-in max-w-sm w-full p-8 text-center !rounded-[32px]">
         <div id="custom-modal-icon" class="flex justify-center mb-5"></div>
@@ -204,16 +193,10 @@
     </div>
 </div>
 
-<!-- Interface Interna -->
 <div id="main-app" class="hidden min-h-screen flex flex-col app-body-dark text-center">
-    
-    <!-- HEADER PRINCIPAL -->
     <header id="main-header" class="no-print bg-white/5 backdrop-blur-md border-b border-white/5 p-4 sticky top-0 z-40 shadow-sm transition-all duration-300">
         <div class="max-w-7xl mx-auto flex justify-between items-center">
-            <div class="flex items-center gap-6">
-                <div class="bg-white p-2 rounded-xl shadow-md"><img id="header-logo" src="logo-D2-Group-preto.png" class="h-10" onerror="this.onerror=null; this.src='https://via.placeholder.com/150x40?text=D2+Group'"></div>
-            </div>
-
+            <div class="flex items-center gap-6"><div class="bg-white p-2 rounded-xl shadow-md"><img id="header-logo" src="logo-D2-Group-preto.png" class="h-10" onerror="this.onerror=null; this.src='https://via.placeholder.com/150x40?text=D2+Group'"></div></div>
             <div class="flex items-center gap-5">
                 <button onclick="window.toggleTheme()" class="p-3 rounded-2xl bg-white/5 hover:bg-gold/20 transition-all"><i data-lucide="sun" id="theme-icon-light" class="hidden text-gold"></i><i data-lucide="moon" id="theme-icon-dark" class="text-slate-400"></i></button>
                 <div class="text-right hidden sm:block">
@@ -226,32 +209,24 @@
     </header>
 
     <main id="main-container" class="max-w-7xl mx-auto w-full p-4 sm:p-6 flex-1 pt-6 sm:pt-8 transition-all duration-300">
-        
-        <!-- NAVEGAÇÃO PRINCIPAL -->
         <nav id="main-nav" class="no-print flex gap-10 mb-6 border-b border-white/5 overflow-x-auto justify-center sm:justify-start scrollbar-hide">
             <button onclick="window.showView('projects')" class="tab-btn pb-4 font-black uppercase tracking-[0.2em] tab-active hidden" id="tab-projects" data-i18n="nav_proj">Projetos</button>
-            <button onclick="window.cancelEdit(); window.showView('new')" class="tab-btn pb-4 font-black uppercase tracking-[0.2em] editor-only hidden" id="tab-new" data-i18n="nav_new">Nova Obra</button>
+            <button onclick="window.cancelEdit(); window.showView('new')" class="tab-btn pb-4 font-black uppercase tracking-[0.2em] hidden" id="tab-new" data-i18n="nav_new">Nova Obra</button>
             <button onclick="window.showView('reports')" class="tab-btn pb-4 font-black uppercase tracking-[0.2em] hidden" id="tab-reports" data-i18n="nav_rep">Relatórios</button>
             <button onclick="window.showView('users')" class="tab-btn pb-4 font-black uppercase tracking-[0.2em] hidden text-gold" id="tab-users" data-i18n="nav_users">Equipe</button>
             <button onclick="window.showView('logs')" class="tab-btn pb-4 font-black uppercase tracking-[0.2em] hidden text-gold" id="tab-logs">📋 Logs</button>
         </nav>
 
         <div id="view-projects" class="w-full hidden">
-            <!-- PAINEL DE FILTROS COMPLETOS (Busca e Vendedores) -->
             <div id="projects-filters" class="flex flex-col gap-6 mb-8 no-print">
                 <div class="flex flex-col md:flex-row gap-4 w-full">
                     <div class="flex-1 text-left">
                         <label class="text-[10px] font-black uppercase text-slate-500 tracking-widest mb-1.5 block ml-1" data-i18n="quick_search">Busca Rápida</label>
-                        <div class="relative">
-                            <i data-lucide="search" class="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400"></i>
-                            <input type="text" id="search-input" oninput="window.renderProjects()" class="modern-input !pl-10" placeholder="Buscar por cliente, projeto, endereço, invoice, proposta..." data-i18n-placeholder="search_placeholder">
-                        </div>
+                        <div class="relative"><i data-lucide="search" class="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400"></i><input type="text" id="search-input" oninput="window.renderProjects()" class="modern-input !pl-10" placeholder="Buscar por cliente, projeto, invoice..." data-i18n-placeholder="search_placeholder"></div>
                     </div>
                     <div class="w-full md:w-64 text-left">
                         <label class="text-[10px] font-black uppercase text-slate-500 tracking-widest mb-1.5 block ml-1" data-i18n="filter_seller">Filtro por Vendedor</label>
-                        <select id="filter-seller" onchange="window.renderProjects()" class="modern-input !pr-10">
-                            <option value="all" data-i18n="all_sellers">Todos os Vendedores</option>
-                        </select>
+                        <select id="filter-seller" onchange="window.renderProjects()" class="modern-input !pr-10"><option value="all" data-i18n="all_sellers">Todos os Vendedores</option></select>
                     </div>
                 </div>
                 <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
@@ -263,15 +238,12 @@
                     </div>
                 </div>
             </div>
-            
             <div id="projects-grid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 text-left"></div>
         </div>
 
-        <!-- Formulário Nova Obra -->
         <div id="view-new" class="hidden max-w-3xl mx-auto glass p-6 sm:p-10 rounded-[40px] text-left shadow-2xl border border-white/5 animate-fade-in">
             <h3 class="text-3xl font-black mb-10 flex items-center gap-4 uppercase tracking-tighter text-white">
-                <span class="w-3 h-10 bg-gold rounded-full"></span>
-                <span id="form-title" data-i18n="form_new_title">Registrar Obra</span>
+                <span class="w-3 h-10 bg-gold rounded-full"></span><span id="form-title" data-i18n="form_new_title">Registrar Obra</span>
             </h3>
             <form id="project-form" class="grid grid-cols-1 md:grid-cols-2 gap-6 sm:gap-8 text-left">
                 <input type="hidden" id="edit-id">
@@ -367,254 +339,388 @@
     import { getAuth, signInWithEmailAndPassword, createUserWithEmailAndPassword, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
     import { getFirestore, collection, doc, updateDoc, addDoc, deleteDoc, onSnapshot, serverTimestamp, arrayUnion } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
 
-    const firebaseConfig = {
-        apiKey: "AIzaSyDrLfIOuBwZblwKPuxBRK3R4fQpjQQbnDE",
-        authDomain: "d2-project-management.firebaseapp.com",
-        projectId: "d2-project-management",
-        storageBucket: "d2-project-management.firebasestorage.app",
-        messagingSenderId: "254630664761",
-        appId: "1:254630664761:web:0d3c9c840bde488353cbe8"
-    };
-
-    const appId = 'd2-Project-Management';
-    const app = initializeApp(firebaseConfig);
-    const auth = getAuth(app);
-    const db = getFirestore(app);
+    const firebaseConfig = { apiKey: "AIzaSyDrLfIOuBwZblwKPuxBRK3R4fQpjQQbnDE", authDomain: "d2-project-management.firebaseapp.com", projectId: "d2-project-management", storageBucket: "d2-project-management.firebasestorage.app", messagingSenderId: "254630664761", appId: "1:254630664761:web:0d3c9c840bde488353cbe8" };
+    const appId = 'd2-Project-Management'; 
+    const app = initializeApp(firebaseConfig); 
+    const auth = getAuth(app); 
+    const db = getFirestore(app); 
     const SUPER_ADMIN = "dante.frota@allcablingtech.com";
-
-    let state = { 
-        user: null, isSuperAdmin: false,
-        userPerms: { tab_proj: true, tab_new: false, tab_rep: false, fin: false, costs: false, smart: true, hvac: false, global: false },
-        projects: [], team: [], company: 'Ambas', lang: 'pt', theme: 'dark', 
-        focusedProject: null, showArchived: false, reportActiveKpi: 'receita' 
-    };
-
+    
+    let state = { user: null, isSuperAdmin: false, userPerms: { tab_proj: true, tab_new: false, tab_rep: false, fin: false, costs: false, smart: true, hvac: false, global: false }, projects: [], team: [], company: 'Ambas', lang: 'pt', theme: 'dark', focusedProject: null, showArchived: false, reportActiveKpi: 'receita' };
     window.d2Charts = {};
     const formatCurr = (v) => new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD', minimumFractionDigits: 2 }).format(Number(v || 0));
 
-    window.togglePassword = function(inputId, btnId) {
-        const el = document.getElementById(inputId); const btn = document.getElementById(btnId);
+    window.togglePassword = function(inputId, btnId) { 
+        const el = document.getElementById(inputId); 
+        const btn = document.getElementById(btnId); 
         if (el && btn) { 
-            const isPass = el.type === 'password'; el.type = isPass ? 'text' : 'password'; 
+            const isPass = el.type === 'password'; 
+            el.type = isPass ? 'text' : 'password'; 
             btn.innerHTML = isPass ? '<i data-lucide="eye-off" class="w-5 h-5"></i>' : '<i data-lucide="eye" class="w-5 h-5"></i>'; 
-            try { lucide.createIcons(); } catch {}
-        }
+            try { lucide.createIcons(); } catch {} 
+        } 
     };
 
     const translations = {
-        pt: { admin_panel:"Gestão Corporativa",nav_proj:"Projetos",nav_new:"Nova Obra",nav_rep:"Relatórios",nav_users:"Equipe",form_new_title:"Registrar Obra",team_title:"Gestão de Equipe",btn_team:"Salvar e Autorizar Acesso",filter_both:"AMBAS",filter_active:"ATIVAS",filter_archived:"ARQUIVADAS",filter_all:"TODAS",lbl_email:"E-mail Corporativo",lbl_pass:"Senha de Acesso",btn_login:"Acessar Sistema",f_prop:"Nº Proposta",f_inv:"Nº Invoice",f_unit:"Unidade Responsável",f_client:"Cliente",f_seller:"Vendedor",f_gross:"Valor Contrato Bruto",f_budget:"Orçamento Custo",f_comm_perc:"% Comissão",f_pay_method:"Forma Pagt.",f_start:"Início",f_end:"Entrega",f_status:"Status",btn_save:"Salvar Registro",btn_cancel:"Cancelar",team_email:"E-mail",team_pass:"Senha",team_scope:"Visibilidade e Escopo",team_tabs:"Acesso às Abas",team_perms:"Permissões de Escrita",seller:"Vendedor",status_obra:"Status",prop_inv:"Proposta / Invoice",pay_comm:"Pagamento • % Comissão",timeline:"Timeline",days_left:"DIAS",completed:"CONCLUÍDA",late:"ATRASADA",gross_contract:"Valor Contrato Bruto",client:"Cliente",commission:"Comissão",paid_100:"100% PAGO",paid_perc:"% PAGO",pending:"PENDENTE",click_to_open:"CLIQUE NO CARD PARA ABRIR",comm_finances:"Comissões e Finanças",cost_management:"Gestão de Custos",comm_projected:"Comissão Projetada",comm_released:"Comissão Liberada",paid_seller:"Pago ao Vendedor",balance_pay:"SALDO A PAGAR",balance_over:"PAGO A MAIOR",balance_paid:"TOTALMENTE PAGO",client_receipts:"Recebimentos do Cliente",no_receipts:"Nenhum recebimento.",seller_payments:"Pagamentos ao Vendedor",no_payments:"Nenhum pagamento.",back:"Voltar",print_ficha:"Imprimir Ficha",budget:"Orçamento (Budget)",total_expenses:"Despesas Totais",real_profit:"Lucro Real",margin:"Margem",budget_vs_spent:"Orçamento vs Gasto",dist_category:"Distribuição por Categoria",reg_expense:"Registrar Nova Despesa",add_table:"Add",expense_history:"Histórico de Gastos",no_expenses:"Nenhuma despesa lançada.",desc_expense:"Descrição do gasto",rep_title:"Relatório Executivo Geral",rep_title_company:"Relatório Executivo - ",date:"Data",exec_vision:"Visão Executiva Institucional",gross_revenue:"Receita Bruta",entries:"Entradas",to_receive:"A Receber",est_profit:"Lucro Estimado",global_margin:"Margem Global",see_works:"Ver Obras ➔",see_received:"Ver Recebidos ➔",see_pending:"Ver Pendentes ➔",see_details:"Ver Detalhes ➔",see_summary:"Ver Resumo ➔",active_funnel:"Funil de Operações Ativas",comm_paid_month:"Comissões Pagas por Mês",total_year:"Total Ano",no_data_year:"Nenhum dado.",detailed_struct:"Detalhamento Estruturado",no_active_works:"Nenhuma obra encontrada.",print_full_rep:"Imprimir Relatório Completo",print_view:"Imprimir Visão",missing_receive:"Falta Receber",status_appr:"✅ Aprovado",status_wait:"Aguardando Início",status_exec:"Em Execução",status_fin:"Finalizado",funnel_appr:"Aprovados",funnel_wait:"Aguardando Início",funnel_exec:"Em Execução",funnel_fin:"Concluídas",cancel:"Cancelar",confirm:"Confirmar",understood:"Entendido",attention:"Ação Necessária",error:"Erro",modal_del_exp_title:"Excluir Despesa",modal_del_exp_msg:"Deseja remover:",modal_del_pay_title:"Confirmar Exclusão",modal_del_pay_msg:"Remover pagamento?",modal_del_rec_msg:"Remover recebimento?",modal_del_team_title:"Remover Acesso",modal_del_team_msg:"Remover acesso deste membro?",modal_del_proj_title:"Excluir Obra",modal_del_proj_msg:"Excluir esta obra permanentemente?",modal_access_denied:"Acesso Negado",modal_access_denied_msg:"Apenas administrador.",perm_insert_fin:"Inserir Receb./Pagtos.",team_viewall:"Ver Outros",team_viewcosts:"Acesso a Custos e Margem",clear_history:"Limpar",modal_total_launched:"Total Lançado",modal_balance_seller:"Saldo P/ Vendedor",modal_gross_contract:"Valor da Obra",modal_client_paid:"Pago pelo Cliente",delivered_late:"ENTREGA ATRASADA",delivered_early:"ENTREGA ADIANTADA",on_time:"NO PRAZO",days:"DIAS",late_days:"ATRASADA",quick_search:"Busca Rápida",filter_seller:"Filtro Vendedor",all_sellers:"Todos os Vendedores",search_placeholder:"Buscar por cliente, projeto, invoice..." },
-        en: { admin_panel:"Corporate Mgmt",nav_proj:"Projects",nav_new:"New Entry",nav_rep:"Reports",nav_users:"Team",form_new_title:"Register Project",team_title:"Team Management",btn_team:"Authorize Access",filter_both:"BOTH",filter_active:"ACTIVE",filter_archived:"ARCHIVED",filter_all:"ALL",lbl_email:"Corporate Email",lbl_pass:"Password",btn_login:"Access System",f_prop:"Proposal No.",f_inv:"Invoice No.",f_unit:"Unit",f_client:"Client",f_seller:"Seller",f_gross:"Gross Contract",f_budget:"Budget",f_comm_perc:"% Commission",f_pay_method:"Pay Method",f_start:"Start Date",f_end:"Delivery",f_status:"Status",btn_save:"Save",btn_cancel:"Cancel",team_email:"Email",team_pass:"Password",team_scope:"Visibility",team_tabs:"Tabs Access",team_perms:"Permissions",seller:"Seller",status_obra:"Status",prop_inv:"Proposal/Invoice",pay_comm:"Payment • % Comm",timeline:"Timeline",days_left:"DAYS LEFT",completed:"COMPLETED",late:"LATE",gross_contract:"Gross Value",client:"Client",commission:"Commission",paid_100:"100% PAID",paid_perc:"% PAID",pending:"PENDING",click_to_open:"CLICK TO OPEN",comm_finances:"Commissions",cost_management:"Cost Mgmt",comm_projected:"Projected Comm",comm_released:"Released Comm",paid_seller:"Paid to Seller",balance_pay:"BALANCE TO PAY",balance_over:"OVERPAID",balance_paid:"FULLY PAID",client_receipts:"Client Receipts",no_receipts:"No receipts.",seller_payments:"Seller Payments",no_payments:"No payments.",back:"Back",print_ficha:"Print",budget:"Budget",total_expenses:"Total Expenses",real_profit:"Real Profit",margin:"Margin",budget_vs_spent:"Budget vs Spent",dist_category:"Category Distribution",reg_expense:"New Expense",add_table:"Add",expense_history:"Expense History",no_expenses:"No expenses.",desc_expense:"Description",rep_title:"Executive Report",rep_title_company:"Executive Report - ",date:"Date",exec_vision:"Executive Vision",gross_revenue:"Gross Revenue",entries:"Entries",to_receive:"To Receive",est_profit:"Est Profit",global_margin:"Global Margin",see_works:"See Works ➔",see_received:"See Received ➔",see_pending:"See Pending ➔",see_details:"See Details ➔",see_summary:"See Summary ➔",active_funnel:"Active Funnel",comm_paid_month:"Comm Paid by Month",total_year:"Total Year",no_data_year:"No data.",detailed_struct:"Detailed Structure",no_active_works:"No works found.",print_full_rep:"Print Report",print_view:"Print View",missing_receive:"Pending",status_appr:"✅ Approved",status_wait:"Waiting Start",status_exec:"In Execution",status_fin:"Finished",funnel_appr:"Approved",funnel_wait:"Waiting",funnel_exec:"Execution",funnel_fin:"Completed",cancel:"Cancel",confirm:"Confirm",understood:"Understood",attention:"Attention",error:"Error",modal_del_exp_title:"Delete Expense",modal_del_exp_msg:"Remove:",modal_del_pay_title:"Delete Payment",modal_del_pay_msg:"Remove payment?",modal_del_rec_msg:"Remove receipt?",modal_del_team_title:"Remove Access",modal_del_team_msg:"Remove member?",modal_del_proj_title:"Delete Project",modal_del_proj_msg:"Delete permanently?",modal_access_denied:"Access Denied",modal_access_denied_msg:"Admin only.",perm_insert_fin:"Insert Finances",team_viewall:"View All Sellers",team_viewcosts:"Cost Access",clear_history:"Clear",modal_total_launched:"Total Launched",modal_balance_seller:"Seller Balance",modal_gross_contract:"Project Value",modal_client_paid:"Paid by Client",delivered_late:"DELIVERED LATE",delivered_early:"DELIVERED EARLY",on_time:"ON TIME",days:"DAYS",late_days:"LATE",quick_search:"Quick Search",filter_seller:"Seller Filter",all_sellers:"All Sellers",search_placeholder:"Search client, project, invoice..." }
+        pt: { admin_panel:"Gestão Corporativa",nav_proj:"Projetos",nav_new:"Nova Obra",nav_rep:"Relatórios",nav_users:"Equipe",form_new_title:"Registrar Obra",team_title:"Gestão de Equipe",btn_team:"Salvar e Autorizar Acesso",filter_both:"AMBAS",filter_active:"ATIVAS",filter_archived:"ARQUIVADAS",filter_all:"TODAS",lbl_email:"E-mail Corporativo",lbl_pass:"Senha de Acesso",btn_login:"Acessar Sistema",f_prop:"Nº Proposta",f_inv:"Nº Invoice",f_unit:"Unidade Responsável",f_client:"Cliente",f_seller:"Vendedor",f_gross:"Valor Contrato Bruto",f_budget:"Orçamento Custo",f_comm_perc:"% Comissão",f_pay_method:"Forma Pagt.",f_start:"Início",f_end:"Entrega",f_status:"Status",btn_save:"Salvar Registro",btn_cancel:"Cancelar",team_email:"E-mail",team_pass:"Senha",team_scope:"Visibilidade e Escopo",team_tabs:"Acesso às Abas",team_perms:"Permissões de Escrita",seller:"Vendedor",status_obra:"Status",prop_inv:"Proposta / Invoice",pay_comm:"Pagamento • % Comissão",timeline:"Timeline",days_left:"DIAS",completed:"CONCLUÍDA",late:"ATRASADA",gross_contract:"Valor Contrato Bruto",client:"Cliente",commission:"Comissão",paid_100:"100% PAGO",paid_perc:"% PAGO",pending:"PENDENTE",click_to_open:"CLIQUE NO CARD PARA ABRIR",comm_finances:"Comissões e Finanças",cost_management:"Gestão de Custos",comm_projected:"Comissão Projetada",comm_released:"Comissão Liberada",paid_seller:"Pago ao Vendedor",balance_pay:"SALDO A PAGAR",balance_over:"PAGO A MAIOR",balance_paid:"TOTALMENTE PAGO",client_receipts:"Recebimentos do Cliente",no_receipts:"Nenhum recebimento.",seller_payments:"Pagamentos ao Vendedor",no_payments:"Nenhum pagamento.",back:"Voltar",print_ficha:"Imprimir Ficha",budget:"Orçamento (Budget)",total_expenses:"Despesas Totais",real_profit:"Lucro Real",margin:"Margem",budget_vs_spent:"Orçamento vs Gasto",dist_category:"Distribuição por Categoria",reg_expense:"Registrar Nova Despesa",add_table:"Add",expense_history:"Histórico de Gastos",no_expenses:"Nenhuma despesa lançada.",desc_expense:"Descrição do gasto",rep_title:"Relatório Executivo Geral",rep_title_company:"Relatório Executivo - ",date:"Data",exec_vision:"Visão Executiva Institucional",gross_revenue:"Receita Bruta",entries:"Entradas",to_receive:"A Receber",est_profit:"Lucro Estimado",global_margin:"Margem Global",see_works:"Ver Obras ➔",see_received:"Ver Recebidos ➔",see_pending:"Ver Pendentes ➔",see_details:"Ver Detalhes ➔",see_summary:"Ver Resumo ➔",active_funnel:"Funil de Operações Ativas",comm_paid_month:"Comissões Pagas por Mês",total_year:"Total Ano",no_data_year:"Nenhum dado.",detailed_struct:"Detalhamento Estruturado",no_active_works:"Nenhuma obra encontrada.",print_full_rep:"Imprimir Relatório Completo",print_view:"Imprimir Visão",missing_receive:"Falta Receber",status_appr:"✅ Aprovado",status_wait:"Aguardando Início",status_exec:"Em Execução",status_fin:"Finalizado",funnel_appr:"Aprovados",funnel_wait:"Aguardando Início",funnel_exec:"Em Execução",funnel_fin:"Concluídas",cancel:"Cancelar",confirm:"Confirmar",understood:"Entendido",attention:"Ação Necessária",error:"Erro",modal_del_exp_title:"Excluir Despesa",modal_del_exp_msg:"Deseja remover:",modal_del_pay_title:"Confirmar Exclusão",modal_del_pay_msg:"Remover pagamento?",modal_del_rec_msg:"Remover recebimento?",modal_del_team_title:"Remover Acesso",modal_del_team_msg:"Remover acesso deste membro?",modal_del_proj_title:"Excluir Obra",modal_del_proj_msg:"Excluir esta obra permanentemente?",modal_access_denied:"Acesso Negado",modal_access_denied_msg:"Apenas administrador.",perm_insert_fin:"Inserir Receb./Pagtos.",team_viewall:"Ver Outros",team_viewcosts:"Acesso a Custos e Margem",clear_history:"Limpar",modal_total_launched:"Total Lançado",modal_balance_seller:"Saldo P/ Vendedor",modal_gross_contract:"Valor da Obra",modal_client_paid:"Pago pelo Cliente",delivered_late:"ENTREGA ATRASADA",delivered_early:"ENTREGA ADIANTADA",on_time:"NO PRAZO",days:"DIAS",late_days:"ATRASADA",quick_search:"Busca Rápida",filter_seller:"Filtro Vendedor",all_sellers:"Todos os Vendedores",search_placeholder:"Buscar..." },
+        en: { admin_panel:"Corporate Mgmt",nav_proj:"Projects",nav_new:"New Entry",nav_rep:"Reports",nav_users:"Team",form_new_title:"Register Project",team_title:"Team Management",btn_team:"Authorize Access",filter_both:"BOTH",filter_active:"ACTIVE",filter_archived:"ARCHIVED",filter_all:"ALL",lbl_email:"Corporate Email",lbl_pass:"Password",btn_login:"Access System",f_prop:"Proposal No.",f_inv:"Invoice No.",f_unit:"Unit",f_client:"Client",f_seller:"Seller",f_gross:"Gross Contract",f_budget:"Budget",f_comm_perc:"% Commission",f_pay_method:"Pay Method",f_start:"Start Date",f_end:"Delivery",f_status:"Status",btn_save:"Save",btn_cancel:"Cancel",team_email:"Email",team_pass:"Password",team_scope:"Visibility",team_tabs:"Tabs Access",team_perms:"Permissions",seller:"Seller",status_obra:"Status",prop_inv:"Proposal/Invoice",pay_comm:"Payment • % Comm",timeline:"Timeline",days_left:"DAYS LEFT",completed:"COMPLETED",late:"LATE",gross_contract:"Gross Value",client:"Client",commission:"Commission",paid_100:"100% PAID",paid_perc:"% PAID",pending:"PENDING",click_to_open:"CLICK TO OPEN",comm_finances:"Commissions",cost_management:"Cost Mgmt",comm_projected:"Projected Comm",comm_released:"Released Comm",paid_seller:"Paid to Seller",balance_pay:"BALANCE TO PAY",balance_over:"OVERPAID",balance_paid:"FULLY PAID",client_receipts:"Client Receipts",no_receipts:"No receipts.",seller_payments:"Seller Payments",no_payments:"No payments.",back:"Back",print_ficha:"Print",budget:"Budget",total_expenses:"Total Expenses",real_profit:"Real Profit",margin:"Margin",budget_vs_spent:"Budget vs Spent",dist_category:"Category Distribution",reg_expense:"New Expense",add_table:"Add",expense_history:"Expense History",no_expenses:"No expenses.",desc_expense:"Description",rep_title:"Executive Report",rep_title_company:"Executive Report - ",date:"Date",exec_vision:"Executive Vision",gross_revenue:"Gross Revenue",entries:"Entries",to_receive:"To Receive",est_profit:"Est Profit",global_margin:"Global Margin",see_works:"See Works ➔",see_received:"See Received ➔",see_pending:"See Pending ➔",see_details:"See Details ➔",see_summary:"See Summary ➔",active_funnel:"Active Funnel",comm_paid_month:"Comm Paid by Month",total_year:"Total Year",no_data_year:"No data.",detailed_struct:"Detailed Structure",no_active_works:"No works found.",print_full_rep:"Print Report",print_view:"Print View",missing_receive:"Pending",status_appr:"✅ Approved",status_wait:"Waiting Start",status_exec:"In Execution",status_fin:"Finished",funnel_appr:"Approved",funnel_wait:"Waiting",funnel_exec:"Execution",funnel_fin:"Completed",cancel:"Cancel",confirm:"Confirm",understood:"Understood",attention:"Attention",error:"Error",modal_del_exp_title:"Delete Expense",modal_del_exp_msg:"Remove:",modal_del_pay_title:"Delete Payment",modal_del_pay_msg:"Remove payment?",modal_del_rec_msg:"Remove receipt?",modal_del_team_title:"Remove Access",modal_del_team_msg:"Remove member?",modal_del_proj_title:"Delete Project",modal_del_proj_msg:"Delete permanently?",modal_access_denied:"Access Denied",modal_access_denied_msg:"Admin only.",perm_insert_fin:"Insert Finances",team_viewall:"View All Sellers",team_viewcosts:"Cost Access",clear_history:"Clear",modal_total_launched:"Total Launched",modal_balance_seller:"Seller Balance",modal_gross_contract:"Project Value",modal_client_paid:"Paid by Client",delivered_late:"LATE",delivered_early:"EARLY",on_time:"ON TIME",days:"DAYS",late_days:"LATE",quick_search:"Quick Search",filter_seller:"Seller Filter",all_sellers:"All Sellers",search_placeholder:"Search client, project, invoice..." }
     };
     
     window.t = function(key) { return translations[state.lang]?.[key] || key; };
 
-    function tStatus(s) {
-        if(s === '✅ Aprovado') return window.t('status_appr');
-        if(s === 'Aguardando Início') return window.t('status_wait');
-        if(s === 'Em Execução') return window.t('status_exec');
-        if(s === 'Finalizado') return window.t('status_fin');
-        return s;
+    function tStatus(s) { 
+        if(s === '✅ Aprovado') return window.t('status_appr'); 
+        if(s === 'Aguardando Início') return window.t('status_wait'); 
+        if(s === 'Em Execução') return window.t('status_exec'); 
+        if(s === 'Finalizado') return window.t('status_fin'); 
+        return s; 
     }
 
     window.setLang = function(l) { 
         state.lang = l; 
         document.querySelectorAll('.flag-btn').forEach(b => b.classList.toggle('active', b.id === 'l-' + l)); 
-        document.querySelectorAll('[data-i18n]').forEach(el => {
-            const key = el.getAttribute('data-i18n');
-            if (translations[l] && translations[l][key]) {
-                if (el.tagName === 'INPUT' && el.type === 'button') el.value = translations[l][key];
-                else el.innerText = translations[l][key];
+        document.querySelectorAll('[data-i18n]').forEach(el => { 
+            const key = el.getAttribute('data-i18n'); 
+            if (translations[l]?.[key]) { 
+                if (el.tagName === 'INPUT' && el.type === 'button') {
+                    el.value = translations[l][key]; 
+                } else {
+                    el.innerText = translations[l][key]; 
+                }
+            } 
+        });
+        document.querySelectorAll('[data-i18n-placeholder]').forEach(el => { 
+            const key = el.getAttribute('data-i18n-placeholder'); 
+            if (translations[l]?.[key]) {
+                el.placeholder = translations[l][key]; 
             }
         });
-        document.querySelectorAll('[data-i18n-placeholder]').forEach(el => {
-            const key = el.getAttribute('data-i18n-placeholder');
-            if (translations[l] && translations[l][key]) el.placeholder = translations[l][key];
-        });
-        if(state.projects.length > 0) { window.renderProjects(); window.renderReport(); }
+        if(state.projects.length > 0) { 
+            window.renderProjects(); 
+            window.renderReport(); 
+        }
     };
 
     window._tempOnConfirm = null;
-    window.currentConfirmCallback = async function() {
-        if (typeof window._tempOnConfirm === 'function') { try { await window._tempOnConfirm(); } catch (err) { console.error(err); } }
-        window.closeCustomModal();
+
+    window.currentConfirmCallback = async function() { 
+        if (typeof window._tempOnConfirm === 'function') { 
+            try { await window._tempOnConfirm(); } catch (err) { console.error(err); } 
+        } 
+        window.closeCustomModal(); 
     };
 
     window.showModal = function(title, msg, type = 'alert', onConfirm = null) {
-        document.getElementById('custom-modal-title').innerText = title; document.getElementById('custom-modal-msg').innerHTML = msg;
-        const btnContainer = document.getElementById('custom-modal-buttons'); const iconContainer = document.getElementById('custom-modal-icon');
+        document.getElementById('custom-modal-title').innerText = title; 
+        document.getElementById('custom-modal-msg').innerHTML = msg;
+        const btnContainer = document.getElementById('custom-modal-buttons'); 
+        const iconContainer = document.getElementById('custom-modal-icon'); 
         window._tempOnConfirm = onConfirm; 
-        if (type === 'confirm') {
-            iconContainer.innerHTML = '<i data-lucide="help-circle" class="w-12 h-12 text-gold"></i>';
-            btnContainer.innerHTML = `<button onclick="window.closeCustomModal()" class="flex-1 px-4 py-3 bg-slate-700 text-white force-white-text rounded-xl font-bold hover:bg-slate-600 transition-colors text-xs uppercase tracking-widest shadow-lg">${window.t('cancel')}</button><button onclick="window.currentConfirmCallback()" class="flex-1 px-4 py-3 bg-red-600 text-white force-white-text font-black rounded-xl hover:bg-red-50 transition-colors text-xs uppercase tracking-widest shadow-lg shadow-red-500/20">${window.t('confirm')}</button>`;
-        } else if (type === 'error') {
-            iconContainer.innerHTML = '<i data-lucide="alert-circle" class="w-12 h-12 text-red-500"></i>';
-            btnContainer.innerHTML = `<button onclick="window.closeCustomModal()" class="w-full px-6 py-3 bg-slate-800 text-white force-white-text font-black rounded-xl hover:bg-slate-700 transition-colors text-xs uppercase tracking-widest shadow-lg">OK</button>`;
-        } else {
-            iconContainer.innerHTML = '<i data-lucide="info" class="w-12 h-12 text-cyan-400"></i>';
-            btnContainer.innerHTML = `<button onclick="window.closeCustomModal()" class="w-full px-6 py-3 bg-cyan-600 text-white force-white-text font-black rounded-xl hover:bg-cyan-500 transition-colors text-xs uppercase tracking-widest shadow-lg shadow-cyan-500/20">${window.t('understood')}</button>`;
+        
+        if (type === 'confirm') { 
+            iconContainer.innerHTML = '<i data-lucide="help-circle" class="w-12 h-12 text-gold"></i>'; 
+            btnContainer.innerHTML = `<button onclick="window.closeCustomModal()" class="flex-1 px-4 py-3 bg-slate-700 text-white force-white-text rounded-xl font-bold hover:bg-slate-600 transition-colors text-xs uppercase tracking-widest shadow-lg">${window.t('cancel')}</button><button onclick="window.currentConfirmCallback()" class="flex-1 px-4 py-3 bg-red-600 text-white force-white-text font-black rounded-xl hover:bg-red-500 transition-colors text-xs uppercase tracking-widest shadow-lg shadow-red-500/20">${window.t('confirm')}</button>`; 
+        } else if (type === 'error') { 
+            iconContainer.innerHTML = '<i data-lucide="alert-circle" class="w-12 h-12 text-red-500"></i>'; 
+            btnContainer.innerHTML = `<button onclick="window.closeCustomModal()" class="w-full px-6 py-3 bg-slate-800 text-white force-white-text font-black rounded-xl hover:bg-slate-700 transition-colors text-xs uppercase tracking-widest shadow-lg">OK</button>`; 
+        } else { 
+            iconContainer.innerHTML = '<i data-lucide="info" class="w-12 h-12 text-cyan-400"></i>'; 
+            btnContainer.innerHTML = `<button onclick="window.closeCustomModal()" class="w-full px-6 py-3 bg-cyan-600 text-white force-white-text font-black rounded-xl hover:bg-cyan-500 transition-colors text-xs uppercase tracking-widest shadow-lg shadow-cyan-500/20">${window.t('understood')}</button>`; 
         }
-        document.getElementById('custom-modal').classList.add('active'); try { lucide.createIcons(); } catch {}
+        
+        document.getElementById('custom-modal').classList.add('active'); 
+        try { lucide.createIcons(); } catch {}
     };
 
-    window.closeCustomModal = function() { window._tempOnConfirm = null; document.getElementById('custom-modal').classList.remove('active'); };
-
-    function showLoginError(msg) {
-        const box = document.getElementById('login-error-msg'); const hint = document.getElementById('login-hint-msg');
-        if (hint) hint.classList.add('hidden'); if (box) { box.textContent = msg || 'Falha.'; box.classList.remove('hidden'); }
-    }
-    function hideLoginMessages() {
-        document.getElementById('login-error-msg')?.classList.add('hidden'); document.getElementById('login-hint-msg')?.classList.add('hidden');
-    }
-
-    function logAccess(userEmail, action) {
-        if (!state.isSuperAdmin) return;
-        const logs = JSON.parse(localStorage.getItem('access_logs') || '[]');
-        logs.unshift({ timestamp: new Date().toISOString(), user: userEmail, action });
-        if (logs.length > 500) logs.splice(500);
-        localStorage.setItem('access_logs', JSON.stringify(logs)); window.renderLogs();
-    }
-
-    window.clearLogs = function() {
-        if(!state.isSuperAdmin) return;
-        if(confirm("Tem certeza que deseja limpar todo o histórico?")) { localStorage.removeItem('access_logs'); window.renderLogs(); }
+    window.closeCustomModal = function() { 
+        window._tempOnConfirm = null; 
+        document.getElementById('custom-modal').classList.remove('active'); 
     };
 
-    window.renderLogs = function() {
-        const tbody = document.getElementById('logs-body'); if (!tbody || !state.isSuperAdmin) return;
-        const logs = JSON.parse(localStorage.getItem('access_logs') || '[]');
-        tbody.innerHTML = logs.map(log => `<tr class="border-b border-white/5 hover:bg-white/5"><td class="py-4 px-4 text-sm whitespace-nowrap">${new Date(log.timestamp).toLocaleString(state.lang === 'pt' ? 'pt-BR' : 'en-US')}</td><td class="py-4 px-4 text-sm font-bold text-gold">${log.user}</td><td class="py-4 px-4 text-sm text-slate-300">${log.action}</td></tr>`).join('') || `<tr><td colspan="3" class="py-10 text-center text-slate-500">Nenhum log registrado</td></tr>`;
+    function showLoginError(msg) { 
+        const box = document.getElementById('login-error-msg'); 
+        const hint = document.getElementById('login-hint-msg'); 
+        if (hint) hint.classList.add('hidden'); 
+        if (box) { 
+            box.textContent = msg || 'Falha.'; 
+            box.classList.remove('hidden'); 
+        } 
+    }
+
+    function hideLoginMessages() { 
+        document.getElementById('login-error-msg')?.classList.add('hidden'); 
+        document.getElementById('login-hint-msg')?.classList.add('hidden'); 
+    }
+
+    function logAccess(userEmail, action) { 
+        if (!state.isSuperAdmin) return; 
+        const logs = JSON.parse(localStorage.getItem('access_logs') || '[]'); 
+        logs.unshift({ timestamp: new Date().toISOString(), user: userEmail, action }); 
+        if (logs.length > 500) logs.splice(500); 
+        localStorage.setItem('access_logs', JSON.stringify(logs)); 
+        window.renderLogs(); 
+    }
+
+    window.clearLogs = function() { 
+        if(!state.isSuperAdmin) return; 
+        if(confirm("Tem certeza que deseja limpar todo o histórico?")) { 
+            localStorage.removeItem('access_logs'); 
+            window.renderLogs(); 
+        } 
     };
 
-    window.toggleTheme = function() { state.theme = state.theme === 'dark' ? 'light' : 'dark'; localStorage.setItem('d2_theme', state.theme); applyThemeConfig(); try { lucide.createIcons(); } catch {} };
+    window.renderLogs = function() { 
+        const tbody = document.getElementById('logs-body'); 
+        if (!tbody || !state.isSuperAdmin) return; 
+        const logs = JSON.parse(localStorage.getItem('access_logs') || '[]'); 
+        tbody.innerHTML = logs.map(log => `
+            <tr class="border-b border-white/5 hover:bg-white/5">
+                <td class="py-4 px-4 text-sm whitespace-nowrap">${new Date(log.timestamp).toLocaleString(state.lang === 'pt' ? 'pt-BR' : 'en-US')}</td>
+                <td class="py-4 px-4 text-sm font-bold text-gold">${log.user}</td>
+                <td class="py-4 px-4 text-sm text-slate-300">${log.action}</td>
+            </tr>
+        `).join('') || `<tr><td colspan="3" class="py-10 text-center text-slate-500">Nenhum log registrado</td></tr>`; 
+    };
+
+    window.toggleTheme = function() { 
+        state.theme = state.theme === 'dark' ? 'light' : 'dark'; 
+        localStorage.setItem('d2_theme', state.theme); 
+        applyThemeConfig(); 
+        try { lucide.createIcons(); } catch {} 
+    };
 
     function applyThemeConfig() {
-        state.theme = localStorage.getItem('d2_theme') || 'dark'; const appDiv = document.getElementById('main-app');
-        if (state.theme === 'dark') { document.body.className = 'app-body-dark'; if(appDiv) appDiv.className = 'min-h-screen flex flex-col app-body-dark text-center'; } 
-        else { document.body.className = 'app-body-light light'; if(appDiv) appDiv.className = 'min-h-screen flex flex-col app-body-light light text-center'; }
-        const sun = document.getElementById('theme-icon-light'); const moon = document.getElementById('theme-icon-dark');
-        if (sun && moon) { if (state.theme === 'dark') { sun.classList.add('hidden'); moon.classList.remove('hidden'); } else { moon.classList.add('hidden'); sun.classList.remove('hidden'); } }
+        state.theme = localStorage.getItem('d2_theme') || 'dark'; 
+        const appDiv = document.getElementById('main-app');
+        if (state.theme === 'dark') { 
+            document.body.className = 'app-body-dark'; 
+            if(appDiv) appDiv.className = 'min-h-screen flex flex-col app-body-dark text-center'; 
+        } else { 
+            document.body.className = 'app-body-light light'; 
+            if(appDiv) appDiv.className = 'min-h-screen flex flex-col app-body-light light text-center'; 
+        }
+        const sun = document.getElementById('theme-icon-light'); 
+        const moon = document.getElementById('theme-icon-dark');
+        if (sun && moon) { 
+            if (state.theme === 'dark') { 
+                sun.classList.add('hidden'); 
+                moon.classList.remove('hidden'); 
+            } else { 
+                moon.classList.add('hidden'); 
+                sun.classList.remove('hidden'); 
+            } 
+        }
     }
 
     window.applyPermissions = function() {
         const p = state.userPerms;
-        if (state.isSuperAdmin) { document.getElementById('tab-users').classList.remove('hidden'); document.getElementById('tab-logs').classList.remove('hidden'); } 
-        else { document.getElementById('tab-users').classList.add('hidden'); document.getElementById('tab-logs').classList.add('hidden'); }
-
-        const tabProj = document.getElementById('tab-projects'); const tabNew = document.getElementById('tab-new'); const tabRep = document.getElementById('tab-reports');
+        if (state.isSuperAdmin) { 
+            document.getElementById('tab-users').classList.remove('hidden'); 
+            document.getElementById('tab-logs').classList.remove('hidden'); 
+        } else { 
+            document.getElementById('tab-users').classList.add('hidden'); 
+            document.getElementById('tab-logs').classList.add('hidden'); 
+        }
+        const tabProj = document.getElementById('tab-projects'); 
+        const tabNew = document.getElementById('tab-new'); 
+        const tabRep = document.getElementById('tab-reports');
+        
         if(p.tab_proj) tabProj.classList.remove('hidden'); else tabProj.classList.add('hidden');
         if(p.tab_new) tabNew.classList.remove('hidden'); else tabNew.classList.add('hidden');
         if(p.tab_rep) tabRep.classList.remove('hidden'); else tabRep.classList.add('hidden');
-
+        
         const renderCompanyPills = (containerId) => {
-            const c = document.getElementById(containerId); if(!c) return;
+            const c = document.getElementById(containerId); 
+            if(!c) return; 
             c.innerHTML = '';
-            if (!(p.smart && p.hvac)) { c.style.display = 'none'; return; }
+            if (!(p.smart && p.hvac)) { 
+                c.style.display = 'none'; 
+                return; 
+            }
             c.style.display = 'flex';
             c.innerHTML += `<button onclick="window.selectUnit('Smart Home')" class="unit-pill unit-pill-btn ${state.company === 'Smart Home' ? 'active':''}">SMART HOME</button>`;
             c.innerHTML += `<button onclick="window.selectUnit('HVAC')" class="unit-pill unit-pill-btn ${state.company === 'HVAC' ? 'active':''}">HVAC</button>`;
             c.innerHTML += `<button onclick="window.selectUnit('Ambas')" class="unit-pill unit-pill-btn ${state.company === 'Ambas' ? 'active':''}" data-i18n="filter_both">${window.t('filter_both')}</button>`;
         };
         
-        renderCompanyPills('dynamic-unit-pills-proj'); renderCompanyPills('report-unit-filters');
-
-        if(state.company === 'Ambas' && (!p.smart || !p.hvac)) { if(p.smart) state.company = 'Smart Home'; else if(p.hvac) state.company = 'HVAC'; }
-        if(p.tab_proj) window.showView('projects'); else if(p.tab_rep) window.showView('reports'); else if(p.tab_new) window.showView('new');
-        if (state.projects.length > 0) { window.updateSellerFilterOptions(); window.renderProjects(); window.renderReport(); }
+        renderCompanyPills('dynamic-unit-pills-proj'); 
+        renderCompanyPills('report-unit-filters');
+        
+        if(state.company === 'Ambas' && (!p.smart || !p.hvac)) { 
+            if(p.smart) state.company = 'Smart Home'; 
+            else if(p.hvac) state.company = 'HVAC'; 
+        }
+        
+        if(p.tab_proj) window.showView('projects'); 
+        else if(p.tab_rep) window.showView('reports'); 
+        else if(p.tab_new) window.showView('new');
+        
+        if (state.projects.length > 0) { 
+            window.updateSellerFilterOptions(); 
+            window.renderProjects(); 
+            window.renderReport(); 
+        }
     };
 
     window.updateSellerFilterOptions = function() {
-        const select = document.getElementById('filter-seller'); if (!select || !state.user) return;
-        const currentVal = select.value; const canViewAll = state.userPerms.global;
+        const select = document.getElementById('filter-seller'); 
+        if (!select || !state.user) return;
+        const currentVal = select.value; 
+        const canViewAll = state.userPerms.global; 
+        
         select.innerHTML = `<option value="all">${window.t('all_sellers')}</option>`;
-        if (canViewAll) {
-            const uniqueSellers = [...new Set(state.projects.map(p => p.vendedor).filter(v => v))].sort();
-            uniqueSellers.forEach(email => { select.innerHTML += `<option value="${email}">${email.split('@')[0]}</option>`; });
-        } else { select.innerHTML += `<option value="${state.user.email}">${state.user.email.split('@')[0]}</option>`; }
-        if (currentVal && Array.from(select.options).some(opt => opt.value === currentVal)) select.value = currentVal;
+        
+        if (canViewAll) { 
+            const uniqueSellers = [...new Set(state.projects.map(p => p.vendedor).filter(v => v))].sort(); 
+            uniqueSellers.forEach(email => { 
+                select.innerHTML += `<option value="${email}">${email.split('@')[0]}</option>`; 
+            }); 
+        } else { 
+            select.innerHTML += `<option value="${state.user.email}">${state.user.email.split('@')[0]}</option>`; 
+        }
+        
+        if (currentVal && Array.from(select.options).some(opt => opt.value === currentVal)) {
+            select.value = currentVal;
+        }
     };
 
     window.renderVendedores = function() {
-        const select = document.getElementById('f-vendedor'); if (!select || !state.user) return;
-        const canViewAll = state.userPerms.global; const currentValue = select.value;
+        const select = document.getElementById('f-vendedor'); 
+        if (!select || !state.user) return;
+        const canViewAll = state.userPerms.global; 
+        const currentValue = select.value; 
         select.innerHTML = '';
-        if (canViewAll) {
-            const uniqueEmails = new Set(state.team.map(m => m.email)); uniqueEmails.add(state.user.email); 
-            uniqueEmails.forEach(email => select.innerHTML += `<option value="${email}">${email}</option>`);
-        } else { select.innerHTML = `<option value="${state.user.email}">${state.user.email}</option>`; }
-        if (currentValue && Array.from(select.options).some(opt => opt.value === currentValue)) select.value = currentValue;
-        else select.value = state.user.email;
+        
+        if (canViewAll) { 
+            const uniqueEmails = new Set(state.team.map(m => m.email)); 
+            uniqueEmails.add(state.user.email); 
+            uniqueEmails.forEach(email => {
+                select.innerHTML += `<option value="${email}">${email}</option>`;
+            }); 
+        } else { 
+            select.innerHTML = `<option value="${state.user.email}">${state.user.email}</option>`; 
+        }
+        
+        if (currentValue && Array.from(select.options).some(opt => opt.value === currentValue)) {
+            select.value = currentValue; 
+        } else {
+            select.value = state.user.email;
+        }
     };
 
-    window.selectUnit = function(unit) {
-        state.company = unit;
-        document.querySelectorAll('.unit-pill-btn').forEach(b => { b.classList.remove('active'); if (b.getAttribute('onclick').includes(`'${unit}'`)) b.classList.add('active'); });
-        state.reportActiveKpi = 'receita'; window.renderProjects(); window.renderReport();
+    window.selectUnit = function(unit) { 
+        state.company = unit; 
+        document.querySelectorAll('.unit-pill-btn').forEach(b => { 
+            b.classList.remove('active'); 
+            if (b.getAttribute('onclick').includes(`'${unit}'`)) {
+                b.classList.add('active'); 
+            }
+        }); 
+        state.reportActiveKpi = 'receita'; 
+        window.renderProjects(); 
+        window.renderReport(); 
     };
 
-    window.setArchiveFilter = function(showArchived) {
-        state.showArchived = showArchived;
-        document.getElementById('filter-active').classList.toggle('active', showArchived === false);
-        document.getElementById('filter-archived').classList.toggle('active', showArchived === true);
-        document.getElementById('filter-all-archived').classList.toggle('active', showArchived === 'all');
-        state.focusedProject = null; window.renderProjects();
+    window.setArchiveFilter = function(showArchived) { 
+        state.showArchived = showArchived; 
+        document.getElementById('filter-active').classList.toggle('active', showArchived === false); 
+        document.getElementById('filter-archived').classList.toggle('active', showArchived === true); 
+        document.getElementById('filter-all-archived').classList.toggle('active', showArchived === 'all'); 
+        state.focusedProject = null; 
+        window.renderProjects(); 
     };
 
     window.toggleArchive = async function(id, currentArchivedStatus) {
         if (!state.userPerms.tab_proj) return;
-        try {
-            const action = currentArchivedStatus ? "Desarquivou" : "Arquivou";
-            await updateDoc(doc(db, 'artifacts', appId, 'public', 'data', 'projects', id), { archived: !currentArchivedStatus });
-            logAccess(state.user.email, `${action} a obra ID: ${id}`);
-            if (state.focusedProject === id) window.closeProjectDetails();
-        } catch (e) { console.error(e); }
+        try { 
+            const action = currentArchivedStatus ? "Desarquivou" : "Arquivou"; 
+            await updateDoc(doc(db, 'artifacts', appId, 'public', 'data', 'projects', id), { archived: !currentArchivedStatus }); 
+            logAccess(state.user.email, `${action} a obra ID: ${id}`); 
+            if (state.focusedProject === id) window.closeProjectDetails(); 
+        } catch (e) { 
+            console.error(e); 
+        }
     };
 
     window.addExpense = async function(projectId) {
         if (!state.userPerms.costs) return;
-        const date = document.getElementById(`exp-date-${projectId}`)?.value; const desc = document.getElementById(`exp-desc-${projectId}`)?.value;
-        const cat = document.getElementById(`exp-cat-${projectId}`)?.value; const val = document.getElementById(`exp-val-${projectId}`)?.value;
-        if (!date || !desc || !cat || !val) { window.showModal(window.t('attention'), window.t('error'), 'alert'); return; }
-        const newExpense = { id: crypto.randomUUID(), data: date, descricao: desc, categoria: cat, valor: parseFloat(val), adicionadoPor: state.user.email, criadoEm: new Date().toISOString() };
-        try {
-            await updateDoc(doc(db, 'artifacts', appId, 'public', 'data', 'projects', projectId), { despesas: arrayUnion(newExpense) });
-            logAccess(state.user.email, `Registrou despesa de $${val} (${cat}) na obra ID: ${projectId}`);
-        } catch (e) { console.error(e); }
+        const date = document.getElementById(`exp-date-${projectId}`)?.value; 
+        const desc = document.getElementById(`exp-desc-${projectId}`)?.value; 
+        const cat = document.getElementById(`exp-cat-${projectId}`)?.value; 
+        const val = document.getElementById(`exp-val-${projectId}`)?.value;
+        if (!date || !desc || !cat || !val) { 
+            window.showModal(window.t('attention'), window.t('error'), 'alert'); 
+            return; 
+        }
+        const newExpense = { 
+            id: crypto.randomUUID(), 
+            data: date, 
+            descricao: desc, 
+            categoria: cat, 
+            valor: parseFloat(val), 
+            adicionadoPor: state.user.email, 
+            criadoEm: new Date().toISOString() 
+        };
+        try { 
+            await updateDoc(doc(db, 'artifacts', appId, 'public', 'data', 'projects', projectId), { despesas: arrayUnion(newExpense) }); 
+            logAccess(state.user.email, `Registrou despesa de $${val} (${cat}) na obra ID: ${projectId}`); 
+        } catch (e) { 
+            console.error(e); 
+        }
     };
 
     window.deleteExpense = function(projectId, expenseId, expenseDesc, expenseVal) {
         if (!state.userPerms.costs) return;
         window.showModal(window.t('modal_del_exp_title'), `${window.t('modal_del_exp_msg')} ${expenseDesc}?`, 'confirm', async () => {
-            const p = state.projects.find(x => x.id === projectId); if (!p) return;
+            const p = state.projects.find(x => x.id === projectId); 
+            if (!p) return;
             const updatedExpenses = (p.despesas || []).filter(e => e.id !== expenseId);
-            try {
-                await updateDoc(doc(db, 'artifacts', appId, 'public', 'data', 'projects', projectId), { despesas: updatedExpenses });
-                logAccess(state.user.email, `Excluiu despesa na obra ID: ${projectId}`);
-            } catch (e) { window.showModal(window.t('error'), 'Falha ao excluir.', 'error'); }
+            try { 
+                await updateDoc(doc(db, 'artifacts', appId, 'public', 'data', 'projects', projectId), { despesas: updatedExpenses }); 
+                logAccess(state.user.email, `Excluiu despesa na obra ID: ${projectId}`); 
+            } catch (e) { 
+                window.showModal(window.t('error'), 'Falha ao excluir.', 'error'); 
+            }
         });
     };
 
     window.deleteRecebimento = function(projectId, index) {
         if (!state.userPerms.fin) return;
         window.showModal(window.t('attention'), window.t('modal_del_rec_msg'), 'confirm', async () => {
-            const p = state.projects.find(x => x.id === projectId); if (!p) return;
-            const newRecs = [...(p.recebimentos || [])]; newRecs.splice(index, 1);
-            try { await updateDoc(doc(db, 'artifacts', appId, 'public', 'data', 'projects', projectId), { recebimentos: newRecs }); logAccess(state.user.email, `Removeu recebimento`); } catch (e) {}
+            const p = state.projects.find(x => x.id === projectId); 
+            if (!p) return;
+            const newRecs = [...(p.recebimentos || [])]; 
+            newRecs.splice(index, 1);
+            try { 
+                await updateDoc(doc(db, 'artifacts', appId, 'public', 'data', 'projects', projectId), { recebimentos: newRecs }); 
+                logAccess(state.user.email, `Removeu recebimento`); 
+            } catch (e) {}
         });
     };
     
     window.deletePagamento = function(projectId, index) {
         if (!state.userPerms.fin) return;
         window.showModal(window.t('attention'), window.t('modal_del_pay_msg'), 'confirm', async () => {
-            const p = state.projects.find(x => x.id === projectId); if (!p) return;
-            const newPays = [...(p.pagamentosEfetuados || [])]; newPays.splice(index, 1);
-            try { await updateDoc(doc(db, 'artifacts', appId, 'public', 'data', 'projects', projectId), { pagamentosEfetuados: newPays }); logAccess(state.user.email, `Removeu pagamento`); } catch (e) {}
+            const p = state.projects.find(x => x.id === projectId); 
+            if (!p) return;
+            const newPays = [...(p.pagamentosEfetuados || [])]; 
+            newPays.splice(index, 1);
+            try { 
+                await updateDoc(doc(db, 'artifacts', appId, 'public', 'data', 'projects', projectId), { pagamentosEfetuados: newPays }); 
+                logAccess(state.user.email, `Removeu pagamento`); 
+            } catch (e) {}
         });
     };
 
     window.addRecebimento = async function(projectId) { 
         if (!state.userPerms.fin) return; 
-        const v = document.getElementById(`rec-val-${projectId}`)?.value; const d = document.getElementById(`rec-date-${projectId}`)?.value; const m = document.getElementById(`rec-met-${projectId}`)?.value; 
-        if (!v || !d || !m) { window.showModal(window.t('attention'), 'Preencha data, valor e método.', 'error'); return; } 
+        const v = document.getElementById(`rec-val-${projectId}`)?.value; 
+        const d = document.getElementById(`rec-date-${projectId}`)?.value; 
+        const m = document.getElementById(`rec-met-${projectId}`)?.value; 
+        if (!v || !d || !m) { 
+            window.showModal(window.t('attention'), 'Preencha data, valor e método.', 'error'); 
+            return; 
+        } 
         try { 
             await updateDoc(doc(db, 'artifacts', appId, 'public', 'data', 'projects', projectId), { recebimentos: arrayUnion({ valor: parseFloat(v), data: d, metodo: m }) }); 
             logAccess(state.user.email, `Registrou recebimento $${v}`); 
@@ -623,8 +729,12 @@
 
     window.addPayment = async function(projectId) { 
         if (!state.userPerms.fin) return; 
-        const v = document.getElementById(`pay-val-${projectId}`)?.value; const d = document.getElementById(`pay-date-${projectId}`)?.value; 
-        if (!v || !d) { window.showModal(window.t('attention'), 'Preencha data e valor.', 'error'); return; } 
+        const v = document.getElementById(`pay-val-${projectId}`)?.value; 
+        const d = document.getElementById(`pay-date-${projectId}`)?.value; 
+        if (!v || !d) { 
+            window.showModal(window.t('attention'), 'Preencha data e valor.', 'error'); 
+            return; 
+        } 
         try { 
             await updateDoc(doc(db, 'artifacts', appId, 'public', 'data', 'projects', projectId), { pagamentosEfetuados: arrayUnion({ valor: parseFloat(v), data: d }) }); 
             logAccess(state.user.email, `Pagou vendedor $${v}`); 
@@ -635,179 +745,310 @@
         const ctxBudget = document.getElementById(`chart-budget-${pId}`);
         if (ctxBudget) {
             if (window.d2Charts[`budget-${pId}`]) window.d2Charts[`budget-${pId}`].destroy();
-            const remaining = Math.max(0, budget - totalExpenses); const overspent = Math.max(0, totalExpenses - budget);
+            const remaining = Math.max(0, budget - totalExpenses); 
+            const overspent = Math.max(0, totalExpenses - budget);
             let dataArr, bgColors, labels;
-            if (budget === 0 && totalExpenses === 0) { labels = [window.t('budget')]; dataArr = [1]; bgColors = ['#334155']; } 
-            else if (overspent > 0) { labels = [window.t('budget'), 'Overbudget']; dataArr = [budget, overspent]; bgColors = ['#0891b2', '#dc2626']; } 
-            else { labels = [window.t('budget'), 'Restante']; dataArr = [totalExpenses, remaining]; bgColors = ['#0891b2', '#059669']; }
-            window.d2Charts[`budget-${pId}`] = new Chart(ctxBudget, { type: 'doughnut', data: { labels: labels, datasets: [{ data: dataArr, backgroundColor: bgColors, borderWidth: 0 }] }, options: { responsive: true, maintainAspectRatio: false, cutout: '75%', plugins: { legend: { display: false } } } });
+            if (budget === 0 && totalExpenses === 0) { 
+                labels = [window.t('budget')]; dataArr = [1]; bgColors = ['#334155']; 
+            } else if (overspent > 0) { 
+                labels = [window.t('budget'), 'Overbudget']; dataArr = [budget, overspent]; bgColors = ['#0891b2', '#dc2626']; 
+            } else { 
+                labels = [window.t('budget'), 'Restante']; dataArr = [totalExpenses, remaining]; bgColors = ['#0891b2', '#059669']; 
+            }
+            window.d2Charts[`budget-${pId}`] = new Chart(ctxBudget, { 
+                type: 'doughnut', 
+                data: { labels: labels, datasets: [{ data: dataArr, backgroundColor: bgColors, borderWidth: 0 }] }, 
+                options: { responsive: true, maintainAspectRatio: false, cutout: '75%', plugins: { legend: { display: false } } } 
+            });
         }
         const ctxCat = document.getElementById(`chart-cat-${pId}`);
         if (ctxCat) {
             if (window.d2Charts[`cat-${pId}`]) window.d2Charts[`cat-${pId}`].destroy();
-            const labels = Object.keys(expensesByCategory); const dataArr = Object.values(expensesByCategory);
-            window.d2Charts[`cat-${pId}`] = new Chart(ctxCat, { type: 'bar', data: { labels: labels, datasets: [{ label: 'Gastos', data: dataArr, backgroundColor: '#0891b2', borderRadius: 4 }] }, options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { display: false } }, scales: { y: { beginAtZero: true, grid: { color: 'rgba(148,163,184,0.1)' }, ticks: { color: '#64748b', font: {size: 11} } }, x: { grid: { display: false }, ticks: { color: '#64748b', font: {size: 11} } } } } });
+            const labels = Object.keys(expensesByCategory); 
+            const dataArr = Object.values(expensesByCategory);
+            window.d2Charts[`cat-${pId}`] = new Chart(ctxCat, { 
+                type: 'bar', 
+                data: { labels: labels, datasets: [{ label: 'Gastos', data: dataArr, backgroundColor: '#0891b2', borderRadius: 4 }] }, 
+                options: { 
+                    responsive: true, 
+                    maintainAspectRatio: false, 
+                    plugins: { legend: { display: false } }, 
+                    scales: { 
+                        y: { beginAtZero: true, grid: { color: 'rgba(148,163,184,0.1)' }, ticks: { color: '#64748b', font: {size: 11} } }, 
+                        x: { grid: { display: false }, ticks: { color: '#64748b', font: {size: 11} } } 
+                    } 
+                } 
+            });
         }
     };
 
-    window.openProjectDetails = function(id) { state.focusedProject = id; window.renderProjects(); window.scrollTo({ top: 0, behavior: 'smooth' }); };
-    window.closeProjectDetails = function() { state.focusedProject = null; window.renderProjects(); window.scrollTo({ top: 0, behavior: 'smooth' }); };
+    window.openProjectDetails = function(id) { 
+        state.focusedProject = id; 
+        window.renderProjects(); 
+        window.scrollTo({ top: 0, behavior: 'smooth' }); 
+    };
     
-    window.goToProject = function(id) {
-        window.closeCustomModal();
-        window.showView('projects');
-        setTimeout(() => { window.openProjectDetails(id); }, 50);
+    window.closeProjectDetails = function() { 
+        state.focusedProject = null; 
+        window.renderProjects(); 
+        window.scrollTo({ top: 0, behavior: 'smooth' }); 
+    };
+    
+    window.goToProject = function(id) { 
+        window.closeCustomModal(); 
+        window.showView('projects'); 
+        setTimeout(() => { window.openProjectDetails(id); }, 50); 
     };
 
     window.showMonthDetails = function(seller, monthIdx, projectsJsonEncoded) {
         const monthNames = state.lang === 'en' ? ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'] : ['Jan','Fev','Mar','Abr','Mai','Jun','Jul','Ago','Set','Out','Nov','Dez'];
-        const monthName = monthNames[monthIdx];
+        const monthName = monthNames[monthIdx]; 
         const projects = JSON.parse(decodeURIComponent(projectsJsonEncoded));
         
         let listHtml = `<div class="text-left space-y-2 mt-4 max-h-[40vh] overflow-y-auto pr-2 scrollbar-hide">`;
-        projects.forEach(p => {
+        projects.forEach(p => { 
             listHtml += `
-                <div onclick="window.goToProject('${p.id}')" class="group p-4 bg-black/20 hover:bg-white/10 rounded-xl cursor-pointer flex justify-between items-center border border-white/5 transition-all">
-                   <div>
-                       <p class="text-[10px] font-bold text-slate-500 uppercase tracking-widest mb-1 group-hover:text-gold transition-colors">${p.proposta || '-'} / ${p.invoice || '-'}</p>
-                       <p class="text-sm font-black text-white truncate max-w-[200px]">${p.cliente || 'Sem Nome'}</p>
-                   </div>
-                   <div class="text-right">
-                       <p class="text-[10px] font-bold text-slate-500 uppercase tracking-widest mb-1">Comissão</p>
-                       <p class="text-sm font-black text-emerald-400">+ ${formatCurr(p.val)}</p>
-                   </div>
-               </div>
-            `;
+            <div onclick="window.goToProject('${p.id}')" class="group p-4 bg-black/20 hover:bg-white/10 rounded-xl cursor-pointer flex justify-between items-center border border-white/5 transition-all">
+                <div>
+                    <p class="text-[10px] font-bold text-slate-500 uppercase tracking-widest mb-1 group-hover:text-gold transition-colors">${p.proposta || '-'} / ${p.invoice || '-'}</p>
+                    <p class="text-sm font-black text-slate-200 truncate max-w-[200px]">${p.cliente || 'Sem Nome'}</p>
+                </div>
+                <div class="text-right">
+                    <p class="text-[10px] font-bold text-slate-500 uppercase tracking-widest mb-1">Comissão</p>
+                    <p class="text-sm font-black text-emerald-400">+ ${formatCurr(p.val)}</p>
+                </div>
+            </div>`; 
         });
-        listHtml += `</div>`;
+        listHtml += `</div>`; 
         
         window.showModal(`Comissões de ${monthName} - ${seller.split('@')[0].toUpperCase()}`, listHtml, 'info');
     };
 
     window.printReport = function() { window.print(); };
-    window.printKpiReport = function() { document.body.classList.add('printing-kpi'); window.print(); setTimeout(() => document.body.classList.remove('printing-kpi'), 500); };
-    window.setReportKpi = function(kpiName) { state.reportActiveKpi = kpiName; window.renderReport(); };
+    
+    window.printKpiReport = function() { 
+        document.body.classList.add('printing-kpi'); 
+        window.print(); 
+        setTimeout(() => document.body.classList.remove('printing-kpi'), 500); 
+    };
+    
+    window.setReportKpi = function(kpiName) { 
+        state.reportActiveKpi = kpiName; 
+        window.renderReport(); 
+    };
 
     window.editTeamMember = function(id, email, password, permObj) {
-        document.getElementById('t-id').value = id; document.getElementById('t-email').value = email; document.getElementById('t-pass').value = password; 
-        document.getElementById('p_smart').checked = permObj.smart; document.getElementById('p_hvac').checked = permObj.hvac; document.getElementById('p_global').checked = permObj.global;
-        document.getElementById('p_tab_proj').checked = permObj.tab_proj; document.getElementById('p_tab_new').checked = permObj.tab_new; document.getElementById('p_tab_rep').checked = permObj.tab_rep;
-        document.getElementById('p_fin').checked = permObj.fin; document.getElementById('p_costs').checked = permObj.costs;
+        document.getElementById('t-id').value = id; 
+        document.getElementById('t-email').value = email; 
+        document.getElementById('t-pass').value = password; 
+        document.getElementById('p_smart').checked = permObj.smart; 
+        document.getElementById('p_hvac').checked = permObj.hvac; 
+        document.getElementById('p_global').checked = permObj.global;
+        document.getElementById('p_tab_proj').checked = permObj.tab_proj; 
+        document.getElementById('p_tab_new').checked = permObj.tab_new; 
+        document.getElementById('p_tab_rep').checked = permObj.tab_rep;
+        document.getElementById('p_fin').checked = permObj.fin; 
+        document.getElementById('p_costs').checked = permObj.costs;
         window.scrollTo({ top: 0, behavior: 'smooth' });
     };
 
-    window.deleteTeam = function(id) {
-        window.showModal(window.t('modal_del_team_title'), window.t('modal_del_team_msg'), 'confirm', async () => {
-            try { await deleteDoc(doc(db, 'artifacts', appId, 'public', 'data', 'user_credentials', id)); logAccess(state.user.email, `Removeu membro da equipe.`); } catch(e) {}
-        });
+    window.deleteTeam = function(id) { 
+        window.showModal(window.t('modal_del_team_title'), window.t('modal_del_team_msg'), 'confirm', async () => { 
+            try { 
+                await deleteDoc(doc(db, 'artifacts', appId, 'public', 'data', 'user_credentials', id)); 
+                logAccess(state.user.email, `Removeu membro da equipe.`); 
+            } catch(e) {} 
+        }); 
     };
 
     window.deleteP = function(id) {
         const p = state.projects.find(x => x.id === id);
-        if (!state.isSuperAdmin) { window.showModal(window.t('modal_access_denied'), window.t('modal_access_denied_msg'), 'error'); return; }
-        window.showModal(window.t('modal_del_proj_title'), window.t('modal_del_proj_msg'), 'confirm', async () => {
-            try { await deleteDoc(doc(db, 'artifacts', appId, 'public', 'data', 'projects', id)); logAccess(state.user.email, `Excluiu a obra: ${p?.cliente || id}`); if (state.focusedProject === id) window.closeProjectDetails(); } catch(e) {}
+        if (!state.isSuperAdmin) { 
+            window.showModal(window.t('modal_access_denied'), window.t('modal_access_denied_msg'), 'error'); 
+            return; 
+        }
+        window.showModal(window.t('modal_del_proj_title'), window.t('modal_del_proj_msg'), 'confirm', async () => { 
+            try { 
+                await deleteDoc(doc(db, 'artifacts', appId, 'public', 'data', 'projects', id)); 
+                logAccess(state.user.email, `Excluiu a obra: ${p?.cliente || id}`); 
+                if (state.focusedProject === id) window.closeProjectDetails(); 
+            } catch(e) {} 
         });
     };
 
     window.editP = function(id) {
-        const p = state.projects.find(x => x.id === id); if (!p) return;
-        window.renderVendedores(); const vendSelect = document.getElementById('f-vendedor');
-        if (p.vendedor && !Array.from(vendSelect.options).some(opt => opt.value === p.vendedor)) { vendSelect.innerHTML += `<option value="${p.vendedor}">${p.vendedor} (Cadastro Antigo)</option>`; }
-        const statusSelect = document.getElementById('f-status');
-        if (statusSelect) {
-            statusSelect.innerHTML = `<option value="✅ Aprovado">${window.t('status_appr')}</option><option value="Aguardando Início">${window.t('status_wait')}</option><option value="Em Execução">${window.t('status_exec')}</option><option value="Finalizado">${window.t('status_fin')}</option>`;
-            if (p.status && !Array.from(statusSelect.options).some(opt => opt.value === p.status) && p.status !== 'Cotação') statusSelect.innerHTML += `<option value="${p.status}">${p.status}</option>`;
+        const p = state.projects.find(x => x.id === id); 
+        if (!p) return;
+        window.renderVendedores(); 
+        const vendSelect = document.getElementById('f-vendedor');
+        if (p.vendedor && !Array.from(vendSelect.options).some(opt => opt.value === p.vendedor)) { 
+            vendSelect.innerHTML += `<option value="${p.vendedor}">${p.vendedor} (Cadastro Antigo)</option>`; 
         }
-        document.getElementById('edit-id').value = id; document.getElementById('f-proposta').value = p.numeroProposta || ''; document.getElementById('f-invoice').value = p.numeroInvoice || ''; document.getElementById('f-empresa').value = p.empresa || 'Smart Home';
-        document.getElementById('f-cliente').value = p.cliente || ''; document.getElementById('f-vendedor').value = p.vendedor || ''; document.getElementById('f-valor').value = p.valorTotal ?? ''; document.getElementById('f-orcamento').value = p.orcamento ?? ''; 
-        document.getElementById('f-comm').value = p.percComissao ?? 5; document.getElementById('f-metodo').value = p.metodo || 'Zelle'; document.getElementById('f-inicio').value = p.dataInicio || ''; document.getElementById('f-entrega').value = p.dataEntrega || ''; 
+        const statusSelect = document.getElementById('f-status');
+        if (statusSelect) { 
+            statusSelect.innerHTML = `<option value="✅ Aprovado">${window.t('status_appr')}</option><option value="Aguardando Início">${window.t('status_wait')}</option><option value="Em Execução">${window.t('status_exec')}</option><option value="Finalizado">${window.t('status_fin')}</option>`; 
+            if (p.status && !Array.from(statusSelect.options).some(opt => opt.value === p.status) && p.status !== 'Cotação') {
+                statusSelect.innerHTML += `<option value="${p.status}">${p.status}</option>`; 
+            }
+        }
+        document.getElementById('edit-id').value = id; 
+        document.getElementById('f-proposta').value = p.numeroProposta || ''; 
+        document.getElementById('f-invoice').value = p.numeroInvoice || ''; 
+        document.getElementById('f-empresa').value = p.empresa || 'Smart Home'; 
+        document.getElementById('f-cliente').value = p.cliente || ''; 
+        document.getElementById('f-vendedor').value = p.vendedor || ''; 
+        document.getElementById('f-valor').value = p.valorTotal ?? ''; 
+        document.getElementById('f-orcamento').value = p.orcamento ?? ''; 
+        document.getElementById('f-comm').value = p.percComissao ?? 5; 
+        document.getElementById('f-metodo').value = p.metodo || 'Zelle'; 
+        document.getElementById('f-inicio').value = p.dataInicio || ''; 
+        document.getElementById('f-entrega').value = p.dataEntrega || ''; 
         document.getElementById('f-status').value = p.status === 'Cotação' ? '✅ Aprovado' : (p.status || '✅ Aprovado');
         window.showView('new');
     };
 
     window.cancelEdit = function() { 
-        const form = document.getElementById('project-form'); if (form) form.reset(); document.getElementById('edit-id').value = ''; 
-        const fVendedor = document.getElementById('f-vendedor'); if (fVendedor && state.user) fVendedor.value = state.user.email; 
-        const statusSelect = document.getElementById('f-status');
+        const form = document.getElementById('project-form'); 
+        if (form) form.reset(); 
+        document.getElementById('edit-id').value = ''; 
+        const fVendedor = document.getElementById('f-vendedor'); 
+        if (fVendedor && state.user) fVendedor.value = state.user.email; 
+        const statusSelect = document.getElementById('f-status'); 
         if (statusSelect) statusSelect.innerHTML = `<option value="✅ Aprovado">${window.t('status_appr')}</option><option value="Aguardando Início">${window.t('status_wait')}</option><option value="Em Execução">${window.t('status_exec')}</option><option value="Finalizado">${window.t('status_fin')}</option>`;
     };
 
     window.showView = function(v) {
-        ['projects', 'new', 'reports', 'users', 'logs'].forEach(id => {
-            const el = document.getElementById('view-' + id); const tab = document.getElementById('tab-' + id);
-            if (el) el.classList.add('hidden'); if (tab) tab.classList.remove('tab-active');
+        ['projects', 'new', 'reports', 'users', 'logs'].forEach(id => { 
+            const el = document.getElementById('view-' + id); 
+            const tab = document.getElementById('tab-' + id); 
+            if (el) el.classList.add('hidden'); 
+            if (tab) tab.classList.remove('tab-active'); 
         });
-        const tv = document.getElementById('view-' + v); const tt = document.getElementById('tab-' + v);
-        if (tv) tv.classList.remove('hidden'); if (tt) tt.classList.add('tab-active');
-        if (v === 'logs') window.renderLogs(); if (v === 'projects') { state.focusedProject = null; window.renderProjects(); } if (v === 'reports') { state.reportActiveKpi = 'receita'; window.renderReport(); } 
+        const tv = document.getElementById('view-' + v); 
+        const tt = document.getElementById('tab-' + v);
+        if (tv) tv.classList.remove('hidden'); 
+        if (tt) tt.classList.add('tab-active');
+        
+        if (v === 'logs') window.renderLogs(); 
+        if (v === 'projects') { state.focusedProject = null; window.renderProjects(); } 
+        if (v === 'reports') { state.reportActiveKpi = 'receita'; window.renderReport(); } 
         try { lucide.createIcons(); } catch {}
     };
 
-    window.handleLogout = function() { signOut(auth).then(() => location.reload()).catch(console.error); };
+    window.handleLogout = function() { 
+        signOut(auth).then(() => location.reload()).catch(console.error); 
+    };
 
     window.getFin = function(p) {
-        const percComissao = Number(p?.percComissao || 0) / 100; const valorTotal = Number(p?.valorTotal || 0); const orcamento = Number(p?.orcamento || 0);
-        const globalMetodo = String(p?.metodo || ''); const globalIsCC = (globalMetodo === 'CC' || globalMetodo.toLowerCase().includes('cartão'));
-        const baseProjetada = globalIsCC ? valorTotal * 0.97 : valorTotal; const commTotalProjetada = baseProjetada * percComissao;
+        const percComissao = Number(p?.percComissao || 0) / 100; 
+        const valorTotal = Number(p?.valorTotal || 0); 
+        const orcamento = Number(p?.orcamento || 0);
+        
+        const globalMetodo = String(p?.metodo || ''); 
+        const globalIsCC = (globalMetodo === 'CC' || globalMetodo.toLowerCase().includes('cartão'));
+        const baseProjetada = globalIsCC ? valorTotal * 0.97 : valorTotal; 
+        const commTotalProjetada = baseProjetada * percComissao;
+        
         const recebimentos = Array.isArray(p?.recebimentos) ? p.recebimentos : [];
         let totalRecebido = 0; let commLiberada = 0;
-        recebimentos.forEach(r => { const rVal = Number(r.valor || 0); totalRecebido += rVal; const rBase = (r.metodo === 'CC') ? rVal * 0.97 : rVal; commLiberada += rBase * percComissao; });
+        recebimentos.forEach(r => { 
+            const rVal = Number(r.valor || 0); 
+            totalRecebido += rVal; 
+            const rBase = (r.metodo === 'CC') ? rVal * 0.97 : rVal; 
+            commLiberada += rBase * percComissao; 
+        });
         
         const pays = Array.isArray(p?.pagamentosEfetuados) ? p.pagamentosEfetuados : [];
-        const totalPaid = pays.reduce((a, c) => a + Number(c?.valor || 0), 0); const balance = commLiberada - totalPaid;
-        let statusColor = "bg-red-500"; if (balance < 0) statusColor = "bg-blue-500"; else if (balance === 0 && commLiberada > 0) statusColor = "bg-emerald-500"; else if (totalPaid > 0) statusColor = "bg-orange-500"; 
+        const totalPaid = pays.reduce((a, c) => a + Number(c?.valor || 0), 0); 
+        const balance = commLiberada - totalPaid;
+        
+        let statusColor = "bg-red-500"; 
+        if (balance < 0) statusColor = "bg-blue-500"; 
+        else if (balance === 0 && commLiberada > 0) statusColor = "bg-emerald-500"; 
+        else if (totalPaid > 0) statusColor = "bg-orange-500"; 
         
         const despesas = Array.isArray(p?.despesas) ? p.despesas : [];
-        let totalDespesas = 0; let gastosPorCategoria = { 'Materiais': 0, 'Mão-de-obra': 0, 'Equipamentos': 0, 'Licenças': 0, 'Comissões': 0, 'Outros': 0 };
-        despesas.forEach(d => { const val = Number(d.valor || 0); totalDespesas += val; if (gastosPorCategoria[d.categoria] !== undefined) { gastosPorCategoria[d.categoria] += val; } else { gastosPorCategoria['Outros'] += val; } });
+        let totalDespesas = 0; 
+        let gastosPorCategoria = { 'Materiais': 0, 'Mão-de-obra': 0, 'Equipamentos': 0, 'Licenças': 0, 'Comissões': 0, 'Outros': 0 };
         
-        pays.forEach(pay => { const val = Number(pay?.valor || 0); totalDespesas += val; gastosPorCategoria['Comissões'] += val; });
+        despesas.forEach(d => { 
+            const val = Number(d.valor || 0); 
+            totalDespesas += val; 
+            if (gastosPorCategoria[d.categoria] !== undefined) { 
+                gastosPorCategoria[d.categoria] += val; 
+            } else { 
+                gastosPorCategoria['Outros'] += val; 
+            } 
+        });
+        
+        pays.forEach(pay => { 
+            const val = Number(pay?.valor || 0); 
+            totalDespesas += val; 
+            gastosPorCategoria['Comissões'] += val; 
+        });
 
-        const lucroBruto = valorTotal - totalDespesas; const margemLucro = valorTotal > 0 ? (lucroBruto / valorTotal) * 100 : 0;
+        const lucroBruto = valorTotal - totalDespesas; 
+        const margemLucro = valorTotal > 0 ? (lucroBruto / valorTotal) * 100 : 0;
+        
         return { baseProjetada, commTotalProjetada, totalRecebido, commLiberada, totalPaid, balance, statusColor, globalIsCC, orcamento, totalDespesas, lucroBruto, margemLucro, gastosPorCategoria };
     };
 
     window.renderProjects = () => {
-        const grid = document.getElementById('projects-grid'); const filtersDiv = document.getElementById('projects-filters');
-        const mainHeader = document.getElementById('main-header'); const mainNav = document.getElementById('main-nav'); const mainContainer = document.getElementById('main-container');
+        const grid = document.getElementById('projects-grid'); 
+        const filtersDiv = document.getElementById('projects-filters'); 
+        const mainHeader = document.getElementById('main-header'); 
+        const mainNav = document.getElementById('main-nav'); 
+        const mainContainer = document.getElementById('main-container');
         if (!grid || !state.user) return;
         
-        const canViewAll = state.userPerms.global; const canViewCosts = state.userPerms.costs;
-        
-        const searchEl = document.getElementById('search-input');
+        const canViewAll = state.userPerms.global; 
+        const canViewCosts = state.userPerms.costs;
+        const searchEl = document.getElementById('search-input'); 
         const searchTerm = searchEl ? searchEl.value.toLowerCase() : '';
-        const sellerEl = document.getElementById('filter-seller');
+        const sellerEl = document.getElementById('filter-seller'); 
         const sellerFilter = sellerEl ? sellerEl.value : 'all';
 
         let filtered = state.projects.filter(p => {
             const matchCompany = (p.empresa === 'Smart Home' && state.userPerms.smart) || (p.empresa === 'HVAC' && state.userPerms.hvac);
             const matchSelectedTab = state.company === 'Ambas' || p.empresa === state.company;
             const matchUser = canViewAll || p.vendedor === state.user.email; 
-            const isArchived = p.archived === true;
+            const isArchived = p.archived === true; 
             const matchArchive = state.showArchived === 'all' || isArchived === state.showArchived;
-            let matchSearch = true;
-            if (searchTerm) { const searchString = `${p.cliente || ''} ${p.numeroProposta || ''} ${p.numeroInvoice || ''}`.toLowerCase(); matchSearch = searchString.includes(searchTerm); }
-            let matchSellerDropdown = true;
+            let matchSearch = true; 
+            if (searchTerm) { 
+                const searchString = `${p.cliente || ''} ${p.numeroProposta || ''} ${p.numeroInvoice || ''}`.toLowerCase(); 
+                matchSearch = searchString.includes(searchTerm); 
+            }
+            let matchSellerDropdown = true; 
             if (sellerFilter !== 'all') matchSellerDropdown = p.vendedor === sellerFilter;
             return matchCompany && matchSelectedTab && matchUser && matchArchive && matchSearch && matchSellerDropdown;
         });
 
         if (state.focusedProject) {
-            filtersDiv.classList.add('hidden'); if (mainHeader) mainHeader.style.display = 'none'; if (mainNav) mainNav.style.display = 'none';
-            if (mainContainer) { mainContainer.classList.remove('pt-6', 'sm:pt-8'); mainContainer.classList.add('pt-2', 'sm:pt-4'); }
+            filtersDiv.classList.add('hidden'); 
+            if (mainHeader) mainHeader.style.display = 'none'; 
+            if (mainNav) mainNav.style.display = 'none';
+            if (mainContainer) { 
+                mainContainer.classList.remove('pt-6', 'sm:pt-8'); 
+                mainContainer.classList.add('pt-2', 'sm:pt-4'); 
+            }
             grid.className = "flex flex-col max-w-4xl mx-auto gap-6 text-left w-full animate-fade-in pb-20 mt-4";
             filtered = state.projects.filter(p => p.id === state.focusedProject); 
         } else {
-            filtersDiv.classList.remove('hidden'); filtersDiv.classList.add('flex');
-            if (mainHeader) mainHeader.style.display = ''; if (mainNav) mainNav.style.display = 'flex';
-            if (mainContainer) { mainContainer.classList.add('pt-6', 'sm:pt-8'); mainContainer.classList.remove('pt-2', 'sm:pt-4'); }
+            filtersDiv.classList.remove('hidden'); 
+            filtersDiv.classList.add('flex');
+            if (mainHeader) mainHeader.style.display = ''; 
+            if (mainNav) mainNav.style.display = 'flex';
+            if (mainContainer) { 
+                mainContainer.classList.add('pt-6', 'sm:pt-8'); 
+                mainContainer.classList.remove('pt-2', 'sm:pt-4'); 
+            }
             grid.className = "grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-10 text-left animate-fade-in pb-10";
         }
 
-        if (filtered.length === 0 && !state.focusedProject) {
-            grid.innerHTML = `<div class="col-span-full py-20 text-center text-slate-500 font-bold uppercase tracking-widest text-sm">${window.t('no_active_works')}</div>`;
-            return;
+        if (filtered.length === 0 && !state.focusedProject) { 
+            grid.innerHTML = `<div class="col-span-full py-20 text-center text-slate-500 font-bold uppercase tracking-widest text-sm">${window.t('no_active_works')}</div>`; 
+            return; 
         }
 
         let cardsHtmlBuffer = "";
@@ -816,39 +1057,58 @@
             const s = new Date(p.dataInicio).getTime(); const e = new Date(p.dataEntrega).getTime(); const n = Date.now();
             let prog = 0; let colorHex = '#f59e0b'; let timelineText = ''; let timelineTextColor = 'text-gold';
             
-            let referenceTime;
-            if (p.status === 'Finalizado') { referenceTime = p.dataFinalizado ? new Date(p.dataFinalizado).getTime() : e; } else { referenceTime = n; }
+            let referenceTime; 
+            if (p.status === 'Finalizado') { 
+                referenceTime = p.dataFinalizado ? new Date(p.dataFinalizado).getTime() : e; 
+            } else { 
+                referenceTime = n; 
+            }
 
             prog = (Number.isFinite(s) && Number.isFinite(e) && e > s) ? (referenceTime >= s ? Math.floor(((referenceTime - s) / (e - s)) * 100) : 0) : 0;
             if (prog > 100) prog = 100;
 
             if (p.status === 'Finalizado') {
-                colorHex = '#10b981';
+                colorHex = '#10b981'; 
                 let diffDays = Math.ceil((e - referenceTime) / (1000 * 3600 * 24));
-                if (diffDays < 0) { timelineText = `${window.t('delivered_late')} (${Math.abs(diffDays)} ${window.t('days')})`; timelineTextColor = 'text-red-500'; colorHex = '#ef4444'; } 
-                else if (diffDays > 0) { timelineText = `${window.t('delivered_early')} (${diffDays} ${window.t('days')})`; timelineTextColor = 'text-emerald-500'; } 
-                else { timelineText = window.t('on_time'); timelineTextColor = 'text-emerald-500'; }
+                if (diffDays < 0) { 
+                    timelineText = `${window.t('delivered_late')} (${Math.abs(diffDays)} ${window.t('days')})`; 
+                    timelineTextColor = 'text-red-500'; colorHex = '#ef4444'; 
+                } else if (diffDays > 0) { 
+                    timelineText = `${window.t('delivered_early')} (${diffDays} ${window.t('days')})`; 
+                    timelineTextColor = 'text-emerald-500'; 
+                } else { 
+                    timelineText = window.t('on_time'); timelineTextColor = 'text-emerald-500'; 
+                }
                 prog = 100; 
             } else {
                 if (referenceTime > e) {
-                    prog = 100; colorHex = '#ef4444';
+                    prog = 100; colorHex = '#ef4444'; 
                     let daysLate = Math.ceil((referenceTime - e) / (1000 * 3600 * 24));
-                    timelineText = `${window.t('late_days')} (${daysLate} ${window.t('days')})`; timelineTextColor = 'text-red-500';
+                    timelineText = `${window.t('late_days')} (${daysLate} ${window.t('days')})`; 
+                    timelineTextColor = 'text-red-500';
                 } else {
-                    let r = prog < 50 ? Math.floor(prog * 5.1) : 255; let g = prog < 50 ? 255 : Math.floor(255 - (prog - 50) * 5.1);
-                    colorHex = `rgb(${r}, ${g}, 0)`;
+                    let r = prog < 50 ? Math.floor(prog * 5.1) : 255; 
+                    let g = prog < 50 ? 255 : Math.floor(255 - (prog - 50) * 5.1);
+                    colorHex = `rgb(${r}, ${g}, 0)`; 
                     let daysLeft = Math.ceil((e - referenceTime) / (1000 * 3600 * 24));
-                    timelineText = `${daysLeft} ${window.t('days_left')}`; timelineTextColor = 'text-gold';
+                    timelineText = `${daysLeft} ${window.t('days_left')}`; 
+                    timelineTextColor = 'text-gold';
                 }
             }
 
-            const f = window.getFin(p); const isFocused = state.focusedProject === p.id;
+            const f = window.getFin(p); 
+            const isFocused = state.focusedProject === p.id;
             let balText = window.t('balance_pay'); let balColor = "text-red-400"; let balDisplay = formatCurr(f.balance);
-            if (f.balance < 0) { balText = window.t('balance_over'); balColor = "text-blue-400"; balDisplay = "+ " + formatCurr(Math.abs(f.balance)); } 
-            else if (f.balance === 0) { balText = window.t('balance_paid'); balColor = "text-emerald-400"; }
+            if (f.balance < 0) { 
+                balText = window.t('balance_over'); balColor = "text-blue-400"; balDisplay = "+ " + formatCurr(Math.abs(f.balance)); 
+            } else if (f.balance === 0) { 
+                balText = window.t('balance_paid'); balColor = "text-emerald-400"; 
+            }
 
-            let clientPaidPerc = p.valorTotal > 0 ? Math.floor((f.totalRecebido / p.valorTotal) * 100) : 0; if (clientPaidPerc > 100) clientPaidPerc = 100;
-            let sellerPaidPerc = f.commTotalProjetada > 0 ? Math.floor((f.totalPaid / f.commTotalProjetada) * 100) : 0; if (sellerPaidPerc > 100) sellerPaidPerc = 100;
+            let clientPaidPerc = p.valorTotal > 0 ? Math.floor((f.totalRecebido / p.valorTotal) * 100) : 0; 
+            if (clientPaidPerc > 100) clientPaidPerc = 100;
+            let sellerPaidPerc = f.commTotalProjetada > 0 ? Math.floor((f.totalPaid / f.commTotalProjetada) * 100) : 0; 
+            if (sellerPaidPerc > 100) sellerPaidPerc = 100;
 
             const clientPaidText = clientPaidPerc >= 100 ? window.t('paid_100') : (clientPaidPerc > 0 ? `${clientPaidPerc}${window.t('paid_perc')}` : window.t('pending'));
             const clientPaidColor = clientPaidPerc >= 100 ? 'text-emerald-400' : (clientPaidPerc > 0 ? 'text-amber-400' : 'text-slate-500');
@@ -871,14 +1131,65 @@
                 `;
             }
 
-            let unifiedHTML = '';
+            let cardHTML = `<div class="glass p-6 md:p-10 rounded-[40px] border-l-[8px] relative shadow-2xl flex flex-col w-full print:border print:border-slate-300 print:shadow-none animate-fade-in mt-6" style="border-left-color: ${p.status === 'Finalizado' ? '#10b981' : '#f59e0b'}" ${!isFocused ? `onclick="window.openProjectDetails('${p.id}')"` : ''}>`;
+
+            if (isFocused) {
+                cardHTML += `
+                <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-8 border-b border-white/10 pb-6 gap-6 no-print">
+                    <div class="flex flex-col sm:flex-row items-start sm:items-center gap-4 w-full sm:w-auto">
+                        <button onclick="window.closeProjectDetails()" class="p-4 w-full sm:w-auto bg-slate-800 hover:bg-slate-700 rounded-2xl transition-all border border-white/10 shadow-lg flex items-center justify-center gap-3 text-xs font-black uppercase text-white force-white-text">
+                            <i data-lucide="arrow-left" class="w-5 h-5"></i> ${window.t('back')}
+                        </button>
+                        <div class="mt-2 sm:mt-0">
+                            <h4 class="font-black text-2xl sm:text-3xl uppercase tracking-tight text-white force-white-text leading-none truncate max-w-full sm:max-w-md">${p.cliente || 'Sem Nome'}</h4>
+                            <span class="px-3 py-1 bg-white/5 border border-white/10 rounded-lg text-[9px] font-black uppercase tracking-widest text-slate-300 mt-3 inline-block">${p.empresa}</span>
+                        </div>
+                    </div>
+                    <button onclick="window.printReport()" class="w-full sm:w-auto mt-4 sm:mt-0 flex items-center justify-center gap-2 text-white force-white-text bg-slate-800 hover:bg-slate-700 transition-all font-black text-xs uppercase tracking-widest px-6 py-4 rounded-2xl border border-white/10 shadow-lg">
+                        <i data-lucide="printer" class="w-5 h-5"></i> ${window.t('print_ficha')}
+                    </button>
+                </div>
+                <div class="hidden print:block mb-8 border-b border-slate-300 pb-4">
+                    <div class="mb-4"><img src="logo-D2-Group-preto.png" class="h-12" onerror="this.onerror=null; this.src='https://via.placeholder.com/150x40?text=D2+Group'"></div>
+                    <h4 class="font-black text-3xl uppercase tracking-tight leading-none print:text-slate-900">${p.cliente || 'Sem Nome'}</h4>
+                    <p class="text-sm font-bold text-slate-500 uppercase tracking-widest mt-2 print:text-slate-600">${p.empresa}</p>
+                </div>`;
+            } else {
+                cardHTML = `<div class="glass p-6 md:p-8 rounded-[40px] border-l-[8px] relative shadow-2xl flex flex-col h-full print:border print:border-slate-300 print:shadow-none print:break-inside-avoid project-card clickable cursor-pointer" style="border-left-color: ${p.status === 'Finalizado' ? '#10b981' : '#f59e0b'}" onclick="window.openProjectDetails('${p.id}')">
+                <div class="flex justify-between items-start mb-6">
+                    <span class="px-4 py-2 bg-white/5 border border-white/10 rounded-xl text-[10px] font-black uppercase tracking-widest text-slate-300 shadow-sm print:bg-slate-100 print:text-slate-800">${p.empresa || 'Sem Unidade'} ${p.archived ? '<span class="text-indigo-400 ml-1">(ARQUIVADA)</span>' : ''}</span>
+                    <div class="flex items-center gap-3 bg-black/20 p-2 px-4 rounded-full border border-white/5 print:hidden">
+                        <span class="status-badge ${f.statusColor}" title="Status Financeiro"></span>
+                        ${actionButtons}
+                    </div>
+                </div>
+                <div class="text-left mb-8"><h4 class="font-black text-3xl uppercase tracking-tight text-white force-white-text leading-none print:text-slate-900">${p.cliente || 'Sem Nome'}</h4></div>`;
+            }
+
+            cardHTML += `
+                <div class="grid grid-cols-2 md:grid-cols-4 gap-4 p-6 bg-black/20 print:bg-transparent rounded-[24px] border border-white/5 print:border-slate-300 mb-8 text-left shadow-inner">
+                    <div><p class="text-xs font-black text-slate-500 print:text-slate-600 uppercase tracking-widest mb-1.5">${window.t('seller')}</p><p class="text-sm font-bold text-slate-200 print:text-slate-900 truncate" title="${p.vendedor}">${p.vendedor?.split('@')[0] || '--'}</p></div>
+                    <div><p class="text-xs font-black text-slate-500 print:text-slate-600 uppercase tracking-widest mb-1.5">${window.t('status_obra')}</p><p class="text-sm font-black text-gold print:text-amber-700 uppercase">${tStatus(p.status)}</p></div>
+                    <div><p class="text-xs font-black text-slate-500 print:text-slate-600 uppercase tracking-widest mb-1.5">${window.t('prop_inv')}</p><p class="text-sm font-bold text-slate-200 print:text-slate-900">${p.numeroProposta || '---'} <span class="text-slate-600 font-normal mx-1">|</span> ${p.numeroInvoice || '---'}</p></div>
+                    <div><p class="text-xs font-black text-slate-500 print:text-slate-600 uppercase tracking-widest mb-1.5">${window.t('pay_comm')}</p><p class="text-sm font-bold text-slate-200 print:text-slate-900">${p.metodo || '--'} <span class="text-slate-600 font-normal mx-1">•</span> ${p.percComissao || 0}%</p></div>
+                </div>
+
+                <div class="space-y-4 mb-8 text-left">
+                    <div class="flex justify-between text-xs font-black uppercase text-slate-400 print:text-slate-800"><span>${window.t('timeline')}</span><span style="color: ${colorHex}">${prog}%</span></div>
+                    <div class="progress-track print:bg-slate-200"><div class="progress-bar-fill print:!bg-slate-800" style="width: ${prog}%; background-color: ${colorHex};"></div></div>
+                    <div class="flex justify-between text-xs font-extrabold uppercase mt-2">
+                        <span class="print:text-slate-900">${p.dataInicio ? new Date(p.dataInicio + 'T12:00:00').toLocaleDateString(state.lang === 'pt' ? 'pt-BR' : 'en-US') : '-'}</span>
+                        <span class="${timelineTextColor} print:!text-slate-900">${timelineText}</span>
+                    </div>
+                </div>
+            `;
 
             if (isFocused) {
                 let recsListHTML = (p.recebimentos || []).map((r, i) => `
                     <div class="flex justify-between items-center text-sm py-3 border-b border-emerald-500/10 last:border-0 hover:bg-emerald-500/5 transition-colors px-2 rounded print:border-slate-200">
                         <div class="flex items-center gap-2">
-                            <span class="text-slate-400 print:text-slate-600 font-bold text-xs">${r.data ? new Date(r.data + 'T12:00:00').toLocaleDateString(state.lang === 'pt' ? 'pt-BR' : 'en-US') : '-'}</span>
-                            <span class="text-[9px] px-2 py-0.5 bg-black/30 text-slate-300 rounded font-bold uppercase print:bg-slate-200 print:text-slate-800">${r.metodo}</span>
+                            <span class="text-slate-400 font-bold text-xs print:text-slate-900">${r.data ? new Date(r.data + 'T12:00:00').toLocaleDateString(state.lang === 'pt' ? 'pt-BR' : 'en-US') : '-'}</span>
+                            <span class="text-[9px] px-2 py-0.5 bg-black/30 text-slate-300 rounded font-bold uppercase print:bg-slate-200 print:text-slate-900">${r.metodo}</span>
                         </div>
                         <div class="flex items-center gap-3">
                             <span class="font-black text-emerald-400 print:text-emerald-700">+ ${formatCurr(r.valor)}</span>
@@ -889,7 +1200,7 @@
 
                 let paysListHTML = (p.pagamentosEfetuados || []).map((pay, i) => `
                     <div class="flex justify-between items-center text-sm py-3 border-b border-gold/10 last:border-0 hover:bg-gold/5 transition-colors px-2 rounded print:border-slate-200">
-                        <span class="text-slate-400 print:text-slate-600 font-bold text-xs">${pay.data ? new Date(pay.data + 'T12:00:00').toLocaleDateString(state.lang === 'pt' ? 'pt-BR' : 'en-US') : '-'}</span>
+                        <span class="text-slate-400 font-bold text-xs print:text-slate-900">${pay.data ? new Date(pay.data + 'T12:00:00').toLocaleDateString(state.lang === 'pt' ? 'pt-BR' : 'en-US') : '-'}</span>
                         <div class="flex items-center gap-3">
                             <span class="font-black text-gold print:text-amber-700">- ${formatCurr(pay.valor)}</span>
                             ${state.userPerms.fin ? `<button onclick="window.deletePagamento('${p.id}', ${i})" class="p-1.5 text-red-500/60 hover:text-red-400 hover:bg-red-500/10 rounded-md transition-colors no-print"><i data-lucide="trash-2" class="w-4 h-4"></i></button>` : ''}
@@ -897,78 +1208,38 @@
                     </div>
                 `).join('') || `<p class="text-sm italic text-slate-500/50 text-center py-6">${window.t('no_payments')}</p>`;
 
-                unifiedHTML += `
-                <div class="glass p-6 md:p-10 rounded-[40px] border-l-[8px] relative shadow-2xl flex flex-col w-full print:border print:border-none print:shadow-none animate-fade-in mt-6" style="border-left-color: ${p.status === 'Finalizado' ? '#10b981' : '#f59e0b'}">
-                    <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-8 border-b border-white/10 pb-6 gap-6 no-print">
-                        <div class="flex flex-col sm:flex-row items-start sm:items-center gap-4 w-full sm:w-auto">
-                            <button onclick="window.closeProjectDetails()" class="p-4 w-full sm:w-auto bg-slate-800 hover:bg-slate-700 rounded-2xl transition-all border border-white/10 shadow-lg flex items-center justify-center gap-3 text-xs font-black uppercase text-white force-white-text force-dark-bg">
-                                <i data-lucide="arrow-left" class="w-5 h-5"></i> ${window.t('back')}
-                            </button>
-                            <div class="mt-2 sm:mt-0">
-                                <h4 class="font-black text-2xl sm:text-3xl uppercase tracking-tight text-white force-white-text leading-none truncate max-w-full sm:max-w-md">${p.cliente || 'Sem Nome'}</h4>
-                                <span class="px-3 py-1 bg-white/5 border border-white/10 rounded-lg text-[9px] font-black uppercase tracking-widest text-slate-300 mt-3 inline-block print:text-slate-800 print:border-slate-300">${p.empresa}</span>
-                            </div>
-                        </div>
-                        <button onclick="window.printReport()" class="w-full sm:w-auto mt-4 sm:mt-0 flex items-center justify-center gap-2 text-white force-white-text bg-slate-800 hover:bg-slate-700 transition-all font-black text-xs uppercase tracking-widest px-6 py-4 rounded-2xl border border-white/10 shadow-lg force-dark-bg">
-                            <i data-lucide="printer" class="w-5 h-5"></i> ${window.t('print_ficha')}
-                        </button>
-                    </div>
-
-                    <div class="hidden print:block mb-8 border-b border-slate-300 pb-4">
-                        <div class="mb-4"><img src="logo-D2-Group-preto.png" class="h-12" onerror="this.onerror=null; this.src='https://via.placeholder.com/150x40?text=D2+Group'"></div>
-                        <h4 class="font-black text-3xl uppercase tracking-tight text-black leading-none">${p.cliente || 'Sem Nome'}</h4>
-                        <p class="text-sm font-bold text-slate-500 uppercase tracking-widest mt-2">${p.empresa}</p>
-                    </div>
-
-                    <div class="grid grid-cols-2 md:grid-cols-4 gap-4 p-6 bg-black/20 rounded-[24px] border border-white/5 mb-8 text-left shadow-inner print:bg-transparent print:border-slate-200">
-                        <div><p class="text-xs font-black text-slate-500 uppercase tracking-widest mb-1.5">${window.t('seller')}</p><p class="text-sm font-bold text-slate-200 truncate print:text-black" title="${p.vendedor}">${p.vendedor?.split('@')[0] || '--'}</p></div>
-                        <div><p class="text-xs font-black text-slate-500 uppercase tracking-widest mb-1.5">${window.t('status_obra')}</p><p class="text-sm font-black text-gold uppercase print:text-amber-700">${tStatus(p.status)}</p></div>
-                        <div><p class="text-xs font-black text-slate-500 uppercase tracking-widest mb-1.5">${window.t('prop_inv')}</p><p class="text-sm font-bold text-slate-200 print:text-black">${p.numeroProposta || '---'} <span class="text-slate-600 font-normal mx-1">|</span> ${p.numeroInvoice || '---'}</p></div>
-                        <div><p class="text-xs font-black text-slate-500 uppercase tracking-widest mb-1.5">${window.t('pay_comm')}</p><p class="text-sm font-bold text-slate-200 print:text-black">${p.metodo || '--'} <span class="text-slate-600 font-normal mx-1">•</span> ${p.percComissao || 0}%</p></div>
-                    </div>
-
-                    <div class="space-y-4 mb-8 text-left">
-                        <div class="flex justify-between text-xs font-black uppercase text-slate-400 print:text-slate-800"><span>${window.t('timeline')}</span><span style="color: ${colorHex}">${prog}%</span></div>
-                        <div class="progress-track print:bg-slate-200"><div class="progress-bar-fill print:!bg-black" style="width: ${prog}%; background-color: ${colorHex};"></div></div>
-                        <div class="flex justify-between text-xs font-extrabold uppercase mt-2">
-                            <span class="print:text-black">${p.dataInicio ? new Date(p.dataInicio + 'T12:00:00').toLocaleDateString(state.lang === 'pt' ? 'pt-BR' : 'en-US') : '-'}</span>
-                            <span class="${timelineTextColor} print:!text-black">${timelineText}</span>
-                        </div>
-                    </div>
-
-                    <!-- MÓDULO UNIFICADO DE FINANÇAS -->
+                cardHTML += `
                     <div class="border-t border-white/10 pt-8 mt-4 animate-fade-in">
-                        <h3 class="text-xl font-black text-gold uppercase mb-6 flex items-center gap-2"><i data-lucide="wallet" class="w-5 h-5"></i> Gestão de Recebimentos e Comissões</h3>
+                        <h3 class="text-xl font-black text-gold print:text-amber-700 uppercase mb-6 flex items-center gap-2"><i data-lucide="wallet" class="w-5 h-5"></i> Gestão de Recebimentos e Comissões</h3>
                         
                         <div class="grid grid-cols-2 md:grid-cols-5 gap-3 sm:gap-4 mb-8">
-                            <div class="bg-black/40 p-4 rounded-xl border border-white/5 force-dark-bg flex flex-col justify-center text-center">
-                                <p class="text-[9px] font-black uppercase text-slate-500 mb-1 tracking-widest">${window.t('modal_gross_contract')}</p>
-                                <p class="text-lg font-black text-white force-white-text truncate">${formatCurr(p.valorTotal)}</p>
+                            <div class="bg-black/40 p-4 rounded-xl border border-white/5 flex flex-col justify-center text-center print:bg-transparent print:border-slate-300">
+                                <p class="text-[9px] font-black uppercase text-slate-500 print:text-slate-600 mb-1 tracking-widest">${window.t('modal_gross_contract')}</p>
+                                <p class="text-lg font-black text-white print:text-slate-900 truncate">${formatCurr(p.valorTotal)}</p>
                             </div>
-                            <div class="bg-black/40 p-4 rounded-xl border border-white/5 force-dark-bg flex flex-col justify-center text-center">
-                                <p class="text-[9px] font-black uppercase text-slate-500 mb-1 tracking-widest">${window.t('modal_client_paid')}</p>
-                                <p class="text-lg font-black text-emerald-500 truncate">${formatCurr(f.totalRecebido)}</p>
+                            <div class="bg-black/40 p-4 rounded-xl border border-white/5 flex flex-col justify-center text-center print:bg-transparent print:border-slate-300">
+                                <p class="text-[9px] font-black uppercase text-slate-500 print:text-slate-600 mb-1 tracking-widest">${window.t('modal_client_paid')}</p>
+                                <p class="text-lg font-black text-emerald-500 print:text-emerald-700 truncate">${formatCurr(f.totalRecebido)}</p>
                             </div>
-                            <div class="bg-black/40 p-4 rounded-xl border border-white/5 force-dark-bg flex flex-col justify-center text-center">
-                                <p class="text-[9px] font-black uppercase text-slate-500 mb-1 tracking-widest">${window.t('comm_released')}</p>
-                                <p class="text-lg font-black text-emerald-400 truncate">${formatCurr(f.commLiberada)}</p>
+                            <div class="bg-black/40 p-4 rounded-xl border border-white/5 flex flex-col justify-center text-center print:bg-transparent print:border-slate-300">
+                                <p class="text-[9px] font-black uppercase text-slate-500 print:text-slate-600 mb-1 tracking-widest">${window.t('comm_released')}</p>
+                                <p class="text-lg font-black text-emerald-400 print:text-emerald-700 truncate">${formatCurr(f.commLiberada)}</p>
                             </div>
-                            <div class="bg-black/40 p-4 rounded-xl border border-white/5 force-dark-bg flex flex-col justify-center text-center">
-                                <p class="text-[9px] font-black uppercase text-slate-500 mb-1 tracking-widest">${window.t('modal_total_launched')}</p>
-                                <p class="text-lg font-black text-slate-300 truncate">${formatCurr(f.totalPaid)}</p>
+                            <div class="bg-black/40 p-4 rounded-xl border border-white/5 flex flex-col justify-center text-center print:bg-transparent print:border-slate-300">
+                                <p class="text-[9px] font-black uppercase text-slate-500 print:text-slate-600 mb-1 tracking-widest">${window.t('modal_total_launched')}</p>
+                                <p class="text-lg font-black text-slate-300 print:text-slate-900 truncate">${formatCurr(f.totalPaid)}</p>
                             </div>
-                            <div class="bg-black/40 p-4 rounded-xl border border-white/5 force-dark-bg flex flex-col justify-center text-center">
-                                <p class="text-[9px] font-black uppercase text-slate-500 mb-1 tracking-widest">${window.t('modal_balance_seller')}</p>
+                            <div class="bg-black/40 p-4 rounded-xl border border-white/5 flex flex-col justify-center text-center print:bg-transparent print:border-slate-300">
+                                <p class="text-[9px] font-black uppercase text-slate-500 print:text-slate-600 mb-1 tracking-widest">${window.t('modal_balance_seller')}</p>
                                 <p class="text-lg font-black ${balColor} truncate">${balDisplay}</p>
                             </div>
                         </div>
 
                         <div class="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-12">
-                            <!-- Coluna Recebimentos (Cliente) -->
                             <div class="bg-emerald-950/10 border border-emerald-500/20 rounded-[24px] p-5 sm:p-6 print:bg-transparent print:border-slate-300 flex flex-col">
                                 <div class="flex justify-between items-center mb-4 border-b border-emerald-500/20 pb-3">
-                                    <h4 class="font-black text-emerald-500 uppercase tracking-widest text-xs sm:text-sm flex items-center gap-2"><i data-lucide="arrow-down-to-line" class="w-4 h-4"></i> Cliente Pagou</h4>
-                                    <span class="text-xs font-black text-emerald-400">${clientPaidPerc}%</span>
+                                    <h4 class="font-black text-emerald-500 print:text-emerald-700 uppercase tracking-widest text-xs sm:text-sm flex items-center gap-2"><i data-lucide="arrow-down-to-line" class="w-4 h-4"></i> Cliente Pagou</h4>
+                                    <span class="text-xs font-black text-emerald-400 print:text-emerald-700">${clientPaidPerc}%</span>
                                 </div>
                                 <div class="max-h-64 overflow-y-auto pr-2 scrollbar-hide mb-4 print:max-h-none flex-1">
                                     ${recsListHTML}
@@ -979,27 +1250,26 @@
                                         <div class="flex-1 min-w-[130px]">
                                             <input type="date" id="rec-date-${p.id}" class="modern-input !bg-black/40 !border-emerald-500/30 !py-2 !text-xs w-full">
                                         </div>
-                                        <div class="flex-[2] min-w-[100px]">
+                                        <div class="flex-1 min-w-[100px]">
                                             <input type="number" id="rec-val-${p.id}" placeholder="$ Valor" step="0.01" class="modern-input !bg-black/40 !border-emerald-500/30 !py-2 !text-xs w-full text-emerald-400 font-bold">
                                         </div>
-                                        <div class="flex-[2] min-w-[100px]">
+                                        <div class="flex-1 min-w-[110px]">
                                             <select id="rec-met-${p.id}" class="modern-input !bg-black/40 !border-emerald-500/30 !py-2 !text-xs w-full !px-2">
                                                 <option value="Zelle">Zelle</option><option value="Wire Transfer">Wire</option><option value="Dinheiro">Cash</option><option value="CC">Cartão (CC)</option>
                                             </select>
                                         </div>
-                                        <div class="w-full sm:w-auto flex-none">
-                                            <button onclick="window.addRecebimento('${p.id}')" class="bg-emerald-600 hover:bg-emerald-500 text-white force-white-text px-6 py-2 rounded-xl font-black text-[10px] uppercase tracking-widest transition-colors shadow-lg force-dark-bg w-full h-[36px]">Add</button>
+                                        <div class="w-full lg:w-auto flex-none mt-2 lg:mt-0">
+                                            <button onclick="window.addRecebimento('${p.id}')" class="bg-emerald-600 hover:bg-emerald-500 text-white force-white-text px-6 py-2 rounded-xl font-black text-[10px] uppercase tracking-widest transition-colors shadow-lg w-full h-[36px]">Add</button>
                                         </div>
                                     </div>
                                 </div>
                                 ` : ''}
                             </div>
 
-                            <!-- Coluna Pagamentos (Vendedor) -->
                             <div class="bg-gold/5 border border-gold/20 rounded-[24px] p-5 sm:p-6 print:bg-transparent print:border-slate-300 flex flex-col">
                                 <div class="flex justify-between items-center mb-4 border-b border-gold/20 pb-3">
-                                    <h4 class="font-black text-gold uppercase tracking-widest text-xs sm:text-sm flex items-center gap-2"><i data-lucide="arrow-up-from-line" class="w-4 h-4"></i> Vendedor Recebeu</h4>
-                                    <span class="text-xs font-black text-gold">${sellerPaidPerc}%</span>
+                                    <h4 class="font-black text-gold print:text-amber-700 uppercase tracking-widest text-xs sm:text-sm flex items-center gap-2"><i data-lucide="arrow-up-from-line" class="w-4 h-4"></i> Vendedor Recebeu</h4>
+                                    <span class="text-xs font-black text-gold print:text-amber-700">${sellerPaidPerc}%</span>
                                 </div>
                                 <div class="max-h-64 overflow-y-auto pr-2 scrollbar-hide mb-4 print:max-h-none flex-1">
                                     ${paysListHTML}
@@ -1013,8 +1283,8 @@
                                         <div class="flex-[2] min-w-[110px]">
                                             <input type="number" id="pay-val-${p.id}" placeholder="$ Valor Pagar" step="0.01" class="modern-input !bg-black/40 !border-gold/30 !py-2 !text-xs w-full text-gold font-bold">
                                         </div>
-                                        <div class="w-full sm:w-auto flex-none">
-                                            <button onclick="window.addPayment('${p.id}')" class="bg-slate-800 border border-gold/40 hover:bg-slate-700 text-white force-white-text px-8 py-2 rounded-xl font-black text-[10px] uppercase tracking-widest transition-colors shadow-lg force-dark-bg w-full h-[36px]">Pagar</button>
+                                        <div class="w-full lg:w-auto flex-none mt-2 lg:mt-0">
+                                            <button onclick="window.addPayment('${p.id}')" class="bg-slate-800 border border-gold/40 hover:bg-slate-700 text-white force-white-text px-8 py-2 rounded-xl font-black text-[10px] uppercase tracking-widest transition-colors shadow-lg w-full h-[36px]">Pagar</button>
                                         </div>
                                     </div>
                                 </div>
@@ -1024,7 +1294,6 @@
                     </div>
                 `;
 
-                // --- MÓDULO 2: GESTÃO DE CUSTOS (SE PERMITIDO) ---
                 if (canViewCosts) {
                     const budgetColor = f.totalDespesas > f.orcamento && f.orcamento > 0 ? 'text-red-500' : 'text-slate-300';
                     const profitColor = f.lucroBruto >= 0 ? 'text-emerald-500' : 'text-red-500';
@@ -1046,46 +1315,46 @@
                         <div class="flex justify-between items-center text-sm py-4 border-b border-cyan-500/10 last:border-0 hover:bg-white/5 transition-colors px-3 rounded-lg print:border-slate-200">
                             <div class="flex-1 flex flex-col sm:flex-row sm:items-center gap-1.5 sm:gap-4">
                                 <span class="text-slate-400 print:text-slate-600 font-bold text-xs">${exp.data ? new Date(exp.data + 'T12:00:00').toLocaleDateString(state.lang === 'pt' ? 'pt-BR' : 'en-US') : '-'}</span>
-                                <span class="font-black text-slate-200 print:text-black uppercase">${exp.descricao}</span>
-                                <span class="text-[10px] px-2.5 py-1 bg-cyan-500/20 text-cyan-300 rounded-md border border-cyan-500/30 font-bold self-start sm:self-auto print:bg-slate-200 print:text-slate-800">${exp.categoria}</span>
+                                <span class="font-black text-slate-200 print:text-slate-900 uppercase">${exp.descricao}</span>
+                                <span class="text-[10px] px-2.5 py-1 bg-cyan-500/20 text-cyan-300 rounded-md border border-cyan-500/30 font-bold self-start sm:self-auto print:bg-slate-200 print:text-slate-900">${exp.categoria}</span>
                             </div>
                             <div class="flex items-center gap-4">
-                                <span class="font-black text-gold text-lg print:text-black">${formatCurr(exp.valor)}</span>
+                                <span class="font-black text-gold print:text-amber-700 text-lg">${formatCurr(exp.valor)}</span>
                                 ${btn}
                             </div>
                         </div>`;
                     }).join('') || `<p class="text-sm italic text-cyan-300/50 text-center py-8">${window.t('no_expenses')}</p>`;
 
-                    unifiedHTML += `
+                    cardHTML += `
                         <div class="border-t border-cyan-500/20 pt-8 mt-8">
-                            <h3 class="text-xl font-black text-cyan-400 uppercase mb-6 flex items-center gap-2"><i data-lucide="calculator" class="w-5 h-5"></i> ${window.t('cost_management')}</h3>
+                            <h3 class="text-xl font-black text-cyan-400 print:text-cyan-700 uppercase mb-6 flex items-center gap-2"><i data-lucide="calculator" class="w-5 h-5"></i> ${window.t('cost_management')}</h3>
                             
                             <div class="grid grid-cols-2 print:grid-cols-4 sm:grid-cols-4 gap-4 sm:gap-6 mb-10 print:mb-6">
-                                <div class="bg-black/40 p-5 rounded-[24px] border border-white/5 shadow-inner print:bg-transparent print:border-slate-300 print:p-3 print:rounded-xl force-dark-bg">
-                                    <p class="text-[10px] font-black uppercase text-slate-400 mb-2 tracking-widest print:text-slate-600 print:text-[8px]">${window.t('budget')}</p>
-                                    <p class="text-xl sm:text-2xl font-black text-white force-white-text print:text-black print:text-base truncate">${formatCurr(f.orcamento)}</p>
+                                <div class="bg-black/40 p-5 rounded-[24px] border border-white/5 shadow-inner print:bg-transparent print:border-slate-300 print:p-3 print:rounded-xl">
+                                    <p class="text-[10px] font-black uppercase text-slate-400 print:text-slate-600 mb-2 tracking-widest">${window.t('budget')}</p>
+                                    <p class="text-xl sm:text-2xl font-black text-white print:text-slate-900 force-white-text truncate">${formatCurr(f.orcamento)}</p>
                                 </div>
-                                <div class="bg-black/40 p-5 rounded-[24px] border border-white/5 shadow-inner print:bg-transparent print:border-slate-300 print:p-3 print:rounded-xl force-dark-bg">
-                                    <p class="text-[10px] font-black uppercase text-slate-400 mb-2 tracking-widest print:text-slate-600 print:text-[8px]">${window.t('total_expenses')}</p>
-                                    <p class="text-xl sm:text-2xl font-black text-red-400 print:!text-black print:text-base truncate">${formatCurr(f.totalDespesas)}</p>
+                                <div class="bg-black/40 p-5 rounded-[24px] border border-white/5 shadow-inner print:bg-transparent print:border-slate-300 print:p-3 print:rounded-xl">
+                                    <p class="text-[10px] font-black uppercase text-slate-400 print:text-slate-600 mb-2 tracking-widest">${window.t('total_expenses')}</p>
+                                    <p class="text-xl sm:text-2xl font-black text-red-400 print:text-red-700 truncate">${formatCurr(f.totalDespesas)}</p>
                                 </div>
-                                <div class="bg-black/40 p-5 rounded-[24px] border border-white/5 shadow-inner print:bg-transparent print:border-slate-300 print:p-3 print:rounded-xl force-dark-bg">
-                                    <p class="text-[10px] font-black uppercase text-slate-400 mb-2 tracking-widest print:text-slate-600 print:text-[8px]">${window.t('real_profit')}</p>
-                                    <p class="text-xl sm:text-2xl font-black text-cyan-400 print:text-black print:text-base truncate">${formatCurr(f.lucroBruto)}</p>
+                                <div class="bg-black/40 p-5 rounded-[24px] border border-white/5 shadow-inner print:bg-transparent print:border-slate-300 print:p-3 print:rounded-xl">
+                                    <p class="text-[10px] font-black uppercase text-slate-400 print:text-slate-600 mb-2 tracking-widest">${window.t('real_profit')}</p>
+                                    <p class="text-xl sm:text-2xl font-black text-cyan-400 print:text-cyan-700 truncate">${formatCurr(f.lucroBruto)}</p>
                                 </div>
-                                <div class="bg-black/40 p-5 rounded-[24px] border border-white/5 shadow-inner print:bg-transparent print:border-slate-300 print:p-3 print:rounded-xl force-dark-bg">
-                                    <p class="text-[10px] font-black uppercase text-slate-400 mb-2 tracking-widest print:text-slate-600 print:text-[8px]">${window.t('margin')}</p>
-                                    <p class="text-xl sm:text-2xl font-black ${marginColor} print:text-black print:text-base truncate">${f.margemLucro.toFixed(1)}%</p>
+                                <div class="bg-black/40 p-5 rounded-[24px] border border-white/5 shadow-inner print:bg-transparent print:border-slate-300 print:p-3 print:rounded-xl">
+                                    <p class="text-[10px] font-black uppercase text-slate-400 print:text-slate-600 mb-2 tracking-widest">${window.t('margin')}</p>
+                                    <p class="text-xl sm:text-2xl font-black ${marginColor} print:text-slate-900 truncate">${f.margemLucro.toFixed(1)}%</p>
                                 </div>
                             </div>
 
                             <div class="grid grid-cols-1 lg:grid-cols-3 gap-6 mb-10 print:mb-6 no-print">
                                 <div class="bg-black/20 p-6 rounded-[24px] border border-cyan-500/10 flex flex-col items-center shadow-lg print:border-slate-300 print:bg-transparent">
-                                    <p class="text-[11px] font-black uppercase text-cyan-300/70 mb-4 w-full text-left tracking-widest print:text-black">${window.t('budget_vs_spent')}</p>
+                                    <p class="text-[11px] font-black uppercase text-cyan-300/70 mb-4 w-full text-left tracking-widest">${window.t('budget_vs_spent')}</p>
                                     <div class="relative w-48 h-48 print:w-32 print:h-32"><canvas id="chart-budget-${p.id}"></canvas></div>
                                 </div>
                                 <div class="lg:col-span-2 bg-black/20 p-6 rounded-[24px] border border-cyan-500/10 shadow-lg print:border-slate-300 print:bg-transparent">
-                                    <p class="text-[11px] font-black uppercase text-cyan-300/70 mb-4 tracking-widest print:text-black">${window.t('dist_category')}</p>
+                                    <p class="text-[11px] font-black uppercase text-cyan-300/70 mb-4 tracking-widest">${window.t('dist_category')}</p>
                                     <div class="relative w-full h-48 print:h-32"><canvas id="chart-cat-${p.id}"></canvas></div>
                                 </div>
                             </div>
@@ -1110,56 +1379,24 @@
                                             <input type="number" id="exp-val-${p.id}" placeholder="$ Valor" step="0.01" class="modern-input !bg-black/40 !border-cyan-500/30 !text-sm text-gold font-bold w-full" onclick="event.stopPropagation();">
                                         </div>
                                         <div class="w-full sm:w-auto flex-none mt-2 sm:mt-0">
-                                            <button onclick="event.stopPropagation(); window.addExpense('${p.id}')" class="bg-cyan-600 hover:bg-cyan-500 text-white force-white-text px-6 py-4 rounded-xl font-black text-xs uppercase tracking-widest transition-colors shadow-lg force-dark-bg w-full">${window.t('add_table')}</button>
+                                            <button onclick="event.stopPropagation(); window.addExpense('${p.id}')" class="bg-cyan-600 hover:bg-cyan-500 text-white force-white-text px-6 py-4 rounded-xl font-black text-xs uppercase tracking-widest transition-colors shadow-lg w-full">${window.t('add_table')}</button>
                                         </div>
                                     </div>
                                 </div>
 
-                                <p class="text-sm font-black text-cyan-300 uppercase mb-4 tracking-widest print:text-black print:mb-2">${window.t('expense_history')}</p>
+                                <p class="text-sm font-black text-cyan-300 print:text-slate-900 uppercase mb-4 tracking-widest">${window.t('expense_history')}</p>
                                 <div class="max-h-96 overflow-y-auto scrollbar-hide pr-2 print:max-h-none">
                                     ${expensesList}
                                 </div>
                             </div>
                         </div>
                     `;
-                    setTimeout(() => window.renderCharts(p.id, f.orcamento, f.gastosPorCategoria, f.totalDespesas), 100);
                 }
-
-                unifiedHTML += `</div>`;
-                cardsHtmlBuffer += unifiedHTML;
-                return; 
-            }
-
-            const cardClickEvent = isFocused ? '' : `onclick="window.openProjectDetails('${p.id}')"`;
-            const cardHoverClasses = isFocused ? '' : 'project-card clickable cursor-pointer';
-
-            cardsHtmlBuffer += `<div class="glass p-6 md:p-8 rounded-[40px] border-l-[8px] relative shadow-2xl flex flex-col h-full print:border print:border-slate-300 print:shadow-none print:break-inside-avoid ${cardHoverClasses}" style="border-left-color: ${p.status === 'Finalizado' ? '#10b981' : '#f59e0b'}" ${cardClickEvent}>
-                <div class="flex justify-between items-start mb-6">
-                    <span class="px-4 py-2 bg-white/5 border border-white/10 rounded-xl text-[10px] font-black uppercase tracking-widest text-slate-300 shadow-sm print:bg-slate-100 print:text-slate-800">${p.empresa || 'Sem Unidade'} ${p.archived ? '<span class="text-indigo-400 ml-1">(ARQUIVADA)</span>' : ''}</span>
-                    <div class="flex items-center gap-3 bg-black/20 p-2 px-4 rounded-full border border-white/5 print:hidden">
-                        <span class="status-badge ${f.statusColor}" title="Status Financeiro"></span>
-                        ${actionButtons}
-                    </div>
-                </div>
-                <div class="text-left mb-8"><h4 class="font-black text-3xl uppercase tracking-tight text-white force-white-text leading-none print:text-black">${p.cliente || 'Sem Nome'}</h4></div>
-                <div class="grid grid-cols-2 gap-y-6 gap-x-4 p-6 bg-black/20 rounded-[24px] border border-white/5 mb-10 text-left shadow-inner print:bg-transparent print:border-slate-200">
-                    <div><p class="text-xs font-black text-slate-500 uppercase tracking-widest mb-1.5">${window.t('seller')}</p><p class="text-sm font-bold text-slate-200 truncate print:text-black" title="${p.vendedor}">${p.vendedor?.split('@')[0] || '--'}</p></div>
-                    <div><p class="text-xs font-black text-slate-500 uppercase tracking-widest mb-1.5">${window.t('status_obra')}</p><p class="text-sm font-black text-gold uppercase print:text-amber-700">${tStatus(p.status)}</p></div>
-                    <div><p class="text-xs font-black text-slate-500 uppercase tracking-widest mb-1.5">${window.t('prop_inv')}</p><p class="text-sm font-bold text-slate-200 print:text-black">${p.numeroProposta || '---'} <span class="text-slate-600 font-normal mx-1">|</span> ${p.numeroInvoice || '---'}</p></div>
-                    <div><p class="text-xs font-black text-slate-500 uppercase tracking-widest mb-1.5">${window.t('pay_comm')}</p><p class="text-sm font-bold text-slate-200 print:text-black">${p.metodo || '--'} <span class="text-slate-600 font-normal mx-1">•</span> ${p.percComissao || 0}%</p></div>
-                </div>
-                <div class="mt-auto"></div>
-                <div class="space-y-4 mb-10 text-left">
-                    <div class="flex justify-between text-xs font-black uppercase text-slate-400 print:text-slate-800"><span>${window.t('timeline')}</span><span style="color: ${colorHex}">${prog}%</span></div>
-                    <div class="progress-track print:bg-slate-200"><div class="progress-bar-fill print:!bg-black" style="width: ${prog}%; background-color: ${colorHex};"></div></div>
-                    <div class="flex justify-between text-xs font-extrabold uppercase mt-2">
-                        <span class="print:text-black">${p.dataInicio ? new Date(p.dataInicio + 'T12:00:00').toLocaleDateString(state.lang === 'pt' ? 'pt-BR' : 'en-US') : '-'}</span>
-                        <span class="${timelineTextColor} print:!text-black">${timelineText}</span>
-                    </div>
-                </div>
-                <div class="bg-gradient-to-br from-black/50 to-transparent p-6 rounded-[24px] border border-white/5 shadow-inner print:bg-transparent print:border-slate-300">
-                    <p class="text-xs font-black text-slate-500 uppercase mb-2 text-center tracking-widest">${window.t('gross_contract')}</p>
-                    <p class="text-4xl font-black text-white force-white-text text-center tracking-tight print:text-black">${formatCurr(p.valorTotal)}</p>
+            } else {
+                cardHTML += `
+                <div class="bg-gradient-to-br from-black/50 to-transparent p-6 rounded-[24px] border border-white/5 shadow-inner print:bg-transparent print:border-slate-300 mt-auto">
+                    <p class="text-xs font-black text-slate-500 print:text-slate-600 uppercase mb-2 text-center tracking-widest">${window.t('gross_contract')}</p>
+                    <p class="text-4xl font-black text-white force-white-text text-center tracking-tight print:text-slate-900">${formatCurr(p.valorTotal)}</p>
                 </div>
                 <div class="flex justify-between gap-4 mt-6 no-print">
                     <div class="flex-1 rounded-2xl p-4 text-center border ${clientBorderColor} shadow-inner transition-colors">
@@ -1174,14 +1411,18 @@
                 <div class="mt-8 text-center text-xs text-slate-500 font-bold uppercase tracking-widest no-print opacity-60 group-hover:opacity-100 flex items-center justify-center gap-2 transition-opacity">
                     ${window.t('click_to_open')} <i data-lucide="chevron-right" class="w-4 h-4"></i>
                 </div>
-            </div>`;
+                `;
+            }
+
+            cardHTML += `</div>`;
+            cardsHtmlBuffer += cardHTML;
         });
         
         grid.innerHTML = cardsHtmlBuffer;
         try { lucide.createIcons(); } catch {}
     };
 
-    window.renderReport = function() {
+    const renderReport = function() {
         const out = document.getElementById('report-output');
         if (!out || !state.user) return;
 
@@ -1217,13 +1458,7 @@
             }
 
             const vend = p.vendedor || 'Sem Vendedor';
-            if (!sellerStats[vend]) { 
-                sellerStats[vend] = { 
-                    total: 0, 
-                    months: Array(12).fill(0),
-                    projects: Array(12).fill(null).map(()=>[]) 
-                }; 
-            }
+            if (!sellerStats[vend]) { sellerStats[vend] = { total: 0, months: Array(12).fill(0), projects: Array(12).fill(null).map(()=>[]) }; }
 
             const recebimentos = p.recebimentos || [];
             recebimentos.forEach(r => {
@@ -1235,172 +1470,147 @@
                     if (rYear === currentYear) { 
                         sellerStats[vend].months[rMonth] += rComm; 
                         sellerStats[vend].total += rComm; 
-                        sellerStats[vend].projects[rMonth].push({
-                            id: p.id,
-                            cliente: p.cliente,
-                            invoice: p.numeroInvoice,
-                            proposta: p.numeroProposta,
-                            val: rComm
-                        });
+                        sellerStats[vend].projects[rMonth].push({ id: p.id, cliente: p.cliente, invoice: p.numeroInvoice, proposta: p.numeroProposta, val: rComm });
                     }
                 }
             });
-            
             return { p, f }; 
         });
 
         const reportTitle = state.company === 'Ambas' ? window.t('rep_title') : `${window.t('rep_title_company')} ${state.company}`;
-        
         let ceoDashHTML = '';
+
         if (canViewCosts) {
             const totalOutstanding = tv - totalCollected; const avgMargin = tv > 0 ? (tProfit / tv) * 100 : 0;
+            const kpiBlock = (id, label, val, linkTxt, ringCls, baseCls, labelColor) => {
+                const isActive = state.reportActiveKpi === id; const color = isActive ? ringCls : baseCls;
+                return `<div onclick="window.setReportKpi('${id}')" class="kpi-card cursor-pointer hover:-translate-y-1 hover:shadow-xl transition-all ${color} p-4 sm:p-5 rounded-2xl border border-transparent print:border-slate-300 print:bg-transparent shadow-lg print:shadow-none relative group flex flex-col justify-between h-full min-h-[110px]"><p class="text-[9px] sm:text-[10px] font-black uppercase ${labelColor} print:text-slate-600 mb-1 tracking-widest">${label}</p><p class="text-lg sm:text-xl font-black text-white print:text-slate-900 tracking-tighter break-words my-2">${val}</p>${linkTxt ? `<p class="text-[8px] uppercase font-bold tracking-widest mt-auto opacity-60 group-hover:opacity-100 no-print transition-colors ${labelColor}">${linkTxt}</p>`:''}</div>`;
+            };
 
             let funnelHTML = Object.keys(statusFunnel).map(k => {
                 const s = statusFunnel[k]; const isActive = state.reportActiveKpi === s.id;
-                return `
-                <div onclick="window.setReportKpi('${s.id}')" class="cursor-pointer hover:-translate-y-1 hover:shadow-md transition-all p-4 sm:p-5 rounded-2xl border ${s.border} ${s.bg} flex flex-col justify-between print:bg-transparent print:border-slate-300 shadow-sm force-dark-bg group ${isActive ? `ring-2 ring-offset-2 ring-offset-slate-900 ${s.hoverRing.replace('hover:', '')}` : ''}">
-                    <div class="flex justify-between items-start mb-3">
-                        <p class="text-[9px] sm:text-[10px] font-black uppercase ${s.color} tracking-widest print:text-slate-600 pr-2 leading-tight">${s.label}</p>
-                        <span class="text-[10px] sm:text-xs font-black text-white force-white-text bg-slate-800 px-2 py-0.5 rounded-lg shadow-sm print:text-white print-force-white">${s.count}</span>
-                    </div>
-                    <p class="text-base sm:text-lg font-black text-slate-200 funnel-value tracking-tight print:text-black break-words">${formatCurr(s.val)}</p>
-                </div>`;
+                return `<div onclick="window.setReportKpi('${s.id}')" class="cursor-pointer hover:-translate-y-1 hover:shadow-md transition-all p-4 sm:p-5 rounded-2xl border ${s.border} ${s.bg} flex flex-col justify-between print:bg-transparent print:border-slate-300 shadow-sm group ${isActive ? `ring-2 ring-offset-2 ring-offset-slate-900 ${s.hoverRing.replace('hover:', '')}` : ''}"><div class="flex justify-between items-start mb-3"><p class="text-[9px] sm:text-[10px] font-black uppercase ${s.color} print:text-slate-600 tracking-widest leading-tight">${s.label}</p><span class="text-[10px] sm:text-xs font-black text-white print:text-slate-900 bg-slate-800 print:bg-slate-200 px-2 py-0.5 rounded-lg shadow-sm">${s.count}</span></div><p class="text-base sm:text-lg font-black text-slate-200 print:text-slate-900 tracking-tight break-words">${formatCurr(s.val)}</p></div>`;
             }).join('');
 
             ceoDashHTML = `
                 <div class="mb-10 print:mb-8 animate-fade-in hide-on-kpi-print">
-                    <h3 class="text-lg sm:text-xl font-black uppercase tracking-tighter mb-5 text-slate-200 print:text-slate-800 border-b-2 border-white/10 print:border-slate-100 pb-3 flex items-center gap-2"><i data-lucide="bar-chart-2" class="w-5 h-5 text-indigo-500"></i> ${window.t('exec_vision')}</h3>
+                    <h3 class="text-lg sm:text-xl font-black uppercase tracking-tighter mb-5 text-slate-200 print:text-slate-800 border-b-2 border-white/10 print:border-slate-300 pb-3 flex items-center gap-2"><i data-lucide="bar-chart-2" class="w-5 h-5 text-indigo-500"></i> ${window.t('exec_vision')}</h3>
                     <div class="grid grid-cols-2 md:grid-cols-5 gap-3 sm:gap-4 mb-8">
-                        <div onclick="window.setReportKpi('receita')" class="kpi-card cursor-pointer hover:-translate-y-1 hover:shadow-xl transition-all ${state.reportActiveKpi === 'receita' ? 'bg-emerald-700 ring-2 ring-emerald-400' : 'bg-emerald-600'} p-3 sm:p-4 rounded-2xl border border-emerald-500 shadow-lg print:bg-emerald-600 print:border-emerald-500 print:shadow-none print:ring-0 relative group flex flex-col justify-between h-full min-h-[110px] force-dark-bg">
-                            <p class="text-[9px] sm:text-[10px] font-black uppercase text-emerald-100 mb-1 tracking-widest">${window.t('gross_revenue')}</p><p class="text-sm sm:text-base xl:text-lg font-black text-white force-white-text print:text-white tracking-tighter break-words my-2 kpi-value">${formatCurr(tv)}</p>
-                        </div>
-                        <div onclick="window.setReportKpi('entradas')" class="kpi-card cursor-pointer hover:-translate-y-1 hover:shadow-xl transition-all ${state.reportActiveKpi === 'entradas' ? 'bg-slate-700 ring-2 ring-emerald-500' : 'bg-slate-800'} p-3 sm:p-4 rounded-2xl border border-slate-600 border-l-4 border-l-emerald-500 shadow-lg print:bg-transparent print:border-slate-300 print:shadow-none print:ring-0 relative group flex flex-col justify-between h-full min-h-[110px] force-dark-bg">
-                            <p class="text-[9px] sm:text-[10px] font-black uppercase text-emerald-400 mb-1 tracking-widest kpi-label">${window.t('entries')}</p><p class="text-sm sm:text-base xl:text-lg font-black text-white force-white-text tracking-tighter break-words my-2 kpi-value">${formatCurr(totalCollected)}</p>
-                        </div>
-                        <div onclick="window.setReportKpi('fluxo')" class="kpi-card cursor-pointer hover:-translate-y-1 hover:shadow-xl transition-all ${state.reportActiveKpi === 'fluxo' ? 'bg-slate-700 ring-2 ring-amber-500' : 'bg-slate-800'} p-3 sm:p-4 rounded-2xl border border-slate-600 border-l-4 border-l-amber-500 shadow-lg print:bg-transparent print:border-slate-300 print:shadow-none print:ring-0 relative group flex flex-col justify-between h-full min-h-[110px] force-dark-bg">
-                            <p class="text-[9px] sm:text-[10px] font-black uppercase text-amber-500 mb-1 tracking-widest kpi-label">${window.t('to_receive')}</p><p class="text-sm sm:text-base xl:text-lg font-black text-white force-white-text tracking-tighter break-words my-2 kpi-value">${formatCurr(totalOutstanding)}</p>
-                        </div>
-                        <div onclick="window.setReportKpi('lucro')" class="kpi-card cursor-pointer hover:-translate-y-1 hover:shadow-xl transition-all ${state.reportActiveKpi === 'lucro' ? 'bg-slate-700 ring-2 ring-cyan-500' : 'bg-slate-800'} p-3 sm:p-4 rounded-2xl border border-slate-600 border-l-4 border-l-cyan-500 shadow-lg print:bg-transparent print:border-slate-300 print:shadow-none print:ring-0 relative group flex flex-col justify-between h-full min-h-[110px] force-dark-bg">
-                            <p class="text-[9px] sm:text-[10px] font-black uppercase text-cyan-400 mb-1 tracking-widest kpi-label">${window.t('est_profit')}</p><p class="text-sm sm:text-base xl:text-lg font-black text-white force-white-text tracking-tighter break-words my-2 kpi-value">${formatCurr(tProfit)}</p>
-                        </div>
-                        <div onclick="window.setReportKpi('overview')" class="kpi-card cursor-pointer hover:-translate-y-1 hover:shadow-xl transition-all ${state.reportActiveKpi === 'overview' ? 'bg-slate-700 ring-2 ring-indigo-500' : 'bg-slate-800'} p-3 sm:p-4 rounded-2xl border border-slate-600 border-l-4 border-l-indigo-500 shadow-lg print:bg-transparent print:border-slate-300 print:shadow-none flex flex-col justify-between h-full min-h-[110px] group force-dark-bg">
-                            <p class="text-[9px] sm:text-[10px] font-black uppercase text-indigo-400 mb-1 tracking-widest kpi-label">${window.t('global_margin')}</p><p class="text-sm sm:text-base xl:text-lg font-black ${avgMargin >= 0 ? 'text-white force-white-text kpi-value' : 'text-red-400'} tracking-tighter break-words my-2">${avgMargin.toFixed(1)}%</p>
-                        </div>
+                        ${kpiBlock('receita', window.t('gross_revenue'), formatCurr(tv), window.t('see_works'), 'bg-emerald-700 ring-2 ring-emerald-400', 'bg-emerald-600', 'text-emerald-100')}
+                        ${kpiBlock('entradas', window.t('entries'), formatCurr(totalCollected), window.t('see_received'), 'bg-slate-700 ring-2 ring-emerald-500', 'bg-slate-800 border-l-4 border-l-emerald-500', 'text-emerald-400')}
+                        ${kpiBlock('fluxo', window.t('to_receive'), formatCurr(totalOutstanding), window.t('see_pending'), 'bg-slate-700 ring-2 ring-amber-500', 'bg-slate-800 border-l-4 border-l-amber-500', 'text-amber-500')}
+                        ${kpiBlock('lucro', window.t('est_profit'), formatCurr(tProfit), window.t('see_details'), 'bg-slate-700 ring-2 ring-cyan-500', 'bg-slate-800 border-l-4 border-l-cyan-500', 'text-cyan-400')}
+                        ${kpiBlock('overview', window.t('global_margin'), `${avgMargin.toFixed(1)}%`, window.t('see_summary'), 'bg-slate-700 ring-2 ring-indigo-500', 'bg-slate-800 border-l-4 border-l-indigo-500', 'text-indigo-400')}
                     </div>
-                    <h4 class="text-xs sm:text-sm font-black uppercase mb-4 text-slate-400 tracking-widest border-b border-white/10 print:border-slate-100 pb-2 print:text-slate-500">${window.t('active_funnel')}</h4>
+                    <h4 class="text-xs sm:text-sm font-black uppercase mb-4 text-slate-400 print:text-slate-800 tracking-widest border-b border-white/10 print:border-slate-300 pb-2">${window.t('active_funnel')}</h4>
                     <div class="grid grid-cols-2 md:grid-cols-4 gap-3 sm:gap-4 mb-4">${funnelHTML}</div>
                 </div>`;
         }
 
-        let bottomHTML = ''; let kpiTitle = '';
+        let bottomHTML = ''; 
+        let kpiTitle = '';
+        const tHead = (cols) => cols.map(c => `<th class="p-3 sm:p-4 print:text-slate-600 ${c.cls||''}">${c.lbl}</th>`).join('');
+        const tCell = (val, cls="") => `<td class="p-3 sm:p-4 ${cls}">${val}</td>`;
+        const tRow = (p, extras) => `<tr onclick="window.goToProject('${p.id}')" class="cursor-pointer border-b border-white/5 text-[10px] sm:text-xs text-left text-slate-300 print:text-slate-800 hover:bg-white/10 transition-colors print:border-slate-300"><td class="p-3 sm:p-4 font-bold text-slate-400 print:text-slate-600">${p.numeroProposta || '-'} / ${p.numeroInvoice || '-'}</td><td class="p-3 sm:p-4 font-black uppercase text-white print:text-slate-900"><div class="flex flex-col"><span>${p.cliente || ''}</span><span class="text-[8px] sm:text-[9px] font-bold text-slate-500 print:text-slate-500 mt-0.5">${tStatus(p.status)}</span></div></td>${extras}</tr>`;
+
         if (state.reportActiveKpi === 'overview') {
             let summaryRows = Object.keys(sellerStats).sort().map(vend => {
                 const stats = sellerStats[vend];
                 let monthsHtml = stats.months.map((mVal, mIdx) => {
                     if (mVal > 0) {
                         const encodedProj = encodeURIComponent(JSON.stringify(stats.projects[mIdx]));
-                        return `<td class="p-2 sm:p-3 text-right text-amber-500 font-bold cursor-pointer hover:bg-white/10 transition-colors" onclick="window.showMonthDetails('${vend}', ${mIdx}, '${encodedProj}')">${formatCurr(mVal)}</td>`;
-                    } else {
-                        return `<td class="p-2 sm:p-3 text-right text-slate-500 print:text-slate-400">${formatCurr(mVal)}</td>`;
-                    }
+                        return `<td class="p-2 sm:p-3 text-right text-amber-500 print:text-amber-700 font-bold cursor-pointer hover:bg-white/10 transition-colors" onclick="window.showMonthDetails('${vend}', ${mIdx}, '${encodedProj}')">${formatCurr(mVal)}</td>`;
+                    } else { return `<td class="p-2 sm:p-3 text-right text-slate-500 print:text-slate-400">${formatCurr(mVal)}</td>`; }
                 }).join('');
-                return `<tr class="border-b border-white/5 hover:bg-white/5 transition-colors print:border-slate-100"><td class="p-2 sm:p-3 font-black uppercase whitespace-nowrap text-slate-200 print:text-slate-800">${vend.split('@')[0]}</td>${monthsHtml}<td class="p-2 sm:p-3 text-right font-black text-emerald-400 print:text-emerald-600 bg-black/20 print:bg-slate-50">${formatCurr(stats.total)}</td></tr>`;
+                return `<tr class="border-b border-white/5 hover:bg-white/5 transition-colors print:border-slate-300"><td class="p-2 sm:p-3 font-black uppercase whitespace-nowrap text-slate-200 print:text-slate-800">${vend.split('@')[0]}</td>${monthsHtml}<td class="p-2 sm:p-3 text-right font-black text-emerald-400 print:text-emerald-700 bg-black/20 print:bg-slate-100">${formatCurr(stats.total)}</td></tr>`;
             }).join('');
-            let summaryHeaderMonths = monthNames.map(m => `<th class="p-2 sm:p-3 text-right">${m}</th>`).join('');
+            let summaryHeaderMonths = monthNames.map(m => `<th class="p-2 sm:p-3 text-right print:text-slate-600">${m}</th>`).join('');
 
             const buildGroupedTable = (dbCompanyName) => {
                 const coProjects = enrichedProjects.filter(({p}) => p.empresa === dbCompanyName);
                 if (coProjects.length === 0) return '';
-                
                 const displayTitle = dbCompanyName === 'Smart Home' ? 'D2 Smart Home' : 'D2 HVAC Solutions';
+                
+                let cols = [
+                    {lbl: window.t('prop_inv')}, {lbl: window.t('f_client')}, {lbl: window.t('f_seller')}, 
+                    {lbl: window.t('f_gross'), cls: 'text-right'}, {lbl: 'Recebido', cls: 'text-right bg-emerald-500/10 print:bg-transparent text-emerald-400 print:text-emerald-700'},
+                    {lbl: window.t('comm_released'), cls: 'text-right bg-amber-500/10 print:bg-transparent text-amber-400 print:text-amber-700'}
+                ];
+                if(canViewCosts) {
+                    cols.push({lbl: window.t('total_expenses'), cls: 'text-right bg-red-900/20 print:bg-transparent text-red-400 print:text-red-700'});
+                    cols.push({lbl: window.t('real_profit'), cls: 'text-right bg-cyan-900/20 print:bg-transparent text-cyan-400 print:text-cyan-700'});
+                    cols.push({lbl: window.t('margin'), cls: 'text-right bg-indigo-900/20 print:bg-transparent text-indigo-400 print:text-indigo-700'});
+                }
 
                 const tableRows = coProjects.map(({p, f}) => {
-                    const profitCol = canViewCosts ? `<td class="p-3 sm:p-4 text-right font-black text-red-400 print:text-red-500">${formatCurr(f.totalDespesas)}</td><td class="p-3 sm:p-4 text-right font-black ${f.lucroBruto >= 0 ? 'text-cyan-400 print:text-cyan-600' : 'text-red-400 print:text-red-500'}">${formatCurr(f.lucroBruto)}</td><td class="p-3 sm:p-4 text-right font-black ${f.margemLucro >= 0 ? 'text-indigo-400 print:text-indigo-600' : 'text-red-400 print:text-red-500'}">${f.margemLucro.toFixed(1)}%</td>` : '';
-                    return `<tr onclick="window.goToProject('${p.id}')" class="cursor-pointer border-b border-white/5 text-[10px] sm:text-xs text-left text-slate-300 print:text-slate-800 hover:bg-white/10 transition-colors print:border-slate-100"><td class="p-3 sm:p-4 font-bold text-[9px] sm:text-[10px] text-slate-400 print:text-slate-500">${p.numeroProposta || '-'} / ${p.numeroInvoice || '-'}</td><td class="p-3 sm:p-4 font-black uppercase text-white print:text-black"><div class="flex flex-col"><span>${p.cliente || ''}</span><span class="text-[8px] sm:text-[9px] font-bold text-slate-500 print:text-slate-400 mt-0.5">${tStatus(p.status)}</span></div></td><td class="p-3 sm:p-4 font-bold text-slate-300 print:text-slate-600">${p.vendedor?.split('@')[0] || ''}</td><td class="p-3 sm:p-4 text-right">${formatCurr(p.valorTotal)}</td><td class="p-3 sm:p-4 text-right font-black text-emerald-400 print:text-emerald-600">${formatCurr(f.totalRecebido)}</td><td class="p-3 sm:p-4 text-right font-black text-amber-400 print:text-amber-600">${formatCurr(f.commLiberada)}</td>${profitCol}</tr>`;
+                    let ext = tCell(p.vendedor?.split('@')[0] || '', 'font-bold text-slate-300 print:text-slate-800') + tCell(formatCurr(p.valorTotal), 'text-right print:text-slate-900') + tCell(formatCurr(f.totalRecebido), 'text-right font-black text-emerald-400 print:text-emerald-700') + tCell(formatCurr(f.commLiberada), 'text-right font-black text-amber-400 print:text-amber-700');
+                    if (canViewCosts) ext += tCell(formatCurr(f.totalDespesas), 'text-right font-black text-red-400 print:text-red-700') + tCell(formatCurr(f.lucroBruto), `text-right font-black ${f.lucroBruto >= 0 ? 'text-cyan-400 print:text-cyan-700' : 'text-red-400 print:text-red-700'}`) + tCell(`${f.margemLucro.toFixed(1)}%`, `text-right font-black ${f.margemLucro >= 0 ? 'text-indigo-400 print:text-indigo-700' : 'text-red-400 print:text-red-700'}`);
+                    return tRow(p, ext);
                 }).join('');
-                return `<div class="mb-10"><h4 class="text-sm font-black text-slate-200 print:text-slate-700 bg-black/40 print:bg-slate-100 inline-block px-4 py-2 rounded-t-xl uppercase tracking-widest border border-b-0 border-white/5 print:border-slate-200">${displayTitle}</h4><div class="overflow-x-auto print:overflow-visible border border-white/5 print:border-slate-200 rounded-xl rounded-tl-none print:border-none shadow-sm"><table class="w-full"><thead class="bg-black/20 print:bg-slate-50 border-b border-white/5 print:border-slate-200 print:bg-transparent"><tr class="font-black uppercase text-[8px] sm:text-[9px] text-slate-400 print:text-slate-500 text-left tracking-widest"><th class="p-3 sm:p-4">${window.t('prop_inv')}</th><th class="p-3 sm:p-4">${window.t('f_client')}</th><th class="p-3 sm:p-4">${window.t('f_seller')}</th><th class="p-3 sm:p-4 text-right">${window.t('f_gross')}</th><th class="p-3 sm:p-4 text-right bg-emerald-500/10 print:bg-emerald-50 text-emerald-400 print:text-emerald-700 print:bg-transparent">Recebido</th><th class="p-3 sm:p-4 text-right bg-amber-500/10 print:bg-amber-50 text-amber-400 print:text-amber-700 print:bg-transparent">${window.t('comm_released')}</th>${canViewCosts ? `<th class="p-3 sm:p-4 text-right bg-red-900/20 print:bg-red-50 text-red-400 print:text-red-700 print:bg-transparent">${window.t('total_expenses')}</th><th class="p-3 sm:p-4 text-right bg-cyan-900/20 print:bg-cyan-50 text-cyan-400 print:text-cyan-700 print:bg-transparent">${window.t('real_profit')}</th><th class="p-3 sm:p-4 text-right bg-indigo-900/20 print:bg-indigo-50 text-indigo-400 print:text-indigo-700 print:bg-transparent">${window.t('margin')}</th>` : ''}</tr></thead><tbody>${tableRows}</tbody></table></div></div>`;
+                return `<div class="mb-10"><h4 class="text-sm font-black text-slate-200 print:text-slate-800 bg-black/40 print:bg-transparent inline-block px-4 py-2 rounded-t-xl uppercase tracking-widest border border-b-0 border-white/5 print:border-slate-300">${displayTitle}</h4><div class="overflow-x-auto border border-white/5 print:border-slate-300 rounded-xl rounded-tl-none shadow-sm"><table class="w-full"><thead class="bg-black/20 print:bg-slate-100 border-b border-white/5 print:border-slate-300"><tr class="font-black uppercase text-[8px] sm:text-[9px] text-slate-400 print:text-slate-700 text-left tracking-widest">${tHead(cols)}</tr></thead><tbody>${tableRows}</tbody></table></div></div>`;
             };
 
             let detailedTablesHTML = '';
-            if (state.company === 'Ambas') { 
-                detailedTablesHTML += buildGroupedTable('Smart Home') + buildGroupedTable('HVAC'); 
-            } else { 
-                detailedTablesHTML += buildGroupedTable(state.company); 
-            }
-            if(!detailedTablesHTML) detailedTablesHTML = `<p class="p-6 text-center text-slate-500 text-xs italic">${window.t('no_active_works')}</p>`;
+            if (state.company === 'Ambas') { detailedTablesHTML += buildGroupedTable('Smart Home') + buildGroupedTable('HVAC'); } 
+            else { detailedTablesHTML += buildGroupedTable(state.company); }
+            if(!detailedTablesHTML) detailedTablesHTML = `<p class="p-6 text-center text-slate-500 print:text-slate-600 text-xs italic">${window.t('no_active_works')}</p>`;
 
-            bottomHTML = `
-                <div class="full-report-only animate-fade-in mt-14">
-                    <div class="mb-14 print:mb-8">
-                        <div class="flex justify-between items-center mb-5 border-b-2 border-white/5 print:border-slate-100 pb-3"><h3 class="text-base sm:text-lg font-black uppercase tracking-tighter text-slate-200 print:text-slate-800 flex items-center gap-2"><i data-lucide="users" class="w-5 h-5 text-amber-500"></i> ${window.t('comm_paid_month')} (${currentYear})</h3></div>
-                        <div class="overflow-x-auto print:overflow-visible border border-white/5 print:border-slate-200 rounded-2xl print:border-none shadow-sm">
-                            <table class="w-full">
-                                <thead class="bg-black/20 print:bg-slate-100 border-b border-white/5 print:border-slate-200 print:bg-transparent"><tr class="font-black uppercase text-[8px] sm:text-[9px] text-slate-400 print:text-slate-500 text-left tracking-widest"><th class="p-3 sm:p-4">${window.t('f_seller')}</th>${summaryHeaderMonths}<th class="p-3 sm:p-4 text-right bg-black/40 print:bg-slate-200 print:bg-transparent text-slate-300 print:text-slate-700">${window.t('total_year')}</th></tr></thead>
-                                <tbody>${summaryRows || `<tr><td colspan="14" class="p-6 text-center text-slate-500 text-xs italic">${window.t('no_data_year')}</td></tr>`}</tbody>
-                            </table>
-                        </div>
-                    </div>
-                    <div class="mb-8">
-                        <h3 class="text-base sm:text-lg font-black uppercase tracking-tighter mb-5 text-slate-200 print:text-slate-800 border-b-2 border-white/5 print:border-slate-100 pb-3 flex items-center gap-2"><i data-lucide="list-checks" class="w-5 h-5 text-emerald-500"></i> ${window.t('detailed_struct')}</h3>
-                        ${detailedTablesHTML}
-                    </div>
-                </div>`;
+            bottomHTML = `<div class="full-report-only animate-fade-in mt-14"><div class="mb-14 print:mb-8"><div class="flex justify-between items-center mb-5 border-b-2 border-white/5 print:border-slate-300 pb-3"><h3 class="text-base sm:text-lg font-black uppercase tracking-tighter text-slate-200 print:text-slate-800 flex items-center gap-2"><i data-lucide="users" class="w-5 h-5 text-amber-500"></i> ${window.t('comm_paid_month')} (${currentYear})</h3></div><div class="overflow-x-auto border border-white/5 print:border-slate-300 rounded-2xl shadow-sm"><table class="w-full"><thead class="bg-black/20 print:bg-slate-100 border-b border-white/5 print:border-slate-300"><tr class="font-black uppercase text-[8px] sm:text-[9px] text-slate-400 print:text-slate-700 text-left tracking-widest"><th class="p-3 sm:p-4">${window.t('f_seller')}</th>${summaryHeaderMonths}<th class="p-3 sm:p-4 text-right bg-black/40 print:bg-slate-200 text-slate-300 print:text-slate-900">${window.t('total_year')}</th></tr></thead><tbody>${summaryRows || `<tr><td colspan="14" class="p-6 text-center text-slate-500 print:text-slate-600 text-xs italic">${window.t('no_data_year')}</td></tr>`}</tbody></table></div></div><div class="mb-8"><h3 class="text-base sm:text-lg font-black uppercase tracking-tighter mb-5 text-slate-200 print:text-slate-800 border-b-2 border-white/5 print:border-slate-300 pb-3 flex items-center gap-2"><i data-lucide="list-checks" class="w-5 h-5 text-emerald-500"></i> ${window.t('detailed_struct')}</h3>${detailedTablesHTML}</div></div>`;
         } else {
-            let specificTableHTML = ''; let sRows = '';
-            const buildRows = (rowRenderer) => enrichedProjects.map(rowRenderer).join('');
-            
+            let specificTableHTML = ''; let sRows = ''; 
+            let cols = [];
             if (state.reportActiveKpi === 'receita') {
                 kpiTitle = `Detalhamento: ${window.t('gross_revenue')}`;
-                sRows = buildRows(({p}) => `<tr onclick="window.goToProject('${p.id}')" class="cursor-pointer border-b border-white/5 print:border-slate-100 text-[10px] sm:text-xs text-left text-slate-300 print:text-slate-800 hover:bg-white/10 transition-colors"><td class="p-3 sm:p-4 font-bold text-slate-400 print:text-slate-500">${p.numeroProposta || '-'} / ${p.numeroInvoice || '-'}</td><td class="p-3 sm:p-4 font-black uppercase text-white print:text-black"><div class="flex flex-col"><span>${p.cliente || ''}</span><span class="text-[8px] sm:text-[9px] font-bold text-slate-500 print:text-slate-400 mt-0.5">${tStatus(p.status)}</span></div></td><td class="p-3 sm:p-4 font-bold text-slate-300 print:text-slate-600">${p.vendedor?.split('@')[0] || ''}</td><td class="p-3 sm:p-4 text-right font-black text-slate-100 print:text-slate-800 text-sm">${formatCurr(p.valorTotal)}</td></tr>`);
-                specificTableHTML = `<table class="w-full"><thead class="bg-black/20 print:bg-slate-100 border-b border-white/5 print:border-slate-200 print:bg-transparent"><tr class="font-black uppercase text-[8px] sm:text-[9px] text-slate-400 print:text-slate-500 text-left tracking-widest"><th class="p-3 sm:p-4">${window.t('prop_inv')}</th><th class="p-3 sm:p-4">${window.t('f_client')}</th><th class="p-3 sm:p-4">${window.t('f_seller')}</th><th class="p-3 sm:p-4 text-right">${window.t('f_gross')}</th></tr></thead><tbody>${sRows || `<tr><td colspan="4" class="p-6 text-center text-slate-500 text-xs italic">${window.t('no_active_works')}</td></tr>`}</tbody></table>`;
+                cols = [{lbl: window.t('prop_inv')}, {lbl: window.t('f_client')}, {lbl: window.t('f_seller')}, {lbl: window.t('f_gross'), cls: 'text-right'}];
+                sRows = enrichedProjects.map(({p}) => tRow(p, tCell(p.vendedor?.split('@')[0] || '', 'font-bold text-slate-300 print:text-slate-800') + tCell(formatCurr(p.valorTotal), 'text-right font-black text-slate-100 print:text-slate-900 text-sm'))).join('');
             } else if (state.reportActiveKpi === 'entradas') {
                 kpiTitle = `Detalhamento: ${window.t('entries')}`;
-                sRows = enrichedProjects.filter(({f}) => f.totalRecebido > 0).map(({p, f}) => `<tr onclick="window.goToProject('${p.id}')" class="cursor-pointer border-b border-white/5 print:border-slate-100 text-[10px] sm:text-xs text-left text-slate-300 print:text-slate-800 hover:bg-white/10 transition-colors"><td class="p-3 sm:p-4 font-bold text-slate-400 print:text-slate-500">${p.numeroProposta || '-'} / ${p.numeroInvoice || '-'}</td><td class="p-3 sm:p-4 font-black uppercase text-white print:text-black"><div class="flex flex-col"><span>${p.cliente || ''}</span><span class="text-[8px] sm:text-[9px] font-bold text-slate-500 print:text-slate-400 mt-0.5">${tStatus(p.status)}</span></div></td><td class="p-3 sm:p-4 font-bold text-slate-300 print:text-slate-600">${p.vendedor?.split('@')[0] || ''}</td><td class="p-3 sm:p-4 text-right text-slate-400 print:text-slate-500">${formatCurr(p.valorTotal)}</td><td class="p-3 sm:p-4 text-right font-black text-emerald-400 print:text-emerald-600 text-sm">${formatCurr(f.totalRecebido)}</td></tr>`).join('');
-                specificTableHTML = `<table class="w-full"><thead class="bg-black/20 print:bg-slate-100 border-b border-white/5 print:border-slate-200 print:bg-transparent"><tr class="font-black uppercase text-[8px] sm:text-[9px] text-slate-400 print:text-slate-500 text-left tracking-widest"><th class="p-3 sm:p-4">${window.t('prop_inv')}</th><th class="p-3 sm:p-4">${window.t('f_client')}</th><th class="p-3 sm:p-4">${window.t('f_seller')}</th><th class="p-3 sm:p-4 text-right">${window.t('f_gross')}</th><th class="p-3 sm:p-4 text-right">Total Recebido</th></tr></thead><tbody>${sRows || `<tr><td colspan="5" class="p-6 text-center text-slate-500 text-xs italic">Nenhum recebimento encontrado.</td></tr>`}</tbody></table>`;
+                cols = [{lbl: window.t('prop_inv')}, {lbl: window.t('f_client')}, {lbl: window.t('f_seller')}, {lbl: window.t('f_gross'), cls: 'text-right'}, {lbl: 'Total Recebido', cls: 'text-right'}];
+                sRows = enrichedProjects.filter(({f}) => f.totalRecebido > 0).map(({p, f}) => tRow(p, tCell(p.vendedor?.split('@')[0] || '', 'font-bold text-slate-300 print:text-slate-800') + tCell(formatCurr(p.valorTotal), 'text-right text-slate-400 print:text-slate-900') + tCell(formatCurr(f.totalRecebido), 'text-right font-black text-emerald-400 print:text-emerald-700 text-sm'))).join('');
             } else if (state.reportActiveKpi === 'fluxo') {
                 kpiTitle = `Detalhamento: ${window.t('to_receive')}`;
-                sRows = enrichedProjects.filter(({p, f}) => (p.valorTotal - f.totalRecebido) > 0).map(({p, f}) => `<tr onclick="window.goToProject('${p.id}')" class="cursor-pointer border-b border-white/5 print:border-slate-100 text-[10px] sm:text-xs text-left text-slate-300 print:text-slate-800 hover:bg-white/10 transition-colors"><td class="p-3 sm:p-4 font-bold text-slate-400 print:text-slate-500">${p.numeroProposta || '-'} / ${p.numeroInvoice || '-'}</td><td class="p-3 sm:p-4 font-black uppercase text-white print:text-black"><div class="flex flex-col"><span>${p.cliente || ''}</span><span class="text-[8px] sm:text-[9px] font-bold text-slate-500 print:text-slate-400 mt-0.5">${tStatus(p.status)}</span></div></td><td class="p-3 sm:p-4 font-bold text-slate-300 print:text-slate-600">${p.vendedor?.split('@')[0] || ''}</td><td class="p-3 sm:p-4 text-right text-slate-400 print:text-slate-500">${formatCurr(p.valorTotal)}</td><td class="p-3 sm:p-4 text-right text-emerald-400 print:text-emerald-600">${formatCurr(f.totalRecebido)}</td><td class="p-3 sm:p-4 text-right font-black text-amber-400 print:text-amber-500 text-sm">${formatCurr(p.valorTotal - f.totalRecebido)}</td></tr>`).join('');
-                specificTableHTML = `<table class="w-full"><thead class="bg-black/20 print:bg-slate-100 border-b border-white/5 print:border-slate-200 print:bg-transparent"><tr class="font-black uppercase text-[8px] sm:text-[9px] text-slate-400 print:text-slate-500 text-left tracking-widest"><th class="p-3 sm:p-4">${window.t('prop_inv')}</th><th class="p-3 sm:p-4">${window.t('f_client')}</th><th class="p-3 sm:p-4">${window.t('f_seller')}</th><th class="p-3 sm:p-4 text-right">${window.t('f_gross')}</th><th class="p-3 sm:p-4 text-right">Recebido</th><th class="p-3 sm:p-4 text-right">${window.t('missing_receive')}</th></tr></thead><tbody>${sRows || `<tr><td colspan="6" class="p-6 text-center text-slate-500 text-xs italic">Nenhum saldo pendente.</td></tr>`}</tbody></table>`;
+                cols = [{lbl: window.t('prop_inv')}, {lbl: window.t('f_client')}, {lbl: window.t('f_seller')}, {lbl: window.t('f_gross'), cls: 'text-right'}, {lbl: 'Recebido', cls: 'text-right'}, {lbl: window.t('missing_receive'), cls: 'text-right'}];
+                sRows = enrichedProjects.filter(({p, f}) => (p.valorTotal - f.totalRecebido) > 0).map(({p, f}) => tRow(p, tCell(p.vendedor?.split('@')[0] || '', 'font-bold text-slate-300 print:text-slate-800') + tCell(formatCurr(p.valorTotal), 'text-right text-slate-400 print:text-slate-900') + tCell(formatCurr(f.totalRecebido), 'text-right text-emerald-400 print:text-emerald-700') + tCell(formatCurr(p.valorTotal - f.totalRecebido), 'text-right font-black text-amber-400 print:text-amber-700 text-sm'))).join('');
             } else if (state.reportActiveKpi === 'lucro') {
                 kpiTitle = `Detalhamento: ${window.t('est_profit')} e ${window.t('margin')}`;
-                sRows = enrichedProjects.map(({p, f}) => `<tr onclick="window.goToProject('${p.id}')" class="cursor-pointer border-b border-white/5 print:border-slate-100 text-[10px] sm:text-xs text-left text-slate-300 print:text-slate-800 hover:bg-white/10 transition-colors"><td class="p-3 sm:p-4 font-bold text-slate-400 print:text-slate-500">${p.numeroProposta || '-'} / ${p.numeroInvoice || '-'}</td><td class="p-3 sm:p-4 font-black uppercase text-white print:text-black"><div class="flex flex-col"><span>${p.cliente || ''}</span><span class="text-[8px] sm:text-[9px] font-bold text-slate-500 print:text-slate-400 mt-0.5">${tStatus(p.status)}</span></div></td><td class="p-3 sm:p-4 text-right text-slate-400 print:text-slate-500">${formatCurr(p.valorTotal)}</td><td class="p-3 sm:p-4 text-right text-red-400 print:text-red-500">${formatCurr(f.totalDespesas)}</td><td class="p-3 sm:p-4 text-right font-black ${f.lucroBruto >= 0 ? 'text-cyan-400 print:text-cyan-600' : 'text-red-500 print:text-red-600'} text-sm">${formatCurr(f.lucroBruto)}</td><td class="p-3 sm:p-4 text-right font-black ${f.margemLucro >= 0 ? 'text-indigo-400 print:text-indigo-500' : 'text-red-400 print:text-red-500'} text-sm">${f.margemLucro.toFixed(1)}%</td></tr>`).join('');
-                specificTableHTML = `<table class="w-full"><thead class="bg-black/20 print:bg-slate-100 border-b border-white/5 print:border-slate-200 print:bg-transparent"><tr class="font-black uppercase text-[8px] sm:text-[9px] text-slate-400 print:text-slate-500 text-left tracking-widest"><th class="p-3 sm:p-4">${window.t('prop_inv')}</th><th class="p-3 sm:p-4">${window.t('f_client')}</th><th class="p-3 sm:p-4 text-right">${window.t('f_gross')}</th><th class="p-3 sm:p-4 text-right">${window.t('total_expenses')}</th><th class="p-3 sm:p-4 text-right">${window.t('real_profit')}</th><th class="p-3 sm:p-4 text-right">${window.t('margin')} %</th></tr></thead><tbody>${sRows || `<tr><td colspan="6" class="p-6 text-center text-slate-500 text-xs italic">${window.t('no_active_works')}</td></tr>`}</tbody></table>`;
+                cols = [{lbl: window.t('prop_inv')}, {lbl: window.t('f_client')}, {lbl: window.t('f_gross'), cls: 'text-right'}, {lbl: window.t('total_expenses'), cls: 'text-right'}, {lbl: window.t('real_profit'), cls: 'text-right'}, {lbl: window.t('margin')+' %', cls: 'text-right'}];
+                sRows = enrichedProjects.map(({p, f}) => tRow(p, tCell(formatCurr(p.valorTotal), 'text-right text-slate-400 print:text-slate-900') + tCell(formatCurr(f.totalDespesas), 'text-right text-red-400 print:text-red-700') + tCell(formatCurr(f.lucroBruto), `text-right font-black ${f.lucroBruto >= 0 ? 'text-cyan-400 print:text-cyan-700' : 'text-red-500 print:text-red-700'} text-sm`) + tCell(`${f.margemLucro.toFixed(1)}%`, `text-right font-black ${f.margemLucro >= 0 ? 'text-indigo-400 print:text-indigo-700' : 'text-red-400 print:text-red-700'} text-sm`))).join('');
             } else if (state.reportActiveKpi.startsWith('status_')) {
                 const targetStatusMap = { 'status_aprovado': '✅ Aprovado', 'status_aguardando': 'Aguardando Início', 'status_execucao': 'Em Execução', 'status_finalizado': 'Finalizado' };
                 const targetStatus = targetStatusMap[state.reportActiveKpi];
                 kpiTitle = `Funil: ${tStatus(targetStatus).replace('✅ ', '')}`;
-                sRows = enrichedProjects.filter(({p}) => p.status === targetStatus).map(({p, f}) => `<tr onclick="window.goToProject('${p.id}')" class="cursor-pointer border-b border-white/5 print:border-slate-100 text-[10px] sm:text-xs text-left text-slate-300 print:text-slate-800 hover:bg-white/10 transition-colors"><td class="p-3 sm:p-4 font-bold text-slate-400 print:text-slate-500">${p.numeroProposta || '-'} / ${p.numeroInvoice || '-'}</td><td class="p-3 sm:p-4 font-black uppercase text-white print:text-black"><div class="flex flex-col"><span>${p.cliente || ''}</span><span class="text-[8px] sm:text-[9px] font-bold text-slate-500 print:text-slate-400 mt-0.5">${tStatus(p.status)}</span></div></td><td class="p-3 sm:p-4 font-bold text-slate-300 print:text-slate-600">${p.vendedor?.split('@')[0] || ''}</td><td class="p-3 sm:p-4 text-right font-black text-slate-100 print:text-slate-800 text-sm">${formatCurr(p.valorTotal)}</td></tr>`).join('');
-                specificTableHTML = `<table class="w-full"><thead class="bg-black/20 print:bg-slate-100 border-b border-white/5 print:border-slate-200 print:bg-transparent"><tr class="font-black uppercase text-[8px] sm:text-[9px] text-slate-400 print:text-slate-500 text-left tracking-widest"><th class="p-3 sm:p-4">${window.t('prop_inv')}</th><th class="p-3 sm:p-4">${window.t('f_client')}</th><th class="p-3 sm:p-4">${window.t('f_seller')}</th><th class="p-3 sm:p-4 text-right">${window.t('f_gross')}</th></tr></thead><tbody>${sRows || `<tr><td colspan="4" class="p-6 text-center text-slate-500 text-xs italic">Nenhuma obra nesta etapa.</td></tr>`}</tbody></table>`;
+                cols = [{lbl: window.t('prop_inv')}, {lbl: window.t('f_client')}, {lbl: window.t('f_seller')}, {lbl: window.t('f_gross'), cls: 'text-right'}];
+                sRows = enrichedProjects.filter(({p}) => p.status === targetStatus).map(({p, f}) => tRow(p, tCell(p.vendedor?.split('@')[0] || '', 'font-bold text-slate-300 print:text-slate-800') + tCell(formatCurr(p.valorTotal), 'text-right font-black text-slate-100 print:text-slate-900 text-sm'))).join('');
             }
-
-            bottomHTML = `<div class="mt-8 mb-10 animate-fade-in"><div class="flex justify-between items-center mb-5 border-b-2 border-white/5 print:border-slate-100 pb-3"><h3 class="text-base sm:text-lg font-black uppercase tracking-tighter text-indigo-400 print:text-indigo-600 flex items-center gap-2"><i data-lucide="layout-list" class="w-5 h-5"></i> ${kpiTitle}</h3><button onclick="window.printKpiReport()" class="hidden sm:inline-flex items-center gap-2 text-slate-800 bg-white hover:bg-slate-200 transition-all font-black text-[10px] uppercase tracking-widest px-4 py-2 rounded-xl shadow-md no-print force-dark-bg"><i data-lucide="printer" class="w-3.5 h-3.5"></i> ${window.t('print_view')}</button></div><div class="overflow-x-auto print:overflow-visible border border-white/5 print:border-slate-200 rounded-2xl print:border-none shadow-sm">${specificTableHTML}</div></div>`;
-        }
-
-        let companyFiltersHTML = '';
-        if (state.userPerms.smart && state.userPerms.hvac) {
-            companyFiltersHTML = `<div class="flex gap-2 sm:gap-3 mt-4 sm:mt-0 no-print flex-wrap" id="report-unit-filters"><button onclick="window.selectUnit('Smart Home')" class="unit-pill unit-pill-btn ${state.company === 'Smart Home' ? 'active':''} force-dark-bg">SMART HOME</button><button onclick="window.selectUnit('HVAC')" class="unit-pill unit-pill-btn ${state.company === 'HVAC' ? 'active':''} force-dark-bg">HVAC</button><button onclick="window.selectUnit('Ambas')" class="unit-pill unit-pill-btn ${state.company === 'Ambas' ? 'active':''} force-dark-bg" data-i18n="filter_both">${window.t('filter_both')}</button></div>`;
+            specificTableHTML = `<table class="w-full"><thead class="bg-black/20 print:bg-slate-100 border-b border-white/5 print:border-slate-300"><tr class="font-black uppercase text-[8px] sm:text-[9px] text-slate-400 print:text-slate-700 text-left tracking-widest">${tHead(cols)}</tr></thead><tbody>${sRows || `<tr><td colspan="${cols.length}" class="p-6 text-center text-slate-500 print:text-slate-600 text-xs italic">${window.t('no_active_works')}</td></tr>`}</tbody></table>`;
+            bottomHTML = `<div class="mt-8 mb-10 animate-fade-in"><div class="flex justify-between items-center mb-5 border-b-2 border-white/5 print:border-slate-300 pb-3"><h3 class="text-base sm:text-lg font-black uppercase tracking-tighter text-indigo-400 flex items-center gap-2"><i data-lucide="layout-list" class="w-5 h-5"></i> ${kpiTitle}</h3><button onclick="window.printKpiReport()" class="hidden sm:inline-flex items-center gap-2 text-slate-800 bg-white hover:bg-slate-200 transition-all font-black text-[10px] uppercase tracking-widest px-4 py-2 rounded-xl shadow-md no-print force-dark-bg"><i data-lucide="printer" class="w-3.5 h-3.5"></i> ${window.t('print_view')}</button></div><div class="overflow-x-auto border border-white/5 print:border-slate-300 rounded-2xl shadow-sm">${specificTableHTML}</div></div>`;
         }
 
         out.innerHTML = `
-            <div class="glass p-6 sm:p-12 rounded-[50px] shadow-2xl border border-white/5 text-left print:bg-white print:border-none print:shadow-none print:p-0 animate-fade-in force-dark-bg">
-                <div class="flex flex-col md:flex-row justify-between items-start md:items-center border-b-[8px] border-white/10 pb-8 mb-8 print:border-b-2 print:border-slate-300 gap-4">
+            <div class="glass p-6 sm:p-12 rounded-[50px] shadow-2xl border border-white/5 text-left animate-fade-in force-dark-bg print:bg-transparent print:border-none print:shadow-none">
+                <div class="flex flex-col md:flex-row justify-between items-start md:items-center border-b-[8px] border-white/10 pb-8 mb-8 gap-4 print:border-b-2 print:border-slate-300">
                     <div class="flex flex-col sm:flex-row items-start sm:items-center gap-4 sm:gap-6">
-                        <div class="logo-frame-sm p-3 rounded-2xl print:border-none print:p-0 bg-white shadow-lg"><img src="logo-D2-Group-preto.png" class="h-10 sm:h-14" onerror="this.onerror=null; this.src='https://via.placeholder.com/150x40?text=D2+Group'"></div>
-                        ${companyFiltersHTML}
+                        <div class="logo-frame-sm p-3 rounded-2xl bg-white shadow-lg print:shadow-none print:border-none"><img src="logo-D2-Group-preto.png" class="h-10 sm:h-14" onerror="this.onerror=null; this.src='https://via.placeholder.com/150x40?text=D2+Group'"></div>
+                        <div class="flex gap-2 sm:gap-3 no-print flex-wrap" id="report-unit-filters">
+                            ${state.userPerms.smart ? `<button onclick="window.selectUnit('Smart Home')" class="unit-pill unit-pill-btn ${state.company === 'Smart Home' ? 'active':''} force-dark-bg">SMART HOME</button>` : ''}
+                            ${state.userPerms.hvac ? `<button onclick="window.selectUnit('HVAC')" class="unit-pill unit-pill-btn ${state.company === 'HVAC' ? 'active':''} force-dark-bg">HVAC</button>` : ''}
+                            ${(state.userPerms.smart && state.userPerms.hvac) ? `<button onclick="window.selectUnit('Ambas')" class="unit-pill unit-pill-btn ${state.company === 'Ambas' ? 'active':''} force-dark-bg" data-i18n="filter_both">${window.t('filter_both')}</button>` : ''}
+                        </div>
                     </div>
                     <div class="text-left md:text-right w-full md:w-auto mt-4 md:mt-0">
-                        <h2 class="text-2xl sm:text-3xl font-black uppercase tracking-tighter text-white force-white-text print:text-slate-900">${reportTitle}</h2>
-                        <p class="text-slate-400 font-black uppercase text-xs tracking-widest mt-1">${window.t('date')}: ${new Date().toLocaleDateString(state.lang === 'pt' ? 'pt-BR' : 'en-US')}</p>
+                        <h2 class="text-2xl sm:text-3xl font-black uppercase tracking-tighter text-white print:text-slate-900 force-white-text">${reportTitle}</h2>
+                        <p class="text-slate-400 print:text-slate-600 font-black uppercase text-xs tracking-widest mt-1">${window.t('date')}: ${new Date().toLocaleDateString(state.lang === 'pt' ? 'pt-BR' : 'en-US')}</p>
                     </div>
                 </div>
-                <div class="bg-black/20 print:bg-transparent p-6 sm:p-10 rounded-[40px] shadow-inner text-slate-200 print:p-0 print:shadow-none border border-white/5 print:border-none">
+                <div class="bg-black/20 p-6 sm:p-10 rounded-[40px] shadow-inner text-slate-200 border border-white/5 print:bg-transparent print:border-none print:p-0 print:shadow-none">
                     ${ceoDashHTML}
                     <div id="dynamic-report-content">${bottomHTML}</div>
-                    ${state.reportActiveKpi === 'overview' ? `<div class="mt-12 pt-8 border-t-4 border-white/10 print:border-slate-100 flex justify-center no-print"><button onclick="window.printReport()" class="flex items-center gap-3 text-white force-white-text bg-slate-800 hover:bg-slate-700 transition-all font-black text-sm uppercase tracking-widest px-8 py-4 rounded-2xl shadow-xl hover:-translate-y-1"><i data-lucide="printer" class="w-5 h-5"></i> ${window.t('print_full_rep')}</button></div>` : ''}
+                    ${state.reportActiveKpi === 'overview' ? `<div class="mt-12 pt-8 border-t-4 border-white/10 print:border-slate-300 flex justify-center no-print"><button onclick="window.printReport()" class="flex items-center gap-3 text-white force-white-text bg-slate-800 hover:bg-slate-700 transition-all font-black text-sm uppercase tracking-widest px-8 py-4 rounded-2xl shadow-xl hover:-translate-y-1"><i data-lucide="printer" class="w-5 h-5"></i> ${window.t('print_full_rep')}</button></div>` : ''}
                 </div>
             </div>`;
         try { lucide.createIcons(); } catch {}
-    };
+    }
+    window.renderReport = renderReport;
 
     onAuthStateChanged(auth, (u) => {
         state.user = u; applyThemeConfig(); 
