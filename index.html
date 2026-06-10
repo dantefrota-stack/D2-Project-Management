@@ -1226,9 +1226,34 @@
     window.toggleArchive = async (id, currentArchivedStatus) => {
         if (!state.userPerms.tab_proj) return;
         try {
+            const project = state.projects.find(x => x.id === id);
             const action = currentArchivedStatus ? "Desarquivou" : "Arquivou";
-            await updateDoc(doc(db, 'artifacts', appId, 'public', 'data', 'projects', id), { archived: !currentArchivedStatus });
-            const projectMeta = getProjectLogMeta(state.projects.find(x => x.id === id));
+            const payload = { archived: !currentArchivedStatus, updatedAt: serverTimestamp() };
+
+            if (!currentArchivedStatus && project) {
+                const audit = getProjectSalesAudit(project, new Date());
+                if (audit.excludedFromSalesReport) {
+                    const ok = confirm(state.lang === 'pt'
+                        ? 'Esta obra não possui recebimentos, comissão paga ou conclusão registrada. Ao arquivar, ela será tratada como CANCELADA / NÃO REALIZADA e ficará fora dos totais do relatório de vendas. Deseja continuar?'
+                        : 'This project has no receipts, paid commission, or completion date. If archived, it will be treated as CANCELED / NOT REALIZED and excluded from sales report totals. Continue?');
+                    if (!ok) return;
+                    payload.commercialStatus = 'cancelled_no_movement';
+                    payload.archivedReason = state.lang === 'pt' ? 'Cancelada / não realizada' : 'Canceled / not realized';
+                } else {
+                    payload.commercialStatus = 'realized_or_completed';
+                    payload.archivedReason = project?.status === 'Finalizado'
+                        ? (state.lang === 'pt' ? 'Finalizada e arquivada' : 'Finished and archived')
+                        : (state.lang === 'pt' ? 'Arquivada com movimento financeiro' : 'Archived with financial movement');
+                }
+            }
+
+            if (currentArchivedStatus) {
+                payload.commercialStatus = '';
+                payload.archivedReason = '';
+            }
+
+            await updateDoc(doc(db, 'artifacts', appId, 'public', 'data', 'projects', id), payload);
+            const projectMeta = getProjectLogMeta(project);
             logAccess(state.user.email, `${action} a obra ID: ${id}`, projectMeta);
             if (state.focusedProject === id) window.closeProjectDetails();
         } catch (e) { console.error(e); }
@@ -3248,6 +3273,54 @@
 
     
 
+    function getProjectSalesAudit(project, periodEnd) {
+        const end = periodEnd instanceof Date ? periodEnd : toDateOnly(periodEnd);
+        let receivedToEnd = 0;
+        let releasedToEnd = 0;
+        let paidToEnd = 0;
+
+        (Array.isArray(project?.recebimentos) ? project.recebimentos : []).forEach(receipt => {
+            const dt = toDateOnly(receipt?.data);
+            if (!dt || (end && dt > end)) return;
+            receivedToEnd = roundMoney(receivedToEnd + Number(receipt?.valor || 0));
+            releasedToEnd = roundMoney(releasedToEnd + getReceiptCommissionValue(receipt, project));
+        });
+
+        normalizePaymentEntries(project?.pagamentosEfetuados || []).forEach(payment => {
+            const dt = toDateOnly(payment?.data);
+            if (!dt || (end && dt > end)) return;
+            paidToEnd = roundMoney(paidToEnd + Number(payment?.valor || 0));
+        });
+
+        const hasFinancialMovement = receivedToEnd > 0.009 || releasedToEnd > 0.009 || paidToEnd > 0.009;
+        const isFinished = project?.status === 'Finalizado';
+        const isArchived = project?.archived === true;
+        const commercialStatus = String(project?.commercialStatus || '').toLowerCase();
+        const explicitCancel = ['cancelled_no_movement', 'cancelled', 'canceled', 'nao_realizada', 'não_realizada', 'not_realized'].includes(commercialStatus);
+        const inferredNoMovement = isArchived && !hasFinancialMovement && !isFinished;
+        const excludedFromSalesReport = !hasFinancialMovement && (explicitCancel || inferredNoMovement);
+
+        return {
+            receivedToEnd,
+            releasedToEnd,
+            paidToEnd,
+            hasFinancialMovement,
+            isFinished,
+            isArchived,
+            excludedFromSalesReport,
+            reason: excludedFromSalesReport
+                ? (state.lang === 'pt' ? 'Arquivada sem movimento financeiro' : 'Archived without financial movement')
+                : ''
+        };
+    }
+
+    function getReportCountLabel(count, singularPt, pluralPt, singularEn, pluralEn) {
+        const isPt = state.lang === 'pt';
+        if (isPt) return `${count} ${count === 1 ? singularPt : pluralPt}`;
+        return `${count} ${count === 1 ? singularEn : pluralEn}`;
+    }
+
+
 function getSellerCommissionPeriodReport(projects, startStr, endStr) {
         const start = toDateOnly(startStr);
         const end = toDateOnly(endStr);
@@ -3267,13 +3340,25 @@ function getSellerCommissionPeriodReport(projects, startStr, endStr) {
             totalReceivedPeriod: 0,
             totalReceivedToEnd: 0,
             activeProjects: 0,
-            archivedProjects: 0
+            archivedProjects: 0,
+            excludedProjects: 0,
+            excludedWorkValue: 0,
+            excludedRows: []
         };
         if (!start || !end) return result;
 
         const sellersMap = new Map();
 
         projects.forEach(project => {
+            const salesAudit = getProjectSalesAudit(project, end);
+            if (salesAudit.excludedFromSalesReport) {
+                const workValue = roundMoney(Number(project?.valorTotal || 0));
+                result.excludedProjects += 1;
+                result.excludedWorkValue = roundMoney(result.excludedWorkValue + workValue);
+                result.excludedRows.push({ project, totalWorkValue: workValue, reason: salesAudit.reason });
+                return;
+            }
+
             const sellerEmail = project?.vendedor || 'sem-vendedor';
             const sellerName = getUserDisplayName(project?.vendedor, state.lang === 'pt' ? 'Sem vendedor' : 'No seller');
             if (!sellersMap.has(sellerEmail)) {
@@ -3473,8 +3558,8 @@ function getSellerCommissionPeriodReport(projects, startStr, endStr) {
         const monthNames = state.lang === 'en' ? ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'] : ['Jan','Fev','Mar','Abr','Mai','Jun','Jul','Ago','Set','Out','Nov','Dez'];
 
         const periodTerms = isPT ? {
-            title: 'Relatório de vendas do vendedor',
-            subtitle: 'Apuração mensal por obra iniciada no período, mostrando valor do contrato, comissão já paga ao vendedor e saldo de comissão em aberto.',
+            title: 'Relatório de vendas confirmadas do vendedor',
+            subtitle: 'Apuração mensal por obra válida iniciada no período. Obras arquivadas sem recebimento, comissão ou conclusão ficam fora do total para evitar distorção.',
             paid: 'Comissão paga no período',
             released: 'Comissão liberada no período',
             pending: 'Em aberto no fim do período',
@@ -3517,8 +3602,8 @@ function getSellerCommissionPeriodReport(projects, startStr, endStr) {
             activeLabel: 'Ativa',
             archivedLabel: 'Arquivada'
         } : {
-            title: 'Seller sales report',
-            subtitle: 'Monthly breakdown of projects started in the selected period, showing gross contract value, commission already paid and open commission balance.',
+            title: 'Confirmed seller sales report',
+            subtitle: 'Monthly breakdown of valid projects started in the period. Archived projects without receipts, commission or completion are excluded from totals to avoid distortion.',
             paid: 'Commission paid in period',
             released: 'Commission released in period',
             pending: 'Open by period end',
@@ -3697,7 +3782,7 @@ function getSellerCommissionPeriodReport(projects, startStr, endStr) {
                 <div class="kpi-card rounded-2xl p-4 border border-indigo-500/20 print:bg-transparent print:border-slate-200"><p class="text-[10px] font-black uppercase tracking-[0.2em] text-indigo-400 mb-2">${periodTerms.workValue}</p><p class="text-xl sm:text-2xl font-black text-indigo-300 print:text-indigo-700">${formatCurr(commissionPeriod.totalWorkValue)}</p></div>
                 <div class="kpi-card rounded-2xl p-4 border border-emerald-500/20 print:bg-transparent print:border-slate-200"><p class="text-[10px] font-black uppercase tracking-[0.2em] text-emerald-400 mb-2">${periodTerms.paid}</p><p class="text-xl sm:text-2xl font-black text-emerald-300 print:text-emerald-700">${formatCurr(commissionPeriod.totalPaidPeriod)}</p></div>
                 <div class="kpi-card rounded-2xl p-4 border border-amber-500/20 print:bg-transparent print:border-slate-200"><p class="text-[10px] font-black uppercase tracking-[0.2em] text-amber-400 mb-2">${periodTerms.pending}</p><p class="text-xl sm:text-2xl font-black text-amber-300 print:text-amber-700">${formatCurr(commissionPeriod.totalPendingEnd)}</p></div>
-                <div class="kpi-card rounded-2xl p-4 border border-fuchsia-500/20 print:bg-transparent print:border-slate-200"><p class="text-[10px] font-black uppercase tracking-[0.2em] text-fuchsia-400 mb-2">${periodTerms.projectsInReport}</p><p class="text-xl sm:text-2xl font-black text-white print:text-slate-900">${commissionPeriod.totalProjects}</p><p class="text-[10px] font-black mt-2 tracking-wide print:text-slate-600" style="color:#cbd5e1;">${commissionPeriod.activeProjects} ${commissionPeriod.activeProjects === 1 ? periodTerms.activeLabel.toLowerCase() : (state.lang === 'pt' ? 'ativas' : 'active')} • ${commissionPeriod.archivedProjects} ${commissionPeriod.archivedProjects === 1 ? periodTerms.archivedLabel.toLowerCase() : (state.lang === 'pt' ? 'arquivadas' : 'archived')}</p></div>
+                <div class="kpi-card rounded-2xl p-4 border border-fuchsia-500/20 print:bg-transparent print:border-slate-200"><p class="text-[10px] font-black uppercase tracking-[0.2em] text-fuchsia-400 mb-2">${periodTerms.projectsInReport}</p><p class="text-xl sm:text-2xl font-black text-white print:text-slate-900">${commissionPeriod.totalProjects}</p><p class="text-[10px] font-black mt-2 tracking-wide print:text-slate-600" style="color:#cbd5e1;">${getReportCountLabel(commissionPeriod.activeProjects, 'ativa', 'ativas', 'active', 'active')} • ${getReportCountLabel(commissionPeriod.archivedProjects, 'arquivada', 'arquivadas', 'archived', 'archived')}</p>${commissionPeriod.excludedProjects ? `<p class="text-[9px] font-black mt-1 tracking-wide text-amber-300 print:text-amber-700">${state.lang === 'pt' ? 'Excluídas sem movimento' : 'Excluded no movement'}: ${commissionPeriod.excludedProjects} • ${formatCurr(commissionPeriod.excludedWorkValue)}</p>` : ''}</div>
             </div>`;
 
         const singleSellerReport = !!selectedReportSeller;
@@ -4133,7 +4218,7 @@ function getSellerCommissionPeriodReport(projects, startStr, endStr) {
 
             try {
                 if (id) { await updateDoc(doc(db, 'artifacts', appId, 'public', 'data', 'projects', id), d); logAccess(state.user.email, `Editou a obra: ${getProjectDisplayName(d)}`, { projectId: id, projectName: getProjectDisplayName(d), projectInvoice: String(d.numeroInvoice || '').trim(), projectProposal: String(d.numeroProposta || '').trim() }); } 
-                else { const createdRef = await addDoc(collection(db, 'artifacts', appId, 'public', 'data', 'projects'), { ...d, archived: false, createdAt: serverTimestamp(), pagamentosEfetuados: [], recebimentos: [], despesas: [] }); logAccess(state.user.email, `Registrou nova obra: ${getProjectDisplayName(d)}`, { projectId: createdRef.id, projectName: getProjectDisplayName(d), projectInvoice: String(d.numeroInvoice || '').trim(), projectProposal: String(d.numeroProposta || '').trim() }); }
+                else { const createdRef = await addDoc(collection(db, 'artifacts', appId, 'public', 'data', 'projects'), { ...d, archived: false, commercialStatus: 'active', createdAt: serverTimestamp(), pagamentosEfetuados: [], recebimentos: [], despesas: [] }); logAccess(state.user.email, `Registrou nova obra: ${getProjectDisplayName(d)}`, { projectId: createdRef.id, projectName: getProjectDisplayName(d), projectInvoice: String(d.numeroInvoice || '').trim(), projectProposal: String(d.numeroProposta || '').trim() }); }
                 e.target.reset(); document.getElementById('edit-id').value = ''; document.getElementById('f-vendedor').value = auth.currentUser.email; window.showView('projects');
             } catch (err) { console.error(err); }
         };
