@@ -1484,8 +1484,8 @@
     function getProjectSellerPaymentAlert(project) {
         const fin = getFin(project);
         return {
-            hasPending: fin.commLiberada > 0.009 && fin.balance > 0.009,
-            amount: roundMoney(Math.max(0, fin.balance))
+            hasPending: Number(fin?.dueNow || 0) > 0.009,
+            amount: roundMoney(Math.max(0, Number(fin?.dueNow || 0)))
         };
     }
 
@@ -1577,7 +1577,7 @@
             metric(isPt ? 'Saldo Cliente a Receber' : 'Client Outstanding', formatCurr(fin?.clientOutstanding || 0), Number(fin?.clientOutstanding || 0) > 0 ? 'warn' : ''),
             metric(isPt ? 'Comissão Projetada' : 'Projected Commission', formatCurr(fin?.commTotalProjetada || 0), '', true),
             metric(isPt ? 'Pago ao Vendedor' : 'Seller Paid', formatCurr(fin?.totalPaid || 0), '', true),
-            metric(isPt ? 'Comissão futura sobre saldo' : 'Future commission on balance', formatCurr(fin?.commissionFuturePotential ?? fin?.commRemainingProjected ?? 0), Number(fin?.commissionFuturePotential ?? fin?.commRemainingProjected ?? 0) > 0 ? 'warn' : '', true),
+            metric(isPt ? 'Comissão futura após adiantamentos' : 'Future commission after advances', formatCurr(fin?.futureCommissionAfterAdvance ?? fin?.commissionFuturePotential ?? fin?.commRemainingProjected ?? 0), Number(fin?.futureCommissionAfterAdvance ?? fin?.commissionFuturePotential ?? fin?.commRemainingProjected ?? 0) > 0 ? 'warn' : '', true),
             metric(isPt ? '% do Budget Usado' : '% Budget Used', budgetDefined ? `${Number(fin?.budgetSpentPerc || 0).toFixed(1)}%` : '—', budgetDefined && Number(fin?.budgetSpentPerc || 0) >= 100 ? 'negative' : ''),
             metric(isPt ? 'Lucro Atual' : 'Current Profit', formatCurr(fin?.lucroBruto || 0), Number(fin?.lucroBruto || 0) >= 0 ? 'positive' : 'negative'),
             metric(isPt ? 'Margem Atual' : 'Current Margin', `${Number(fin?.margemLucro || 0).toFixed(1)}%`, Number(fin?.margemLucro || 0) >= 0 ? 'positive' : 'negative')
@@ -1680,18 +1680,21 @@
         const released = roundMoney(Number(fin?.commLiberada || 0));
         const paid = roundMoney(Number(fin?.totalPaid || 0));
         const releasedPaidAmount = roundMoney(Math.min(paid, released));
-        const currentDue = roundMoney(Math.max(0, Number(fin?.balance || 0)));
-        const overpaidAmount = roundMoney(Math.max(0, -Number(fin?.balance || 0)));
+        const currentDue = roundMoney(Number(fin?.dueNow ?? Math.max(0, Number(fin?.balance || 0))));
+        const advanceCredit = roundMoney(Number(fin?.advanceCredit || 0));
+        const overpaidAmount = roundMoney(Number(fin?.overpaidBeyondProjected ?? Math.max(0, paid - released - Number(fin?.commissionFuturePotential || 0))));
         const clientOutstanding = roundMoney(Math.max(0, Number(project?.valorTotal || 0) - Number(fin?.totalRecebido || 0)));
         const futureCommissionPotential = roundMoney(Number(fin?.commissionFuturePotential ?? fin?.commRemainingProjected ?? 0));
+        const futureCommissionAfterAdvance = roundMoney(Number(fin?.futureCommissionAfterAdvance ?? Math.max(0, futureCommissionPotential - advanceCredit)));
+        const advanceAvailable = roundMoney(Number(fin?.advanceAvailable ?? Math.max(0, released + futureCommissionPotential - paid)));
         const cardFeeReduction = roundMoney(Number(fin?.commissionCardFeeReduction || 0));
-        // Compatibility alias: projectedRemaining now excludes card-fee reductions.
-        const projectedRemaining = futureCommissionPotential;
+        // Compatibility alias: projectedRemaining now represents only what may still need payment after advances.
+        const projectedRemaining = futureCommissionAfterAdvance;
         const releasedPaidPerc = released > 0 ? Math.min(100, Math.floor((releasedPaidAmount / released) * 100)) : 0;
         const eligibleTotal = roundMoney(released + futureCommissionPotential);
         const overallPaidPerc = eligibleTotal > 0 ? Math.min(100, Math.floor((Math.min(paid, eligibleTotal) / eligibleTotal) * 100)) : 0;
-        const remainingToPayTotal = roundMoney(currentDue + futureCommissionPotential);
-        return { projectedTotal, released, paid, releasedPaidAmount, currentDue, overpaidAmount, projectedRemaining, futureCommissionPotential, cardFeeReduction, clientOutstanding, releasedPaidPerc, overallPaidPerc, remainingToPayTotal };
+        const remainingToPayTotal = roundMoney(currentDue + futureCommissionAfterAdvance);
+        return { projectedTotal, released, paid, releasedPaidAmount, currentDue, advanceCredit, advanceAvailable, overpaidAmount, projectedRemaining, futureCommissionPotential, futureCommissionAfterAdvance, cardFeeReduction, clientOutstanding, releasedPaidPerc, overallPaidPerc, remainingToPayTotal };
     }
 
     function getCommissionStatusPresentation(project, finOverride = null) {
@@ -1706,6 +1709,10 @@
             toneClass = 'border-blue-500/30 bg-blue-500/10';
             headlineClass = 'text-blue-300';
             headline = window.t('commission_review_status');
+        } else if (data.advanceCredit > 0.009) {
+            toneClass = 'border-cyan-500/30 bg-cyan-500/10';
+            headlineClass = 'text-cyan-300';
+            headline = state.lang === 'pt' ? 'Adiantamento ativo' : 'Active advance';
         } else if (data.currentDue > 0.009) {
             toneClass = 'border-gold/30 bg-gold/10';
             headlineClass = 'text-gold';
@@ -1736,16 +1743,20 @@
             parts.push(isPT
                 ? `${formatCurr(data.currentDue)} está liberado e deve ser pago agora ao vendedor.`
                 : `${formatCurr(data.currentDue)} is released and payable to the seller now.`);
+        } else if (data.advanceCredit > 0.009) {
+            parts.push(isPT
+                ? `${formatCurr(data.advanceCredit)} está registrado como adiantamento e será compensado pelas próximas liberações.`
+                : `${formatCurr(data.advanceCredit)} is recorded as an advance and will be offset by future releases.`);
         } else if (data.released > 0.009 && data.overpaidAmount <= 0.009) {
             parts.push(isPT
                 ? 'Toda a comissão já liberada está quitada.'
                 : 'All commission released so far has been settled.');
         }
 
-        if (data.futureCommissionPotential > 0.009) {
+        if (data.futureCommissionAfterAdvance > 0.009) {
             parts.push(isPT
-                ? `Até ${formatCurr(data.futureCommissionPotential)} ainda poderá ser liberado sobre os ${formatCurr(data.clientOutstanding)} que o cliente deve. O valor final pode diminuir se a futura parcela for paga com cartão.`
-                : `Up to ${formatCurr(data.futureCommissionPotential)} may still be released on the client's ${formatCurr(data.clientOutstanding)} outstanding balance. The final amount may be lower if a future installment is paid by card.`);
+                ? `Até ${formatCurr(data.futureCommissionAfterAdvance)} ainda poderá precisar ser pago sobre os ${formatCurr(data.clientOutstanding)} que o cliente deve. O valor final pode diminuir se a futura parcela for paga com cartão.`
+                : `Up to ${formatCurr(data.futureCommissionAfterAdvance)} may still need to be paid on the client's ${formatCurr(data.clientOutstanding)} outstanding balance. The final amount may be lower if a future installment is paid by card.`);
         }
 
         if (data.cardFeeReduction > 0.009) {
@@ -1761,12 +1772,17 @@
         const p = state.projects.find(x => x.id === projectId);
         if (!p) return null;
         const f = getFin(p);
-        const payments = Array.isArray(draftPayments) ? draftPayments : (Array.isArray(p?.pagamentosEfetuados) ? p.pagamentosEfetuados : []);
+        const payments = Array.isArray(draftPayments) ? normalizePaymentEntries(draftPayments) : normalizePaymentEntries(p?.pagamentosEfetuados || []);
         const draftTotalPaid = roundMoney(payments.reduce((a, c) => a + Number(c?.valor || 0), 0));
         const draftBalance = roundMoney(f.commLiberada - draftTotalPaid);
         const remainingToPay = roundMoney(Math.max(0, draftBalance));
-        const overpaidAmount = roundMoney(Math.max(0, -draftBalance));
-        return { ...f, draftTotalPaid, draftBalance, remainingToPay, overpaidAmount };
+        const projectedCommissionCap = roundMoney(Number(f.commLiberada || 0) + Number(f.commissionFuturePotential || 0));
+        const advanceCredit = roundMoney(Math.max(0, Math.min(draftTotalPaid - Number(f.commLiberada || 0), Number(f.commissionFuturePotential || 0))));
+        const overpaidAmount = roundMoney(Math.max(0, draftTotalPaid - projectedCommissionCap));
+        const advanceAvailable = roundMoney(Math.max(0, projectedCommissionCap - draftTotalPaid));
+        const futureCommissionAfterAdvance = roundMoney(Math.max(0, Number(f.commissionFuturePotential || 0) - advanceCredit));
+        const declaredAdvanceTotal = roundMoney(payments.filter(pay => isAdvanceCommissionPayment(pay)).reduce((sum, pay) => sum + Number(pay?.valor || 0), 0));
+        return { ...f, payments, draftTotalPaid, draftBalance, remainingToPay, projectedCommissionCap, advanceCredit, overpaidAmount, advanceAvailable, futureCommissionAfterAdvance, declaredAdvanceTotal };
     }
 
     function getReceiptDraftSummary(projectId, draftReceipts = null) {
@@ -1782,23 +1798,35 @@
     }
 
 
+    function isAdvanceCommissionPayment(pay) {
+        const kind = String(pay?.tipo || pay?.paymentType || '').toLowerCase();
+        return pay?.isAdvance === true || pay?.adiantado === true || kind === 'adiantamento' || kind === 'advance';
+    }
+
     function normalizePaymentEntries(payments = []) {
-        return (Array.isArray(payments) ? payments : []).map(pay => ({
-            ...pay,
-            id: pay?.id || crypto.randomUUID(),
-            valor: roundMoney(Number(pay?.valor || 0))
-        }));
+        return (Array.isArray(payments) ? payments : []).map(pay => {
+            const isAdvance = isAdvanceCommissionPayment(pay);
+            return {
+                ...pay,
+                id: pay?.id || crypto.randomUUID(),
+                valor: roundMoney(Number(pay?.valor || 0)),
+                tipo: isAdvance ? 'adiantamento' : (pay?.tipo || 'comissao'),
+                isAdvance
+            };
+        });
     }
 
     function buildCommissionExpenseFromPayment(pay, project) {
         const sellerLabel = getUserDisplayName(project?.vendedor, state.lang === 'pt' ? 'Vendedor' : 'Seller');
+        const isAdvance = isAdvanceCommissionPayment(pay);
         return {
             id: `auto-commission-${pay.id}`,
             data: pay?.data || new Date().toISOString().split('T')[0],
-            descricao: `${state.lang === 'pt' ? 'Comissão paga' : 'Commission paid'} - ${sellerLabel}`,
+            descricao: `${state.lang === 'pt' ? (isAdvance ? 'Adiantamento de comissão' : 'Comissão paga') : (isAdvance ? 'Commission advance' : 'Commission paid')} - ${sellerLabel}`,
             categoria: 'Comissões',
             valor: roundMoney(Number(pay?.valor || 0)),
             autoType: 'commission_payment',
+            paymentType: isAdvance ? 'advance' : 'regular',
             autoGenerated: true,
             linkedPaymentId: pay.id,
             adicionadoPor: pay?.adicionadoPor || state.user?.email || '',
@@ -1856,7 +1884,7 @@
         if (!summary || !receiptSummary) return;
 
         const isPT = state.lang === 'pt';
-        const isSettled = summary.commLiberada > 0 && summary.remainingToPay <= 0.009;
+        const isSettled = summary.commLiberada > 0 && summary.remainingToPay <= 0.009 && summary.overpaidAmount <= 0.009;
         const noReleasedCommission = summary.commLiberada <= 0.009;
         const hasPayments = state.editingPayments.payments.length > 0;
         const projectName = getProjectDisplayName(project);
@@ -1880,6 +1908,15 @@
             nextValueLabel = isPT ? 'Excesso lançado' : 'Over recorded';
             nextValueDisplay = '+ ' + formatCurr(summary.overpaidAmount);
             helperStateText = isPT ? 'Revise os lançamentos abaixo antes de salvar para evitar pagamento indevido.' : 'Review the entries below before saving to avoid an incorrect payment.';
+        } else if (summary.advanceCredit > 0.009) {
+            statusTitle = isPT ? 'Adiantamento registrado' : 'Advance recorded';
+            statusDesc = isPT ? `${formatCurr(summary.advanceCredit)} foi pago antes da liberação final e será compensado pelos próximos recebimentos do cliente.` : `${formatCurr(summary.advanceCredit)} was paid before final release and will be offset by future client receipts.`;
+            statusChipClass = 'border-cyan-500/30 bg-cyan-500/10';
+            statusDotClass = 'bg-cyan-400';
+            statusTextClass = 'text-cyan-300';
+            nextValueLabel = isPT ? 'Adiantamento ativo' : 'Active advance';
+            nextValueDisplay = formatCurr(summary.advanceCredit);
+            helperStateText = isPT ? 'Este pagamento já entrou como despesa e ficará identificado nos logs como adiantamento de comissão.' : 'This payment is already included as an expense and is identified in the logs as a commission advance.';
         } else if (isSettled) {
             const commissionProgress = getCommissionProgressData(project, summary);
             const hasFutureRelease = commissionProgress.projectedRemaining > 0.009;
@@ -1981,7 +2018,7 @@
                             <p class="text-[10px] font-black uppercase tracking-widest text-cyan-300/80">${window.t('comm_remaining_projected')}</p>
                             ${renderInfoMiniButton(isPT ? 'Comissão potencial sobre saldo do cliente' : 'Potential commission on client balance', isPT ? 'Estimativa máxima sobre o saldo ainda não pago pelo cliente. Se a futura parcela for paga com cartão, o valor elegível será reduzido pela taxa de 3%.' : 'Maximum estimate on the client unpaid balance. If a future installment is paid by card, the eligible amount will be reduced by the 3% fee.')}
                         </div>
-                        <p class="text-xl font-black text-cyan-300">${formatCurr(summary.commissionFuturePotential)}</p>
+                        <p class="text-xl font-black text-cyan-300">${formatCurr(summary.futureCommissionAfterAdvance)}</p>
                     </div>
                     <div class="rounded-2xl border border-rose-500/20 bg-rose-500/10 p-4">
                         <div class="flex items-center justify-between gap-3 mb-1">
@@ -1992,15 +2029,16 @@
                     </div>
                 </div>
 
-                <div class="mt-4 rounded-[26px] border ${summary.overpaidAmount > 0.009 ? 'border-blue-500/30 bg-blue-500/10' : 'border-gold/20 bg-gold/10'} ${exactDuePulseClass} p-5">
+                <div ${summary.overpaidAmount <= 0.009 && ((summary.remainingToPay > 0.009 && state.userPerms.fin) || (summary.advanceCredit <= 0.009 && summary.advanceAvailable > 0.009 && state.isSuperAdmin)) ? `onclick="window.confirmCommissionPayment('${project.id}', '${summary.remainingToPay > 0.009 ? 'due' : 'advance'}')" role="button" tabindex="0"` : ''} class="mt-4 rounded-[26px] border ${summary.overpaidAmount > 0.009 ? 'border-blue-500/30 bg-blue-500/10' : (summary.advanceCredit > 0.009 ? 'border-cyan-500/30 bg-cyan-500/10' : 'border-gold/20 bg-gold/10')} ${exactDuePulseClass} p-5 ${summary.overpaidAmount <= 0.009 && ((summary.remainingToPay > 0.009 && state.userPerms.fin) || (summary.advanceCredit <= 0.009 && summary.advanceAvailable > 0.009 && state.isSuperAdmin)) ? 'cursor-pointer hover:-translate-y-0.5 hover:border-cyan-400/60 transition-all' : ''}">
                     <div class="flex flex-col gap-4">
                         <div class="flex flex-col lg:flex-row lg:items-end lg:justify-between gap-4">
                             <div class="min-w-0 flex-1">
                                 <div class="flex items-center gap-3 mb-2">
-                                    <p class="text-[10px] font-black uppercase tracking-widest ${summary.overpaidAmount > 0.009 ? 'text-blue-300' : 'text-gold'}">${window.t('pay_exact_due')}</p>
+                                    <p class="text-[10px] font-black uppercase tracking-widest ${summary.overpaidAmount > 0.009 ? 'text-blue-300' : (summary.advanceCredit > 0.009 ? 'text-cyan-300' : 'text-gold')}">${summary.remainingToPay > 0.009 ? window.t('pay_exact_due') : (summary.advanceCredit > 0.009 ? (isPT ? 'Adiantamento registrado' : 'Advance recorded') : (summary.advanceAvailable > 0.009 ? (isPT ? 'Adiantamento disponível' : 'Advance available') : window.t('pay_exact_due')))}</p>
                                     ${renderInfoMiniButton(isPT ? 'Saldo exato a pagar' : 'Exact amount due', exactDueInfo)}
                                 </div>
-                                <p class="text-3xl sm:text-4xl font-black ${summary.overpaidAmount > 0.009 ? 'text-blue-300' : 'text-gold'}">${summary.overpaidAmount > 0.009 ? '+ ' + formatCurr(summary.overpaidAmount) : formatCurr(summary.remainingToPay)}</p>
+                                <p class="text-3xl sm:text-4xl font-black ${summary.overpaidAmount > 0.009 ? 'text-blue-300' : (summary.advanceCredit > 0.009 ? 'text-cyan-300' : 'text-gold')}">${summary.overpaidAmount > 0.009 ? '+ ' + formatCurr(summary.overpaidAmount) : (summary.advanceCredit > 0.009 ? formatCurr(summary.advanceCredit) : formatCurr(summary.remainingToPay > 0.009 ? summary.remainingToPay : summary.advanceAvailable))}</p>
+                                ${summary.overpaidAmount <= 0.009 && ((summary.remainingToPay > 0.009 && state.userPerms.fin) || (summary.advanceCredit <= 0.009 && summary.advanceAvailable > 0.009 && state.isSuperAdmin)) ? `<p class="mt-2 text-[10px] font-black uppercase tracking-widest text-cyan-300/80">${isPT ? 'Clique para confirmar e registrar' : 'Click to confirm and record'}</p>` : ''}
                                 <p class="text-sm mt-2 ${statusTextClass}">${statusDesc}</p>
                             </div>
                             <div class="lg:max-w-[320px]">
@@ -2020,8 +2058,11 @@
         `;
 
         const paymentsHtml = hasPayments
-            ? state.editingPayments.payments.map((pay, i) => `
-                <div class="rounded-2xl border border-white/10 bg-white/5 p-4 shadow-inner">
+            ? state.editingPayments.payments.map((pay, i) => {
+                const isAdvance = isAdvanceCommissionPayment(pay);
+                return `
+                <div class="rounded-2xl border ${isAdvance ? 'border-cyan-500/25 bg-cyan-500/5' : 'border-white/10 bg-white/5'} p-4 shadow-inner">
+                    ${isAdvance ? `<div class="mb-3 flex items-center justify-between gap-3"><span class="inline-flex items-center gap-2 rounded-full border border-cyan-500/25 bg-cyan-500/10 px-3 py-1 text-[10px] font-black uppercase tracking-widest text-cyan-300"><i data-lucide="fast-forward" class="w-3.5 h-3.5"></i>${isPT ? 'Adiantamento' : 'Advance'}</span><span class="text-[10px] font-bold text-slate-500">${isPT ? 'Pago antes da liberação final' : 'Paid before final release'}</span></div>` : ''}
                     <div class="grid grid-cols-1 md:grid-cols-[1fr_1fr_auto] gap-4 items-end">
                         <label class="block">
                             <span class="text-[10px] font-black uppercase tracking-widest text-slate-500 mb-2 block">${isPT ? 'Data do pagamento' : 'Payment date'}</span>
@@ -2036,7 +2077,7 @@
                         </button>
                     </div>
                 </div>
-            `).join('')
+            `;}).join('')
             : `
                 <div class="rounded-2xl border border-dashed border-white/10 bg-black/20 px-5 py-8 text-center">
                     <p class="text-sm font-black uppercase tracking-widest text-slate-400 mb-2">${window.t('no_payments')}</p>
@@ -2044,10 +2085,13 @@
                 </div>
             `;
 
-        const canAddPayment = !noReleasedCommission && summary.remainingToPay > 0.009;
+        const canAddPayment = summary.remainingToPay > 0.009;
+        const canAdvancePayment = state.isSuperAdmin && summary.remainingToPay <= 0.009 && summary.advanceAvailable > 0.009 && summary.overpaidAmount <= 0.009;
         const addButton = canAddPayment
             ? `<button onclick="window.addNewPaymentToEdit()" class="w-full p-4 mt-2 rounded-2xl border border-gold/30 bg-gold/10 text-gold font-black uppercase tracking-widest hover:bg-gold/15 hover:border-gold/50 transition-all shadow-[0_12px_30px_-18px_rgba(251,191,36,0.7)]">+ ${window.t('pay_add_remaining')}</button>`
-            : `<div class="rounded-2xl border border-white/10 bg-white/5 px-5 py-4 text-center text-sm text-slate-400">${isSettled ? (summary.commRemainingProjected > 0.009 ? getCommissionContextNote(project, summary) : (isPT ? 'Nenhum pagamento adicional disponível. Comissão já quitada.' : 'No additional payment available. Commission is already settled.')) : noReleasedCommission ? (isPT ? 'Aguardando liberação de comissão para habilitar novos pagamentos.' : 'Waiting for commission release to enable new payments.') : summary.overpaidAmount > 0.009 ? (isPT ? 'Corrija o excesso lançado antes de adicionar um novo pagamento.' : 'Correct the over recorded amount before adding a new payment.') : (isPT ? 'Nenhum novo pagamento sugerido no momento.' : 'No new payment suggested at this time.')}</div>`;
+            : canAdvancePayment
+                ? `<button onclick="window.addAdvancePaymentToEdit()" class="w-full p-4 mt-2 rounded-2xl border border-cyan-500/30 bg-cyan-500/10 text-cyan-300 font-black uppercase tracking-widest hover:bg-cyan-500/15 hover:border-cyan-500/50 transition-all shadow-[0_12px_30px_-18px_rgba(34,211,238,0.55)]"><span class="inline-flex items-center gap-2"><i data-lucide="fast-forward" class="w-4 h-4"></i>${isPT ? `Registrar adiantamento de ${formatCurr(summary.advanceAvailable)}` : `Record advance of ${formatCurr(summary.advanceAvailable)}`}</span></button>`
+                : `<div class="rounded-2xl border border-white/10 bg-white/5 px-5 py-4 text-center text-sm text-slate-400">${summary.advanceCredit > 0.009 ? (isPT ? `${formatCurr(summary.advanceCredit)} já está registrado como adiantamento e será compensado pelas próximas liberações.` : `${formatCurr(summary.advanceCredit)} is recorded as an advance and will be offset by future releases.`) : isSettled ? (summary.futureCommissionAfterAdvance > 0.009 ? getCommissionContextNote(project, summary) : (isPT ? 'Nenhum pagamento adicional disponível. Comissão já quitada.' : 'No additional payment available. Commission is already settled.')) : noReleasedCommission ? (isPT ? 'Aguardando liberação de comissão para habilitar novos pagamentos.' : 'Waiting for commission release to enable new payments.') : summary.overpaidAmount > 0.009 ? (isPT ? 'Corrija o excesso lançado antes de adicionar um novo pagamento.' : 'Correct the over recorded amount before adding a new payment.') : (isPT ? 'Nenhum novo pagamento sugerido no momento.' : 'No new payment suggested at this time.')}</div>`;
 
         container.innerHTML = paymentsHtml + `<div class="space-y-4 mt-4">${addButton}</div>`;
         try { lucide.createIcons(); } catch {}
@@ -2068,33 +2112,145 @@
     window.addNewPaymentToEdit = () => {
         if (!state.editingPayments) return;
         const summary = getPaymentDraftSummary(state.editingPayments.projectId, state.editingPayments.payments);
-        if (!summary || summary.commLiberada <= 0.009 || summary.remainingToPay <= 0.009) {
+        if (!summary || summary.remainingToPay <= 0.009) {
             window.renderPaymentEditList();
             return;
         }
-        state.editingPayments.payments.push({ id: crypto.randomUUID(), data: new Date().toISOString().split('T')[0], valor: summary.remainingToPay, adicionadoPor: state.user?.email || '', criadoEm: new Date().toISOString() });
+        state.editingPayments.payments.push({ id: crypto.randomUUID(), data: new Date().toISOString().split('T')[0], valor: summary.remainingToPay, tipo: 'comissao', isAdvance: false, adicionadoPor: state.user?.email || '', criadoEm: new Date().toISOString() });
         window.renderPaymentEditList();
     };
+
+    window.addAdvancePaymentToEdit = () => {
+        if (!state.isSuperAdmin || !state.editingPayments) return;
+        const summary = getPaymentDraftSummary(state.editingPayments.projectId, state.editingPayments.payments);
+        const project = state.projects.find(x => x.id === state.editingPayments.projectId);
+        if (!summary || !project || summary.advanceAvailable <= 0.009 || summary.remainingToPay > 0.009 || summary.overpaidAmount > 0.009) {
+            window.renderPaymentEditList();
+            return;
+        }
+        const sellerName = getUserDisplayName(project?.vendedor, state.lang === 'pt' ? 'Vendedor' : 'Seller');
+        const message = state.lang === 'pt'
+            ? `Confirmar o adiantamento de ${formatCurr(summary.advanceAvailable)} para ${sellerName}, pela ${getCompanyDisplayName(project?.empresa)}? O valor será pago antes da liberação final, entrará como despesa e será compensado pelos próximos recebimentos do cliente. Se a futura parcela for paga com cartão, poderá existir ajuste pela taxa de 3%.`
+            : `Confirm the ${formatCurr(summary.advanceAvailable)} advance to ${sellerName} from ${getCompanyDisplayName(project?.empresa)}? It will be paid before final release, recorded as an expense and offset by future client receipts. If a future installment is paid by card, a 3% fee adjustment may be required.`;
+        window.showModal(state.lang === 'pt' ? 'Confirmar adiantamento' : 'Confirm advance', message, 'confirm', () => {
+            state.editingPayments.payments.push({
+                id: crypto.randomUUID(),
+                data: new Date().toISOString().split('T')[0],
+                valor: summary.advanceAvailable,
+                tipo: 'adiantamento',
+                isAdvance: true,
+                adiantado: true,
+                commissionEligibleAtPayment: roundMoney(summary.commLiberada),
+                clientOutstandingAtPayment: roundMoney(summary.clientOutstanding),
+                adicionadoPor: state.user?.email || '',
+                criadoEm: new Date().toISOString()
+            });
+            window.renderPaymentEditList();
+        });
+    };
+
     window.saveEditedPayments = async () => {
         if (!state.editingPayments) return;
         const project = state.projects.find(x => x.id === state.editingPayments.projectId);
         const summary = getPaymentDraftSummary(state.editingPayments.projectId, state.editingPayments.payments);
-        if (summary && summary.draftTotalPaid > summary.commLiberada + 0.009) {
-            window.showModal(window.t('pay_block_over_title'), window.t('pay_block_over_msg'), 'error');
+        if (!project || !summary) return;
+        if (summary.draftTotalPaid > summary.projectedCommissionCap + 0.009) {
+            window.showModal(window.t('pay_block_over_title'), state.lang === 'pt' ? `O total lançado ultrapassa a comissão máxima estimada do projeto (${formatCurr(summary.projectedCommissionCap)}).` : `The recorded total exceeds the project's estimated maximum commission (${formatCurr(summary.projectedCommissionCap)}).`, 'error');
             return;
         }
-        if (!project) return;
+        const excessOverReleased = roundMoney(Math.max(0, summary.draftTotalPaid - summary.commLiberada));
+        if (excessOverReleased > 0.009) {
+            if (!state.isSuperAdmin) {
+                window.showModal(window.t('modal_access_denied'), state.lang === 'pt' ? 'Somente o Super Admin pode registrar pagamento antes da liberação da comissão.' : 'Only the Super Admin can record payment before commission release.', 'error');
+                return;
+            }
+            if (summary.declaredAdvanceTotal + 0.009 < excessOverReleased) {
+                window.showModal(state.lang === 'pt' ? 'Identificação obrigatória' : 'Identification required', state.lang === 'pt' ? 'O valor pago antes da liberação precisa ser criado pelo botão Registrar adiantamento para ficar corretamente identificado nos logs e relatórios.' : 'The amount paid before release must be created with the Record advance button so it is correctly identified in logs and reports.', 'error');
+                return;
+            }
+        }
         const { normalizedPayments, syncedExpenses } = buildSyncedCommissionExpensePayload(project, state.editingPayments.payments);
+        const advanceTotal = roundMoney(normalizedPayments.filter(pay => isAdvanceCommissionPayment(pay)).reduce((sum, pay) => sum + Number(pay?.valor || 0), 0));
         try {
             await updateDoc(doc(db, 'artifacts', appId, 'public', 'data', 'projects', state.editingPayments.projectId), {
                 pagamentosEfetuados: normalizedPayments,
                 despesas: syncedExpenses
             });
-            logAccess(state.user?.email, `Salvou pagamentos do vendedor: ${getProjectDisplayName(project)}`, getProjectLogMeta(project));
+            const logMessage = advanceTotal > 0.009
+                ? `Salvou pagamentos do vendedor com adiantamento de ${formatCurr(advanceTotal)}: ${getProjectDisplayName(project)}`
+                : `Salvou pagamentos do vendedor: ${getProjectDisplayName(project)}`;
+            logAccess(state.user?.email, logMessage, { ...getProjectLogMeta(project), paymentType: advanceTotal > 0.009 ? 'commission_advance' : 'commission_payment', advanceAmount: advanceTotal });
             window.closeEditPaymentModal();
         } catch (e) {
             window.showModal(window.t('error'), 'Erro ao salvar pagamentos: ' + e.message, 'error');
         }
+    };
+
+    window.confirmCommissionPayment = (projectId, mode = 'auto') => {
+        const project = state.projects.find(x => x.id === projectId);
+        if (!project || !state.userPerms.fin) return;
+        const usesDraft = state.editingPayments?.projectId === projectId;
+        const summary = usesDraft
+            ? getPaymentDraftSummary(projectId, state.editingPayments.payments)
+            : getPaymentDraftSummary(projectId, project?.pagamentosEfetuados || []);
+        if (!summary) return;
+        const dueNow = roundMoney(Number(summary.remainingToPay || 0));
+        const advanceAvailable = roundMoney(Number(summary.advanceAvailable || 0));
+        const shouldAdvance = mode === 'advance' || (mode === 'auto' && dueNow <= 0.009 && advanceAvailable > 0.009);
+        const amount = shouldAdvance ? advanceAvailable : dueNow;
+        if (amount <= 0.009) {
+            window.showModal(state.lang === 'pt' ? 'Nenhum valor disponível' : 'No amount available', state.lang === 'pt' ? 'Não existe valor disponível para registrar neste momento.' : 'There is no amount available to record at this time.', 'info');
+            return;
+        }
+        if (shouldAdvance && !state.isSuperAdmin) {
+            window.showModal(window.t('modal_access_denied'), state.lang === 'pt' ? 'Somente o Super Admin pode antecipar comissão antes do recebimento do cliente.' : 'Only the Super Admin can advance commission before client payment.', 'error');
+            return;
+        }
+        const sellerName = getUserDisplayName(project?.vendedor, state.lang === 'pt' ? 'Vendedor' : 'Seller');
+        const companyName = getCompanyDisplayName(project?.empresa);
+        const title = shouldAdvance ? (state.lang === 'pt' ? 'Confirmar adiantamento' : 'Confirm advance') : (state.lang === 'pt' ? 'Confirmar pagamento' : 'Confirm payment');
+        const message = shouldAdvance
+            ? (state.lang === 'pt'
+                ? `Registrar ${formatCurr(amount)} como adiantamento de comissão para ${sellerName}, com saída da ${companyName}? O lançamento será feito com a data de hoje, entrará nas despesas e será compensado pelas próximas comissões liberadas. Se o cliente pagar a futura parcela com cartão, o sistema poderá indicar ajuste pela taxa de 3%.`
+                : `Record ${formatCurr(amount)} as a commission advance to ${sellerName}, paid by ${companyName}? It will use today's date, be included in expenses and offset future released commission. If the client later pays by card, the system may indicate a 3% fee adjustment.`)
+            : (state.lang === 'pt'
+                ? `Registrar o pagamento de ${formatCurr(amount)} para ${sellerName}, com saída da ${companyName}, usando a data de hoje?`
+                : `Record a ${formatCurr(amount)} payment to ${sellerName}, paid by ${companyName}, using today's date?`);
+        window.showModal(title, message, 'confirm', async () => {
+            try {
+                const payment = {
+                    id: crypto.randomUUID(),
+                    data: new Date().toISOString().split('T')[0],
+                    valor: amount,
+                    tipo: shouldAdvance ? 'adiantamento' : 'comissao',
+                    isAdvance: shouldAdvance,
+                    adiantado: shouldAdvance,
+                    commissionEligibleAtPayment: roundMoney(summary.commLiberada || 0),
+                    clientOutstandingAtPayment: roundMoney(summary.clientOutstanding || 0),
+                    adicionadoPor: state.user?.email || '',
+                    criadoEm: new Date().toISOString(),
+                    origem: 'quick_commission_action'
+                };
+                const currentPayments = usesDraft ? normalizePaymentEntries(state.editingPayments.payments || []) : normalizePaymentEntries(project?.pagamentosEfetuados || []);
+                const updatedPayments = [...currentPayments, payment];
+                const { normalizedPayments, syncedExpenses } = buildSyncedCommissionExpensePayload(project, updatedPayments);
+                await updateDoc(doc(db, 'artifacts', appId, 'public', 'data', 'projects', projectId), {
+                    pagamentosEfetuados: normalizedPayments,
+                    despesas: syncedExpenses
+                });
+                logAccess(state.user?.email,
+                    shouldAdvance
+                        ? `Registrou adiantamento de comissão de ${formatCurr(amount)} para ${sellerName}: ${getProjectDisplayName(project)}`
+                        : `Registrou pagamento de comissão de ${formatCurr(amount)} para ${sellerName}: ${getProjectDisplayName(project)}`,
+                    { ...getProjectLogMeta(project), paymentType: shouldAdvance ? 'commission_advance' : 'commission_payment', amount, sellerName, payingCompany: companyName }
+                );
+                window.closeEditPaymentModal();
+                setTimeout(() => window.showModal(state.lang === 'pt' ? 'Pagamento registrado' : 'Payment recorded', shouldAdvance ? (state.lang === 'pt' ? `${formatCurr(amount)} foi registrado como adiantamento de comissão.` : `${formatCurr(amount)} was recorded as a commission advance.`) : (state.lang === 'pt' ? `${formatCurr(amount)} foi registrado como pagamento de comissão.` : `${formatCurr(amount)} was recorded as a commission payment.`), 'info'), 180);
+            } catch (error) {
+                console.error('Erro ao registrar comissão:', error);
+                setTimeout(() => window.showModal(window.t('error'), (state.lang === 'pt' ? 'Não foi possível registrar o pagamento: ' : 'Unable to record payment: ') + (error?.message || error), 'error'), 180);
+            }
+        });
     };
 
     window.openEditRecModal = (projectId) => {
@@ -2605,12 +2761,20 @@
         const balance = roundMoney(commLiberada - totalPaid);
         const clientOutstanding = roundMoney(Math.max(0, valorTotal - totalRecebido));
         const commissionFuturePotential = roundMoney(Math.max(0, clientOutstanding * percComissao));
+        const projectedCommissionCap = roundMoney(commLiberada + commissionFuturePotential);
+        const dueNow = roundMoney(Math.max(0, balance));
+        const advanceCredit = roundMoney(Math.max(0, Math.min(totalPaid - commLiberada, commissionFuturePotential)));
+        const overpaidBeyondProjected = roundMoney(Math.max(0, totalPaid - projectedCommissionCap));
+        const advanceAvailable = roundMoney(Math.max(0, projectedCommissionCap - totalPaid));
+        const futureCommissionAfterAdvance = roundMoney(Math.max(0, commissionFuturePotential - advanceCredit));
+        const advancePaidTotal = roundMoney(pays.filter(pay => isAdvanceCommissionPayment(pay)).reduce((sum, pay) => sum + Number(pay?.valor || 0), 0));
         // Legacy field kept for compatibility, but now represents only genuine future commission
         // tied to unpaid client balance (not card-fee deductions).
         const commRemainingProjected = commissionFuturePotential;
         
         let statusColor = "bg-red-500";
-        if (balance < 0) statusColor = "bg-blue-500"; 
+        if (overpaidBeyondProjected > 0.009) statusColor = "bg-blue-500";
+        else if (advanceCredit > 0.009) statusColor = "bg-cyan-500";
         else if (balance === 0 && commLiberada > 0) statusColor = "bg-emerald-500";
         else if (totalPaid > 0) statusColor = "bg-orange-500"; 
 
@@ -2628,7 +2792,7 @@
         const budgetRemaining = roundMoney((Number(orcamento) || 0) - totalDespesas);
         const budgetSpentPerc = Number(orcamento) > 0 ? (totalDespesas / Number(orcamento)) * 100 : 0;
 
-        return { baseProjetada, commTotalProjetada, commGrossContract, commGrossOnReceived, commissionCardFeeReduction, commissionFuturePotential, totalRecebido, commLiberada, totalPaid, balance, clientOutstanding, commRemainingProjected, statusColor, globalIsCC, orcamento, totalDespesas, lucroBruto, margemLucro, gastosPorCategoria, budgetRemaining, budgetSpentPerc, despesasMetricas: despesas };
+        return { baseProjetada, commTotalProjetada, commGrossContract, commGrossOnReceived, commissionCardFeeReduction, commissionFuturePotential, projectedCommissionCap, futureCommissionAfterAdvance, advanceAvailable, advanceCredit, advancePaidTotal, overpaidBeyondProjected, dueNow, totalRecebido, commLiberada, totalPaid, balance, clientOutstanding, commRemainingProjected, statusColor, globalIsCC, orcamento, totalDespesas, lucroBruto, margemLucro, gastosPorCategoria, budgetRemaining, budgetSpentPerc, despesasMetricas: despesas };
     }
 
     window.renderProjects = () => {
@@ -2726,9 +2890,39 @@
                     : (scheduleAlert.isDueSoon ? renderAlertChip(window.t('timeline_due_soon'), 'amber', true) : ''));
             const timelineWrapClass = (scheduleAlert.isLate || scheduleAlert.isDueSoon) ? 'timeline-alert-pulse rounded-2xl p-3 -mx-3' : '';
 
-            let balText = state.lang === 'pt' ? 'A PAGAR AGORA' : 'DUE NOW'; let balColor = "text-red-400"; let balDisplay = formatCurr(f.balance);
-            if (f.balance < 0) { balText = window.t('balance_over'); balColor = "text-blue-400"; balDisplay = "+ " + formatCurr(Math.abs(f.balance)); } 
-            else if (f.balance === 0) { balText = window.t('balance_paid'); balColor = "text-emerald-400"; }
+            let balText = state.lang === 'pt' ? 'A PAGAR AGORA' : 'DUE NOW';
+            let balColor = "text-red-400";
+            let balDisplay = formatCurr(f.dueNow || 0);
+            let balTone = 'due';
+            let commissionQuickMode = '';
+            if (f.overpaidBeyondProjected > 0.009) {
+                balText = window.t('balance_over');
+                balColor = "text-blue-400";
+                balDisplay = "+ " + formatCurr(f.overpaidBeyondProjected);
+                balTone = 'over';
+            } else if (f.advanceCredit > 0.009) {
+                balText = state.lang === 'pt' ? 'ADIANTAMENTO REGISTRADO' : 'ADVANCE RECORDED';
+                balColor = "text-cyan-300";
+                balDisplay = formatCurr(f.advanceCredit);
+                balTone = 'advance';
+            } else if (f.dueNow > 0.009) {
+                commissionQuickMode = 'due';
+            } else if (f.advanceAvailable > 0.009 && state.isSuperAdmin) {
+                balText = state.lang === 'pt' ? 'ADIANTAR COMISSÃO' : 'ADVANCE COMMISSION';
+                balColor = "text-cyan-300";
+                balDisplay = formatCurr(f.advanceAvailable);
+                balTone = 'advance-available';
+                commissionQuickMode = 'advance';
+            } else {
+                balText = window.t('balance_paid');
+                balColor = "text-emerald-400";
+                balDisplay = formatCurr(0);
+                balTone = 'paid';
+            }
+            const balBorderClass = balTone === 'due' ? 'border-red-500/35 bg-red-500/10' : balTone === 'over' ? 'border-blue-500/35 bg-blue-500/10' : (balTone === 'advance' || balTone === 'advance-available') ? 'border-cyan-500/35 bg-cyan-500/10' : 'border-emerald-500/35 bg-emerald-500/10';
+            const balTextClass = balTone === 'due' ? 'text-red-300' : balTone === 'over' ? 'text-blue-300' : (balTone === 'advance' || balTone === 'advance-available') ? 'text-cyan-300' : 'text-emerald-300';
+            const balActionAttrs = commissionQuickMode ? `onclick="window.confirmCommissionPayment('${p.id}', '${commissionQuickMode}')" role="button" tabindex="0"` : '';
+            const balActionClass = commissionQuickMode ? 'cursor-pointer hover:-translate-y-0.5 hover:shadow-[0_18px_45px_-28px_rgba(34,211,238,0.8)] transition-all' : '';
 
             let clientPaidPerc = p.valorTotal > 0 ? Math.floor((f.totalRecebido / p.valorTotal) * 100) : 0; if (clientPaidPerc > 100) clientPaidPerc = 100;
             const commissionStatus = getCommissionStatusPresentation(p, f);
@@ -2764,11 +2958,12 @@
                                         <p class="text-[10px] font-black uppercase tracking-[0.2em] text-slate-500 print:text-slate-600 mb-2">${window.t('paid_seller')}</p>
                                         <p class="text-3xl sm:text-4xl font-black tracking-tight text-white print:text-slate-900">${formatCurr(f.totalPaid)}</p>
                                     </div>
-                                    <div class="rounded-2xl border px-5 py-5 ${f.balance > 0.009 ? 'border-red-500/35 bg-red-500/10' : (f.balance < -0.009 ? 'border-blue-500/35 bg-blue-500/10' : 'border-emerald-500/35 bg-emerald-500/10')} print:bg-white print:border-slate-300">
+                                    <div ${balActionAttrs} class="rounded-2xl border px-5 py-5 ${balBorderClass} ${balActionClass} print:bg-white print:border-slate-300">
                                         <div class="flex flex-col sm:flex-row sm:items-start sm:justify-between gap-3">
                                             <div>
-                                                <p class="text-[10px] font-black uppercase tracking-[0.2em] ${f.balance > 0.009 ? 'text-red-300' : (f.balance < -0.009 ? 'text-blue-300' : 'text-emerald-300')} print:text-slate-600 mb-2">${balText}</p>
-                                                <p class="text-3xl sm:text-4xl font-black tracking-tight ${f.balance > 0.009 ? 'text-red-400' : (f.balance < -0.009 ? 'text-blue-400' : 'text-emerald-400')} print:text-slate-900">${balDisplay}</p>
+                                                <p class="text-[10px] font-black uppercase tracking-[0.2em] ${balTextClass} print:text-slate-600 mb-2">${balText}</p>
+                                                <p class="text-3xl sm:text-4xl font-black tracking-tight ${balColor} print:text-slate-900">${balDisplay}</p>
+                                                ${commissionQuickMode ? `<p class="mt-2 text-[9px] font-black uppercase tracking-[0.16em] text-cyan-300/80 no-print">${state.lang === 'pt' ? 'Clique para confirmar e registrar' : 'Click to confirm and record'}</p>` : ''}
                                             </div>
                                             <div class="sm:text-right">
                                                 <p class="text-[9px] font-black uppercase tracking-[0.16em] text-slate-500 print:text-slate-600">${state.lang === 'pt' ? 'Empresa pagadora' : 'Paying company'}</p>
@@ -2793,26 +2988,30 @@
                                     </div>
                                     <div>
                                         <p class="text-[9px] font-black uppercase tracking-[0.16em] text-slate-500 print:text-slate-600">${window.t('comm_remaining_projected')}</p>
-                                        <p class="mt-1 text-base sm:text-lg font-black text-slate-300 print:text-slate-900">${formatCurr(f.commissionFuturePotential)}</p>
+                                        <p class="mt-1 text-base sm:text-lg font-black text-slate-300 print:text-slate-900">${formatCurr(f.futureCommissionAfterAdvance)}</p>
                                     </div>
                                 </div>
 
                                 <div class="mt-5 rounded-xl border border-white/10 bg-black/20 px-4 py-3 text-sm font-bold text-slate-300 print:bg-slate-50 print:border-slate-200 print:text-slate-800">
-                                    ${f.balance > 0.009
+                                    ${f.dueNow > 0.009
                                         ? (state.lang === 'pt'
-                                            ? `${formatCurr(f.balance)} deve ser pago agora ao vendedor pela ${escapeInlineHtml(getCompanyDisplayName(p.empresa))}.`
-                                            : `${formatCurr(f.balance)} is due now to the seller from ${escapeInlineHtml(getCompanyDisplayName(p.empresa))}.`)
-                                        : (f.balance < -0.009
+                                            ? `${formatCurr(f.dueNow)} deve ser pago agora ao vendedor pela ${escapeInlineHtml(getCompanyDisplayName(p.empresa))}. Clique no saldo para registrar.`
+                                            : `${formatCurr(f.dueNow)} is due now to the seller from ${escapeInlineHtml(getCompanyDisplayName(p.empresa))}. Click the balance to record it.`)
+                                        : (f.overpaidBeyondProjected > 0.009
                                             ? (state.lang === 'pt'
-                                                ? `Há ${formatCurr(Math.abs(f.balance))} pago a maior. Revise antes de registrar outro pagamento.`
-                                                : `${formatCurr(Math.abs(f.balance))} was overpaid. Review before recording another payment.`)
-                                            : (f.commissionFuturePotential > 0.009
+                                                ? `Há ${formatCurr(f.overpaidBeyondProjected)} pago acima da comissão máxima estimada. Revise antes de registrar outro pagamento.`
+                                                : `${formatCurr(f.overpaidBeyondProjected)} was paid above the estimated maximum commission. Review before another payment.`)
+                                            : (f.advanceCredit > 0.009
                                                 ? (state.lang === 'pt'
-                                                    ? `A comissão já liberada está quitada. Novos valores só serão devidos após novos recebimentos do cliente.`
-                                                    : `Released commission is settled. New amounts will only become due after additional client receipts.`)
-                                                : (state.lang === 'pt'
-                                                    ? `Comissão quitada. Nenhum valor pendente ao vendedor.`
-                                                    : `Commission settled. No amount is currently due to the seller.`)))}
+                                                    ? `${formatCurr(f.advanceCredit)} está registrado como adiantamento e será compensado pelas próximas comissões liberadas.`
+                                                    : `${formatCurr(f.advanceCredit)} is recorded as an advance and will be offset by future released commission.`)
+                                                : (f.advanceAvailable > 0.009
+                                                    ? (state.lang === 'pt'
+                                                        ? `A comissão já liberada está quitada. O Super Admin pode adiantar até ${formatCurr(f.advanceAvailable)} antes do recebimento final.`
+                                                        : `Released commission is settled. The Super Admin may advance up to ${formatCurr(f.advanceAvailable)} before final client payment.`)
+                                                    : (state.lang === 'pt'
+                                                        ? `Comissão quitada. Nenhum valor pendente ao vendedor.`
+                                                        : `Commission settled. No amount is currently due to the seller.`))))}
                                 </div>
                             </div>
 
@@ -2845,7 +3044,10 @@
                                     ${state.userPerms.fin ? `<button onclick="window.openEditPaymentModal('${p.id}')" class="flex items-center gap-2 text-[10px] font-black text-white force-white-text hover:text-gold transition-colors no-print px-4 py-2 bg-slate-800 rounded-xl shadow-md border border-gold/30 force-dark-bg uppercase tracking-widest"><i data-lucide="settings-2" class="w-4 h-4"></i> ${window.t('btn_manage')}</button>` : ''}
                                 </div>
                                 <div class="max-h-60 overflow-y-auto scrollbar-hide px-2 print:max-h-none">
-                                    ${(p.pagamentosEfetuados || []).map(pay => `<div class="flex justify-between items-center text-sm sm:text-base py-4 border-b border-white/5 last:border-0 print:border-slate-200 hover:bg-white/5 rounded px-2"><span class="text-slate-300 print:text-black">${pay.data ? new Date(pay.data + 'T12:00:00').toLocaleDateString(state.lang === 'pt' ? 'pt-BR' : 'en-US') : '-'}</span><span class="font-black text-gold print:text-amber-700">- ${formatCurr(pay.valor)}</span></div>`).join('') || `<p class="text-sm italic text-slate-600 text-center py-6">${window.t('no_payments')}</p>`}
+                                    ${(p.pagamentosEfetuados || []).map(pay => {
+                                        const isAdvance = isAdvanceCommissionPayment(pay);
+                                        return `<div class="flex justify-between items-center text-sm sm:text-base py-4 border-b border-white/5 last:border-0 print:border-slate-200 hover:bg-white/5 rounded px-2 gap-3"><span class="text-slate-300 print:text-black flex items-center gap-2 flex-wrap">${pay.data ? new Date(pay.data + 'T12:00:00').toLocaleDateString(state.lang === 'pt' ? 'pt-BR' : 'en-US') : '-'}${isAdvance ? `<span class="inline-flex items-center gap-1 rounded-full border border-cyan-500/25 bg-cyan-500/10 px-2 py-1 text-[9px] font-black uppercase tracking-widest text-cyan-300 print:text-cyan-700"><i data-lucide="fast-forward" class="w-3 h-3"></i>${state.lang === 'pt' ? 'Adiantamento' : 'Advance'}</span>` : ''}</span><span class="font-black ${isAdvance ? 'text-cyan-300 print:text-cyan-700' : 'text-gold print:text-amber-700'} whitespace-nowrap">- ${formatCurr(pay.valor)}</span></div>`;
+                                    }).join('') || `<p class="text-sm italic text-slate-600 text-center py-6">${window.t('no_payments')}</p>`}
                                 </div>
                             </div>
                         </div>
