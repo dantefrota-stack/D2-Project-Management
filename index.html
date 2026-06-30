@@ -753,7 +753,7 @@
             pay_overpaid_title: "Pagamento acima do liberado", pay_overpaid_msg: "Os pagamentos lançados estão acima da comissão liberada. Revise os valores antes de salvar.",
             pay_block_over_title: "Valor acima do permitido", pay_block_over_msg: "O total dos pagamentos não pode exceder a comissão liberada.", pay_add_remaining: "Adicionar pagamento restante", pay_summary_paid: "Pago no gerenciador",
             rec_summary_gross: "Recebido bruto", rec_summary_fees: "Taxas de cartão 3%", rec_summary_net: "Base líquida elegível", rec_summary_release: "Comissão liberada",
-            rec_method_actual: "Forma real recebida", rec_method_locked: "Recebimento já registrado. Para corrigir, exclua e crie uma nova entrada.", rec_method_card_note: "Cartão deduz 3% automaticamente da base de comissão.",
+            rec_method_actual: "Forma real recebida", rec_method_locked: "Recebimento protegido. Para corrigir, exclua e crie uma nova entrada.", rec_method_admin_locked: "Recebimento protegido. Como Super Admin, use o botão Editar para corrigir este lançamento sem recriá-lo.", rec_method_admin_editing: "Modo de edição do Super Admin ativo. Revise os dados e clique em Salvar Alterações. A correção ficará registrada nos logs.", rec_edit_title: "Editar lançamento", rec_cancel_edit_title: "Cancelar edição", rec_method_card_note: "Cartão deduz 3% automaticamente da base de comissão.",
             rec_line_gross: "Bruto", rec_line_fee: "Taxa", rec_line_net: "Líquido base", rec_add_new: "Adicionar Novo Recebimento", rec_save_block: "Preencha data, valor e forma de pagamento em todas as novas entradas antes de salvar.",
             payment_summary_card_fees: "Taxas cartão (cliente)", payment_summary_net_basis: "Base líquida recebida", payment_summary_received: "Recebido do cliente", pay_pending_badge: "Pagamento pendente", timeline_due_soon: "Prazo próximo", invoice_label: "Invoice", proposal_label: "Proposta", client_outstanding: "Saldo cliente a receber", comm_remaining_projected: "Comissão restante projetada", commission_released_settled: "Liberada quitada", commission_total_paid: "Comissão total quitada", commission_due_now: "Pendente agora", commission_paid_from_released: "Pago da liberada", commission_still_to_release: "Ainda a liberar", commission_waiting_receipts: "Aguardando recebimentos", commission_future_pending: "Comissão futura estimada", commission_released_paid_label: "Liberada paga", commission_overall_paid_label: "Pago do total projetado", commission_note_released_only: "A comissão do vendedor foi quitada apenas sobre o valor já recebido do cliente.", commission_note_future_release: "Ainda restam {commission} de comissão projetada, que serão liberados conforme o cliente pagar os {client} em aberto.", commission_note_due_now: "Existe {due} de comissão liberada pendente agora e ainda {future} de comissão projetada aguardando novos recebimentos.", commission_note_waiting_receipts: "Ainda não há comissão liberada. O cliente ainda deve {client} e isso pode liberar até {commission} de comissão projetada.", client_received_label: "Recebido", client_balance_short: "Saldo a receber", commission_paid_simple: "Comissão paga", commission_to_receive_label: "Comissão a receber", commission_to_receive_short: "Comissão restante", commission_partial_status: "Parcial", commission_review_status: "Revisar pagamento", commission_due_now_short: "Pendente agora", client_received_compact: "Recebido", client_balance_compact: "Falta receber", commission_paid_compact: "Paga", commission_remaining_compact: "A receber", commission_due_now_compact: "Pendente agora"
         },
@@ -804,8 +804,8 @@
             pay_overpaid_title: "Payment above released amount", pay_overpaid_msg: "Recorded payments are above the released commission. Review the values before saving.",
             pay_block_over_title: "Amount above allowed", pay_block_over_msg: "Total payments cannot exceed the released commission.", pay_add_remaining: "Add remaining payment", pay_summary_paid: "Paid in manager",
             rec_summary_gross: "Gross received", rec_summary_fees: "Card fees 3%", rec_summary_net: "Eligible net basis", rec_summary_release: "Commission released",
-            rec_method_actual: "Actual received method", rec_method_locked: "Receipt already recorded. To correct it, delete it and create a new entry.", rec_method_card_note: "Card payments automatically deduct 3% from the commission basis.",
-            rec_line_gross: "Gross", rec_line_fee: "Fee", rec_line_net: "Net basis", rec_add_new: "Add New Receipt", rec_save_block: "Fill in date, amount, and payment method on all new entries before saving.",
+            rec_method_actual: "Actual received method", rec_method_locked: "Protected receipt. To correct it, delete it and create a new entry.", rec_method_admin_locked: "Protected receipt. As Super Admin, use the Edit button to correct this entry without recreating it.", rec_method_admin_editing: "Super Admin edit mode is active. Review the data and click Save Changes. The correction will be recorded in the audit logs.", rec_edit_title: "Edit entry", rec_cancel_edit_title: "Cancel edit", rec_method_card_note: "Card payments automatically deduct 3% from the commission basis.",
+            rec_line_gross: "Gross", rec_line_fee: "Fee", rec_line_net: "Net basis", rec_add_new: "Add New Receipt", rec_save_block: "Fill in date, amount, and payment method on all new or edited entries before saving.",
             payment_summary_card_fees: "Client card fees", payment_summary_net_basis: "Net received basis", payment_summary_received: "Client received", pay_pending_badge: "Payment pending", timeline_due_soon: "Due soon", invoice_label: "Invoice", proposal_label: "Proposal", client_outstanding: "Client outstanding", comm_remaining_projected: "Projected commission remaining", commission_released_settled: "Released portion settled", commission_total_paid: "Total commission settled", commission_due_now: "Due now", commission_paid_from_released: "Paid from released", commission_still_to_release: "Still to release", commission_waiting_receipts: "Waiting for receipts", commission_future_pending: "Estimated future commission", commission_released_paid_label: "Released paid", commission_overall_paid_label: "Paid from projected total", commission_note_released_only: "The seller commission has been fully paid only on the amount already received from the client.", commission_note_future_release: "There is still {commission} of projected commission to be released as the client pays the remaining {client}.", commission_note_due_now: "There is {due} of released commission due now and another {future} of projected commission waiting for new client receipts.", commission_note_waiting_receipts: "There is no released commission yet. The client still owes {client}, which may release up to {commission} of projected commission.", client_received_label: "Received", client_balance_short: "Balance due", commission_paid_simple: "Commission paid", commission_to_receive_label: "Commission to receive", commission_to_receive_short: "Commission remaining", commission_partial_status: "Partial", commission_review_status: "Review payment", commission_due_now_short: "Due now", client_received_compact: "Received", client_balance_compact: "To collect", commission_paid_compact: "Paid", commission_remaining_compact: "Remaining", commission_due_now_compact: "Due now"
         }
     };
@@ -2073,7 +2073,7 @@
         if (!p) return;
         state.editingRecs = {
             projectId,
-            recs: (p.recebimentos || []).map(r => ({ ...r, metodo: getReceiptEffectiveMethod(r, p), _isNew: false }))
+            recs: (p.recebimentos || []).map(r => ({ ...r, metodo: getReceiptEffectiveMethod(r, p), _isNew: false, _isEditing: false }))
         };
         logAccess(state.user?.email, `Abriu recebimentos do cliente: ${getProjectDisplayName(p)}`, getProjectLogMeta(p));
         window.renderRecEditList();
@@ -2095,9 +2095,14 @@
             const badge = getReceiptMethodBadge(method);
             const fee = getReceiptFee(r, project);
             const net = getReceiptNet(r, project);
-            const locked = !r._isNew;
+            const editingExisting = !r._isNew && !!r._isEditing;
+            const locked = !r._isNew && !editingExisting;
             const inputClass = locked ? 'opacity-60 cursor-not-allowed pointer-events-none select-none' : '';
-            const noteText = locked ? window.t('rec_method_locked') : (isCardMethod(method) ? window.t('rec_method_card_note') : (isPT ? 'Recebimento sem desconto de cartão na base de comissão.' : 'Receipt with no card fee deduction on commission basis.'));
+            const noteText = editingExisting
+                ? window.t('rec_method_admin_editing')
+                : locked
+                    ? (state.isSuperAdmin ? window.t('rec_method_admin_locked') : window.t('rec_method_locked'))
+                    : (isCardMethod(method) ? window.t('rec_method_card_note') : (isPT ? 'Recebimento sem desconto de cartão na base de comissão.' : 'Receipt with no card fee deduction on commission basis.'));
             return `
                 <div class="rounded-[24px] border ${locked ? 'border-white/10 bg-white/5' : 'border-emerald-500/20 bg-emerald-500/5'} p-4 shadow-inner">
                     <div class="flex flex-col xl:flex-row xl:items-start xl:justify-between gap-4">
@@ -2125,7 +2130,11 @@
                         <div class="xl:w-[240px] rounded-2xl border border-white/10 bg-black/20 p-4">
                             <div class="flex items-center justify-between gap-3 mb-3">
                                 <span class="inline-flex items-center rounded-xl border px-3 py-1 text-[10px] font-black uppercase tracking-widest ${badge.pill}">${badge.label}</span>
-                                <button onclick="window.removeRecFromEdit(${i})" class="p-3 bg-red-500/20 text-red-400 rounded-xl hover:bg-red-500/30 transition-colors flex items-center justify-center"><i data-lucide="trash-2" class="w-5 h-5"></i></button>
+                                <div class="flex items-center gap-2">
+                                    ${state.isSuperAdmin && locked ? `<button type="button" title="${window.t('rec_edit_title')}" aria-label="${window.t('rec_edit_title')}" onclick="window.enableRecEdit(${i})" class="p-3 bg-cyan-500/15 text-cyan-300 border border-cyan-500/20 rounded-xl hover:bg-cyan-500/25 transition-colors flex items-center justify-center"><i data-lucide="pencil" class="w-5 h-5"></i></button>` : ''}
+                                    ${state.isSuperAdmin && editingExisting ? `<button type="button" title="${window.t('rec_cancel_edit_title')}" aria-label="${window.t('rec_cancel_edit_title')}" onclick="window.cancelRecEdit(${i})" class="p-3 bg-slate-500/15 text-slate-300 border border-white/10 rounded-xl hover:bg-slate-500/25 transition-colors flex items-center justify-center"><i data-lucide="x" class="w-5 h-5"></i></button>` : ''}
+                                    <button type="button" title="${isPT ? 'Excluir lançamento' : 'Delete entry'}" aria-label="${isPT ? 'Excluir lançamento' : 'Delete entry'}" onclick="window.removeRecFromEdit(${i})" class="p-3 bg-red-500/20 text-red-400 rounded-xl hover:bg-red-500/30 transition-colors flex items-center justify-center"><i data-lucide="trash-2" class="w-5 h-5"></i></button>
+                                </div>
                             </div>
                             <div class="space-y-2 text-sm">
                                 <div class="flex justify-between gap-4"><span class="text-slate-500">${window.t('rec_line_gross')}</span><span class="font-black text-slate-200">${formatCurr(r.valor)}</span></div>
@@ -2134,7 +2143,7 @@
                             </div>
                         </div>
                     </div>
-                    <div class="mt-4 rounded-2xl border ${locked ? 'border-white/10 bg-black/20' : 'border-emerald-500/20 bg-emerald-500/10'} px-4 py-3 text-sm ${locked ? 'text-slate-400' : 'text-emerald-200'}">${noteText}</div>
+                    <div class="mt-4 rounded-2xl border ${editingExisting ? 'border-cyan-500/30 bg-cyan-500/10' : locked ? 'border-white/10 bg-black/20' : 'border-emerald-500/20 bg-emerald-500/10'} px-4 py-3 text-sm ${editingExisting ? 'text-cyan-100' : locked ? 'text-slate-400' : 'text-emerald-200'}">${noteText}</div>
                 </div>
             `;
         }).join('');
@@ -2182,12 +2191,41 @@
         container.innerHTML = emptyState + receiptsHtml + `<button onclick="window.addNewRecToEdit()" class="w-full p-4 mt-2 border-2 border-dashed border-emerald-500/30 rounded-2xl text-emerald-400 font-black uppercase tracking-widest hover:bg-emerald-500/10 transition-all">+ ${window.t('rec_add_new')}</button>`;
         try { lucide.createIcons(); } catch {}
     };
+    window.enableRecEdit = (index) => {
+        if (!state.isSuperAdmin || !state.editingRecs) return;
+        const receipt = state.editingRecs.recs[index];
+        if (!receipt || receipt._isNew) return;
+        const project = state.projects.find(x => x.id === state.editingRecs.projectId);
+        if (!receipt._original) {
+            receipt._original = {
+                data: receipt.data || '',
+                valor: roundMoney(receipt.valor || 0),
+                metodo: getReceiptEffectiveMethod(receipt, project)
+            };
+        }
+        receipt._isEditing = true;
+        window.renderRecEditList();
+    };
+    window.cancelRecEdit = (index) => {
+        if (!state.isSuperAdmin || !state.editingRecs) return;
+        const receipt = state.editingRecs.recs[index];
+        if (!receipt || receipt._isNew || !receipt._original) return;
+        receipt.data = receipt._original.data;
+        receipt.valor = receipt._original.valor;
+        receipt.metodo = receipt._original.metodo;
+        receipt._isEditing = false;
+        delete receipt._original;
+        window.renderRecEditList();
+    };
     window.updateRecField = (index, field, value) => {
         if (!state.editingRecs) return;
-        if (!state.editingRecs.recs[index]?._isNew) return;
-        if (field === 'data') state.editingRecs.recs[index].data = value;
-        if (field === 'valor') state.editingRecs.recs[index].valor = roundMoney(value || 0);
-        if (field === 'metodo') state.editingRecs.recs[index].metodo = value;
+        const receipt = state.editingRecs.recs[index];
+        if (!receipt) return;
+        const canEdit = receipt._isNew || (state.isSuperAdmin && receipt._isEditing);
+        if (!canEdit) return;
+        if (field === 'data') receipt.data = value;
+        if (field === 'valor') receipt.valor = roundMoney(value || 0);
+        if (field === 'metodo') receipt.metodo = value;
         window.renderRecEditList();
     };
     window.removeRecFromEdit = (index) => {
@@ -2203,16 +2241,44 @@
     };
     window.saveEditedRecs = async () => {
         if (!state.editingRecs) return;
-        const invalidNewEntry = state.editingRecs.recs.some(r => r._isNew && (!r.data || Number(r.valor || 0) <= 0 || !getReceiptEffectiveMethod(r)));
-        if (invalidNewEntry) {
+        const project = state.projects.find(x => x.id === state.editingRecs.projectId);
+        if (!project) return;
+        const invalidEntry = state.editingRecs.recs.some(r => (r._isNew || r._isEditing) && (!r.data || Number(r.valor || 0) <= 0 || !getReceiptEffectiveMethod(r, project)));
+        if (invalidEntry) {
             window.showModal(window.t('attention'), window.t('rec_save_block'), 'error');
             return;
         }
-        const payload = state.editingRecs.recs.map(r => ({ data: r.data || '', valor: roundMoney(r.valor || 0), metodo: getReceiptEffectiveMethod(r) }));
+        const unauthorizedEdit = state.editingRecs.recs.some(r => !r._isNew && r._isEditing && !state.isSuperAdmin);
+        if (unauthorizedEdit) {
+            window.showModal(window.t('modal_access_denied'), window.t('modal_access_denied_msg'), 'error');
+            return;
+        }
+        const editedEntries = state.editingRecs.recs.flatMap((r, index) => {
+            if (r._isNew || !r._original) return [];
+            const before = {
+                data: r._original.data || '',
+                valor: roundMoney(r._original.valor || 0),
+                metodo: r._original.metodo || ''
+            };
+            const after = {
+                data: r.data || '',
+                valor: roundMoney(r.valor || 0),
+                metodo: getReceiptEffectiveMethod(r, project)
+            };
+            const changed = before.data !== after.data || before.valor !== after.valor || normalizeMethod(before.metodo) !== normalizeMethod(after.metodo);
+            return changed ? [{ index, before, after }] : [];
+        });
+        const payload = state.editingRecs.recs.map(r => ({ data: r.data || '', valor: roundMoney(r.valor || 0), metodo: getReceiptEffectiveMethod(r, project) }));
         try {
-            const project = state.projects.find(x => x.id === state.editingRecs.projectId);
             await updateDoc(doc(db, 'artifacts', appId, 'public', 'data', 'projects', state.editingRecs.projectId), { recebimentos: payload });
-            logAccess(state.user?.email, `Salvou recebimentos do cliente: ${getProjectDisplayName(project)}`, getProjectLogMeta(project));
+            if (editedEntries.length) {
+                await Promise.all(editedEntries.map(change => logAccess(
+                    state.user?.email,
+                    `Editou recebimento do cliente: ${getProjectDisplayName(project)} | ${change.before.data} ${formatCurr(change.before.valor)} ${change.before.metodo || '-'} → ${change.after.data} ${formatCurr(change.after.valor)} ${change.after.metodo || '-'}`,
+                    getProjectLogMeta(project)
+                )));
+            }
+            await logAccess(state.user?.email, `Salvou recebimentos do cliente: ${getProjectDisplayName(project)}`, getProjectLogMeta(project));
             window.closeEditRecModal();
         } catch (e) {
             window.showModal(window.t('error'), 'Erro ao salvar: ' + e.message, 'error');
