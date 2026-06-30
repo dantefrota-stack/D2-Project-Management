@@ -200,6 +200,23 @@
             .project-print-sheet .sheet-list-value { font-weight: 900; white-space: nowrap; }
             .project-print-sheet .sheet-note { margin-top: 10px; padding: 10px 12px; border-radius: 12px; background: #f8fafc !important; border: 1px solid #e2e8f0; font-size: 11px; line-height: 1.45; color: #475569 !important; }
             .project-print-sheet .sheet-footer { margin-top: 10px; padding-top: 8px; border-top: 1px solid #cbd5e1; font-size: 10px; color: #64748b !important; display: flex; justify-content: space-between; gap: 10px; }
+            .project-print-sheet .sheet-payment-history { margin-top: 12px; }
+            .project-print-sheet .sheet-payment-summary { display: flex; align-items: center; justify-content: space-between; gap: 12px; margin-bottom: 8px; padding: 8px 10px; border: 1px solid #e2e8f0; border-radius: 10px; background: #f8fafc !important; }
+            .project-print-sheet .sheet-payment-summary-text { font-size: 10px; line-height: 1.35; color: #475569 !important; font-weight: 700; }
+            .project-print-sheet .sheet-payment-summary-total { font-size: 13px; font-weight: 900; color: #047857 !important; white-space: nowrap; }
+            .project-print-sheet .sheet-payment-table { width: 100%; border-collapse: separate; border-spacing: 0; table-layout: fixed; }
+            .project-print-sheet .sheet-payment-table th { padding: 7px 8px; border-top: 1px solid #e2e8f0; border-bottom: 1px solid #cbd5e1; background: #f8fafc !important; color: #64748b !important; font-size: 8px; font-weight: 900; text-transform: uppercase; letter-spacing: 0.12em; text-align: left; }
+            .project-print-sheet .sheet-payment-table td { padding: 8px; border-bottom: 1px solid #e2e8f0; font-size: 10px; color: #334155 !important; vertical-align: middle; }
+            .project-print-sheet .sheet-payment-table tbody tr:last-child td { border-bottom: 0; }
+            .project-print-sheet .sheet-payment-table .col-seq { width: 7%; text-align: center; }
+            .project-print-sheet .sheet-payment-table .col-date { width: 20%; }
+            .project-print-sheet .sheet-payment-table .col-type { width: 25%; }
+            .project-print-sheet .sheet-payment-table .col-value, .project-print-sheet .sheet-payment-table .col-running { width: 24%; text-align: right; font-variant-numeric: tabular-nums; white-space: nowrap; }
+            .project-print-sheet .sheet-payment-table .payment-value { font-weight: 900; color: #0f172a !important; }
+            .project-print-sheet .sheet-payment-table .payment-running { font-weight: 900; color: #047857 !important; }
+            .project-print-sheet .sheet-payment-type { display: inline-block; padding: 3px 7px; border-radius: 999px; border: 1px solid #cbd5e1; background: #ffffff !important; color: #475569 !important; font-size: 8px; font-weight: 900; text-transform: uppercase; letter-spacing: 0.08em; }
+            .project-print-sheet .sheet-payment-type.advance { border-color: #67e8f9; background: #ecfeff !important; color: #0e7490 !important; }
+            .project-print-sheet .sheet-payment-empty { padding: 14px; text-align: center; color: #64748b !important; font-size: 10px; font-style: italic; }
             .print-keep-together { break-inside: avoid-page !important; page-break-inside: avoid !important; }
             .print-break-before { break-before: page !important; page-break-before: always !important; }
             .report-table-monthly { table-layout: fixed !important; width: 100% !important; }
@@ -1563,6 +1580,43 @@
             .slice(0, 6)
             .map(([label, value]) => `<li><span class="sheet-list-label">${escapeInlineHtml(label)}</span><span class="sheet-list-value">${formatCurr(value)}</span></li>`)
             .join('');
+        const sellerPayments = normalizePaymentEntries(project?.pagamentosEfetuados || [])
+            .filter(pay => Number(pay?.valor || 0) > 0.004)
+            .sort((a, b) => {
+                const dateCompare = String(a?.data || '').localeCompare(String(b?.data || ''));
+                if (dateCompare !== 0) return dateCompare;
+                return String(a?.criadoEm || '').localeCompare(String(b?.criadoEm || ''));
+            });
+        let sellerPaymentRunningTotal = 0;
+        const sellerPaymentRows = sellerPayments.map((pay, index) => {
+            sellerPaymentRunningTotal = roundMoney(sellerPaymentRunningTotal + Number(pay?.valor || 0));
+            const isAdvance = isAdvanceCommissionPayment(pay);
+            const paymentTypeLabel = isAdvance
+                ? (isPt ? 'Adiantamento' : 'Advance')
+                : (isPt ? 'Comissão' : 'Commission');
+            return `
+                <tr>
+                    <td class="col-seq">${index + 1}</td>
+                    <td class="col-date">${formatProjectDate(pay?.data)}</td>
+                    <td class="col-type"><span class="sheet-payment-type${isAdvance ? ' advance' : ''}">${paymentTypeLabel}</span></td>
+                    <td class="col-value payment-value">${formatCurr(pay?.valor || 0)}</td>
+                    <td class="col-running payment-running">${formatCurr(sellerPaymentRunningTotal)}</td>
+                </tr>`;
+        }).join('');
+        const sellerPaymentHistoryHTML = sellerPayments.length
+            ? `<table class="sheet-payment-table">
+                    <thead>
+                        <tr>
+                            <th class="col-seq">#</th>
+                            <th class="col-date">${isPt ? 'Data' : 'Date'}</th>
+                            <th class="col-type">${isPt ? 'Tipo' : 'Type'}</th>
+                            <th class="col-value">${isPt ? 'Valor pago' : 'Amount paid'}</th>
+                            <th class="col-running">${isPt ? 'Total acumulado' : 'Running total'}</th>
+                        </tr>
+                    </thead>
+                    <tbody>${sellerPaymentRows}</tbody>
+                </table>`
+            : `<div class="sheet-payment-empty">${isPt ? 'Nenhum pagamento ao vendedor foi registrado nesta obra.' : 'No seller payment has been recorded for this project.'}</div>`;
         const metric = (label, value, tone = '', small = false) => `
             <div class="sheet-metric">
                 <span class="sheet-metric-label">${label}</span>
@@ -1638,6 +1692,16 @@
                             <li><span class="sheet-list-label">${isPt ? 'Margem atual' : 'Current margin'}</span><span class="sheet-list-value">${Number(fin?.margemLucro || 0).toFixed(1)}%</span></li>
                         </ul>
                     </div>
+                </div>
+                <div class="sheet-card sheet-payment-history">
+                    <div class="sheet-section-title">${isPt ? 'Histórico de pagamentos ao vendedor' : 'Seller payment history'}</div>
+                    <div class="sheet-payment-summary">
+                        <div class="sheet-payment-summary-text">
+                            ${sellerPayments.length} ${sellerPayments.length === 1 ? (isPt ? 'pagamento registrado' : 'payment recorded') : (isPt ? 'pagamentos registrados' : 'payments recorded')} • ${companyName}
+                        </div>
+                        <div class="sheet-payment-summary-total">${isPt ? 'Total pago' : 'Total paid'}: ${formatCurr(fin?.totalPaid || 0)}</div>
+                    </div>
+                    ${sellerPaymentHistoryHTML}
                 </div>
                 <div class="sheet-footer">
                     <span>${footerLeft}</span>
@@ -2573,6 +2637,23 @@
             .sheet-list-value { font-weight: 900; white-space: nowrap; }
             .sheet-note { margin-top: 10px; padding: 10px 12px; border-radius: 12px; background: #f8fafc; border: 1px solid #e2e8f0; font-size: 11px; line-height: 1.45; color: #475569; }
             .sheet-footer { margin-top: 10px; padding-top: 8px; border-top: 1px solid #cbd5e1; font-size: 10px; color: #64748b; display: flex; justify-content: space-between; gap: 10px; }
+            .sheet-payment-history { margin-top: 12px; }
+            .sheet-payment-summary { display: flex; align-items: center; justify-content: space-between; gap: 12px; margin-bottom: 8px; padding: 8px 10px; border: 1px solid #e2e8f0; border-radius: 10px; background: #f8fafc; }
+            .sheet-payment-summary-text { font-size: 10px; line-height: 1.35; color: #475569; font-weight: 700; }
+            .sheet-payment-summary-total { font-size: 13px; font-weight: 900; color: #047857; white-space: nowrap; }
+            .sheet-payment-table { width: 100%; border-collapse: separate; border-spacing: 0; table-layout: fixed; }
+            .sheet-payment-table th { padding: 7px 8px; border-top: 1px solid #e2e8f0; border-bottom: 1px solid #cbd5e1; background: #f8fafc; color: #64748b; font-size: 8px; font-weight: 900; text-transform: uppercase; letter-spacing: 0.12em; text-align: left; }
+            .sheet-payment-table td { padding: 8px; border-bottom: 1px solid #e2e8f0; font-size: 10px; color: #334155; vertical-align: middle; }
+            .sheet-payment-table tbody tr:last-child td { border-bottom: 0; }
+            .sheet-payment-table .col-seq { width: 7%; text-align: center; }
+            .sheet-payment-table .col-date { width: 20%; }
+            .sheet-payment-table .col-type { width: 25%; }
+            .sheet-payment-table .col-value, .sheet-payment-table .col-running { width: 24%; text-align: right; font-variant-numeric: tabular-nums; white-space: nowrap; }
+            .sheet-payment-table .payment-value { font-weight: 900; color: #0f172a; }
+            .sheet-payment-table .payment-running { font-weight: 900; color: #047857; }
+            .sheet-payment-type { display: inline-block; padding: 3px 7px; border-radius: 999px; border: 1px solid #cbd5e1; background: #ffffff; color: #475569; font-size: 8px; font-weight: 900; text-transform: uppercase; letter-spacing: 0.08em; }
+            .sheet-payment-type.advance { border-color: #67e8f9; background: #ecfeff; color: #0e7490; }
+            .sheet-payment-empty { padding: 14px; text-align: center; color: #64748b; font-size: 10px; font-style: italic; }
             @media print {
                 html, body { width: 100%; }
                 .project-print-sheet { margin: 0; }
