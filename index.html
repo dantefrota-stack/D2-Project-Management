@@ -320,6 +320,17 @@
         .compact-kpi-label { font-size:10px; font-weight:900; text-transform:uppercase; letter-spacing:.18em; color:#64748b; }
         .compact-kpi-value { font-size:clamp(1.2rem, 3.4vw, 2rem); line-height:1; font-weight:900; color:#fff; letter-spacing:-0.03em; }
         .compact-card-name { font-size:clamp(1.6rem, 4.2vw, 2.4rem); line-height:0.96; font-weight:900; text-transform:uppercase; letter-spacing:-0.04em; }
+        .compact-meta-grid { display:grid; grid-template-columns:minmax(0,1.08fr) minmax(0,.92fr); gap:.75rem; align-items:stretch; }
+        .compact-reference-card { min-width:0; overflow:hidden; }
+        .compact-reference-row { min-width:0; }
+        .compact-reference-row + .compact-reference-row { margin-top:.8rem; padding-top:.8rem; border-top:1px solid rgba(255,255,255,.06); }
+        .compact-reference-value { font-size:clamp(.9rem, 2.4vw, 1.075rem); line-height:1.22; font-weight:900; color:#f8fafc; white-space:normal; overflow-wrap:anywhere; word-break:break-word; }
+        .compact-seller-status-card { min-width:0; overflow:hidden; }
+        @media (max-width: 420px) {
+            .compact-meta-grid { grid-template-columns:minmax(0,1fr) minmax(0,.9fr); gap:.6rem; }
+            .compact-kpi-card { padding:.9rem; }
+            .compact-reference-value { font-size:.9rem; }
+        }
         .project-search-input { min-width:0; }
         @media (max-width: 639px) {
             .mobile-nav-toggle { display:inline-flex; }
@@ -3040,19 +3051,25 @@
                             <p class="compact-kpi-label mb-2">${window.t('gross_contract')}</p>
                             <p class="compact-kpi-value">${formatCurr(p.valorTotal)}</p>
                         </div>
-                        <div class="grid grid-cols-2 gap-3">
-                            <div class="compact-kpi-card">
-                                <p class="compact-kpi-label mb-2">${window.t('prop_inv')}</p>
-                                <p class="text-base sm:text-lg font-black text-slate-100 leading-tight whitespace-nowrap">${quickInvoice} <span class="text-slate-600 font-normal mx-1">|</span> ${quickProposal}</p>
-                            </div>
-                            <div class="compact-kpi-card flex flex-col justify-between">
-                                <div>
-                                    <p class="compact-kpi-label mb-2">${window.t('seller')}</p>
-                                    <p class="text-sm sm:text-base font-black text-slate-100 leading-tight truncate" title="${escapeInlineHtml(getUserDisplayName(p.vendedor, '--'))}">${escapeInlineHtml(getUserDisplayName(p.vendedor, '--'))}</p>
+                        <div class="compact-meta-grid">
+                            <div class="compact-kpi-card compact-reference-card">
+                                <div class="compact-reference-row">
+                                    <p class="compact-kpi-label mb-2">${window.t('invoice_label')}</p>
+                                    <p class="compact-reference-value">${escapeInlineHtml(quickInvoice)}</p>
                                 </div>
-                                <div class="mt-3 pt-3 border-t border-white/5">
+                                <div class="compact-reference-row">
+                                    <p class="compact-kpi-label mb-2">${window.t('proposal_label')}</p>
+                                    <p class="compact-reference-value">${escapeInlineHtml(quickProposal)}</p>
+                                </div>
+                            </div>
+                            <div class="compact-kpi-card compact-seller-status-card flex flex-col justify-between">
+                                <div class="min-w-0">
+                                    <p class="compact-kpi-label mb-2">${window.t('seller')}</p>
+                                    <p class="text-sm sm:text-base font-black text-slate-100 leading-tight break-words" title="${escapeInlineHtml(getUserDisplayName(p.vendedor, '--'))}">${escapeInlineHtml(getUserDisplayName(p.vendedor, '--'))}</p>
+                                </div>
+                                <div class="mt-3 pt-3 border-t border-white/5 min-w-0">
                                     <p class="compact-kpi-label mb-2">${window.t('status_obra')}</p>
-                                    <p class="text-base sm:text-lg font-black ${compactStatusTone} leading-tight">${p.status === 'Finalizado' ? getProjectCompletionText(p, true) : tStatus(p.status)}</p>
+                                    <p class="text-base sm:text-lg font-black ${compactStatusTone} leading-tight break-words">${p.status === 'Finalizado' ? getProjectCompletionText(p, true) : tStatus(p.status)}</p>
                                 </div>
                             </div>
                         </div>
