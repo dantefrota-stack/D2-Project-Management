@@ -655,9 +655,21 @@
 
         <div id="view-logs" class="hidden space-y-6 max-w-7xl mx-auto animate-fade-in">
             <div class="glass p-6 sm:p-8 rounded-[32px] border border-white/5">
-                <div class="flex justify-between items-center mb-6">
+                <div class="flex flex-col sm:flex-row justify-between sm:items-center gap-4 mb-5">
                     <h3 class="text-2xl font-black text-gold uppercase tracking-tighter">📋 Logs de Auditoria</h3>
-                    <button onclick="window.clearLogs()" class="text-[10px] font-bold text-red-500 hover:text-red-400 uppercase tracking-widest border border-red-500/20 px-4 py-2 rounded-xl transition-all">Limpar Histórico</button>
+                    <button onclick="window.clearLogs()" class="text-[10px] font-bold text-red-500 hover:text-red-400 uppercase tracking-widest border border-red-500/20 px-4 py-2 rounded-xl transition-all self-start sm:self-auto">Limpar Histórico</button>
+                </div>
+                <div class="grid grid-cols-1 md:grid-cols-[minmax(260px,420px)_1fr] gap-4 items-end mb-6 p-4 rounded-2xl border border-white/5 bg-black/10">
+                    <div class="text-left">
+                        <label for="logs-user-filter" class="block text-[10px] font-black uppercase tracking-[0.18em] text-slate-500 mb-2" data-i18n="logs_filter_user">Filtrar por usuário</label>
+                        <select id="logs-user-filter" onchange="window.setLogsUserFilter(this.value)" class="w-full modern-input py-3 px-4 text-sm font-bold">
+                            <option value="" data-i18n="logs_all_users">Todos os usuários</option>
+                        </select>
+                    </div>
+                    <div class="flex flex-col sm:flex-row md:justify-end gap-3 sm:items-center">
+                        <div id="logs-filter-summary" class="text-sm font-bold text-slate-400 text-left md:text-right"></div>
+                        <button id="logs-clear-filter" onclick="window.setLogsUserFilter('')" class="hidden text-[10px] font-black uppercase tracking-widest text-gold border border-gold/20 hover:border-gold/50 px-4 py-3 rounded-xl transition-all" data-i18n="logs_clear_filter">Limpar filtro</button>
+                    </div>
                 </div>
                 <div class="overflow-x-auto">
                     <table class="w-full text-left" id="logs-table">
@@ -705,7 +717,7 @@
         user: null, 
         isSuperAdmin: false,
         userPerms: { tab_proj: true, tab_new: false, tab_rep: false, fin: false, costs: false, smart: true, hvac: false, global: false },
-        projects: [], team: [], logs: [], company: 'Ambas', lang: 'pt', theme: 'dark', 
+        projects: [], team: [], logs: [], logsUserFilter: '', company: 'Ambas', lang: 'pt', theme: 'dark', 
         editingPayments: null, editingRecs: null, focusedProject: null, activeModule: null, archiveFilter: 'active',
         reportActiveKpi: 'receita', projectSellerFilter: 'all', projectSearchQuery: '', reportPeriodStart: '', reportPeriodEnd: '', reportSellerFilter: 'all', reportRangePreset: 'year', mobileNavOpen: false, currentView: 'projects' 
     };
@@ -737,7 +749,7 @@
             admin_panel: "Gestão Corporativa", nav_proj: "Projetos", nav_new: "Nova Obra", nav_rep: "Relatórios", nav_users: "Equipe", project_search_label: "Busca rápida", project_search_placeholder: "Buscar por cliente, projeto, endereço, invoice, proposta ou valor",
             form_new_title: "Registrar Obra", team_title: "Gestão de Equipe", btn_team: "Salvar e Autorizar Acesso",
             filter_both: "AMBAS", filter_active: "ATIVAS", filter_archived: "ARQUIVADAS", filter_all: "TODAS",
-            project_filter_seller: "Filtro por Vendedor", project_filter_all_sellers: "Todos os vendedores", report_filter_seller: "Vendedor no relatório", report_filter_all_sellers: "Todos os vendedores", logs_empty: "Nenhum log registrado", margin_alert_low: "Margem abaixo de 45%", margin_current: "Margem Atual", completed_on: "Concluída em", category_commission: "Comissões", seller_margin_cover: "Margem da obra",
+            project_filter_seller: "Filtro por Vendedor", project_filter_all_sellers: "Todos os vendedores", report_filter_seller: "Vendedor no relatório", report_filter_all_sellers: "Todos os vendedores", logs_empty: "Nenhum log registrado", logs_filter_user: "Filtrar por usuário", logs_all_users: "Todos os usuários", logs_clear_filter: "Limpar filtro", logs_results: "registros exibidos", margin_alert_low: "Margem abaixo de 45%", margin_current: "Margem Atual", completed_on: "Concluída em", category_commission: "Comissões", seller_margin_cover: "Margem da obra",
             lbl_email: "E-mail Corporativo", lbl_pass: "Senha de Acesso", btn_login: "Acessar Sistema",
             f_prop: "Nº Proposta", f_inv: "Nº Invoice", f_unit: "Unidade Responsável", f_client: "Cliente", f_project_name: "Nome do Projeto / Referência", f_address: "Endereço da Obra", f_seller: "Vendedor",
             f_gross: "Valor Contrato Bruto", f_budget: "Orçamento Custo (Budget)", f_comm_perc: "% Comissão",
@@ -789,7 +801,7 @@
             admin_panel: "Corporate Management", nav_proj: "Projects", nav_new: "New Entry", nav_rep: "Reports", nav_users: "Team", project_search_label: "Quick search", project_search_placeholder: "Search by client, project, address, invoice, proposal, or value",
             form_new_title: "Register Project", team_title: "Team Management", btn_team: "Authorize Access",
             filter_both: "BOTH", filter_active: "ACTIVE", filter_archived: "ARCHIVED", filter_all: "ALL",
-            project_filter_seller: "Seller Filter", project_filter_all_sellers: "All sellers", report_filter_seller: "Seller in report", report_filter_all_sellers: "All sellers", logs_empty: "No logs recorded", margin_alert_low: "Margin below 45%", margin_current: "Current Margin", completed_on: "Completed on", category_commission: "Commissions", seller_margin_cover: "Project margin",
+            project_filter_seller: "Seller Filter", project_filter_all_sellers: "All sellers", report_filter_seller: "Seller in report", report_filter_all_sellers: "All sellers", logs_empty: "No logs recorded", logs_filter_user: "Filter by user", logs_all_users: "All users", logs_clear_filter: "Clear filter", logs_results: "records shown", margin_alert_low: "Margin below 45%", margin_current: "Current Margin", completed_on: "Completed on", category_commission: "Commissions", seller_margin_cover: "Project margin",
             lbl_email: "Corporate Email", lbl_pass: "Password", btn_login: "Access System",
             f_prop: "Proposal No.", f_inv: "Invoice No.", f_unit: "Responsible Unit", f_client: "Client", f_seller: "Seller",
             f_gross: "Gross Contract Value", f_budget: "Cost Budget", f_comm_perc: "% Commission",
@@ -1056,19 +1068,79 @@
         });
     }
 
+    window.setLogsUserFilter = (userEmail = '') => {
+        state.logsUserFilter = String(userEmail || '').trim().toLowerCase();
+        window.renderLogs();
+    };
+
     window.renderLogs = () => {
         const tbody = document.getElementById('logs-body');
         if (!tbody || !state.isSuperAdmin) return;
-        const logs = getMergedLogs();
+
+        const allLogs = getMergedLogs();
+        const selectedUser = String(state.logsUserFilter || '').trim().toLowerCase();
+        const userMap = new Map();
+
+        allLogs.forEach(log => {
+            const email = String(log?.user || '').trim();
+            if (!email) return;
+            const normalized = email.toLowerCase();
+            if (!userMap.has(normalized)) {
+                userMap.set(normalized, {
+                    email,
+                    name: getUserDisplayName(email, email.split('@')[0] || email)
+                });
+            }
+        });
+
+        const userOptions = Array.from(userMap.entries())
+            .sort((a, b) => a[1].name.localeCompare(b[1].name, state.lang === 'pt' ? 'pt-BR' : 'en-US'));
+        const select = document.getElementById('logs-user-filter');
+        if (select) {
+            const optionsHtml = [
+                `<option value="">${escapeInlineHtml(window.t('logs_all_users'))}</option>`,
+                ...userOptions.map(([normalized, info]) => {
+                    const label = info.name && info.name.toLowerCase() !== info.email.toLowerCase()
+                        ? `${info.name} — ${info.email}`
+                        : info.email;
+                    return `<option value="${escapeInlineHtml(normalized)}">${escapeInlineHtml(label)}</option>`;
+                })
+            ].join('');
+            if (select.innerHTML !== optionsHtml) select.innerHTML = optionsHtml;
+            select.value = userMap.has(selectedUser) ? selectedUser : '';
+            if (selectedUser && !userMap.has(selectedUser)) state.logsUserFilter = '';
+        }
+
+        const effectiveUser = String(state.logsUserFilter || '').trim().toLowerCase();
+        const logs = effectiveUser
+            ? allLogs.filter(log => String(log?.user || '').trim().toLowerCase() === effectiveUser)
+            : allLogs;
+
+        const summary = document.getElementById('logs-filter-summary');
+        if (summary) {
+            const selectedInfo = effectiveUser ? userMap.get(effectiveUser) : null;
+            const selectedLabel = selectedInfo ? `<span class="text-gold">${escapeInlineHtml(selectedInfo.name)}</span> · ` : '';
+            summary.innerHTML = `${selectedLabel}<span class="text-white">${logs.length}</span> ${escapeInlineHtml(window.t('logs_results'))}`;
+        }
+        const clearFilterBtn = document.getElementById('logs-clear-filter');
+        if (clearFilterBtn) clearFilterBtn.classList.toggle('hidden', !effectiveUser);
+
         tbody.innerHTML = logs.map(log => {
             const logDate = log._renderDate || getLogDate(log);
             const renderedDate = Number.isNaN(logDate.getTime()) ? '-' : logDate.toLocaleString(state.lang === 'pt' ? 'pt-BR' : 'en-US');
             const info = getLogProjectInfo(log);
             const projectMetaLine = [info.invoice ? `${window.t('invoice_label')}: ${info.invoice}` : '', info.proposal ? `${window.t('proposal_label')}: ${info.proposal}` : ''].filter(Boolean).join(' • ');
+            const logUserEmail = String(log?.user || '').trim();
+            const logUserName = getUserDisplayName(logUserEmail, '-');
             return `
             <tr class="border-b border-white/5 hover:bg-white/5 align-top">
                 <td class="py-4 px-4 text-sm whitespace-nowrap">${renderedDate}</td>
-                <td class="py-4 px-4 text-sm font-bold text-gold whitespace-nowrap">${escapeInlineHtml(getUserDisplayName(log.user, '-'))}</td>
+                <td class="py-4 px-4 text-sm font-bold text-gold whitespace-nowrap">
+                    <button type="button" onclick="window.setLogsUserFilter('${escapeInlineHtml(logUserEmail.toLowerCase())}')" class="text-left hover:text-yellow-300 transition-colors" title="${escapeInlineHtml(state.lang === 'pt' ? 'Ver somente os logs deste usuário' : 'Show only this user logs')}">
+                        <span class="block">${escapeInlineHtml(logUserName)}</span>
+                        ${logUserEmail ? `<span class="block text-[10px] text-slate-500 font-bold normal-case mt-1">${escapeInlineHtml(logUserEmail)}</span>` : ''}
+                    </button>
+                </td>
                 <td class="py-4 px-4 text-sm text-slate-300 min-w-[240px]">
                     ${info.projectName ? `<div class="font-black text-white">${escapeInlineHtml(info.projectName)}</div>` : `<div class="text-slate-500">-</div>`}
                     ${projectMetaLine ? `<div class="text-[11px] text-slate-400 mt-1">${escapeInlineHtml(projectMetaLine)}</div>` : ''}
