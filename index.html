@@ -3779,12 +3779,19 @@
         return Array.from(methods);
     }
 
-    function getReceiptCommissionValue(receipt, project) {
+    function getReceiptCommissionBase(receipt, project) {
         const amount = Number(receipt?.valor || 0);
-        const rate = Number(project?.percComissao || 0) / 100;
         const method = getReceiptEffectiveMethod(receipt, project);
-        const base = isCardMethod(method) ? amount * 0.97 : amount;
-        return roundMoney(base * rate);
+        return isCardMethod(method) ? amount * 0.97 : amount;
+    }
+
+    function getCommissionFromBase(base, project) {
+        const rate = Number(project?.percComissao || 0) / 100;
+        return roundMoney(Number(base || 0) * rate);
+    }
+
+    function getReceiptCommissionValue(receipt, project) {
+        return getCommissionFromBase(getReceiptCommissionBase(receipt, project), project);
     }
 
     
@@ -3795,12 +3802,14 @@
         let releasedToEnd = 0;
         let paidToEnd = 0;
 
+        let commissionBaseToEnd = 0;
         (Array.isArray(project?.recebimentos) ? project.recebimentos : []).forEach(receipt => {
             const dt = toDateOnly(receipt?.data);
             if (!dt || (end && dt > end)) return;
             receivedToEnd = roundMoney(receivedToEnd + Number(receipt?.valor || 0));
-            releasedToEnd = roundMoney(releasedToEnd + getReceiptCommissionValue(receipt, project));
+            commissionBaseToEnd += getReceiptCommissionBase(receipt, project);
         });
+        releasedToEnd = getCommissionFromBase(commissionBaseToEnd, project);
 
         normalizePaymentEntries(project?.pagamentosEfetuados || []).forEach(payment => {
             const dt = toDateOnly(payment?.data);
@@ -3922,6 +3931,8 @@ function getSellerCommissionPeriodReport(projects, startStr, endStr) {
             let receivedToEnd = 0;
             let releasedPeriod = 0;
             let releasedToEnd = 0;
+            let commissionBasePeriod = 0;
+            let commissionBaseToEnd = 0;
             let paidPeriod = 0;
             let paidToEnd = 0;
 
@@ -3929,14 +3940,14 @@ function getSellerCommissionPeriodReport(projects, startStr, endStr) {
                 const dt = toDateOnly(receipt?.data);
                 if (!dt) return;
                 const amount = roundMoney(Number(receipt?.valor || 0));
-                const commValue = getReceiptCommissionValue(receipt, project);
+                const commissionBase = getReceiptCommissionBase(receipt, project);
                 if (dt <= end) {
                     receivedToEnd += amount;
-                    releasedToEnd += commValue;
+                    commissionBaseToEnd += commissionBase;
                 }
                 if (dt >= start && dt <= end) {
                     receivedPeriod += amount;
-                    releasedPeriod += commValue;
+                    commissionBasePeriod += commissionBase;
                 }
             });
 
@@ -3954,8 +3965,8 @@ function getSellerCommissionPeriodReport(projects, startStr, endStr) {
 
             receivedPeriod = roundMoney(receivedPeriod);
             receivedToEnd = roundMoney(receivedToEnd);
-            releasedPeriod = roundMoney(releasedPeriod);
-            releasedToEnd = roundMoney(releasedToEnd);
+            releasedPeriod = getCommissionFromBase(commissionBasePeriod, project);
+            releasedToEnd = getCommissionFromBase(commissionBaseToEnd, project);
             paidPeriod = roundMoney(paidPeriod);
             paidToEnd = roundMoney(paidToEnd);
             const pendingEnd = roundMoney(Math.max(0, releasedToEnd - paidToEnd));
