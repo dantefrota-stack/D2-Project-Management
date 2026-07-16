@@ -361,12 +361,12 @@
             <div id="login-hint-msg" class="hidden p-4 bg-amber-50 border border-amber-100 rounded-xl text-amber-700 text-xs font-bold text-center uppercase tracking-widest leading-relaxed"></div>
 
             <div>
-                <label class="label-auth" data-i18n="lbl_email">E-mail Corporativo</label>
+                <label class="label-auth" data-i18n="lbl_email">Corporate Email</label>
                 <input type="email" id="email" required class="auth-input" placeholder="usuario@allcablingtech.com">
             </div>
 
             <div class="relative">
-                <label class="label-auth" data-i18n="lbl_pass">Senha de Acesso</label>
+                <label class="label-auth" data-i18n="lbl_pass">Access Password</label>
                 <input type="password" id="password" required class="auth-input !pr-10" placeholder="••••••••">
                 <button type="button" onclick="window.togglePassword('password', 'eye-login-btn')" class="password-toggle !text-slate-400" id="eye-login-btn" style="top: 70%;">
                     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>
@@ -374,13 +374,16 @@
             </div>
 
             <button type="submit" id="btn-entrar" class="btn-access">
-                <span data-i18n="btn_login">Acessar Sistema</span>
+                <span data-i18n="btn_login">Access System</span>
             </button>
         </form>
 
-        <div class="mt-8 flex justify-center gap-4">
-            <button onclick="window.setLang('pt')" class="flag-btn active" id="l-pt"><img src="https://flagcdn.com/w80/br.png" class="w-6"></button>
-            <button onclick="window.setLang('en')" class="flag-btn" id="l-en"><img src="https://flagcdn.com/w80/us.png" class="w-6"></button>
+        <div class="mt-8 flex flex-col items-center gap-3">
+            <p class="text-[10px] font-black uppercase tracking-[0.18em] text-slate-500" data-i18n="language_label">Language</p>
+            <div class="flex justify-center gap-4">
+                <button type="button" onclick="window.setLang('en')" class="flag-btn active" id="l-en" aria-label="English" title="English"><img src="https://flagcdn.com/w80/us.png" class="w-6" alt="USA"></button>
+                <button type="button" onclick="window.setLang('pt')" class="flag-btn" id="l-pt" aria-label="Português" title="Português"><img src="https://flagcdn.com/w80/br.png" class="w-6" alt="Brasil"></button>
+            </div>
         </div>
     </div>
 </div>
@@ -695,7 +698,7 @@
         user: null, 
         isSuperAdmin: false,
         userPerms: { tab_proj: true, tab_new: false, tab_rep: false, fin: false, costs: false, smart: true, hvac: false, global: false },
-        projects: [], team: [], logs: [], company: 'Ambas', lang: 'pt', theme: 'dark', 
+        projects: [], team: [], logs: [], company: 'Ambas', lang: 'en', theme: 'dark', 
         editingPayments: null, editingRecs: null, focusedProject: null, activeModule: null, archiveFilter: 'active',
         reportActiveKpi: 'receita', projectSellerFilter: 'all', projectSearchQuery: '', reportPeriodStart: '', reportPeriodEnd: '', reportSellerFilter: 'all', reportStatusFilter: 'all', reportRangePreset: 'year', mobileNavOpen: false, currentView: 'projects' 
     };
@@ -724,6 +727,7 @@
 
     const translations = {
         pt: {
+            language_label: "Idioma",
             admin_panel: "Gestão Corporativa", nav_proj: "Projetos", nav_new: "Nova Obra", nav_rep: "Relatórios", nav_users: "Equipe", project_search_label: "Busca rápida", project_search_placeholder: "Buscar por cliente, projeto, endereço, invoice, proposta ou valor",
             form_new_title: "Registrar Obra", team_title: "Gestão de Equipe", btn_team: "Salvar e Autorizar Acesso",
             filter_both: "AMBAS", filter_active: "ATIVAS", filter_archived: "ARQUIVADAS", filter_all: "TODAS",
@@ -776,6 +780,7 @@
             payment_summary_card_fees: "Taxas cartão (cliente)", payment_summary_net_basis: "Base líquida recebida", payment_summary_received: "Recebido do cliente", pay_pending_badge: "Pagamento pendente", timeline_due_soon: "Prazo próximo", invoice_label: "Invoice", proposal_label: "Proposta", client_outstanding: "Saldo cliente a receber", comm_remaining_projected: "Comissão potencial sobre saldo do cliente", comm_card_fee_reduction: "Redução por taxas de cartão", commission_released_settled: "Liberada quitada", commission_total_paid: "Comissão total quitada", commission_due_now: "Pendente agora", commission_paid_from_released: "Pago da liberada", commission_still_to_release: "Ainda a liberar", commission_waiting_receipts: "Aguardando recebimentos", commission_future_pending: "Comissão futura estimada", commission_released_paid_label: "Liberada paga", commission_overall_paid_label: "Pago do total projetado", commission_note_released_only: "A comissão do vendedor foi quitada apenas sobre o valor já recebido do cliente.", commission_note_future_release: "Ainda restam {commission} de comissão projetada, que serão liberados conforme o cliente pagar os {client} em aberto.", commission_note_due_now: "Existe {due} de comissão liberada pendente agora e ainda {future} de comissão projetada aguardando novos recebimentos.", commission_note_waiting_receipts: "Ainda não há comissão liberada. O cliente ainda deve {client} e isso pode liberar até {commission} de comissão projetada.", client_received_label: "Recebido", client_balance_short: "Saldo a receber", commission_paid_simple: "Comissão paga", commission_to_receive_label: "Comissão a receber", commission_to_receive_short: "Comissão restante", commission_partial_status: "Parcial", commission_review_status: "Revisar pagamento", commission_due_now_short: "Pendente agora", client_received_compact: "Recebido", client_balance_compact: "Falta receber", commission_paid_compact: "Paga", commission_remaining_compact: "A receber", commission_due_now_compact: "Pendente agora"
         },
         en: {
+            language_label: "Language",
             admin_panel: "Corporate Management", nav_proj: "Projects", nav_new: "New Entry", nav_rep: "Reports", nav_users: "Team", project_search_label: "Quick search", project_search_placeholder: "Search by client, project, address, invoice, proposal, or value",
             form_new_title: "Register Project", team_title: "Team Management", btn_team: "Authorize Access",
             filter_both: "BOTH", filter_active: "ACTIVE", filter_archived: "ARCHIVED", filter_all: "ALL",
@@ -862,18 +867,25 @@
     };
 
     window.setLang = (l) => { 
-        state.lang = l; 
-        document.querySelectorAll('.flag-btn').forEach(b => b.classList.toggle('active', b.id === 'l-' + l)); 
+        state.lang = l === 'pt' ? 'pt' : 'en';
+        localStorage.setItem('d2_lang_preference', state.lang);
+        if (state.user?.email) localStorage.setItem(`d2_lang_user_${state.user.email.toLowerCase()}`, state.lang);
+        else {
+            const loginEmail = String(document.getElementById('email')?.value || '').trim().toLowerCase();
+            if (loginEmail) localStorage.setItem(`d2_lang_user_${loginEmail}`, state.lang);
+        }
+        document.documentElement.lang = state.lang === 'pt' ? 'pt-BR' : 'en';
+        document.querySelectorAll('.flag-btn').forEach(b => b.classList.toggle('active', b.id === 'l-' + state.lang)); 
         document.querySelectorAll('[data-i18n]').forEach(el => {
             const key = el.getAttribute('data-i18n');
-            if (translations[l] && translations[l][key]) {
-                if (el.tagName === 'INPUT' && el.type === 'button') el.value = translations[l][key];
-                else el.innerText = translations[l][key];
+            if (translations[state.lang] && translations[state.lang][key]) {
+                if (el.tagName === 'INPUT' && el.type === 'button') el.value = translations[state.lang][key];
+                else el.innerText = translations[state.lang][key];
             }
         });
         document.querySelectorAll('[data-i18n-placeholder]').forEach(el => {
             const key = el.getAttribute('data-i18n-placeholder');
-            if (translations[l] && translations[l][key]) el.setAttribute('placeholder', translations[l][key]);
+            if (translations[state.lang] && translations[state.lang][key]) el.setAttribute('placeholder', translations[state.lang][key]);
         });
         window.renderProjectSellerFilter();
         window.renderLogs();
@@ -4361,6 +4373,10 @@ function getSellerCommissionPeriodReport(projects, startStr, endStr) {
 
     onAuthStateChanged(auth, (u) => {
         state.user = u;
+        if (u?.email) {
+            const userLanguage = localStorage.getItem(`d2_lang_user_${u.email.toLowerCase()}`);
+            state.lang = userLanguage === 'pt' ? 'pt' : (userLanguage === 'en' ? 'en' : state.lang);
+        }
         applyThemeConfig(); 
         if (u) {
             document.getElementById('auth-screen').classList.add('hidden'); document.getElementById('main-app').classList.remove('hidden');
@@ -4371,6 +4387,7 @@ function getSellerCommissionPeriodReport(projects, startStr, endStr) {
 
             initData(); logAccess(u.email, 'Fez login no sistema');
         } else {
+            state.lang = 'en';
             document.getElementById('auth-screen').classList.remove('hidden'); document.getElementById('main-app').classList.add('hidden'); document.body.className = 'auth-body';
         }
         window.setLang(state.lang); try { lucide.createIcons(); } catch {}
@@ -4467,6 +4484,12 @@ function getSellerCommissionPeriodReport(projects, startStr, endStr) {
         document.getElementById('login-form').onsubmit = async (e) => {
             e.preventDefault(); hideLoginMessages(); const btn = document.getElementById('btn-entrar'); btn.disabled = true;
             const email = document.getElementById('email').value.trim(); const pass = document.getElementById('password').value;
+            if (email) {
+                const languageKey = `d2_lang_user_${email.toLowerCase()}`;
+                const savedLanguage = localStorage.getItem(languageKey);
+                if (savedLanguage === 'pt' || savedLanguage === 'en') state.lang = savedLanguage;
+                localStorage.setItem(languageKey, state.lang);
+            }
             try {
                 await signInWithEmailAndPassword(auth, email, pass);
             } catch (err) {
@@ -4477,6 +4500,12 @@ function getSellerCommissionPeriodReport(projects, startStr, endStr) {
                 else { showLoginError('Falha no login: ' + err.message); }
             } finally { btn.disabled = false; }
         };
+
+        document.getElementById('email').addEventListener('change', (event) => {
+            const email = String(event.target.value || '').trim().toLowerCase();
+            const savedLanguage = email ? localStorage.getItem(`d2_lang_user_${email}`) : null;
+            if (savedLanguage === 'pt' || savedLanguage === 'en') window.setLang(savedLanguage);
+        });
 
         document.getElementById('project-form').onsubmit = async (e) => {
             e.preventDefault(); if (!auth.currentUser) return;
