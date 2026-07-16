@@ -326,6 +326,9 @@
         .compact-reference-row + .compact-reference-row { margin-top:.8rem; padding-top:.8rem; border-top:1px solid rgba(255,255,255,.06); }
         .compact-reference-value { font-size:clamp(.9rem, 2.4vw, 1.075rem); line-height:1.22; font-weight:900; color:#f8fafc; white-space:normal; overflow-wrap:anywhere; word-break:break-word; }
         .compact-seller-status-card { min-width:0; overflow:hidden; }
+        .quick-edit-label { display:block; margin-bottom:.5rem; color:#64748b; font-size:10px; font-weight:900; text-transform:uppercase; letter-spacing:.14em; }
+        .quick-edit-target { border-radius:12px; transition:background-color .18s ease, box-shadow .18s ease; cursor:pointer; }
+        .quick-edit-target:hover { background:rgba(255,255,255,.045); box-shadow:0 0 0 1px rgba(255,255,255,.07); }
         @media (max-width: 420px) {
             .compact-meta-grid { grid-template-columns:minmax(0,1fr) minmax(0,.9fr); gap:.6rem; }
             .compact-kpi-card { padding:.9rem; }
@@ -2569,6 +2572,78 @@
         window.closeCustomModal();
     };
 
+    function getProjectReceiptMethodSummary(project) {
+        const receipts = Array.isArray(project?.recebimentos) ? project.recebimentos : [];
+        const methods = [...new Set(receipts.map(receipt => getReceiptEffectiveMethod(receipt)).filter(Boolean))];
+        if (!methods.length) return state.lang === 'pt' ? 'Sem recebimentos' : 'No receipts';
+        return methods.map(method => getReceiptMethodBadge(method).label).join(' / ');
+    }
+
+    window.quickEditProjectSection = (projectId, section) => {
+        if (!state.userPerms.tab_proj) return;
+        const project = state.projects.find(item => item.id === projectId);
+        if (!project) return;
+        const isPT = state.lang === 'pt';
+        const sellerOptions = [...new Map(state.team
+            .filter(user => user?.email)
+            .map(user => [user.email, { email: user.email, name: getUserDisplayName(user.email, user.name || user.email) }])).values()];
+        if (project.vendedor && !sellerOptions.some(item => item.email === project.vendedor)) sellerOptions.push({ email: project.vendedor, name: getUserDisplayName(project.vendedor, project.vendedor) });
+        let title = isPT ? 'Editar obra' : 'Edit project';
+        let fields = '';
+        if (section === 'identity') {
+            title = isPT ? 'Identificação da obra' : 'Project identity';
+            fields = `<label class="block text-left"><span class="quick-edit-label">${isPT ? 'Cliente' : 'Client'}</span><input id="quick-client" class="modern-input" value="${escapeInlineHtml(project.cliente || '')}"></label><label class="block text-left mt-3"><span class="quick-edit-label">${isPT ? 'Projeto / referência' : 'Project / reference'}</span><input id="quick-project-name" class="modern-input" value="${escapeInlineHtml(project.nomeProjeto || '')}"></label><label class="block text-left mt-3"><span class="quick-edit-label">${isPT ? 'Endereço' : 'Address'}</span><input id="quick-address" class="modern-input" value="${escapeInlineHtml(project.endereco || '')}"></label>`;
+        } else if (section === 'seller') {
+            title = isPT ? 'Alterar vendedor' : 'Change seller';
+            fields = `<label class="block text-left"><span class="quick-edit-label">${isPT ? 'Vendedor' : 'Seller'}</span><select id="quick-seller" class="modern-input !pr-10">${sellerOptions.map(item => `<option value="${escapeInlineHtml(item.email)}" ${item.email === project.vendedor ? 'selected' : ''}>${escapeInlineHtml(item.name)}</option>`).join('')}</select></label>`;
+        } else if (section === 'status') {
+            title = isPT ? 'Alterar status' : 'Change status';
+            fields = `<label class="block text-left"><span class="quick-edit-label">Status</span><select id="quick-status" class="modern-input !pr-10"><option value="✅ Aprovado" ${project.status === '✅ Aprovado' ? 'selected' : ''}>${window.t('status_appr')}</option><option value="Aguardando Início" ${project.status === 'Aguardando Início' ? 'selected' : ''}>${window.t('status_wait')}</option><option value="Em Execução" ${project.status === 'Em Execução' ? 'selected' : ''}>${window.t('status_exec')}</option><option value="Finalizado" ${project.status === 'Finalizado' ? 'selected' : ''}>${window.t('status_fin')}</option></select></label>`;
+        } else if (section === 'documents') {
+            title = isPT ? 'Invoice e proposta' : 'Invoice and proposal';
+            fields = `<div class="grid grid-cols-2 gap-3"><label class="block text-left"><span class="quick-edit-label">Invoice</span><input id="quick-invoice" class="modern-input" value="${escapeInlineHtml(project.numeroInvoice || '')}"></label><label class="block text-left"><span class="quick-edit-label">${isPT ? 'Proposta' : 'Proposal'}</span><input id="quick-proposal" class="modern-input" value="${escapeInlineHtml(project.numeroProposta || '')}"></label></div>`;
+        } else if (section === 'schedule') {
+            title = isPT ? 'Datas da obra' : 'Project dates';
+            fields = `<div class="grid grid-cols-2 gap-3"><label class="block text-left"><span class="quick-edit-label">${isPT ? 'Início' : 'Start'}</span><input id="quick-start" type="date" class="modern-input" value="${project.dataInicio || ''}"></label><label class="block text-left"><span class="quick-edit-label">${isPT ? 'Entrega' : 'Due date'}</span><input id="quick-end" type="date" class="modern-input" value="${project.dataEntrega || ''}"></label></div>`;
+        } else if (section === 'contract') {
+            title = isPT ? 'Valor do contrato' : 'Contract value';
+            fields = `<label class="block text-left"><span class="quick-edit-label">${isPT ? 'Valor bruto' : 'Gross value'}</span><div class="relative"><span class="absolute left-4 top-1/2 -translate-y-1/2 font-bold text-gold">$</span><input id="quick-contract" type="number" min="0" step="0.01" class="modern-input !pl-8" value="${Number(project.valorTotal || 0)}"></div></label>`;
+        } else if (section === 'commission') {
+            title = isPT ? 'Comissão e recebimentos' : 'Commission and receipts';
+            fields = `<div class="rounded-2xl border border-white/10 bg-white/5 p-4 text-left mb-4"><span class="quick-edit-label">${isPT ? 'Formas já recebidas' : 'Received methods'}</span><p class="text-base font-black text-slate-200">${escapeInlineHtml(getProjectReceiptMethodSummary(project))}</p><p class="text-xs text-slate-500 mt-2">${isPT ? 'A forma é definida individualmente ao registrar cada parcela.' : 'The method is selected for each receipt.'}</p>${state.userPerms.fin ? `<button type="button" onclick="window.openReceiptsFromQuickEdit('${projectId}')" class="mt-4 w-full inline-flex items-center justify-center gap-2 rounded-xl border border-emerald-500/30 bg-emerald-500/10 px-4 py-3 text-[10px] font-black uppercase tracking-widest text-emerald-300 hover:bg-emerald-500/20"><i data-lucide="wallet-cards" class="w-4 h-4"></i>${isPT ? 'Gerenciar parcelas recebidas' : 'Manage received installments'}</button>` : ''}</div><label class="block text-left"><span class="quick-edit-label">${isPT ? 'Comissão do vendedor' : 'Seller commission'}</span><div class="relative"><input id="quick-commission" type="number" min="0" max="100" step="0.01" class="modern-input !pr-10" value="${Number(project.percComissao || 0)}"><span class="absolute right-4 top-1/2 -translate-y-1/2 font-bold text-gold">%</span></div></label>`;
+        }
+        document.getElementById('custom-modal-title').innerText = title;
+        document.getElementById('custom-modal-icon').innerHTML = '<i data-lucide="pencil" class="w-10 h-10 text-gold"></i>';
+        document.getElementById('custom-modal-msg').innerHTML = fields;
+        document.getElementById('custom-modal-buttons').innerHTML = `<button type="button" onclick="window.closeCustomModal()" class="flex-1 px-4 py-3 bg-slate-700 text-white rounded-xl font-bold text-xs uppercase">${window.t('cancel')}</button><button type="button" onclick="window.saveQuickProjectSection('${projectId}', '${section}')" class="flex-1 px-4 py-3 bg-gold text-slate-950 rounded-xl font-black text-xs uppercase">${isPT ? 'Salvar' : 'Save'}</button>`;
+        document.getElementById('custom-modal').classList.add('active');
+        try { lucide.createIcons(); } catch {}
+    };
+
+    window.saveQuickProjectSection = async (projectId, section) => {
+        const project = state.projects.find(item => item.id === projectId);
+        if (!project) return;
+        const payload = { updatedAt: serverTimestamp() };
+        if (section === 'identity') Object.assign(payload, { cliente: document.getElementById('quick-client').value.trim(), nomeProjeto: document.getElementById('quick-project-name').value.trim(), endereco: document.getElementById('quick-address').value.trim() });
+        if (section === 'seller') payload.vendedor = document.getElementById('quick-seller').value;
+        if (section === 'status') {
+            payload.status = document.getElementById('quick-status').value;
+            payload.dataConclusao = payload.status === 'Finalizado' ? (project.dataConclusao || new Date().toISOString().split('T')[0]) : '';
+        }
+        if (section === 'documents') Object.assign(payload, { numeroInvoice: document.getElementById('quick-invoice').value.trim(), numeroProposta: document.getElementById('quick-proposal').value.trim() });
+        if (section === 'schedule') Object.assign(payload, { dataInicio: document.getElementById('quick-start').value, dataEntrega: document.getElementById('quick-end').value });
+        if (section === 'contract') payload.valorTotal = roundMoney(document.getElementById('quick-contract').value || 0);
+        if (section === 'commission') payload.percComissao = Number(document.getElementById('quick-commission').value || 0);
+        await updateDoc(doc(db, 'artifacts', appId, 'public', 'data', 'projects', projectId), payload);
+        logAccess(state.user?.email, `Edição rápida (${section}): ${getProjectDisplayName(project)}`, getProjectLogMeta(project));
+        window.closeCustomModal();
+    };
+
+    window.openReceiptsFromQuickEdit = (projectId) => {
+        window.closeCustomModal();
+        window.openEditRecModal(projectId);
+    };
+
     window.editP = (id) => {
         const p = state.projects.find(x => x.id === id); if (!p) return;
         renderVendedores(); const vendSelect = document.getElementById('f-vendedor');
@@ -3201,15 +3276,16 @@
                 </div>
 
                 <div class="text-left mb-8 space-y-4 relative z-[1]">
-                    <div class="space-y-3"><h4 class="font-black text-3xl uppercase tracking-tight text-white force-white-text leading-none print:text-black">${escapeInlineHtml(getProjectPrimaryTitle(p))}</h4>${renderProjectIdentityBlock(p)}</div>
+                    <button type="button" onclick="window.quickEditProjectSection('${p.id}', 'identity')" class="quick-edit-target group w-full text-left space-y-3 p-2 -m-2 no-print"><h4 class="font-black text-3xl uppercase tracking-tight text-white force-white-text leading-none">${escapeInlineHtml(getProjectPrimaryTitle(p))}</h4>${renderProjectIdentityBlock(p)}<span class="text-[9px] uppercase tracking-widest text-slate-600 group-hover:text-gold transition-colors">${state.lang === 'pt' ? 'Editar identificação' : 'Edit identity'}</span></button>
+                    <div class="hidden print:block space-y-3"><h4 class="font-black text-3xl uppercase tracking-tight text-black leading-none">${escapeInlineHtml(getProjectPrimaryTitle(p))}</h4>${renderProjectIdentityBlock(p)}</div>
                     ${canPrintProjectSheet() ? `<div class="flex justify-start no-print"><button onclick="window.printReport()" class="inline-flex items-center justify-center gap-2 text-white force-white-text bg-slate-800 hover:bg-slate-700 transition-all font-black text-[11px] uppercase tracking-widest px-5 py-3 rounded-2xl border border-white/10 shadow-lg force-dark-bg"><i data-lucide="printer" class="w-4 h-4"></i> ${window.t('print_ficha')}</button></div>` : ''}
                 </div>
 
                 <div class="grid grid-cols-2 gap-y-6 gap-x-4 p-6 bg-black/20 rounded-[24px] border border-white/5 mb-10 text-left shadow-inner print:bg-transparent print:border-slate-200">
-                    <div><p class="text-xs font-black text-slate-500 uppercase tracking-widest mb-1.5">${window.t('seller')}</p><p class="text-sm font-bold text-slate-200 truncate print:text-black" title="${escapeInlineHtml(getUserDisplayName(p.vendedor, p.vendedor || "--"))}">${escapeInlineHtml(getUserDisplayName(p.vendedor, '--'))}</p></div>
-                    <div><p class="text-xs font-black text-slate-500 uppercase tracking-widest mb-1.5">${window.t('status_obra')}</p><p class="text-sm font-black ${p.status === 'Finalizado' ? 'text-emerald-400 print:text-emerald-700' : 'text-gold print:text-amber-700'} uppercase">${p.status === 'Finalizado' ? getProjectCompletionText(p, true) : tStatus(p.status)}</p></div>
-                    <div><p class="text-xs font-black text-slate-500 uppercase tracking-widest mb-1.5">${window.t('prop_inv')}</p><p class="text-sm font-bold text-slate-200 print:text-black">${p.numeroInvoice || '---'} <span class="text-slate-600 font-normal mx-1">|</span> ${p.numeroProposta || '---'}</p></div>
-                    <div><p class="text-xs font-black text-slate-500 uppercase tracking-widest mb-1.5">${window.t('pay_comm')}</p><p class="text-sm font-bold text-slate-200 print:text-black">${p.metodo || '--'} <span class="text-slate-600 font-normal mx-1">•</span> ${p.percComissao || 0}%</p></div>
+                    <button type="button" onclick="window.quickEditProjectSection('${p.id}', 'seller')" class="quick-edit-target text-left p-2 -m-2"><p class="text-xs font-black text-slate-500 uppercase tracking-widest mb-1.5">${window.t('seller')}</p><p class="text-sm font-bold text-slate-200 truncate" title="${escapeInlineHtml(getUserDisplayName(p.vendedor, p.vendedor || "--"))}">${escapeInlineHtml(getUserDisplayName(p.vendedor, '--'))}</p></button>
+                    <button type="button" onclick="window.quickEditProjectSection('${p.id}', 'status')" class="quick-edit-target text-left p-2 -m-2"><p class="text-xs font-black text-slate-500 uppercase tracking-widest mb-1.5">${window.t('status_obra')}</p><p class="text-sm font-black ${p.status === 'Finalizado' ? 'text-emerald-400' : 'text-gold'} uppercase">${p.status === 'Finalizado' ? getProjectCompletionText(p, true) : tStatus(p.status)}</p></button>
+                    <button type="button" onclick="window.quickEditProjectSection('${p.id}', 'documents')" class="quick-edit-target text-left p-2 -m-2"><p class="text-xs font-black text-slate-500 uppercase tracking-widest mb-1.5">${window.t('prop_inv')}</p><p class="text-sm font-bold text-slate-200">${p.numeroInvoice || '---'} <span class="text-slate-600 font-normal mx-1">|</span> ${p.numeroProposta || '---'}</p></button>
+                    <button type="button" onclick="window.quickEditProjectSection('${p.id}', 'commission')" class="quick-edit-target text-left p-2 -m-2"><p class="text-xs font-black text-slate-500 uppercase tracking-widest mb-1.5">${state.lang === 'pt' ? 'Recebimentos • Comissão' : 'Receipts • Commission'}</p><p class="text-sm font-bold text-slate-200">${escapeInlineHtml(getProjectReceiptMethodSummary(p))} <span class="text-slate-600 font-normal mx-1">•</span> ${p.percComissao || 0}%</p></button>
                 </div>
 
                 <div class="mt-auto"></div>
@@ -3223,18 +3299,18 @@
                         <span style="color: ${colorHex}">${prog}%</span>
                     </div>
                     <div class="progress-track print:bg-slate-200 ${scheduleAlert.isLate || scheduleAlert.isDueSoon ? 'timeline-alert-pulse' : ''}"><div class="progress-bar-fill print:!bg-black" style="width: ${prog}%; background-color: ${colorHex};"></div></div>
-                    <div class="flex justify-between text-xs font-extrabold uppercase mt-2">
+                    <button type="button" onclick="window.quickEditProjectSection('${p.id}', 'schedule')" class="quick-edit-target w-full flex justify-between text-xs font-extrabold uppercase mt-2 p-2 -m-2">
                         <span class="print:text-black">${formatProjectDate(p.dataInicio)}</span>
                         <span class="${p.status === 'Finalizado' ? 'text-emerald-400' : (scheduleAlert.isLate ? 'text-red-500' : (scheduleAlert.isDueSoon ? 'text-amber-400' : 'text-gold'))} print:!text-black">${p.status === 'Finalizado' && p.dataConclusao ? formatProjectDate(p.dataConclusao) : (scheduleAlert.isLate ? window.t('late') : (prog === 100 ? window.t('completed') : (Number.isFinite(e) ? Math.ceil((e - n) / (1000 * 3600 * 24)) : 0) + ' ' + window.t('days_left')))}</span>
-                    </div>
+                    </button>
                     <button type="button" onclick="window.quickEditObservation('${p.id}')" class="no-print group w-full flex items-start gap-2 text-left text-sm leading-relaxed border-l-2 ${scheduleAlert.isLate ? 'border-red-500' : 'border-amber-400'} pl-3 py-1 ${p.observacao ? 'text-slate-300 hover:text-white' : 'text-slate-500 hover:text-amber-300'} transition-colors" title="${state.lang === 'pt' ? 'Clique para editar' : 'Click to edit'}"><span class="flex-1">${p.observacao ? escapeInlineHtml(p.observacao) : (state.lang === 'pt' ? '+ Adicionar observação' : '+ Add note')}</span><i data-lucide="pencil" class="w-3.5 h-3.5 opacity-0 group-hover:opacity-100 transition-opacity"></i></button>
                     ${p.observacao ? `<p class="hidden print:block text-sm text-black border-l-2 border-slate-400 pl-3">${escapeInlineHtml(p.observacao)}</p>` : ''}
                 </div>
 
-                <div class="bg-gradient-to-br from-black/50 to-transparent p-6 rounded-[24px] border border-white/5 shadow-inner print:bg-transparent print:border-slate-300">
+                <button type="button" onclick="window.quickEditProjectSection('${p.id}', 'contract')" class="quick-edit-target w-full bg-gradient-to-br from-black/50 to-transparent p-6 rounded-[24px] border border-white/5 shadow-inner print:bg-transparent print:border-slate-300">
                     <p class="text-xs font-black text-slate-500 uppercase mb-2 text-center tracking-widest">${window.t('gross_contract')}</p>
                     <p class="text-4xl font-black text-white force-white-text text-center tracking-tight print:text-black">${formatCurr(p.valorTotal)}</p>
-                </div>
+                </button>
 
                 <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mt-6 no-print project-finance-snapshot">
                     <div class="rounded-[28px] p-4 sm:p-5 border ${clientBorderColor} shadow-inner transition-colors min-h-[208px] flex flex-col bg-gradient-to-br from-black/20 to-transparent overflow-hidden">
