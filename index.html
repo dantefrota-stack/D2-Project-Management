@@ -329,6 +329,7 @@
         .quick-edit-label { display:block; margin-bottom:.5rem; color:#64748b; font-size:10px; font-weight:900; text-transform:uppercase; letter-spacing:.14em; }
         .quick-edit-target { border-radius:12px; transition:background-color .18s ease, box-shadow .18s ease; cursor:pointer; }
         .quick-edit-target:hover { background:rgba(255,255,255,.045); box-shadow:0 0 0 1px rgba(255,255,255,.07); }
+        .team-management-title { letter-spacing:0; word-spacing:.22em; }
         @media (max-width: 420px) {
             .compact-meta-grid { grid-template-columns:minmax(0,1fr) minmax(0,.9fr); gap:.6rem; }
             .compact-kpi-card { padding:.9rem; }
@@ -597,16 +598,19 @@
 
         <div id="view-users" class="hidden space-y-10 animate-fade-in">
             <div class="glass p-6 sm:p-10 max-w-2xl mx-auto rounded-[32px] text-left border border-white/5 shadow-2xl">
-                <h3 class="text-2xl font-black text-gold mb-8 uppercase tracking-tighter" data-i18n="team_title">Gestão de Equipe</h3>
-                <form id="team-form" class="space-y-6">
+                <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 mb-8">
+                    <h3 class="team-management-title text-2xl font-black text-gold uppercase" data-i18n="team_title">Gestão de Equipe</h3>
+                    <button type="button" onclick="window.startNewTeamMember()" class="inline-flex items-center justify-center gap-2 px-4 py-3 rounded-xl border border-gold/30 bg-gold/10 text-gold text-[10px] font-black uppercase tracking-widest hover:bg-gold/20 transition-colors"><i data-lucide="user-plus" class="w-4 h-4"></i><span data-i18n="team_new">Novo vendedor</span></button>
+                </div>
+                <form id="team-form" class="space-y-6" autocomplete="off">
                     <input type="hidden" id="t-id">
 
                     <div class="grid grid-cols-1 sm:grid-cols-3 gap-6">
-                        <div class="space-y-1"><label class="label-auth text-xs" data-i18n="team_name">Nome do Vendedor</label><input type="text" id="t-name" required class="modern-input"></div>
-                        <div class="space-y-1"><label class="label-auth text-xs" data-i18n="team_email">E-mail</label><input type="email" id="t-email" required class="modern-input"></div>
+                        <div class="space-y-1"><label class="label-auth text-xs" data-i18n="team_name">Nome do Vendedor</label><input type="text" id="t-name" required class="modern-input" autocomplete="off" data-lpignore="true"></div>
+                        <div class="space-y-1"><label class="label-auth text-xs" data-i18n="team_email">E-mail</label><input type="email" id="t-email" required class="modern-input" autocomplete="off" data-lpignore="true"></div>
                         <div class="space-y-1 relative">
                             <label class="label-auth text-xs" data-i18n="team_pass">Senha</label>
-                            <input type="password" id="t-pass" required class="modern-input !pr-10">
+                            <input type="password" id="t-pass" required class="modern-input !pr-10" autocomplete="new-password" data-lpignore="true">
                             <button type="button" onclick="window.togglePassword('t-pass', 'eye-team-btn')" class="password-toggle" id="eye-team-btn" style="top:70%"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg></button>
                         </div>
                     </div>
@@ -640,7 +644,7 @@
                         </div>
                     </div>
                     
-                    <button type="submit" id="btn-save-team" class="btn-premium-gold shadow-xl mt-6" data-i18n="btn_team">Salvar e Autorizar Acesso</button>
+                    <button type="submit" id="btn-save-team" class="btn-premium-gold shadow-xl mt-6">Criar vendedor</button>
                 </form>
             </div>
             <div id="users-list" class="flex flex-col gap-4 text-left max-w-7xl mx-auto mt-10"></div>
@@ -729,7 +733,7 @@
         pt: {
             language_label: "Idioma",
             admin_panel: "Gestão Corporativa", nav_proj: "Projetos", nav_new: "Nova Obra", nav_rep: "Relatórios", nav_users: "Equipe", project_search_label: "Busca rápida", project_search_placeholder: "Buscar por cliente, projeto, endereço, invoice, proposta ou valor",
-            form_new_title: "Registrar Obra", team_title: "Gestão de Equipe", btn_team: "Salvar e Autorizar Acesso",
+            form_new_title: "Registrar Obra", team_title: "Gestão de Equipe", btn_team: "Salvar e Autorizar Acesso", team_new: "Novo vendedor",
             filter_both: "AMBAS", filter_active: "ATIVAS", filter_archived: "ARQUIVADAS", filter_all: "TODAS",
             project_filter_seller: "Filtro por Vendedor", project_filter_all_sellers: "Todos os vendedores", report_filter_seller: "Vendedor no relatório", report_filter_all_sellers: "Todos os vendedores", logs_empty: "Nenhum log registrado", margin_alert_low: "Margem abaixo de 45%", margin_current: "Margem Atual", completed_on: "Concluída em", category_commission: "Comissões", seller_margin_cover: "Margem da obra",
             lbl_email: "E-mail Corporativo", lbl_pass: "Senha de Acesso", btn_login: "Acessar Sistema",
@@ -782,7 +786,7 @@
         en: {
             language_label: "Language",
             admin_panel: "Corporate Management", nav_proj: "Projects", nav_new: "New Entry", nav_rep: "Reports", nav_users: "Team", project_search_label: "Quick search", project_search_placeholder: "Search by client, project, address, invoice, proposal, or value",
-            form_new_title: "Register Project", team_title: "Team Management", btn_team: "Authorize Access",
+            form_new_title: "Register Project", team_title: "Team Management", btn_team: "Authorize Access", team_new: "New seller",
             filter_both: "BOTH", filter_active: "ACTIVE", filter_archived: "ARCHIVED", filter_all: "ALL",
             project_filter_seller: "Seller Filter", project_filter_all_sellers: "All sellers", report_filter_seller: "Seller in report", report_filter_all_sellers: "All sellers", logs_empty: "No logs recorded", margin_alert_low: "Margin below 45%", margin_current: "Current Margin", completed_on: "Completed on", category_commission: "Commissions", seller_margin_cover: "Project margin",
             lbl_email: "Corporate Email", lbl_pass: "Password", btn_login: "Access System",
@@ -887,6 +891,7 @@
             const key = el.getAttribute('data-i18n-placeholder');
             if (translations[state.lang] && translations[state.lang][key]) el.setAttribute('placeholder', translations[state.lang][key]);
         });
+        updateTeamFormMode(!!document.getElementById('t-id')?.value);
         window.renderProjectSellerFilter();
         window.renderLogs();
         if(state.projects.length > 0) {
@@ -2507,6 +2512,29 @@
         window.safeRenderReport();
     };
 
+    function updateTeamFormMode(isEditing = false) {
+        const button = document.getElementById('btn-save-team');
+        if (button) button.textContent = isEditing
+            ? (state.lang === 'pt' ? 'Salvar alterações' : 'Save changes')
+            : (state.lang === 'pt' ? 'Criar vendedor' : 'Create seller');
+    }
+
+    window.startNewTeamMember = () => {
+        const form = document.getElementById('team-form');
+        if (!form) return;
+        form.reset();
+        document.getElementById('t-id').value = '';
+        document.getElementById('t-name').value = '';
+        document.getElementById('t-email').value = '';
+        document.getElementById('t-pass').value = '';
+        document.querySelectorAll('#team-form .perm-checkbox').forEach(box => { box.checked = false; });
+        document.getElementById('p_smart').checked = true;
+        document.getElementById('p_hvac').checked = true;
+        document.getElementById('p_tab_proj').checked = true;
+        updateTeamFormMode(false);
+        document.getElementById('t-name').focus();
+    };
+
     window.editTeamMember = (id, name, email, password, permObj) => {
         document.getElementById('t-id').value = id; 
         document.getElementById('t-name').value = name || ''; 
@@ -2521,6 +2549,7 @@
         document.getElementById('p_tab_rep').checked = permObj.tab_rep;
         document.getElementById('p_fin').checked = permObj.fin;
         document.getElementById('p_costs').checked = permObj.costs;
+        updateTeamFormMode(true);
 
         window.scrollTo({ top: 0, behavior: 'smooth' });
     };
@@ -4497,6 +4526,9 @@ function getSellerCommissionPeriodReport(projects, startStr, endStr) {
 
     document.addEventListener('DOMContentLoaded', () => {
         try { lucide.createIcons(); } catch {}
+        setTimeout(() => {
+            if (!document.getElementById('t-id')?.value) window.startNewTeamMember();
+        }, 350);
 
         document.getElementById('login-form').onsubmit = async (e) => {
             e.preventDefault(); hideLoginMessages(); const btn = document.getElementById('btn-entrar'); btn.disabled = true;
@@ -4579,9 +4611,7 @@ function getSellerCommissionPeriodReport(projects, startStr, endStr) {
                 try { const secApp = initializeApp(firebaseConfig, "SecApp_" + Date.now()); const secAuth = getAuth(secApp); await createUserWithEmailAndPassword(secAuth, mail, pass); await signOut(secAuth); await deleteApp(secApp); } catch (authErr) {}
                 if (!id) { await addDoc(collection(db, 'artifacts', appId, 'public', 'data', 'user_credentials'), permData); logAccess(state.user.email, `Adicionou usuário: ${name}`); } 
                 else { await updateDoc(doc(db, 'artifacts', appId, 'public', 'data', 'user_credentials', id), permData); logAccess(state.user.email, `Atualizou usuário: ${name}`); }
-                e.target.reset(); document.getElementById('t-id').value = ''; document.getElementById('t-name').value = ''; 
-                document.querySelectorAll('.perm-checkbox').forEach(c => c.checked = false);
-                document.getElementById('p_smart').checked = true; document.getElementById('p_hvac').checked = true; document.getElementById('p_tab_proj').checked = true;
+                window.startNewTeamMember();
             } catch (err) { window.showModal('Erro', 'Erro ao salvar usuário: ' + err.message, 'error'); }
         };
     });
