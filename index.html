@@ -3557,7 +3557,9 @@
         const rate = Number(project?.percComissao || 0) / 100;
         const method = getReceiptEffectiveMethod(receipt, project);
         const base = isCardMethod(method) ? amount * 0.97 : amount;
-        return roundMoney(base * rate);
+        // Keep sub-cent precision per installment. Rounding each receipt first can
+        // create a false $0.01 balance when multiple half-cent values are summed.
+        return base * rate;
     }
 
     
@@ -3571,15 +3573,19 @@
         (Array.isArray(project?.recebimentos) ? project.recebimentos : []).forEach(receipt => {
             const dt = toDateOnly(receipt?.data);
             if (!dt || (end && dt > end)) return;
-            receivedToEnd = roundMoney(receivedToEnd + Number(receipt?.valor || 0));
-            releasedToEnd = roundMoney(releasedToEnd + getReceiptCommissionValue(receipt, project));
+            receivedToEnd += Number(receipt?.valor || 0);
+            releasedToEnd += getReceiptCommissionValue(receipt, project);
         });
 
         normalizePaymentEntries(project?.pagamentosEfetuados || []).forEach(payment => {
             const dt = toDateOnly(payment?.data);
             if (!dt || (end && dt > end)) return;
-            paidToEnd = roundMoney(paidToEnd + Number(payment?.valor || 0));
+            paidToEnd += Number(payment?.valor || 0);
         });
+
+        receivedToEnd = roundMoney(receivedToEnd);
+        releasedToEnd = roundMoney(releasedToEnd);
+        paidToEnd = roundMoney(paidToEnd);
 
         const hasFinancialMovement = receivedToEnd > 0.009 || releasedToEnd > 0.009 || paidToEnd > 0.009;
         const isFinished = project?.status === 'Finalizado';
