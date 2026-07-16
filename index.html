@@ -2375,6 +2375,17 @@
         window.scrollTo({ top: 0, behavior: 'smooth' });
     };
 
+    window.openProjectFromReport = (projectId, moduleName = 'commissions') => {
+        const project = state.projects.find(item => item.id === projectId);
+        if (!project) return;
+        window.showView('projects');
+        state.focusedProject = projectId;
+        state.activeModule = moduleName;
+        logAccess(state.user?.email, `Abriu pelo relatório: ${getProjectDisplayName(project)}`, getProjectLogMeta(project));
+        window.renderProjects();
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+    };
+
     window.closeProjectModule = () => {
         state.activeModule = null; 
         window.renderProjects();
@@ -4177,7 +4188,7 @@ function getSellerCommissionPeriodReport(projects, startStr, endStr) {
             const rowsHtml = group.rows.map(row => {
                 const p = row.project;
                 return `
-                    <tr class="border-b border-white/5 print:border-slate-100 text-[10px] sm:text-xs text-left text-slate-300 print:text-slate-800 hover:bg-white/5 transition-colors">
+                    <tr onclick="window.openProjectFromReport('${p.id}', 'commissions')" onkeydown="if(event.key==='Enter'||event.key===' '){event.preventDefault();window.openProjectFromReport('${p.id}', 'commissions')}" role="link" tabindex="0" aria-label="${state.lang === 'pt' ? 'Abrir obra' : 'Open project'} ${escapeInlineHtml(getProjectPrimaryTitle(p))}" class="cursor-pointer border-b border-white/5 print:border-slate-100 text-[10px] sm:text-xs text-left text-slate-300 print:text-slate-800 hover:bg-white/10 hover:ring-1 hover:ring-inset hover:ring-gold/20 focus:outline-none focus:ring-2 focus:ring-inset focus:ring-gold/50 transition-colors">
                         ${showCompanyColumn ? `<td class="p-3 sm:p-4 text-slate-400 print:text-slate-500 report-col-unit">${escapeInlineHtml(getCompanyDisplayName(p?.empresa))}</td>` : ''}
                         <td class="p-3 sm:p-4 font-bold text-slate-400 print:text-slate-500 report-col-prop">${p.numeroInvoice || '-'} / ${p.numeroProposta || '-'}</td>
                         <td class="p-3 sm:p-4 font-black uppercase text-white force-white-text print:!text-slate-900 report-col-client">${escapeInlineHtml(getProjectPrimaryTitle(p))}</td>
