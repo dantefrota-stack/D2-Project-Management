@@ -841,7 +841,7 @@
         const m = normalizeMethod(method);
         return m === 'CC' || m.includes('CART') || m.includes('CARD') || m.includes('CREDIT');
     };
-    const getReceiptEffectiveMethod = (receipt, project = null) => receipt?.metodo || project?.metodo || 'Zelle';
+    const getReceiptEffectiveMethod = (receipt) => receipt?.metodo || 'Zelle';
     const getReceiptFee = (receipt, project = null) => {
         const amount = roundMoney(Number(receipt?.valor || 0));
         return isCardMethod(getReceiptEffectiveMethod(receipt, project)) ? roundMoney(amount * 0.03) : 0;
@@ -2547,6 +2547,28 @@
         window.closeCustomModal();
     };
 
+    window.quickEditObservation = (projectId) => {
+        if (!state.userPerms.tab_proj) return;
+        const project = state.projects.find(item => item.id === projectId);
+        if (!project) return;
+        document.getElementById('custom-modal-title').innerText = state.lang === 'pt' ? 'Editar observação' : 'Edit note';
+        document.getElementById('custom-modal-icon').innerHTML = '<i data-lucide="message-square-text" class="w-10 h-10 text-amber-400"></i>';
+        document.getElementById('custom-modal-msg').innerHTML = `<label class="block text-left text-[10px] font-black uppercase tracking-widest text-slate-500 mb-2">${state.lang === 'pt' ? 'Observação da obra' : 'Project note'}</label><textarea id="quick-observation-input" maxlength="180" rows="3" class="modern-input resize-none" placeholder="${state.lang === 'pt' ? 'Informe uma observação curta' : 'Enter a short note'}">${escapeInlineHtml(project.observacao || '')}</textarea><p class="text-right text-[10px] text-slate-500 mt-2">${state.lang === 'pt' ? 'Máximo 180 caracteres' : 'Maximum 180 characters'}</p>`;
+        document.getElementById('custom-modal-buttons').innerHTML = `<button type="button" onclick="window.closeCustomModal()" class="flex-1 px-4 py-3 bg-slate-700 text-white rounded-xl font-bold text-xs uppercase">${window.t('cancel')}</button><button type="button" onclick="window.saveQuickObservation('${projectId}')" class="flex-1 px-4 py-3 bg-amber-500 text-slate-950 rounded-xl font-black text-xs uppercase">${state.lang === 'pt' ? 'Salvar' : 'Save'}</button>`;
+        document.getElementById('custom-modal').classList.add('active');
+        setTimeout(() => document.getElementById('quick-observation-input')?.focus(), 50);
+        try { lucide.createIcons(); } catch {}
+    };
+
+    window.saveQuickObservation = async (projectId) => {
+        const value = String(document.getElementById('quick-observation-input')?.value || '').trim().slice(0, 180);
+        const project = state.projects.find(item => item.id === projectId);
+        if (!project) return;
+        await updateDoc(doc(db, 'artifacts', appId, 'public', 'data', 'projects', projectId), { observacao: value, updatedAt: serverTimestamp() });
+        logAccess(state.user?.email, `Atualizou observação: ${getProjectDisplayName(project)}`, getProjectLogMeta(project));
+        window.closeCustomModal();
+    };
+
     window.editP = (id) => {
         const p = state.projects.find(x => x.id === id); if (!p) return;
         renderVendedores(); const vendSelect = document.getElementById('f-vendedor');
@@ -2616,9 +2638,10 @@
         const valorTotal = Number(p?.valorTotal || 0);
         const orcamento = Number(p?.orcamento || 0);
 
-        const globalMetodo = String(p?.metodo || '');
-        const globalIsCC = isCardMethod(globalMetodo);
-        const baseProjetada = globalIsCC ? valorTotal * 0.97 : valorTotal;
+        // The expected contract method is informational only. Card fees are applied
+        // exclusively to each receipt whose actual method is credit card.
+        const globalIsCC = false;
+        const baseProjetada = valorTotal;
         const commTotalProjetada = roundMoney(baseProjetada * percComissao);
 
         const recebimentos = Array.isArray(p?.recebimentos) ? p.recebimentos : [];
@@ -3158,7 +3181,8 @@
                                 <span class="text-slate-300">${formatProjectDate(p.dataInicio)}</span>
                                 <span class="${compactStatusTone}">${p.status === 'Finalizado' && p.dataConclusao ? formatProjectDate(p.dataConclusao) : dueLabel}</span>
                             </div>
-                            ${p.observacao ? `<p class="text-xs text-slate-300 leading-relaxed border-l-2 ${scheduleAlert.isLate ? 'border-red-500' : 'border-amber-400'} pl-3">${escapeInlineHtml(p.observacao)}</p>` : ''}
+                            <button type="button" onclick="event.stopPropagation(); window.quickEditObservation('${p.id}')" class="no-print w-full text-left text-xs leading-relaxed border-l-2 ${scheduleAlert.isLate ? 'border-red-500' : 'border-amber-400'} pl-3 py-1 ${p.observacao ? 'text-slate-300 hover:text-white' : 'text-slate-500 hover:text-amber-300'} transition-colors" title="${state.lang === 'pt' ? 'Clique para editar' : 'Click to edit'}">${p.observacao ? escapeInlineHtml(p.observacao) : (state.lang === 'pt' ? '+ Adicionar observação' : '+ Add note')}</button>
+                            ${p.observacao ? `<p class="hidden print:block text-xs text-slate-800 border-l-2 border-slate-400 pl-3">${escapeInlineHtml(p.observacao)}</p>` : ''}
                         </div>
                     </div>
                     <div class="mt-6 text-center text-[11px] text-slate-500 font-bold uppercase tracking-widest no-print opacity-70 flex items-center justify-center gap-2">${window.t('click_to_open')} <i data-lucide="chevron-right" class="w-4 h-4"></i></div>
@@ -3203,7 +3227,8 @@
                         <span class="print:text-black">${formatProjectDate(p.dataInicio)}</span>
                         <span class="${p.status === 'Finalizado' ? 'text-emerald-400' : (scheduleAlert.isLate ? 'text-red-500' : (scheduleAlert.isDueSoon ? 'text-amber-400' : 'text-gold'))} print:!text-black">${p.status === 'Finalizado' && p.dataConclusao ? formatProjectDate(p.dataConclusao) : (scheduleAlert.isLate ? window.t('late') : (prog === 100 ? window.t('completed') : (Number.isFinite(e) ? Math.ceil((e - n) / (1000 * 3600 * 24)) : 0) + ' ' + window.t('days_left')))}</span>
                     </div>
-                    ${p.observacao ? `<p class="text-sm text-slate-300 leading-relaxed border-l-2 ${scheduleAlert.isLate ? 'border-red-500' : 'border-amber-400'} pl-3 pt-0.5 print:text-black">${escapeInlineHtml(p.observacao)}</p>` : ''}
+                    <button type="button" onclick="window.quickEditObservation('${p.id}')" class="no-print group w-full flex items-start gap-2 text-left text-sm leading-relaxed border-l-2 ${scheduleAlert.isLate ? 'border-red-500' : 'border-amber-400'} pl-3 py-1 ${p.observacao ? 'text-slate-300 hover:text-white' : 'text-slate-500 hover:text-amber-300'} transition-colors" title="${state.lang === 'pt' ? 'Clique para editar' : 'Click to edit'}"><span class="flex-1">${p.observacao ? escapeInlineHtml(p.observacao) : (state.lang === 'pt' ? '+ Adicionar observação' : '+ Add note')}</span><i data-lucide="pencil" class="w-3.5 h-3.5 opacity-0 group-hover:opacity-100 transition-opacity"></i></button>
+                    ${p.observacao ? `<p class="hidden print:block text-sm text-black border-l-2 border-slate-400 pl-3">${escapeInlineHtml(p.observacao)}</p>` : ''}
                 </div>
 
                 <div class="bg-gradient-to-br from-black/50 to-transparent p-6 rounded-[24px] border border-white/5 shadow-inner print:bg-transparent print:border-slate-300">
