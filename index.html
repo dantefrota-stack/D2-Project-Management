@@ -480,6 +480,304 @@
             .clean-table-head { padding:16px; }
         }
 
+        /* =========================================================
+           v85 · CONCEITO 2 — DASHBOARD ANALÍTICO UNIFICADO
+           ========================================================= */
+        :root {
+            --c2-bg:#07101a;
+            --c2-bg-2:#091521;
+            --c2-panel:#0d1926;
+            --c2-panel-2:#101d2b;
+            --c2-panel-3:#132233;
+            --c2-line:rgba(148,163,184,.16);
+            --c2-line-strong:rgba(148,163,184,.24);
+            --c2-text:#f2f6fb;
+            --c2-muted:#8b9aad;
+            --c2-green:#45d89c;
+            --c2-green-soft:rgba(69,216,156,.10);
+            --c2-cyan:#44c6e8;
+            --c2-cyan-soft:rgba(68,198,232,.10);
+            --c2-amber:#f3bc3d;
+            --c2-red:#ff6e6e;
+            --c2-purple:#9a78ff;
+            --c2-radius:24px;
+            --c2-shadow:0 24px 65px -42px rgba(0,0,0,.95);
+        }
+        * { box-sizing:border-box; }
+        html { background:var(--c2-bg); }
+        .app-body-dark {
+            background:
+                radial-gradient(circle at 85% -10%, rgba(39,92,126,.16), transparent 34%),
+                radial-gradient(circle at 7% 12%, rgba(36,117,103,.08), transparent 30%),
+                linear-gradient(180deg,var(--c2-bg) 0%,#050b12 100%) !important;
+            color:var(--c2-text);
+        }
+        .app-body-light {
+            --c2-bg:#eef3f8; --c2-bg-2:#f8fafc; --c2-panel:#ffffff; --c2-panel-2:#f8fafc; --c2-panel-3:#f1f5f9;
+            --c2-line:rgba(71,85,105,.16); --c2-line-strong:rgba(71,85,105,.24); --c2-text:#0f172a; --c2-muted:#64748b;
+            background:#eef3f8 !important; color:#0f172a;
+        }
+        .c2-main { max-width:1560px; }
+        .c2-view { width:100%; text-align:left; min-width:0; }
+
+        /* top navigation */
+        .c2-topbar { background:rgba(7,16,26,.92); border-bottom:1px solid var(--c2-line); backdrop-filter:blur(22px); box-shadow:0 12px 35px -28px rgba(0,0,0,.9); }
+        .app-body-light .c2-topbar { background:rgba(255,255,255,.94); }
+        .c2-topbar-inner { max-width:1560px; margin:0 auto; min-height:76px; padding:10px 22px; display:grid; grid-template-columns:auto 1fr auto; align-items:center; gap:28px; }
+        .c2-brand-wrap { display:flex; align-items:center; gap:12px; min-width:0; }
+        .c2-brand-mark { width:48px; height:48px; border-radius:15px; display:flex; align-items:center; justify-content:center; background:#fff; border:1px solid var(--c2-line); overflow:hidden; box-shadow:0 10px 25px -18px #000; }
+        .c2-brand-mark img { width:100%; height:100%; object-fit:contain; padding:5px; }
+        .c2-brand-copy { line-height:1.05; text-align:left; white-space:nowrap; }
+        .c2-brand-copy strong { display:block; font-size:12px; letter-spacing:.13em; color:var(--c2-text); }
+        .c2-brand-copy span { display:block; margin-top:4px; font-size:9px; font-weight:900; letter-spacing:.24em; color:var(--c2-green); }
+        .c2-nav { display:flex; align-items:stretch; justify-content:center; gap:8px; min-width:0; border:0; margin:0; overflow:visible; }
+        .c2-nav .tab-btn { display:flex; align-items:center; gap:9px; padding:14px 16px; border-radius:14px; border:1px solid transparent; color:var(--c2-muted); font-size:13px; font-weight:700; letter-spacing:0; text-transform:none; transition:.2s; white-space:nowrap; }
+        .c2-nav .tab-btn:hover { color:var(--c2-text); background:rgba(255,255,255,.035); }
+        .c2-nav .tab-btn.tab-active { color:var(--c2-text); background:rgba(69,216,156,.07); border-color:rgba(69,216,156,.16); box-shadow:inset 0 -2px 0 var(--c2-green); }
+        .c2-header-actions { display:flex; align-items:center; justify-content:flex-end; gap:10px; }
+        .c2-icon-btn { width:42px; height:42px; border-radius:14px; display:inline-flex; align-items:center; justify-content:center; color:var(--c2-muted); background:rgba(255,255,255,.025); border:1px solid var(--c2-line); transition:.2s; }
+        .c2-icon-btn:hover { color:var(--c2-text); border-color:var(--c2-line-strong); background:rgba(255,255,255,.055); }
+        .c2-logout:hover { color:var(--c2-red); border-color:rgba(255,110,110,.25); }
+        .c2-user { align-items:center; gap:9px; min-width:0; }
+        .c2-avatar { width:38px; height:38px; border-radius:50%; display:flex; align-items:center; justify-content:center; background:rgba(255,255,255,.04); border:1px solid var(--c2-line); font-size:12px; font-weight:900; color:var(--c2-text); }
+        .c2-user-copy { text-align:left; max-width:165px; }
+        .c2-user-copy p:first-child { font-size:11px; font-weight:850; color:var(--c2-text); white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+        .c2-user-copy p:last-child { margin-top:2px; font-size:9px; color:var(--c2-muted); text-transform:uppercase; letter-spacing:.12em; }
+
+        /* page structure */
+        .c2-page-heading { display:flex; align-items:flex-start; justify-content:space-between; gap:20px; margin:10px 0 24px; }
+        .c2-page-heading h1 { margin:2px 0 0; font-size:clamp(1.9rem,3vw,2.65rem); line-height:1.05; font-weight:850; letter-spacing:-.045em; color:var(--c2-text); }
+        .c2-page-subtitle { margin-top:8px; color:var(--c2-muted); font-size:13px; line-height:1.55; max-width:760px; }
+        .c2-eyebrow { font-size:9px; line-height:1.2; font-weight:900; letter-spacing:.22em; text-transform:uppercase; color:var(--c2-muted); }
+        .c2-panel { background:linear-gradient(145deg,rgba(16,29,43,.96),rgba(10,20,31,.98)); border:1px solid var(--c2-line); border-radius:var(--c2-radius); box-shadow:var(--c2-shadow); color:var(--c2-text); min-width:0; }
+        .app-body-light .c2-panel { background:#fff; }
+        .glass { background:linear-gradient(145deg,rgba(16,29,43,.95),rgba(10,20,31,.97)) !important; border-color:var(--c2-line) !important; box-shadow:var(--c2-shadow) !important; }
+        .app-body-light .glass { background:#fff !important; }
+        .c2-section-heading { display:flex; align-items:center; justify-content:space-between; gap:16px; padding-bottom:18px; border-bottom:1px solid var(--c2-line); }
+        .c2-section-heading h2, .c2-list-head h2 { margin-top:5px; color:var(--c2-text); font-size:18px; line-height:1.2; font-weight:800; letter-spacing:-.02em; }
+        .c2-primary-btn,.c2-secondary-btn,.c2-danger-btn { display:inline-flex; align-items:center; justify-content:center; gap:9px; border-radius:13px; min-height:44px; padding:11px 17px; font-size:11px; font-weight:850; letter-spacing:.04em; transition:.2s; white-space:nowrap; }
+        .c2-primary-btn { background:linear-gradient(135deg,#43d995,#2dbf82); border:1px solid rgba(69,216,156,.55); color:#06120e; box-shadow:0 12px 28px -18px rgba(69,216,156,.75); }
+        .c2-primary-btn:hover { transform:translateY(-1px); filter:brightness(1.05); }
+        .c2-secondary-btn { background:rgba(255,255,255,.035); border:1px solid var(--c2-line); color:#dbe5ef; }
+        .app-body-light .c2-secondary-btn { color:#334155; }
+        .c2-secondary-btn:hover { background:rgba(255,255,255,.07); border-color:var(--c2-line-strong); }
+        .c2-danger-btn { background:rgba(255,110,110,.06); color:#ff9a9a; border:1px solid rgba(255,110,110,.2); }
+        .c2-danger-btn:hover { background:rgba(255,110,110,.11); }
+        .c2-status-soft { display:inline-flex; align-items:center; min-height:30px; padding:7px 10px; border:1px solid var(--c2-line); border-radius:999px; color:var(--c2-muted); background:rgba(255,255,255,.025); font-size:9px; font-weight:800; text-transform:uppercase; letter-spacing:.08em; }
+
+        /* forms and filters */
+        .modern-input { background:rgba(2,8,14,.54) !important; border:1px solid var(--c2-line) !important; border-radius:13px !important; color:var(--c2-text) !important; box-shadow:none !important; min-height:47px; font-size:14px; padding:13px 14px; }
+        .modern-input:focus { border-color:rgba(69,216,156,.55) !important; box-shadow:0 0 0 3px rgba(69,216,156,.08) !important; }
+        .app-body-light .modern-input { background:#fff !important; color:#0f172a !important; }
+        .c2-form-field label,.c2-filter-field label { display:block; margin:0 0 8px 2px; color:var(--c2-muted); font-size:9px; font-weight:900; text-transform:uppercase; letter-spacing:.16em; }
+        .c2-filter-panel { padding:18px; background:rgba(13,25,38,.78); border:1px solid var(--c2-line); border-radius:20px; box-shadow:var(--c2-shadow); margin-bottom:24px; }
+        .app-body-light .c2-filter-panel { background:#fff; }
+        .c2-filter-grid { display:grid; grid-template-columns:minmax(280px,1.5fr) minmax(260px,.9fr) minmax(220px,.8fr); gap:14px; align-items:end; }
+        .c2-filter-footer { display:flex; align-items:center; justify-content:space-between; gap:16px; margin-top:14px; padding-top:14px; border-top:1px solid var(--c2-line); }
+        .c2-filter-hint,.c2-filter-summary { display:flex; align-items:center; gap:8px; color:var(--c2-muted); font-size:10px; font-weight:700; }
+        .c2-input-icon { position:absolute; left:14px; top:50%; transform:translateY(-50%); color:var(--c2-muted); pointer-events:none; z-index:2; }
+        .c2-input-with-icon { padding-left:42px !important; }
+        .c2-unit-switch,.c2-segmented { display:flex; align-items:center; gap:5px; padding:4px; border:1px solid var(--c2-line); border-radius:13px; background:rgba(0,0,0,.15); min-height:47px; overflow-x:auto; }
+        .c2-unit-switch .unit-pill,.c2-segmented .filter-pill { flex:1; min-width:max-content; border:0 !important; background:transparent !important; color:var(--c2-muted) !important; border-radius:10px !important; padding:9px 12px !important; font-size:10px !important; font-weight:850 !important; text-transform:none !important; }
+        .c2-unit-switch .unit-pill.active,.c2-segmented .filter-pill.active { background:rgba(69,216,156,.11) !important; color:var(--c2-green) !important; box-shadow:inset 0 0 0 1px rgba(69,216,156,.2); }
+        .c2-filter-panel .filter-pill { border:1px solid var(--c2-line) !important; background:rgba(255,255,255,.025) !important; color:var(--c2-muted) !important; border-radius:11px !important; padding:10px 14px !important; font-size:10px !important; font-weight:850 !important; text-transform:none !important; min-height:40px; }
+        .c2-filter-panel .filter-pill:hover { color:var(--c2-text) !important; background:rgba(255,255,255,.05) !important; }
+        .c2-filter-panel .filter-pill.active { background:rgba(69,216,156,.11) !important; color:var(--c2-green) !important; border-color:rgba(69,216,156,.22) !important; box-shadow:inset 0 0 0 1px rgba(69,216,156,.08); }
+        .c2-currency-prefix,.c2-percent-suffix { position:absolute; top:50%; transform:translateY(-50%); z-index:2; color:var(--c2-muted); font-size:13px; font-weight:800; }
+        .c2-currency-prefix { left:15px; } .c2-percent-suffix { right:15px; }
+        .c2-input-money { padding-left:32px !important; }
+        .calendar-icon-overlay { color:var(--c2-green) !important; }
+
+        /* permissions */
+        .c2-team-layout { display:grid; grid-template-columns:minmax(340px,.82fr) minmax(0,1.48fr); gap:20px; align-items:start; }
+        .c2-permission-group { padding-top:20px; border-top:1px solid var(--c2-line); }
+        .perm-box { background:rgba(255,255,255,.018) !important; border:1px solid var(--c2-line) !important; border-radius:14px !important; padding:13px 14px !important; min-width:0; }
+        .perm-box:hover { border-color:rgba(69,216,156,.28) !important; background:rgba(69,216,156,.035) !important; }
+        .perm-box > span { min-width:0; display:block; }
+        .perm-box strong { display:block; font-size:11px; color:#dde6ef; font-weight:800; letter-spacing:0; text-transform:none; }
+        .app-body-light .perm-box strong { color:#334155; }
+        .perm-box small { display:block; margin-top:3px; font-size:9px; line-height:1.35; color:var(--c2-muted); }
+        .perm-checkbox { accent-color:var(--c2-green) !important; flex:none; }
+        .c2-list-head { min-height:82px; padding:20px 22px; display:flex; justify-content:space-between; align-items:center; gap:16px; border-bottom:1px solid var(--c2-line); }
+        .c2-list-head-icon { width:42px; height:42px; border-radius:13px; display:flex; align-items:center; justify-content:center; background:var(--c2-green-soft); color:var(--c2-green); border:1px solid rgba(69,216,156,.16); }
+        .c2-users-list { min-width:0; }
+        .c2-user-row { display:grid; grid-template-columns:minmax(190px,1.4fr) minmax(140px,.8fr) minmax(130px,.7fr) auto; gap:16px; align-items:center; padding:17px 20px; border-bottom:1px solid var(--c2-line); min-width:0; }
+        .c2-user-row:last-child { border-bottom:0; }
+        .c2-user-row:hover { background:rgba(255,255,255,.018); }
+        .c2-user-identity { display:flex; align-items:center; gap:12px; min-width:0; }
+        .c2-user-initials { width:39px; height:39px; border-radius:50%; display:flex; align-items:center; justify-content:center; flex:none; border:1px solid rgba(68,198,232,.35); background:rgba(68,198,232,.08); color:#cdefff; font-size:11px; font-weight:900; }
+        .c2-user-name { color:var(--c2-text); font-size:12px; font-weight:800; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
+        .c2-user-email { margin-top:3px; color:var(--c2-muted); font-size:10px; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
+        .c2-tag { display:inline-flex; align-items:center; width:max-content; max-width:100%; padding:6px 9px; border-radius:8px; background:rgba(68,198,232,.09); border:1px solid rgba(68,198,232,.12); color:#83d9ef; font-size:9px; font-weight:800; }
+        .c2-tag.green { background:var(--c2-green-soft); border-color:rgba(69,216,156,.14); color:var(--c2-green); }
+        .c2-user-perms { color:var(--c2-muted); font-size:9px; line-height:1.5; }
+        .c2-row-actions { display:flex; align-items:center; justify-content:flex-end; gap:6px; }
+        .c2-row-actions button { width:34px; height:34px; border-radius:10px; display:flex; align-items:center; justify-content:center; border:1px solid var(--c2-line); color:var(--c2-muted); background:rgba(255,255,255,.02); }
+        .c2-row-actions button:hover { color:var(--c2-text); background:rgba(255,255,255,.05); }
+
+        /* projects */
+        .c2-project-grid { display:grid; grid-template-columns:repeat(auto-fit,minmax(min(100%,350px),1fr)); gap:16px; padding-bottom:38px; }
+        .c2-project-card { position:relative; display:flex; flex-direction:column; min-width:0; min-height:318px; padding:20px; border:1px solid var(--c2-line); border-radius:21px; background:linear-gradient(150deg,rgba(16,29,43,.97),rgba(9,18,28,.99)); box-shadow:var(--c2-shadow); overflow:hidden; transition:.2s; cursor:pointer; }
+        .c2-project-card:hover { transform:translateY(-2px); border-color:rgba(69,216,156,.28); box-shadow:0 26px 70px -42px rgba(0,0,0,.95),0 0 0 1px rgba(69,216,156,.04); }
+        .c2-project-card * { min-width:0; }
+        .c2-project-top { display:flex; justify-content:space-between; align-items:flex-start; gap:14px; }
+        .c2-project-title-wrap { display:flex; align-items:flex-start; gap:12px; min-width:0; }
+        .c2-project-icon { width:42px; height:42px; border-radius:12px; flex:none; display:flex; align-items:center; justify-content:center; background:var(--c2-green-soft); border:1px solid rgba(69,216,156,.16); color:var(--c2-green); }
+        .c2-project-name { font-size:17px; line-height:1.15; font-weight:820; color:var(--c2-text); overflow-wrap:anywhere; }
+        .c2-project-reference { margin-top:4px; color:var(--c2-muted); font-size:10px; line-height:1.4; overflow-wrap:anywhere; }
+        .c2-project-status { display:inline-flex; align-items:center; gap:6px; flex:none; border-radius:999px; padding:6px 9px; font-size:9px; font-weight:850; border:1px solid var(--c2-line); color:var(--c2-muted); background:rgba(255,255,255,.025); }
+        .c2-project-status.success { color:var(--c2-green); background:var(--c2-green-soft); border-color:rgba(69,216,156,.16); }
+        .c2-project-status.warning { color:var(--c2-amber); background:rgba(243,188,61,.09); border-color:rgba(243,188,61,.16); }
+        .c2-project-status.danger { color:var(--c2-red); background:rgba(255,110,110,.08); border-color:rgba(255,110,110,.16); }
+        .c2-project-address { display:flex; align-items:flex-start; gap:7px; padding:14px 0; margin-top:14px; border-top:1px solid var(--c2-line); border-bottom:1px solid var(--c2-line); color:var(--c2-muted); font-size:10px; line-height:1.45; overflow-wrap:anywhere; }
+        .c2-project-meta { display:grid; grid-template-columns:1fr 1fr; gap:14px; padding:14px 0; border-bottom:1px solid var(--c2-line); }
+        .c2-project-meta label,.c2-project-fin label,.c2-project-footer label { display:block; color:var(--c2-muted); font-size:8px; font-weight:900; text-transform:uppercase; letter-spacing:.12em; margin-bottom:5px; }
+        .c2-project-meta strong { display:block; color:#dbe6ef; font-size:11px; font-weight:750; overflow-wrap:anywhere; }
+        .app-body-light .c2-project-meta strong { color:#334155; }
+        .c2-project-fin { display:grid; grid-template-columns:1fr 1fr; gap:14px; padding:14px 0; }
+        .c2-project-fin strong { display:block; font-size:clamp(16px,2vw,21px); line-height:1.05; font-weight:850; color:var(--c2-green); font-variant-numeric:tabular-nums; overflow-wrap:anywhere; }
+        .c2-project-fin strong.margin-low { color:var(--c2-red); }
+        .c2-project-footer { margin-top:auto; display:flex; align-items:center; justify-content:space-between; gap:12px; padding-top:14px; border-top:1px solid var(--c2-line); }
+        .c2-project-update { color:#c9d4df; font-size:10px; font-weight:700; }
+
+        /* focused project and modules */
+        .clean-project-dashboard,.clean-finance-dashboard { background:linear-gradient(145deg,rgba(16,29,43,.97),rgba(9,18,28,.99)) !important; border:1px solid var(--c2-line) !important; border-radius:24px !important; box-shadow:var(--c2-shadow) !important; }
+        .clean-section,.clean-table-card,.clean-meta-card,.clean-support-card,.clean-note,.clean-action-card { border-color:var(--c2-line) !important; background:rgba(255,255,255,.022) !important; border-radius:16px !important; box-shadow:none !important; }
+        .clean-value { font-size:clamp(17px,2vw,24px) !important; overflow-wrap:anywhere; }
+        .clean-meta-grid { gap:12px !important; }
+        #projects-grid .project-module-shell.clean-module-shell { max-width:100% !important; width:100% !important; }
+        #projects-grid .project-module-shell.clean-module-shell > .no-print { background:transparent !important; }
+        .clean-table-row { min-width:0; }
+        .clean-table-row > * { min-width:0; overflow-wrap:anywhere; }
+
+        /* tables / reports / logs */
+        .c2-table { width:100%; border-collapse:separate; border-spacing:0; table-layout:auto; }
+        .c2-table thead { background:rgba(255,255,255,.018); }
+        .c2-table th { padding:13px 16px; color:var(--c2-muted); font-size:9px; font-weight:900; text-transform:uppercase; letter-spacing:.12em; text-align:left; white-space:nowrap; border-bottom:1px solid var(--c2-line); }
+        .c2-table td { padding:14px 16px; color:#d6e0ea; font-size:11px; line-height:1.45; border-bottom:1px solid var(--c2-line); vertical-align:middle; }
+        .c2-table tbody tr:last-child td { border-bottom:0; }
+        .c2-table tbody tr:hover { background:rgba(255,255,255,.018); }
+        .c2-table td,.c2-table th { min-width:0; }
+        .c2-table-scroll { scrollbar-color:rgba(148,163,184,.35) transparent; }
+        #logs-body tr { transition:.15s; }
+        #logs-body tr:hover { background:rgba(69,216,156,.025); }
+        #logs-body td { padding:14px 16px !important; }
+        #logs-body .text-gold { color:var(--c2-green) !important; }
+        #report-output > .glass { border-radius:24px !important; padding:24px !important; }
+        #report-output .bg-black\/20 { background:rgba(255,255,255,.018) !important; }
+        #report-output .rounded-\[40px\],#report-output .rounded-\[50px\] { border-radius:22px !important; }
+        #report-output table { table-layout:auto; }
+        #report-output th { color:var(--c2-muted) !important; }
+        #report-output .kpi-card { background:linear-gradient(145deg,#132236,#101d2d) !important; border-color:var(--c2-line) !important; border-radius:18px !important; }
+        #report-output .kpi-card.kpi-emerald { background:linear-gradient(145deg,rgba(42,151,112,.92),rgba(27,118,89,.95)) !important; }
+        #report-output .unit-pill.active { background:var(--c2-green-soft) !important; color:var(--c2-green) !important; border-color:rgba(69,216,156,.18) !important; }
+        #report-output .unit-pill { border-color:var(--c2-line) !important; color:var(--c2-muted) !important; }
+
+        /* modals — same visual family */
+        .modal-content { background:linear-gradient(150deg,#101d2d,#0b1622) !important; border:1px solid var(--c2-line) !important; border-radius:24px !important; box-shadow:0 30px 90px -42px rgba(0,0,0,.95) !important; color:var(--c2-text); }
+        .modal-content .bg-gradient-to-r { background:rgba(255,255,255,.015) !important; }
+        .modal-content .bg-slate-800,.modal-content .bg-slate-900,.modal-content .bg-black\/20,.modal-content .bg-black\/30 { background:rgba(255,255,255,.025) !important; }
+
+        /* protect every value from escaping its box */
+        .c2-panel *, .clean-project-dashboard *, .clean-finance-dashboard *, .project-module-shell *, .c2-project-card *, #report-output * { min-width:0; }
+        .c2-panel p, .c2-panel div, .clean-value, .clean-meta-value, .compact-kpi-value, .compact-reference-value, .kpi-card p { overflow-wrap:anywhere; }
+        .tabular-nums,.clean-value,.c2-project-fin strong { font-variant-numeric:tabular-nums; }
+
+        @media (max-width:1120px) {
+            .c2-topbar-inner { grid-template-columns:auto auto 1fr; gap:14px; }
+            .c2-nav { grid-column:1/-1; order:3; justify-content:flex-start; border-top:1px solid var(--c2-line); padding-top:8px; overflow-x:auto; }
+            .c2-filter-grid { grid-template-columns:1fr 1fr; }
+            .c2-search-field { grid-column:1/-1; }
+            .c2-team-layout { grid-template-columns:1fr; }
+        }
+        @media (max-width:760px) {
+            .c2-topbar-inner { display:flex; min-height:66px; padding:9px 14px; gap:9px; }
+            .c2-brand-mark { width:42px; height:42px; border-radius:13px; }
+            .mobile-nav-toggle { display:inline-flex !important; margin-left:auto; }
+            #main-nav.c2-nav { display:none !important; position:absolute; top:66px; left:12px; right:12px; z-index:50; flex-direction:column; align-items:stretch; gap:4px; padding:8px; background:rgba(7,16,26,.985); border:1px solid var(--c2-line); border-radius:18px; box-shadow:0 24px 60px -28px #000; }
+            #main-nav.c2-nav.nav-open { display:flex !important; }
+            #main-nav.c2-nav .tab-btn { width:100%; padding:13px 14px; border-radius:11px; }
+            .c2-header-actions { gap:7px; }
+            .c2-icon-btn { width:40px; height:40px; }
+            .c2-page-heading { flex-direction:column; align-items:stretch; }
+            .c2-page-heading .c2-primary-btn,.c2-page-heading .c2-secondary-btn,.c2-page-heading .c2-danger-btn { width:100%; }
+            .c2-filter-grid { grid-template-columns:1fr; }
+            .c2-search-field { grid-column:auto; }
+            .c2-filter-footer { flex-direction:column; align-items:stretch; }
+            .c2-filter-hint { display:none; }
+            .c2-project-grid { grid-template-columns:1fr; }
+            .c2-project-card { min-height:0; padding:17px; border-radius:18px; }
+            .c2-project-meta,.c2-project-fin { gap:10px; }
+            .c2-team-layout { display:block; }
+            .c2-team-layout > * + * { margin-top:18px; }
+            .c2-user-row { grid-template-columns:1fr auto; gap:10px; padding:15px; }
+            .c2-user-row > :nth-child(2),.c2-user-row > :nth-child(3) { grid-column:1; }
+            .c2-user-row > :last-child { grid-column:2; grid-row:1/4; }
+            .clean-meta-grid,.clean-support-grid { grid-template-columns:1fr 1fr !important; }
+            .clean-table-row,.clean-table-row.payment { grid-template-columns:1fr 1fr !important; }
+            .clean-table-labels { display:none !important; }
+            #report-output { overflow-x:hidden; }
+            #report-output .overflow-x-auto { overflow-x:auto !important; }
+            #report-output table { min-width:720px; }
+        }
+        @media (max-width:480px) {
+            .c2-main { padding-left:12px !important; padding-right:12px !important; }
+            .c2-page-heading h1 { font-size:1.75rem; }
+            .c2-panel { border-radius:20px; }
+            .c2-project-meta,.c2-project-fin { grid-template-columns:1fr; }
+            .clean-meta-grid,.clean-support-grid { grid-template-columns:1fr !important; }
+            .clean-table-row,.clean-table-row.payment { grid-template-columns:1fr !important; }
+            .c2-segmented { width:100%; }
+        }
+        /* Concept 2 analytical components */
+        .c2-module-header { display:flex; align-items:flex-start; justify-content:space-between; gap:18px; padding:4px 0 20px; margin-bottom:20px; border-bottom:1px solid var(--c2-line); }
+        .c2-module-title { color:var(--c2-text); font-size:clamp(1.7rem,3vw,2.35rem); line-height:1.05; font-weight:900; letter-spacing:-.045em; overflow-wrap:anywhere; }
+        .c2-module-subtitle { margin-top:6px; color:var(--c2-amber); font-size:10px; font-weight:900; text-transform:uppercase; letter-spacing:.14em; }
+        .c2-overview-dashboard,.c2-finance-dashboard { min-width:0; }
+        .c2-metric-card,.c2-kpi,.c2-mini-stat { min-width:0; border:1px solid var(--c2-line); background:rgba(255,255,255,.022); border-radius:16px; }
+        .c2-metric-card { padding:14px 15px; }
+        .c2-metric-card span,.c2-kpi span,.c2-mini-stat span,.c2-data-label { display:block; color:var(--c2-muted); font-size:8px; line-height:1.3; font-weight:900; text-transform:uppercase; letter-spacing:.13em; }
+        .c2-metric-card strong { display:block; margin-top:6px; color:#dbe6ef; font-size:12px; line-height:1.35; font-weight:800; overflow-wrap:anywhere; }
+        .c2-kpi { padding:16px; min-height:112px; display:flex; flex-direction:column; justify-content:space-between; }
+        .c2-kpi strong { display:block; margin-top:14px; color:#e7eef6; font-size:clamp(1.05rem,2.4vw,1.55rem); line-height:1.05; font-weight:900; letter-spacing:-.025em; font-variant-numeric:tabular-nums; overflow-wrap:anywhere; }
+        .c2-kpi strong.green { color:var(--c2-green); } .c2-kpi strong.cyan { color:var(--c2-cyan); } .c2-kpi strong.amber { color:var(--c2-amber); } .c2-kpi strong.red { color:var(--c2-red); }
+        .c2-mini-stat { padding:13px 14px; min-height:82px; }
+        .c2-mini-stat strong { display:block; margin-top:7px; color:#dce6ef; font-size:12px; line-height:1.35; font-weight:850; overflow-wrap:anywhere; }
+        .c2-analytic-strip { display:flex; align-items:center; gap:24px; padding:18px; border:1px solid var(--c2-line); border-radius:18px; background:rgba(0,0,0,.14); }
+        .c2-margin-ring { --pct:0; --ring:var(--c2-green); width:112px; aspect-ratio:1; border-radius:50%; flex:none; display:grid; place-items:center; background:conic-gradient(var(--ring) calc(var(--pct)*1%),rgba(148,163,184,.16) 0); position:relative; }
+        .c2-margin-ring::after { content:""; position:absolute; inset:14px; border-radius:50%; background:var(--c2-panel); border:1px solid var(--c2-line); }
+        .c2-margin-ring > div { position:relative; z-index:1; text-align:center; }
+        .c2-margin-ring strong { display:block; color:var(--c2-text); font-size:18px; font-weight:900; }
+        .c2-margin-ring span { display:block; margin-top:2px; color:var(--c2-muted); font-size:8px; text-transform:uppercase; letter-spacing:.12em; font-weight:850; }
+        .c2-data-value { display:block; margin-top:5px; color:#dce6ef; font-size:12px; line-height:1.25; font-weight:850; overflow-wrap:anywhere; }
+        .c2-progress { height:8px; border-radius:999px; overflow:hidden; background:rgba(148,163,184,.13); }
+        .c2-progress span { display:block; height:100%; border-radius:999px; background:linear-gradient(90deg,#35c98d,#54e1a7); }
+        .c2-note-row { display:flex; align-items:flex-start; gap:12px; padding:14px 16px; border:1px solid var(--c2-line); border-radius:15px; background:rgba(255,255,255,.018); color:#b9c6d3; font-size:11px; line-height:1.55; }
+        .c2-action-tile { display:flex; align-items:center; gap:13px; min-width:0; padding:16px 18px; border:1px solid var(--c2-line); border-radius:16px; background:rgba(255,255,255,.022); color:#dce6ef; transition:.2s; text-align:left; }
+        .c2-action-tile:hover { border-color:rgba(69,216,156,.28); background:rgba(69,216,156,.045); }
+        .c2-action-tile > svg:first-child { color:var(--c2-green); flex:none; }
+        .c2-action-tile span { min-width:0; }
+        .c2-action-tile strong { display:block; font-size:11px; font-weight:850; }
+        .c2-action-tile small { display:block; margin-top:3px; color:var(--c2-muted); font-size:9px; line-height:1.35; }
+        .c2-report-body > *:first-child { margin-top:0 !important; }
+        .c2-report-body .mt-10 { margin-top:24px !important; }
+        .c2-report-body .mb-12 { margin-bottom:28px !important; }
+        .c2-report-body .rounded-2xl { border-radius:16px !important; }
+        .c2-report-body .border-white\/5 { border-color:var(--c2-line) !important; }
+        .c2-report-body .bg-white\/5 { background:rgba(255,255,255,.018) !important; }
+        .c2-report-body .text-fuchsia-300 { color:var(--c2-green) !important; }
+        .c2-report-body .text-indigo-300,.c2-report-body .text-indigo-400 { color:var(--c2-cyan) !important; }
+        @media(max-width:760px){ .c2-module-header{flex-direction:column;align-items:stretch}.c2-module-header>.c2-secondary-btn{width:100%}.c2-analytic-strip{flex-direction:column;align-items:stretch}.c2-margin-ring{margin:0 auto}.c2-kpi{min-height:100px;padding:13px}.c2-mini-stat{min-height:76px}.c2-action-tile{padding:14px} }
+        /* Login in the same Concept 2 family */
+        .auth-body { background:radial-gradient(circle at 70% 0%,rgba(41,105,134,.18),transparent 34%),linear-gradient(180deg,#07111c,#050a10) !important; color:#eef5fb !important; }
+        .auth-card { max-width:460px !important; background:linear-gradient(145deg,#101d2b,#0a1520) !important; border:1px solid rgba(148,163,184,.16) !important; border-radius:28px !important; padding:40px !important; box-shadow:0 30px 90px -44px #000 !important; }
+        .auth-card .logo-box { background:#fff !important; border:1px solid rgba(148,163,184,.16); border-radius:16px !important; padding:12px !important; }
+        .auth-card .logo-box img { filter:none !important; }
+        .auth-card .label-auth { color:#8292a6 !important; font-size:9px !important; letter-spacing:.16em !important; }
+        .auth-input { background:rgba(2,8,14,.55) !important; border:1px solid rgba(148,163,184,.16) !important; color:#eef5fb !important; border-radius:13px !important; font-size:14px !important; }
+        .auth-input:focus { border-color:rgba(69,216,156,.55) !important; box-shadow:0 0 0 3px rgba(69,216,156,.08) !important; }
+        .btn-access { background:linear-gradient(135deg,#43d995,#2dbf82) !important; color:#06120e !important; border-radius:13px !important; box-shadow:0 14px 34px -20px rgba(69,216,156,.8) !important; }
+
 </style>
 </head>
 <body class="auth-body">
@@ -577,239 +875,187 @@
 
 <!-- Interface Interna -->
 <div id="main-app" class="hidden min-h-screen flex flex-col app-body-dark text-center">
-    
-    <!-- HEADER PRINCIPAL -->
-    <header id="main-header" class="no-print bg-white/5 backdrop-blur-md border-b border-white/5 p-4 sticky top-0 z-40 shadow-sm transition-all duration-300">
-        <div class="max-w-7xl mx-auto flex justify-between items-center">
-            <div class="flex items-center gap-6">
-                <div class="bg-white p-2 rounded-xl shadow-md"><img id="header-logo" src="logo-D2-Group-preto.png" class="h-10"></div>
+    <!-- HEADER PRINCIPAL · CONCEITO 2 -->
+    <header id="main-header" class="no-print c2-topbar sticky top-0 z-40">
+        <div class="c2-topbar-inner">
+            <div class="c2-brand-wrap">
+                <div class="c2-brand-mark"><img id="header-logo" src="logo-D2-Group-preto.png" alt="D2 Group"></div>
+                <div class="c2-brand-copy hidden sm:block">
+                    <strong>D2 PROJECT</strong>
+                    <span>MANAGEMENT</span>
+                </div>
             </div>
 
-            <div class="flex items-center gap-3 sm:gap-5">
-                <button type="button" onclick="window.toggleMobileNav()" class="mobile-nav-toggle p-3 rounded-2xl bg-white/5 hover:bg-gold/20 transition-all border border-white/5" aria-label="Abrir menu">
-                    <i data-lucide="menu" class="w-5 h-5 text-slate-300"></i>
-                </button>
-                <button onclick="window.toggleTheme()" class="p-3 rounded-2xl bg-white/5 hover:bg-gold/20 transition-all"><i data-lucide="sun" id="theme-icon-light" class="hidden text-gold"></i><i data-lucide="moon" id="theme-icon-dark" class="text-slate-400"></i></button>
-                <div class="text-right hidden sm:block">
-                    <p id="user-display" class="text-sm font-black uppercase text-gold tracking-tight"></p>
-                    <p id="user-role-display" class="text-[10px] text-slate-500 font-bold uppercase tracking-widest"></p>
+            <button type="button" onclick="window.toggleMobileNav()" class="mobile-nav-toggle c2-icon-btn" aria-label="Abrir menu">
+                <i data-lucide="menu" class="w-5 h-5"></i>
+            </button>
+
+            <nav id="main-nav" class="c2-nav no-print">
+                <button onclick="window.showView('projects')" class="tab-btn tab-active hidden" id="tab-projects"><i data-lucide="layout-grid" class="w-4 h-4"></i><span data-i18n="nav_proj">Projetos</span></button>
+                <button onclick="window.cancelEdit(); window.showView('new')" class="tab-btn editor-only hidden" id="tab-new"><i data-lucide="circle-plus" class="w-4 h-4"></i><span data-i18n="nav_new">Nova Obra</span></button>
+                <button onclick="window.showView('reports')" class="tab-btn hidden" id="tab-reports"><i data-lucide="file-bar-chart" class="w-4 h-4"></i><span data-i18n="nav_rep">Relatórios</span></button>
+                <button onclick="window.showView('users')" class="tab-btn hidden" id="tab-users"><i data-lucide="users" class="w-4 h-4"></i><span data-i18n="nav_users">Equipe</span></button>
+                <button onclick="window.showView('logs')" class="tab-btn hidden" id="tab-logs"><i data-lucide="history" class="w-4 h-4"></i><span>Logs</span></button>
+            </nav>
+
+            <div class="c2-header-actions">
+                <button onclick="window.toggleTheme()" class="c2-icon-btn" aria-label="Alternar tema"><i data-lucide="sun" id="theme-icon-light" class="hidden"></i><i data-lucide="moon" id="theme-icon-dark"></i></button>
+                <div class="c2-user hidden md:flex">
+                    <div class="c2-avatar" id="c2-user-avatar">D2</div>
+                    <div class="c2-user-copy">
+                        <p id="user-display"></p>
+                        <p id="user-role-display"></p>
+                    </div>
                 </div>
-                <button onclick="window.handleLogout()" class="p-3 rounded-2xl text-red-500 hover:bg-red-500/10 transition-all border border-red-500/20 shadow-sm"><i data-lucide="log-out" class="w-5 h-5"></i></button>
+                <button onclick="window.handleLogout()" class="c2-icon-btn c2-logout" aria-label="Sair"><i data-lucide="log-out" class="w-5 h-5"></i></button>
             </div>
         </div>
     </header>
 
-    <main id="main-container" class="max-w-7xl mx-auto w-full p-4 sm:p-6 flex-1 pt-6 sm:pt-8 transition-all duration-300">
-        
-        <!-- NAVEGAÇÃO PRINCIPAL -->
-        <nav id="main-nav" class="no-print flex gap-10 mb-6 border-b border-white/5 overflow-x-auto justify-center sm:justify-start scrollbar-hide">
-            <button onclick="window.showView('projects')" class="tab-btn pb-4 font-black uppercase tracking-[0.2em] tab-active hidden" id="tab-projects" data-i18n="nav_proj">Projetos</button>
-            <button onclick="window.cancelEdit(); window.showView('new')" class="tab-btn pb-4 font-black uppercase tracking-[0.2em] editor-only hidden" id="tab-new" data-i18n="nav_new">Nova Obra</button>
-            <button onclick="window.showView('reports')" class="tab-btn pb-4 font-black uppercase tracking-[0.2em] hidden" id="tab-reports" data-i18n="nav_rep">Relatórios</button>
-            
-            <button onclick="window.showView('users')" class="tab-btn pb-4 font-black uppercase tracking-[0.2em] hidden text-gold" id="tab-users" data-i18n="nav_users">Equipe</button>
-            <button onclick="window.showView('logs')" class="tab-btn pb-4 font-black uppercase tracking-[0.2em] hidden text-gold" id="tab-logs">📋 Logs</button>
-        </nav>
+    <main id="main-container" class="c2-main mx-auto w-full p-4 sm:p-6 flex-1 pt-6 sm:pt-8 transition-all duration-300">
 
-        <div id="view-projects" class="w-full hidden">
-            <!-- Filtros Superiores do Painel de Projetos -->
-            <div id="projects-filters" class="flex flex-col xl:flex-row justify-between items-start xl:items-center mb-8 gap-4 no-print">
-                <div class="flex gap-3 flex-wrap w-full xl:w-auto" id="dynamic-unit-pills-proj">
-                    <!-- Injetado dinamicamente via applyPermissions -->
+        <div id="view-projects" class="w-full hidden c2-view">
+            <div class="c2-page-heading no-print">
+                <div>
+                    <p class="c2-eyebrow">PORTFÓLIO OPERACIONAL</p>
+                    <h1>Projetos</h1>
+                    <p class="c2-page-subtitle">Acompanhe status, contratos, margem e performance das obras em uma única visão.</p>
                 </div>
-                <div class="flex flex-col gap-3 items-stretch w-full xl:w-auto xl:min-w-[760px] xl:max-w-[1000px] xl:ml-auto">
-                    <div class="grid grid-cols-1 lg:grid-cols-[minmax(240px,1fr)_minmax(240px,280px)] gap-3 w-full">
-                        <div class="space-y-2">
-                            <label class="text-xs font-black uppercase text-slate-500 ml-1 tracking-widest" data-i18n="project_search_label">Busca rápida</label>
-                            <div class="relative">
-                                <input type="text" id="project-search" class="modern-input project-search-input !pr-12" data-i18n-placeholder="project_search_placeholder" placeholder="Buscar por cliente, projeto, endereço, invoice, proposta ou valor" oninput="window.setProjectSearchQuery(this.value)">
-                                <i data-lucide="search" class="w-4 h-4 text-slate-500 absolute right-4 top-1/2 -translate-y-1/2 pointer-events-none"></i>
-                            </div>
-                        </div>
-                        <div id="seller-filter-box" class="hidden w-full"></div>
-                    </div>
-                    <div class="flex gap-2 self-start flex-wrap">
-                        <button onclick="window.setArchiveFilter('active')" id="filter-active" class="filter-pill active" data-i18n="filter_active">ATIVAS</button>
-                        <button onclick="window.setArchiveFilter('archived')" id="filter-archived" class="filter-pill" data-i18n="filter_archived">ARQUIVADAS <i data-lucide="archive" class="inline w-3 h-3 ml-1 mb-0.5"></i></button>
-                        <button onclick="window.setArchiveFilter('all')" id="filter-all" class="filter-pill" data-i18n="filter_all">TODAS</button>
-                    </div>
-                </div>
+                <button onclick="window.cancelEdit(); window.showView('new')" class="editor-only hidden c2-primary-btn"><i data-lucide="plus" class="w-4 h-4"></i>Nova Obra</button>
             </div>
-            
-            <div id="projects-grid" class="grid grid-cols-1 lg:grid-cols-2 gap-10 text-left"></div>
+
+            <section id="projects-filters" class="c2-filter-panel no-print">
+                <div class="c2-filter-grid">
+                    <div class="c2-filter-field c2-search-field">
+                        <label data-i18n="project_search_label">Busca rápida</label>
+                        <div class="relative">
+                            <i data-lucide="search" class="c2-input-icon w-4 h-4"></i>
+                            <input type="text" id="project-search" class="modern-input c2-input-with-icon" data-i18n-placeholder="project_search_placeholder" placeholder="Buscar por cliente, projeto, endereço, invoice, proposta ou valor" oninput="window.setProjectSearchQuery(this.value)">
+                        </div>
+                    </div>
+                    <div class="c2-filter-field">
+                        <label>Unidade de negócio</label>
+                        <div id="dynamic-unit-pills-proj" class="c2-unit-switch"></div>
+                    </div>
+                    <div id="seller-filter-box" class="hidden c2-filter-field"></div>
+                </div>
+                <div class="c2-filter-footer">
+                    <div class="c2-segmented">
+                        <button onclick="window.setArchiveFilter('active')" id="filter-active" class="filter-pill active" data-i18n="filter_active">Ativas</button>
+                        <button onclick="window.setArchiveFilter('archived')" id="filter-archived" class="filter-pill" data-i18n="filter_archived">Arquivadas</button>
+                        <button onclick="window.setArchiveFilter('all')" id="filter-all" class="filter-pill" data-i18n="filter_all">Todas</button>
+                    </div>
+                    <div class="c2-filter-hint"><i data-lucide="sliders-horizontal" class="w-4 h-4"></i><span>Filtros aplicados em tempo real</span></div>
+                </div>
+            </section>
+            <div id="projects-grid" class="c2-project-grid text-left"></div>
         </div>
-
-        <!-- Formulário Nova Obra -->
-        <div id="view-new" class="hidden max-w-3xl mx-auto glass p-6 sm:p-10 rounded-[40px] text-left shadow-2xl border border-white/5 animate-fade-in">
-            <h3 class="text-3xl font-black mb-10 flex items-center gap-4 uppercase tracking-tighter text-white">
-                <span class="w-3 h-10 bg-gold rounded-full"></span>
-                <span id="form-title" data-i18n="form_new_title">Registrar Obra</span>
-            </h3>
-            <form id="project-form" class="grid grid-cols-1 md:grid-cols-2 gap-6 sm:gap-8 text-left">
+        <!-- Nova Obra · CONCEITO 2 -->
+        <div id="view-new" class="hidden c2-view c2-form-page text-left animate-fade-in">
+            <div class="c2-page-heading no-print">
+                <div>
+                    <p class="c2-eyebrow">CADASTRO DE PROJETO</p>
+                    <h1 id="form-title" data-i18n="form_new_title">Registrar Obra</h1>
+                    <p class="c2-page-subtitle">Cadastre identificação, dados financeiros e cronograma com uma estrutura única e objetiva.</p>
+                </div>
+                <button type="button" onclick="window.cancelEdit(); window.showView('projects')" class="c2-secondary-btn"><i data-lucide="arrow-left" class="w-4 h-4"></i>Voltar</button>
+            </div>
+            <form id="project-form" class="space-y-6">
                 <input type="hidden" id="edit-id">
-
-                <div class="col-span-2 md:col-span-1 space-y-2">
-                    <label class="text-xs font-black uppercase text-slate-500 ml-1 tracking-widest" data-i18n="f_inv">Nº Invoice</label>
-                    <input type="text" id="f-invoice" class="modern-input" placeholder="Ex: INV-2026-001">
-                </div>
-                <div class="col-span-2 md:col-span-1 space-y-2">
-                    <label class="text-xs font-black uppercase text-slate-500 ml-1 tracking-widest" data-i18n="f_prop">Nº Proposta</label>
-                    <input type="text" id="f-proposta" class="modern-input" placeholder="Ex: PROP-2026-001">
-                </div>
-
-                <div class="col-span-2 space-y-2">
-                    <label class="text-xs font-black uppercase text-slate-500 ml-1 tracking-widest" data-i18n="f_unit">Unidade Responsável</label>
-                    <select id="f-empresa" class="modern-input !pr-10">
-                        <option value="Smart Home">D2 Smart Home</option>
-                        <option value="HVAC">D2 HVAC Solutions</option>
-                    </select>
-                </div>
-                <div class="col-span-2 md:col-span-1 space-y-2"><label class="text-xs font-black uppercase text-slate-500 ml-1 tracking-widest" data-i18n="f_client">Cliente</label><input type="text" id="f-cliente" required class="modern-input"></div>
-                <div class="col-span-2 md:col-span-1 space-y-2"><label class="text-xs font-black uppercase text-slate-500 ml-1 tracking-widest" data-i18n="f_project_name">Nome do Projeto / Referência</label><input type="text" id="f-project-name" class="modern-input" placeholder="Ex: 824 Azalea / Kitchen Remodel"></div>
-                <div class="col-span-2 space-y-2"><label class="text-xs font-black uppercase text-slate-500 ml-1 tracking-widest" data-i18n="f_address">Endereço da Obra</label><input type="text" id="f-address" class="modern-input" placeholder="Ex: 824 Azalea St, Boca Raton, FL"></div>
-                <div class="col-span-2 md:col-span-1 space-y-2"><label class="text-xs font-black uppercase text-slate-500 ml-1 tracking-widest" data-i18n="f_seller">Vendedor</label><select id="f-vendedor" required class="modern-input !pr-10"></select></div>
-                
-                <div class="space-y-2">
-                    <label class="text-xs font-black uppercase text-slate-500 ml-1 tracking-widest" data-i18n="f_gross">Valor Contrato Bruto</label>
-                    <div class="relative"><span class="absolute left-4 top-1/2 -translate-y-1/2 font-bold text-gold">$</span><input type="number" id="f-valor" step="0.01" required class="modern-input !pl-8"></div>
-                </div>
-                <div class="space-y-2">
-                    <label class="text-xs font-black uppercase text-cyan-400 ml-1 tracking-widest" data-i18n="f_budget">Orçamento Custo (Budget)</label>
-                    <div class="relative"><span class="absolute left-4 top-1/2 -translate-y-1/2 font-bold text-cyan-400">$</span><input type="number" id="f-orcamento" step="0.01" placeholder="Opcional" class="modern-input !pl-8 border-cyan-500/20 focus:border-cyan-500"></div>
-                </div>
-
-                <div class="space-y-2">
-                    <label class="text-xs font-black uppercase text-slate-500 ml-1 tracking-widest" data-i18n="f_comm_perc">% Comissão</label>
-                    <div class="relative"><input type="number" id="f-comm" value="5" class="modern-input !pr-10"><span class="absolute right-4 top-1/2 -translate-y-1/2 font-bold text-gold">%</span></div>
-                </div>
-                <div class="space-y-2">
-                    <label class="text-xs font-black uppercase text-slate-500 ml-1 tracking-widest" data-i18n="f_pay_method">Forma Pagt. Prevista</label>
-                    <select id="f-metodo" class="modern-input !pr-10">
-                        <option value="Zelle">Zelle</option>
-                        <option value="Wire Transfer">Wire Transfer</option>
-                        <option value="ACH">ACH</option>
-                        <option value="Check">Check</option>
-                        <option value="Dinheiro">Dinheiro (Cash)</option>
-                        <option value="CC">Cartão de Crédito (Dedução 3% Net)</option>
-                    </select>
-                </div>
-
-                <div class="space-y-2">
-                    <label class="text-xs font-black uppercase text-slate-500 ml-1 tracking-widest" data-i18n="f_start">Início</label>
-                    <div class="date-container" onclick="this.querySelector('input').showPicker()">
-                        <input type="date" id="f-inicio" required class="modern-input relative !pr-10">
-                        <i data-lucide="calendar" class="calendar-icon-overlay w-5 h-5"></i>
+                <section class="c2-panel p-6 sm:p-8">
+                    <div class="c2-section-heading"><div><p class="c2-eyebrow">IDENTIFICAÇÃO</p><h2>Dados da obra</h2></div><i data-lucide="building-2" class="w-5 h-5"></i></div>
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-5 mt-6">
+                        <div class="c2-form-field"><label data-i18n="f_inv">Nº Invoice</label><input type="text" id="f-invoice" class="modern-input" placeholder="Ex: INV-2026-001"></div>
+                        <div class="c2-form-field"><label data-i18n="f_prop">Nº Proposta</label><input type="text" id="f-proposta" class="modern-input" placeholder="Ex: PROP-2026-001"></div>
+                        <div class="c2-form-field md:col-span-2"><label data-i18n="f_unit">Unidade Responsável</label><select id="f-empresa" class="modern-input"><option value="Smart Home">D2 Smart Home</option><option value="HVAC">D2 HVAC Solutions</option></select></div>
+                        <div class="c2-form-field"><label data-i18n="f_client">Cliente</label><input type="text" id="f-cliente" required class="modern-input"></div>
+                        <div class="c2-form-field"><label data-i18n="f_project_name">Nome do Projeto / Referência</label><input type="text" id="f-project-name" class="modern-input" placeholder="Ex: 824 Azalea / Kitchen Remodel"></div>
+                        <div class="c2-form-field md:col-span-2"><label data-i18n="f_address">Endereço da Obra</label><input type="text" id="f-address" class="modern-input" placeholder="Ex: 824 Azalea St, Boca Raton, FL"></div>
+                        <div class="c2-form-field"><label data-i18n="f_seller">Vendedor</label><select id="f-vendedor" required class="modern-input"></select></div>
+                        <div class="c2-form-field"><label data-i18n="f_status">Status</label><select id="f-status" class="modern-input"><option value="✅ Aprovado">✅ Aprovado</option><option value="Aguardando Início">Aguardando Início</option><option value="Em Execução">Em Execução</option><option value="Finalizado">Finalizado</option></select></div>
                     </div>
-                </div>
-                <div class="space-y-2">
-                    <label class="text-xs font-black uppercase text-slate-500 ml-1 tracking-widest" data-i18n="f_end">Entrega</label>
-                    <div class="date-container" onclick="this.querySelector('input').showPicker()">
-                        <input type="date" id="f-entrega" required class="modern-input relative !pr-10">
-                        <i data-lucide="calendar" class="calendar-icon-overlay w-5 h-5"></i>
+                </section>
+
+                <section class="c2-panel p-6 sm:p-8">
+                    <div class="c2-section-heading"><div><p class="c2-eyebrow">FINANCEIRO</p><h2>Contrato e comissão</h2></div><i data-lucide="badge-dollar-sign" class="w-5 h-5"></i></div>
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-5 mt-6">
+                        <div class="c2-form-field"><label data-i18n="f_gross">Valor Contrato Bruto</label><div class="relative"><span class="c2-currency-prefix">$</span><input type="number" id="f-valor" step="0.01" required class="modern-input c2-input-money"></div></div>
+                        <div class="c2-form-field"><label data-i18n="f_budget">Orçamento Custo (Budget)</label><div class="relative"><span class="c2-currency-prefix">$</span><input type="number" id="f-orcamento" step="0.01" placeholder="Opcional" class="modern-input c2-input-money"></div></div>
+                        <div class="c2-form-field"><label data-i18n="f_comm_perc">% Comissão</label><div class="relative"><input type="number" id="f-comm" value="5" class="modern-input !pr-10"><span class="c2-percent-suffix">%</span></div></div>
+                        <div class="c2-form-field"><label data-i18n="f_pay_method">Forma Pagt. Prevista</label><select id="f-metodo" class="modern-input"><option value="Zelle">Zelle</option><option value="Wire Transfer">Wire Transfer</option><option value="ACH">ACH</option><option value="Check">Check</option><option value="Dinheiro">Dinheiro (Cash)</option><option value="CC">Cartão de Crédito (Dedução 3% Net)</option></select></div>
                     </div>
-                </div>
-                <div class="col-span-2 space-y-2">
-                    <label class="text-xs font-black uppercase text-slate-500 ml-1 tracking-widest" data-i18n="f_status">Status</label>
-                    <select id="f-status" class="modern-input !pr-10">
-                        <option value="✅ Aprovado">✅ Aprovado</option>
-                        <option value="Aguardando Início">Aguardando Início</option>
-                        <option value="Em Execução">Em Execução</option>
-                        <option value="Finalizado">Finalizado</option>
-                    </select>
-                </div>
-                <div class="col-span-2 flex flex-col sm:flex-row gap-6 mt-10">
-                    <button type="submit" class="flex-1 btn-premium-gold shadow-xl" data-i18n="btn_save">Salvar Registro</button>
-                    <button type="button" onclick="window.cancelEdit(); window.showView('projects')" class="px-10 py-4 text-slate-500 uppercase font-black text-sm hover:text-white transition-all" data-i18n="btn_cancel">Cancelar</button>
+                </section>
+
+                <section class="c2-panel p-6 sm:p-8">
+                    <div class="c2-section-heading"><div><p class="c2-eyebrow">CRONOGRAMA</p><h2>Datas do projeto</h2></div><i data-lucide="calendar-days" class="w-5 h-5"></i></div>
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-5 mt-6">
+                        <div class="c2-form-field"><label data-i18n="f_start">Início</label><div class="date-container" onclick="this.querySelector('input').showPicker()"><input type="date" id="f-inicio" required class="modern-input"><i data-lucide="calendar" class="calendar-icon-overlay w-5 h-5"></i></div></div>
+                        <div class="c2-form-field"><label data-i18n="f_end">Entrega</label><div class="date-container" onclick="this.querySelector('input').showPicker()"><input type="date" id="f-entrega" required class="modern-input"><i data-lucide="calendar" class="calendar-icon-overlay w-5 h-5"></i></div></div>
+                    </div>
+                </section>
+
+                <div class="flex flex-col sm:flex-row justify-end gap-3 no-print">
+                    <button type="button" onclick="window.cancelEdit(); window.showView('projects')" class="c2-secondary-btn" data-i18n="btn_cancel">Cancelar</button>
+                    <button type="submit" class="c2-primary-btn" data-i18n="btn_save"><i data-lucide="save" class="w-4 h-4"></i>Salvar Registro</button>
                 </div>
             </form>
         </div>
 
-        <div id="view-users" class="hidden space-y-10 animate-fade-in">
-            <div class="glass p-6 sm:p-10 max-w-2xl mx-auto rounded-[32px] text-left border border-white/5 shadow-2xl">
-                <h3 class="text-2xl font-black text-gold mb-8 uppercase tracking-tighter" data-i18n="team_title">Gestão de Equipe</h3>
-                <form id="team-form" class="space-y-6">
-                    <input type="hidden" id="t-id">
-
-                    <div class="grid grid-cols-1 sm:grid-cols-3 gap-6">
-                        <div class="space-y-1"><label class="label-auth text-xs" data-i18n="team_name">Nome do Vendedor</label><input type="text" id="t-name" required class="modern-input"></div>
-                        <div class="space-y-1"><label class="label-auth text-xs" data-i18n="team_email">E-mail</label><input type="email" id="t-email" required class="modern-input"></div>
-                        <div class="space-y-1 relative">
-                            <label class="label-auth text-xs" data-i18n="team_pass">Senha</label>
-                            <input type="password" id="t-pass" required class="modern-input !pr-10">
-                            <button type="button" onclick="window.togglePassword('t-pass', 'eye-team-btn')" class="password-toggle" id="eye-team-btn" style="top:70%"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg></button>
-                        </div>
-                    </div>
-
-                    <!-- NOVO PAINEL DE CONTROLE DE ACESSO GRANULAR -->
-                    <div class="space-y-6 mt-8 pt-8 border-t border-white/10">
-                        <div>
-                            <p class="text-[10px] font-black uppercase text-gold tracking-widest mb-3" data-i18n="team_scope">Visibilidade e Escopo</p>
-                            <div class="grid grid-cols-1 sm:grid-cols-3 gap-3">
-                                <label class="perm-box"><input type="checkbox" id="p_smart" class="perm-checkbox"><span class="perm-label">D2 Smart Home</span></label>
-                                <label class="perm-box"><input type="checkbox" id="p_hvac" class="perm-checkbox"><span class="perm-label">D2 HVAC</span></label>
-                                <label class="perm-box border-indigo-500/30"><input type="checkbox" id="p_global" class="perm-checkbox accent-indigo-500"><span class="perm-label text-indigo-400">Ver Outros Vendedores</span></label>
-                            </div>
-                        </div>
-
-                        <div>
-                            <p class="text-[10px] font-black uppercase text-gold tracking-widest mb-3" data-i18n="team_tabs">Acesso às Abas</p>
-                            <div class="grid grid-cols-1 sm:grid-cols-3 gap-3">
-                                <label class="perm-box"><input type="checkbox" id="p_tab_proj" class="perm-checkbox" checked><span class="perm-label">Aba Projetos</span></label>
-                                <label class="perm-box"><input type="checkbox" id="p_tab_new" class="perm-checkbox"><span class="perm-label">Aba Nova Obra</span></label>
-                                <label class="perm-box"><input type="checkbox" id="p_tab_rep" class="perm-checkbox"><span class="perm-label">Aba Relatórios</span></label>
-                            </div>
-                        </div>
-
-                        <div>
-                            <p class="text-[10px] font-black uppercase text-gold tracking-widest mb-3" data-i18n="team_perms">Permissões de Escrita</p>
-                            <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
-                                <label class="perm-box border-emerald-500/30"><input type="checkbox" id="p_fin" class="perm-checkbox accent-emerald-500"><span class="perm-label text-emerald-400">Inserir Receb./Pagtos.</span></label>
-                                <label class="perm-box border-cyan-500/30"><input type="checkbox" id="p_costs" class="perm-checkbox accent-cyan-500"><span class="perm-label text-cyan-400">Acesso a Custos e Margem</span></label>
-                            </div>
-                        </div>
-                    </div>
-                    
-                    <button type="submit" id="btn-save-team" class="btn-premium-gold shadow-xl mt-6" data-i18n="btn_team">Salvar e Autorizar Acesso</button>
-                </form>
+        <div id="view-users" class="hidden c2-view animate-fade-in">
+            <div class="c2-page-heading no-print">
+                <div>
+                    <p class="c2-eyebrow">ADMINISTRAÇÃO</p>
+                    <h1>Equipe</h1>
+                    <p class="c2-page-subtitle">Gerencie usuários, visibilidade e permissões do sistema.</p>
+                </div>
             </div>
-            <div id="users-list" class="flex flex-col gap-4 text-left max-w-7xl mx-auto mt-10"></div>
-        </div>
-
-        <div id="view-logs" class="hidden space-y-6 max-w-7xl mx-auto animate-fade-in">
-            <div class="glass p-6 sm:p-8 rounded-[32px] border border-white/5">
-                <div class="flex flex-col sm:flex-row justify-between sm:items-center gap-4 mb-5">
-                    <h3 class="text-2xl font-black text-gold uppercase tracking-tighter">📋 Logs de Auditoria</h3>
-                    <button onclick="window.clearLogs()" class="text-[10px] font-bold text-red-500 hover:text-red-400 uppercase tracking-widest border border-red-500/20 px-4 py-2 rounded-xl transition-all self-start sm:self-auto">Limpar Histórico</button>
-                </div>
-                <div class="grid grid-cols-1 md:grid-cols-[minmax(260px,420px)_1fr] gap-4 items-end mb-6 p-4 rounded-2xl border border-white/5 bg-black/10">
-                    <div class="text-left">
-                        <label for="logs-user-filter" class="block text-[10px] font-black uppercase tracking-[0.18em] text-slate-500 mb-2" data-i18n="logs_filter_user">Filtrar por usuário</label>
-                        <select id="logs-user-filter" onchange="window.setLogsUserFilter(this.value)" class="w-full modern-input py-3 px-4 text-sm font-bold">
-                            <option value="" data-i18n="logs_all_users">Todos os usuários</option>
-                        </select>
-                    </div>
-                    <div class="flex flex-col sm:flex-row md:justify-end gap-3 sm:items-center">
-                        <div id="logs-filter-summary" class="text-sm font-bold text-slate-400 text-left md:text-right"></div>
-                        <button id="logs-clear-filter" onclick="window.setLogsUserFilter('')" class="hidden text-[10px] font-black uppercase tracking-widest text-gold border border-gold/20 hover:border-gold/50 px-4 py-3 rounded-xl transition-all" data-i18n="logs_clear_filter">Limpar filtro</button>
-                    </div>
-                </div>
-                <div class="overflow-x-auto">
-                    <table class="w-full text-left" id="logs-table">
-                        <thead class="border-b border-white/10">
-                            <tr>
-                                <th class="py-4 px-4 text-xs font-black uppercase text-slate-500" data-i18n="date">Data/Hora</th>
-                                <th class="py-4 px-4 text-xs font-black uppercase text-slate-500">Usuário</th>
-                                <th class="py-4 px-4 text-xs font-black uppercase text-slate-500" data-i18n="logs_project">Obra / Referência</th>
-                                <th class="py-4 px-4 text-xs font-black uppercase text-slate-500">Ação / Operação</th>
-                            </tr>
-                        </thead>
-                        <tbody id="logs-body"></tbody>
-                    </table>
-                </div>
+            <div class="c2-team-layout">
+                <section class="c2-panel p-6 sm:p-8 text-left">
+                    <div class="c2-section-heading"><div><p class="c2-eyebrow">CADASTRO / EDIÇÃO</p><h2>Usuário</h2></div><span class="c2-status-soft">Campos obrigatórios</span></div>
+                    <form id="team-form" class="space-y-6 mt-6">
+                        <input type="hidden" id="t-id">
+                        <div class="c2-form-field"><label data-i18n="team_name">Nome completo</label><input type="text" id="t-name" required class="modern-input" placeholder="Digite o nome completo"></div>
+                        <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                            <div class="c2-form-field"><label data-i18n="team_email">E-mail</label><input type="email" id="t-email" required class="modern-input" placeholder="usuario@email.com"></div>
+                            <div class="c2-form-field relative"><label data-i18n="team_pass">Senha</label><input type="password" id="t-pass" required class="modern-input !pr-12"><button type="button" onclick="window.togglePassword('t-pass', 'eye-team-btn')" class="password-toggle" id="eye-team-btn" style="top:72%"><i data-lucide="eye" class="w-4 h-4"></i></button></div>
+                        </div>
+                        <div class="c2-permission-group"><p class="c2-eyebrow" data-i18n="team_scope">Visibilidade e Escopo</p><div class="grid grid-cols-1 gap-2 mt-3"><label class="perm-box"><input type="checkbox" id="p_smart" class="perm-checkbox"><span><strong>D2 Smart Home</strong><small>Visualizar projetos e dados Smart Home</small></span></label><label class="perm-box"><input type="checkbox" id="p_hvac" class="perm-checkbox"><span><strong>D2 HVAC</strong><small>Visualizar projetos e dados HVAC</small></span></label><label class="perm-box"><input type="checkbox" id="p_global" class="perm-checkbox"><span><strong>Ver outros vendedores</strong><small>Acesso a projetos de outros responsáveis</small></span></label></div></div>
+                        <div class="c2-permission-group"><p class="c2-eyebrow" data-i18n="team_tabs">Acesso às Abas</p><div class="grid grid-cols-1 sm:grid-cols-3 gap-2 mt-3"><label class="perm-box"><input type="checkbox" id="p_tab_proj" class="perm-checkbox" checked><span><strong>Projetos</strong></span></label><label class="perm-box"><input type="checkbox" id="p_tab_new" class="perm-checkbox"><span><strong>Nova Obra</strong></span></label><label class="perm-box"><input type="checkbox" id="p_tab_rep" class="perm-checkbox"><span><strong>Relatórios</strong></span></label></div></div>
+                        <div class="c2-permission-group"><p class="c2-eyebrow" data-i18n="team_perms">Permissões Financeiras</p><div class="grid grid-cols-1 gap-2 mt-3"><label class="perm-box"><input type="checkbox" id="p_fin" class="perm-checkbox"><span><strong>Inserir recebimentos / pagamentos</strong><small>Registrar movimentações financeiras</small></span></label><label class="perm-box"><input type="checkbox" id="p_costs" class="perm-checkbox"><span><strong>Acesso a custos e margem</strong><small>Visualizar despesas, budget e margem</small></span></label></div></div>
+                        <div class="flex justify-end gap-3 pt-4 border-t border-white/10"><button type="button" onclick="document.getElementById('team-form').reset(); document.getElementById('t-id').value=''" class="c2-secondary-btn">Cancelar</button><button type="submit" id="btn-save-team" class="c2-primary-btn" data-i18n="btn_team"><i data-lucide="save" class="w-4 h-4"></i>Salvar usuário</button></div>
+                    </form>
+                </section>
+                <section class="c2-panel p-0 overflow-hidden text-left">
+                    <div class="c2-list-head"><div><p class="c2-eyebrow">USUÁRIOS CADASTRADOS</p><h2>Equipe ativa</h2></div><div class="c2-list-head-icon"><i data-lucide="users" class="w-5 h-5"></i></div></div>
+                    <div id="users-list" class="c2-users-list"></div>
+                </section>
             </div>
         </div>
 
-        <div id="view-reports" class="hidden space-y-8 max-w-7xl mx-auto text-left animate-fade-in print:block">
+        <div id="view-logs" class="hidden c2-view animate-fade-in">
+            <div class="c2-page-heading no-print">
+                <div>
+                    <p class="c2-eyebrow">AUDITORIA</p>
+                    <h1>Logs de Auditoria</h1>
+                    <p class="c2-page-subtitle">Acompanhe ações, alterações e referências registradas no sistema.</p>
+                </div>
+                <button onclick="window.clearLogs()" class="c2-danger-btn"><i data-lucide="trash-2" class="w-4 h-4"></i>Limpar histórico</button>
+            </div>
+            <section class="c2-filter-panel no-print">
+                <div class="grid grid-cols-1 md:grid-cols-[minmax(220px,320px)_minmax(260px,1fr)_auto] gap-4 items-end">
+                    <div class="c2-filter-field"><label for="logs-user-filter" data-i18n="logs_filter_user">Usuário</label><select id="logs-user-filter" onchange="window.setLogsUserFilter(this.value)" class="modern-input"><option value="" data-i18n="logs_all_users">Todos os usuários</option></select></div>
+                    <div class="c2-filter-field"><label>Buscar</label><div class="relative"><i data-lucide="search" class="c2-input-icon w-4 h-4"></i><input id="logs-search" type="text" class="modern-input c2-input-with-icon" placeholder="Pesquisar ação, usuário, obra ou referência" oninput="window.setLogsSearchQuery(this.value)"></div></div>
+                    <button id="logs-clear-filter" onclick="window.resetLogsFilters()" class="c2-secondary-btn hidden"><i data-lucide="filter-x" class="w-4 h-4"></i>Limpar filtros</button>
+                </div>
+                <div id="logs-filter-summary" class="c2-filter-summary mt-4"></div>
+            </section>
+            <section class="c2-panel p-0 overflow-hidden">
+                <div class="c2-list-head"><div><p class="c2-eyebrow">REGISTROS</p><h2>Histórico de ações</h2></div><div class="c2-list-head-icon"><i data-lucide="history" class="w-5 h-5"></i></div></div>
+                <div class="overflow-x-auto c2-table-scroll"><table class="w-full c2-table" id="logs-table"><thead><tr><th data-i18n="date">Data / Hora</th><th>Usuário</th><th data-i18n="logs_project">Obra / Referência</th><th>Ação / Operação</th></tr></thead><tbody id="logs-body"></tbody></table></div>
+            </section>
+        </div>
+
+        <div id="view-reports" class="hidden c2-view space-y-6 text-left animate-fade-in print:block">
             <div id="report-output"></div>
         </div>
     </main>
@@ -839,7 +1085,7 @@
         user: null, 
         isSuperAdmin: false,
         userPerms: { tab_proj: true, tab_new: false, tab_rep: false, fin: false, costs: false, smart: true, hvac: false, global: false },
-        projects: [], team: [], logs: [], logsUserFilter: '', company: 'Ambas', lang: 'pt', theme: 'dark', 
+        projects: [], team: [], logs: [], logsUserFilter: '', logsSearchQuery: '', company: 'Ambas', lang: 'pt', theme: 'dark', 
         editingPayments: null, editingRecs: null, focusedProject: null, activeModule: null, archiveFilter: 'active',
         reportActiveKpi: 'receita', projectSellerFilter: 'all', projectSearchQuery: '', reportPeriodStart: '', reportPeriodEnd: '', reportSellerFilter: 'all', reportRangePreset: 'year', mobileNavOpen: false, currentView: 'projects' 
     };
@@ -1194,6 +1440,17 @@
         state.logsUserFilter = String(userEmail || '').trim().toLowerCase();
         window.renderLogs();
     };
+    window.setLogsSearchQuery = (value = '') => {
+        state.logsSearchQuery = String(value || '').trim().toLowerCase();
+        window.renderLogs();
+    };
+    window.resetLogsFilters = () => {
+        state.logsUserFilter = '';
+        state.logsSearchQuery = '';
+        const search = document.getElementById('logs-search');
+        if (search) search.value = '';
+        window.renderLogs();
+    };
 
     window.renderLogs = () => {
         const tbody = document.getElementById('logs-body');
@@ -1234,18 +1491,25 @@
         }
 
         const effectiveUser = String(state.logsUserFilter || '').trim().toLowerCase();
-        const logs = effectiveUser
-            ? allLogs.filter(log => String(log?.user || '').trim().toLowerCase() === effectiveUser)
-            : allLogs;
+        const searchQuery = String(state.logsSearchQuery || '').trim().toLowerCase();
+        const logs = allLogs.filter(log => {
+            if (effectiveUser && String(log?.user || '').trim().toLowerCase() !== effectiveUser) return false;
+            if (!searchQuery) return true;
+            const info = getLogProjectInfo(log);
+            const haystack = [log?.user, getUserDisplayName(log?.user || '', ''), info.projectName, info.invoice, info.proposal, info.projectId, info.cleanAction].filter(Boolean).join(' ').toLowerCase();
+            return haystack.includes(searchQuery);
+        });
 
+        const searchInput = document.getElementById('logs-search');
+        if (searchInput && searchInput.value !== state.logsSearchQuery) searchInput.value = state.logsSearchQuery || '';
         const summary = document.getElementById('logs-filter-summary');
         if (summary) {
             const selectedInfo = effectiveUser ? userMap.get(effectiveUser) : null;
-            const selectedLabel = selectedInfo ? `<span class="text-gold">${escapeInlineHtml(selectedInfo.name)}</span> · ` : '';
-            summary.innerHTML = `${selectedLabel}<span class="text-white">${logs.length}</span> ${escapeInlineHtml(window.t('logs_results'))}`;
+            const selectedLabel = selectedInfo ? `<span class="text-emerald-300">${escapeInlineHtml(selectedInfo.name)}</span> · ` : '';
+            summary.innerHTML = `${selectedLabel}<strong class="text-slate-200">${logs.length}</strong> ${escapeInlineHtml(window.t('logs_results'))}`;
         }
         const clearFilterBtn = document.getElementById('logs-clear-filter');
-        if (clearFilterBtn) clearFilterBtn.classList.toggle('hidden', !effectiveUser);
+        if (clearFilterBtn) clearFilterBtn.classList.toggle('hidden', !(effectiveUser || searchQuery));
 
         tbody.innerHTML = logs.map(log => {
             const logDate = log._renderDate || getLogDate(log);
@@ -1255,22 +1519,22 @@
             const logUserEmail = String(log?.user || '').trim();
             const logUserName = getUserDisplayName(logUserEmail, '-');
             return `
-            <tr class="border-b border-white/5 hover:bg-white/5 align-top">
-                <td class="py-4 px-4 text-sm whitespace-nowrap">${renderedDate}</td>
-                <td class="py-4 px-4 text-sm font-bold text-gold whitespace-nowrap">
-                    <button type="button" onclick="window.setLogsUserFilter('${escapeInlineHtml(logUserEmail.toLowerCase())}')" class="text-left hover:text-yellow-300 transition-colors" title="${escapeInlineHtml(state.lang === 'pt' ? 'Ver somente os logs deste usuário' : 'Show only this user logs')}">
-                        <span class="block">${escapeInlineHtml(logUserName)}</span>
-                        ${logUserEmail ? `<span class="block text-[10px] text-slate-500 font-bold normal-case mt-1">${escapeInlineHtml(logUserEmail)}</span>` : ''}
+            <tr>
+                <td class="whitespace-nowrap"><div class="font-bold text-slate-200">${renderedDate}</div></td>
+                <td>
+                    <button type="button" onclick="window.setLogsUserFilter('${escapeInlineHtml(logUserEmail.toLowerCase())}')" class="text-left max-w-full" title="${escapeInlineHtml(state.lang === 'pt' ? 'Filtrar por este usuário' : 'Filter by this user')}">
+                        <span class="block font-extrabold text-emerald-300 truncate">${escapeInlineHtml(logUserName)}</span>
+                        ${logUserEmail ? `<span class="block text-[9px] text-slate-500 mt-1 truncate">${escapeInlineHtml(logUserEmail)}</span>` : ''}
                     </button>
                 </td>
-                <td class="py-4 px-4 text-sm text-slate-300 min-w-[240px]">
-                    ${info.projectName ? `<div class="font-black text-white">${escapeInlineHtml(info.projectName)}</div>` : `<div class="text-slate-500">-</div>`}
-                    ${projectMetaLine ? `<div class="text-[11px] text-slate-400 mt-1">${escapeInlineHtml(projectMetaLine)}</div>` : ''}
-                    ${info.projectId ? `<div class="text-[11px] text-slate-500 mt-1">ID: <span class="font-mono">${escapeInlineHtml(info.projectId)}</span></div>` : ''}
+                <td>
+                    ${info.projectName ? `<div class="font-extrabold text-slate-100">${escapeInlineHtml(info.projectName)}</div>` : `<div class="text-slate-600">—</div>`}
+                    ${projectMetaLine ? `<div class="text-[9px] text-slate-500 mt-1">${escapeInlineHtml(projectMetaLine)}</div>` : ''}
+                    ${info.projectId ? `<div class="text-[9px] text-slate-600 mt-1 font-mono">ID: ${escapeInlineHtml(info.projectId)}</div>` : ''}
                 </td>
-                <td class="py-4 px-4 text-sm text-slate-300">${escapeInlineHtml(info.cleanAction)}</td>
+                <td><div class="text-slate-300">${escapeInlineHtml(info.cleanAction)}</div></td>
             </tr>
-        `}).join('') || `<tr><td colspan="4" class="py-10 text-center text-slate-500">${window.t('logs_empty')}</td></tr>`;
+        `}).join('') || `<tr><td colspan="4" class="py-12 text-center text-slate-500">${window.t('logs_empty')}</td></tr>`;
     };
 
     function applyThemeConfig() {
@@ -1325,11 +1589,12 @@
             const c = document.getElementById(containerId);
             if(!c) return;
             c.innerHTML = '';
+            c.style.display = 'flex';
             if (!(p.smart && p.hvac)) {
-                c.style.display = 'none';
+                if (p.smart) c.innerHTML = `<button type="button" class="unit-pill active" disabled>SMART HOME</button>`;
+                else if (p.hvac) c.innerHTML = `<button type="button" class="unit-pill active" disabled>HVAC</button>`;
                 return;
             }
-            c.style.display = 'flex';
             c.innerHTML += `<button onclick="window.selectUnit('Smart Home')" class="unit-pill unit-pill-btn ${state.company === 'Smart Home' ? 'active':''}">SMART HOME</button>`;
             c.innerHTML += `<button onclick="window.selectUnit('HVAC')" class="unit-pill unit-pill-btn ${state.company === 'HVAC' ? 'active':''}">HVAC</button>`;
             c.innerHTML += `<button onclick="window.selectUnit('Ambas')" class="unit-pill unit-pill-btn ${state.company === 'Ambas' ? 'active':''}" data-i18n="filter_both">${window.t('filter_both')}</button>`;
@@ -3113,7 +3378,7 @@
                 mainContainer.classList.remove('pt-6', 'sm:pt-8');
                 mainContainer.classList.add('pt-2', 'sm:pt-4');
             }
-            grid.className = "flex flex-col max-w-4xl mx-auto gap-6 text-left w-full animate-fade-in pb-20 mt-4";
+            grid.className = "flex flex-col max-w-[1480px] mx-auto gap-6 text-left w-full animate-fade-in pb-20 mt-2";
             filtered = state.projects.filter(p => p.id === state.focusedProject); 
             
             if (!state.activeModule) {
@@ -3125,14 +3390,14 @@
             }
         } else {
             filtersDiv.classList.remove('hidden');
-            filtersDiv.classList.add('flex');
+            filtersDiv.classList.remove('flex');
             if (mainHeader) mainHeader.style.display = '';
             if (mainNav) { mainNav.style.display = ''; mainNav.classList.toggle('nav-open', state.mobileNavOpen); }
             if (mainContainer) {
                 mainContainer.classList.add('pt-6', 'sm:pt-8');
                 mainContainer.classList.remove('pt-2', 'sm:pt-4');
             }
-            grid.className = "grid grid-cols-1 xl:grid-cols-2 gap-6 xl:gap-8 text-left animate-fade-in pb-10";
+            grid.className = "c2-project-grid text-left animate-fade-in pb-10";
         }
 
         if (filtered.length === 0 && !state.focusedProject) {
@@ -3251,77 +3516,23 @@
                             ? (state.lang === 'pt' ? `A comissão liberada está quitada. Novos valores dependem dos próximos recebimentos do cliente.` : `Released commission is settled. Future amounts depend on new client receipts.`)
                             : (state.lang === 'pt' ? `Projeto financeiramente conciliado. Não há saldo de comissão pendente.` : `Project is financially reconciled. No commission balance is pending.`));
                     moduleContent = `
-                        <div class="clean-finance-dashboard text-left print:bg-transparent print:border-slate-300">
-                            <div class="clean-primary-grid p-5 sm:p-6">
-                                <div class="space-y-4">
-                                    <section class="clean-section p-5">
-                                        <div class="flex items-center justify-between gap-4 mb-2">
-                                            <h5 class="clean-section-title">${state.lang === 'pt' ? 'Resumo financeiro' : 'Financial summary'}</h5>
-                                            <span class="clean-pill ${f.dueNow > 0.009 ? 'warning' : 'success'}">${f.dueNow > 0.009 ? (state.lang === 'pt' ? 'Pagamento pendente' : 'Payment due') : (state.lang === 'pt' ? 'Conciliado' : 'Settled')}</span>
-                                        </div>
-                                        <div class="clean-kpi-row">
-                                            <div class="flex items-center gap-3"><span class="clean-icon-box"><i data-lucide="file-text" class="w-5 h-5"></i></span><div><div class="text-sm font-bold text-slate-200">${state.lang === 'pt' ? 'Valor do contrato' : 'Contract value'}</div><div class="clean-subtext">${state.lang === 'pt' ? 'Contrato bruto' : 'Gross contract'}</div></div></div>
-                                            <div class="clean-value">${formatCurr(p.valorTotal)}</div>
-                                        </div>
-                                        <div class="clean-kpi-row">
-                                            <div class="flex items-center gap-3"><span class="clean-icon-box positive"><i data-lucide="credit-card" class="w-5 h-5"></i></span><div><div class="text-sm font-bold text-slate-200">${state.lang === 'pt' ? 'Recebido do cliente' : 'Received from client'}</div><div class="clean-subtext">${clientPaidPerc}% ${state.lang === 'pt' ? 'do contrato' : 'of contract'}</div></div></div>
-                                            <div class="clean-value clean-positive">${formatCurr(f.totalRecebido)}</div>
-                                        </div>
-                                        <div class="clean-kpi-row">
-                                            <div class="flex items-center gap-3"><span class="clean-icon-box"><i data-lucide="user-check" class="w-5 h-5"></i></span><div><div class="text-sm font-bold text-slate-200">${state.lang === 'pt' ? 'Pago ao vendedor' : 'Paid to seller'}</div><div class="clean-subtext">${p.percComissao || 0}% ${state.lang === 'pt' ? 'de comissão' : 'commission'}</div></div></div>
-                                            <div class="clean-value">${formatCurr(f.totalPaid)}</div>
-                                        </div>
-                                        <div class="clean-kpi-row">
-                                            <div class="flex items-center gap-3"><span class="clean-icon-box"><i data-lucide="wallet-cards" class="w-5 h-5"></i></span><div><div class="text-sm font-bold text-slate-200">${state.lang === 'pt' ? 'Saldo do cliente' : 'Client balance'}</div><div class="clean-subtext">${state.lang === 'pt' ? 'Ainda a receber' : 'Still receivable'}</div></div></div>
-                                            <div class="clean-value ${f.clientOutstanding > 0.009 ? 'clean-warning' : 'clean-positive'}">${formatCurr(f.clientOutstanding)}</div>
-                                        </div>
-                                        <div ${balActionAttrs} class="clean-kpi-row ${balActionClass}">
-                                            <div class="flex items-center gap-3"><span class="clean-icon-box ${f.dueNow > 0.009 ? 'warning' : 'positive'}"><i data-lucide="badge-percent" class="w-5 h-5"></i></span><div><div class="text-sm font-bold text-slate-200">${commissionDueLabel}</div><div class="clean-subtext">${state.lang === 'pt' ? 'Pendente de repasse' : 'Pending transfer'}</div></div></div>
-                                            <div class="clean-value ${commissionDueColor}">${formatCurr(f.dueNow)}</div>
-                                        </div>
-                                    </section>
-
-                                    <div class="clean-support-grid">
-                                        <div class="clean-support-card"><div class="clean-label">${state.lang === 'pt' ? 'Empresa pagadora' : 'Paying company'}</div><div class="clean-meta-value">${escapeInlineHtml(getCompanyDisplayName(p.empresa))}</div></div>
-                                        <div class="clean-support-card"><div class="clean-label">${state.lang === 'pt' ? 'Desconto cartão' : 'Card discount'}</div><div class="clean-value">${formatCurr(f.commissionCardFeeReduction)}</div></div>
-                                        <div class="clean-support-card"><div class="clean-label">${state.lang === 'pt' ? 'Comissão elegível' : 'Eligible commission'}</div><div class="clean-value clean-positive">${formatCurr(f.commLiberada)}</div></div>
-                                        <div class="clean-support-card"><div class="clean-label">${state.lang === 'pt' ? 'Comissão futura sobre saldo' : 'Future commission on balance'}</div><div class="clean-value ${f.futureCommissionAfterAdvance > 0.009 ? 'clean-warning' : ''}">${formatCurr(f.futureCommissionAfterAdvance)}</div></div>
-                                    </div>
-                                    <div class="clean-note">${financeStatusText}</div>
+                        <div class="c2-finance-dashboard space-y-5 text-left">
+                            <section class="c2-panel p-5 sm:p-6">
+                                <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 mb-5"><div><p class="c2-eyebrow">COMISSÕES E FINANÇAS</p><h2 class="text-xl font-extrabold mt-1">${state.lang==='pt'?'Resumo financeiro':'Financial summary'}</h2></div><span class="c2-project-status ${f.dueNow>0.009?'warning':'success'}">${f.dueNow>0.009?(state.lang==='pt'?'Pagamento pendente':'Payment due'):(state.lang==='pt'?'Conciliado':'Settled')}</span></div>
+                                <div class="grid grid-cols-2 xl:grid-cols-4 gap-3">
+                                    <div class="c2-kpi"><span>${state.lang==='pt'?'Comissão bruta do contrato':'Gross contract commission'}</span><strong>${formatCurr(f.commGrossContract)}</strong></div>
+                                    <div class="c2-kpi"><span>${state.lang==='pt'?'Comissão liberada':'Released commission'}</span><strong class="green">${formatCurr(f.commLiberada)}</strong></div>
+                                    <div class="c2-kpi"><span>${state.lang==='pt'?'Pago ao vendedor':'Paid to seller'}</span><strong class="cyan">${formatCurr(f.totalPaid)}</strong></div>
+                                    <div ${balActionAttrs} class="c2-kpi ${balActionClass}"><span>${state.lang==='pt'?'Saldo de comissão a pagar':'Commission balance due'}</span><strong class="${f.dueNow>0.009?'amber':'green'}">${formatCurr(f.dueNow)}</strong></div>
                                 </div>
-
-                                <div class="space-y-4">
-                                    <section class="clean-table-card">
-                                        <div class="clean-table-head">
-                                            <div class="flex items-center gap-3"><span class="clean-icon-box positive"><i data-lucide="circle-dollar-sign" class="w-5 h-5"></i></span><div><h5 class="clean-section-title">${state.lang === 'pt' ? 'Recebimentos do Cliente' : 'Client Receipts'}</h5><div class="clean-subtext">${(p.recebimentos || []).length} ${(p.recebimentos || []).length === 1 ? (state.lang === 'pt' ? 'lançamento' : 'entry') : (state.lang === 'pt' ? 'lançamentos' : 'entries')}</div></div></div>
-                                            <div class="clean-table-total">${state.lang === 'pt' ? 'Total recebido' : 'Total received'} &nbsp; ${formatCurr(f.totalRecebido)}</div>
-                                        </div>
-                                        <div class="clean-table-row clean-table-labels"><div>${state.lang === 'pt' ? 'Data' : 'Date'}</div><div>${state.lang === 'pt' ? 'Forma' : 'Method'}</div><div>${state.lang === 'pt' ? 'Bruto' : 'Gross'}</div><div>${state.lang === 'pt' ? 'Taxa / desconto' : 'Fee / discount'}</div><div>${state.lang === 'pt' ? 'Líquido' : 'Net'}</div></div>
-                                        ${receiptRowsClean}
-                                        ${state.userPerms.fin ? `<button onclick="window.openEditRecModal('${p.id}')" class="clean-add-row no-print"><i data-lucide="plus" class="w-4 h-4 inline-block mr-2"></i>${state.lang === 'pt' ? 'Adicionar ou gerenciar recebimento' : 'Add or manage receipt'}</button>` : ''}
-                                    </section>
-
-                                    <section class="clean-table-card">
-                                        <div class="clean-table-head">
-                                            <div class="flex items-center gap-3"><span class="clean-icon-box"><i data-lucide="hand-coins" class="w-5 h-5"></i></span><div><h5 class="clean-section-title">${state.lang === 'pt' ? 'Pagamentos ao Vendedor' : 'Seller Payments'}</h5><div class="clean-subtext">${normalizePaymentEntries(p.pagamentosEfetuados || []).length} ${state.lang === 'pt' ? 'registros' : 'records'}</div></div></div>
-                                            <div class="clean-table-total" style="color:#e6edf5">${state.lang === 'pt' ? 'Total pago' : 'Total paid'} &nbsp; ${formatCurr(f.totalPaid)}</div>
-                                        </div>
-                                        <div class="clean-table-row payment clean-table-labels"><div>${state.lang === 'pt' ? 'Data' : 'Date'}</div><div>${state.lang === 'pt' ? 'Empresa pagadora' : 'Paying company'}</div><div>${state.lang === 'pt' ? 'Valor pago' : 'Paid amount'}</div><div>${state.lang === 'pt' ? 'Status' : 'Status'}</div></div>
-                                        ${paymentRowsClean}
-                                        ${state.userPerms.fin ? `<button onclick="window.openEditPaymentModal('${p.id}')" class="clean-add-row no-print"><i data-lucide="plus" class="w-4 h-4 inline-block mr-2"></i>${state.lang === 'pt' ? 'Adicionar ou gerenciar pagamento' : 'Add or manage payment'}</button>` : ''}
-                                    </section>
-
-                                    <section class="clean-section p-5">
-                                        <h5 class="clean-section-title mb-4">${state.lang === 'pt' ? 'Resumo rápido' : 'Quick summary'}</h5>
-                                        <div class="clean-meta-grid">
-                                            <div><div class="clean-label">${state.lang === 'pt' ? 'Situação' : 'Status'}</div><div class="clean-meta-value">${p.status === 'Finalizado' ? (state.lang === 'pt' ? 'Finalizado' : 'Completed') : escapeInlineHtml(tStatus(p.status))}</div></div>
-                                            <div><div class="clean-label">${state.lang === 'pt' ? 'Finalização' : 'Completion'}</div><div class="clean-meta-value">${formatProjectDate(p.dataConclusao) || '—'}</div></div>
-                                            <div><div class="clean-label">${state.lang === 'pt' ? 'Invoice / Proposta' : 'Invoice / Proposal'}</div><div class="clean-meta-value">${escapeInlineHtml(p.numeroInvoice || '—')} / ${escapeInlineHtml(p.numeroProposta || '—')}</div></div>
-                                            <div><div class="clean-label">${state.lang === 'pt' ? 'Vendedor' : 'Seller'}</div><div class="clean-meta-value">${escapeInlineHtml(getUserDisplayName(p.vendedor, '—'))}</div></div>
-                                        </div>
-                                    </section>
-                                </div>
+                                <div class="grid grid-cols-2 xl:grid-cols-4 gap-3 mt-3"><div class="c2-mini-stat"><span>${state.lang==='pt'?'Empresa pagadora':'Paying company'}</span><strong>${escapeInlineHtml(getCompanyDisplayName(p.empresa))}</strong></div><div class="c2-mini-stat"><span>${state.lang==='pt'?'Saldo cliente a receber':'Client balance'}</span><strong>${formatCurr(f.clientOutstanding)}</strong></div><div class="c2-mini-stat"><span>${state.lang==='pt'?'Comissão futura':'Future commission'}</span><strong>${formatCurr(f.futureCommissionAfterAdvance)}</strong></div><div class="c2-mini-stat"><span>${state.lang==='pt'?'Desconto cartão':'Card discount'}</span><strong>${formatCurr(f.commissionCardFeeReduction)}</strong></div></div>
+                                <div class="c2-note-row mt-4"><i data-lucide="info" class="w-4 h-4 text-emerald-300 shrink-0"></i><span>${financeStatusText}</span></div>
+                            </section>
+                            <div class="grid grid-cols-1 xl:grid-cols-2 gap-5">
+                                <section class="clean-table-card c2-panel"><div class="clean-table-head"><div class="flex items-center gap-3"><span class="clean-icon-box positive"><i data-lucide="circle-dollar-sign" class="w-5 h-5"></i></span><div><h5 class="clean-section-title">${state.lang==='pt'?'Recebimentos do Cliente':'Client Receipts'}</h5><div class="clean-subtext">${(p.recebimentos||[]).length} ${state.lang==='pt'?'lançamentos':'entries'}</div></div></div><div class="clean-table-total">${formatCurr(f.totalRecebido)}</div></div><div class="clean-table-row clean-table-labels"><div>${state.lang==='pt'?'Data':'Date'}</div><div>${state.lang==='pt'?'Forma':'Method'}</div><div>${state.lang==='pt'?'Bruto':'Gross'}</div><div>${state.lang==='pt'?'Taxa':'Fee'}</div><div>${state.lang==='pt'?'Líquido':'Net'}</div></div>${receiptRowsClean}${state.userPerms.fin?`<button onclick="window.openEditRecModal('${p.id}')" class="clean-add-row no-print"><i data-lucide="plus" class="w-4 h-4 inline-block mr-2"></i>${state.lang==='pt'?'Gerenciar recebimentos':'Manage receipts'}</button>`:''}</section>
+                                <section class="clean-table-card c2-panel"><div class="clean-table-head"><div class="flex items-center gap-3"><span class="clean-icon-box warning"><i data-lucide="hand-coins" class="w-5 h-5"></i></span><div><h5 class="clean-section-title">${state.lang==='pt'?'Pagamentos ao Vendedor':'Seller Payments'}</h5><div class="clean-subtext">${normalizePaymentEntries(p.pagamentosEfetuados||[]).length} ${state.lang==='pt'?'registros':'records'}</div></div></div><div class="clean-table-total" style="color:var(--c2-amber)">${formatCurr(f.totalPaid)}</div></div><div class="clean-table-row payment clean-table-labels"><div>${state.lang==='pt'?'Data':'Date'}</div><div>${state.lang==='pt'?'Empresa':'Company'}</div><div>${state.lang==='pt'?'Valor':'Amount'}</div><div>Status</div></div>${paymentRowsClean}${state.userPerms.fin?`<button onclick="window.openEditPaymentModal('${p.id}')" class="clean-add-row no-print"><i data-lucide="plus" class="w-4 h-4 inline-block mr-2"></i>${state.lang==='pt'?'Gerenciar pagamentos':'Manage payments'}</button>`:''}</section>
                             </div>
+                            <section class="c2-panel p-5 sm:p-6"><div class="c2-section-heading"><div><p class="c2-eyebrow">RESUMO RÁPIDO</p><h2>${state.lang==='pt'?'Situação financeira':'Financial status'}</h2></div><i data-lucide="activity" class="w-5 h-5 text-cyan-300"></i></div><div class="grid grid-cols-2 sm:grid-cols-4 gap-3 mt-4"><div class="c2-mini-stat"><span>${state.lang==='pt'?'Situação':'Status'}</span><strong>${p.status==='Finalizado'?(state.lang==='pt'?'Finalizado':'Completed'):escapeInlineHtml(tStatus(p.status))}</strong></div><div class="c2-mini-stat"><span>${state.lang==='pt'?'Finalização':'Completion'}</span><strong>${formatProjectDate(p.dataConclusao)||'—'}</strong></div><div class="c2-mini-stat"><span>${state.lang==='pt'?'Invoice / Proposta':'Invoice / Proposal'}</span><strong>${escapeInlineHtml(p.numeroInvoice||'—')} / ${escapeInlineHtml(p.numeroProposta||'—')}</strong></div><div class="c2-mini-stat"><span>${state.lang==='pt'?'Vendedor':'Seller'}</span><strong>${escapeInlineHtml(getUserDisplayName(p.vendedor,'—'))}</strong></div></div></section>
                         </div>
                     `;
                 } else if (state.activeModule === 'costs' && canViewCosts) {
@@ -3397,131 +3608,130 @@
 
                     moduleContent = `
                         <div class="space-y-6 mb-10 print:mb-6">
-                            <div class="rounded-[30px] border ${isOverBudget ? 'border-red-500/20' : 'border-cyan-500/20'} bg-gradient-to-br from-slate-950 via-slate-900 to-black/90 p-6 sm:p-7 shadow-[0_20px_60px_-30px_rgba(0,0,0,0.75)] print:bg-transparent print:border-slate-300 print:shadow-none">
-                                <div class="grid grid-cols-1 xl:grid-cols-[minmax(0,1.05fr)_minmax(360px,0.95fr)] gap-6 items-stretch">
-                                    <div class="rounded-[28px] border ${isOverBudget ? 'border-red-500/20 bg-red-500/5' : 'border-cyan-500/20 bg-cyan-500/5'} p-6 sm:p-7 flex flex-col min-h-[360px]">
-                                        <div class="flex flex-col gap-6 h-full">
-                                            <div class="flex flex-col lg:flex-row lg:items-start lg:justify-between gap-4">
+                            <section class="rounded-[34px] border border-cyan-500/20 bg-gradient-to-br from-slate-950 via-slate-900 to-black/90 p-6 sm:p-8 shadow-[0_24px_70px_-34px_rgba(0,0,0,0.78)] print:bg-transparent print:border-slate-300 print:shadow-none">
+                                <div class="grid grid-cols-1 xl:grid-cols-[minmax(320px,.85fr)_minmax(0,2.15fr)] gap-6 items-stretch">
+                                    <div class="rounded-[28px] border ${isOverBudget ? 'border-red-500/25 bg-red-500/5' : 'border-cyan-500/20 bg-cyan-500/5'} p-6 sm:p-7 flex flex-col justify-between min-h-[320px]">
+                                        <div>
+                                            <div class="flex items-start gap-4 mb-5">
+                                                <div class="w-12 h-12 rounded-2xl border ${isOverBudget ? 'border-red-500/30 bg-red-500/10' : 'border-emerald-500/30 bg-emerald-500/10'} flex items-center justify-center shrink-0">
+                                                    <i data-lucide="heart-pulse" class="w-6 h-6 ${isOverBudget ? 'text-red-300' : 'text-emerald-300'}"></i>
+                                                </div>
                                                 <div class="min-w-0">
-                                                    <p class="text-[10px] font-black uppercase tracking-[0.28em] text-slate-500 mb-3">${window.t('budget_health')}</p>
-                                                    <p class="text-[11px] font-black uppercase tracking-[0.22em] text-slate-500 mb-2">${window.t('contract_value')}</p>
-                                                    <p class="${contractMetricClass} font-black text-slate-100 leading-none tracking-tight whitespace-nowrap">${contractSummary}</p>
-                                                    <p class="text-sm sm:text-base text-slate-400 mt-4 max-w-xl">${!hasBudget ? window.t('budget_not_set_hint') : (isOverBudget ? window.t('budget_over_hint') : window.t('budget_remaining_hint'))}</p>
-                                                </div>
-                                                <div class="flex flex-wrap gap-2 lg:justify-end">
-                                                    <span class="inline-flex items-center gap-2 rounded-2xl border ${budgetStatusClass} px-3 py-2 text-[10px] font-black uppercase tracking-widest">
-                                                        <span class="w-2.5 h-2.5 rounded-full ${!hasBudget ? 'bg-slate-400' : (isOverBudget ? 'bg-red-400' : 'bg-emerald-400')}"></span>
-                                                        ${budgetStatusLabel}
-                                                    </span>
-                                                    ${marginAlert.isLow ? `<span class="inline-flex items-center gap-2 rounded-2xl border border-red-500/30 bg-red-500/10 px-3 py-2 text-[10px] font-black uppercase tracking-widest text-red-300 balance-due-pulse"><span class="w-2.5 h-2.5 rounded-full bg-red-400"></span>${window.t('margin_alert_low')}</span>` : ''}
+                                                    <p class="text-[11px] font-black uppercase tracking-[0.24em] text-slate-300 mb-2">${window.t('budget_health')}</p>
+                                                    <p class="text-sm text-slate-400 leading-relaxed">${state.lang === 'pt' ? 'Acompanhe em tempo real o uso do budget, despesas, lucro e margens do projeto.' : 'Track budget usage, expenses, profit and margins in real time.'}</p>
                                                 </div>
                                             </div>
 
-                                            <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                                                <div class="rounded-[22px] border ${!hasBudget ? 'border-white/10 bg-white/5' : (isOverBudget ? 'border-red-500/20 bg-red-500/10' : 'border-emerald-500/20 bg-emerald-500/10')} px-5 py-5">
-                                                    <p class="text-[11px] font-black uppercase tracking-[0.22em] ${!hasBudget ? 'text-slate-500' : (isOverBudget ? 'text-red-300/80' : 'text-emerald-300/80')} mb-2">${budgetHeadlineLabel}</p>
-                                                    <p class="${availableMetricClass} font-black ${budgetHeadlineColor} leading-none tracking-tight whitespace-nowrap">${hasBudget ? formatCurr(budgetRemainingAbs) : '—'}</p>
-                                                    <p class="text-sm text-slate-400 mt-3">${hasBudget ? `${window.t('budget')}: ${budgetSummary}` : window.t('budget_not_set_hint')}</p>
-                                                </div>
-                                                <div class="rounded-[22px] border border-white/10 bg-white/5 px-5 py-5">
-                                                    <div class="flex items-start justify-between gap-4">
-                                                        <div>
-                                                            <p class="text-[10px] font-black uppercase tracking-[0.22em] text-slate-500 mb-2">${window.t('total_expenses')}</p>
-                                                            <p class="${expensesMetricClass} font-black text-red-300 leading-none tracking-tight whitespace-nowrap">${spentSummary}</p>
-                                                        </div>
-                                                        <div class="text-right">
-                                                            <p class="text-[10px] font-black uppercase tracking-[0.22em] text-slate-500 mb-2">${window.t('real_profit')}</p>
-                                                            <p class="${profitMetricClass} font-black ${profitColor} leading-none tracking-tight whitespace-nowrap">${formatCurr(f.lucroBruto)}</p>
-                                                        </div>
-                                                    </div>
-                                                </div>
+                                            <div class="mb-4">
+                                                <p class="text-[10px] font-black uppercase tracking-[0.22em] text-slate-500 mb-2">${window.t('contract_value')}</p>
+                                                <p class="${contractMetricClass} font-black ${hasBudget ? 'text-emerald-300' : 'text-slate-100'} leading-none tracking-tight break-words">${contractSummary}</p>
                                             </div>
 
-                                            <div class="rounded-[22px] border border-white/10 bg-black/20 px-5 py-5 mt-auto">
-                                                <div class="flex items-center justify-between gap-3 mb-3">
-                                                    <p class="text-[11px] font-black uppercase tracking-[0.22em] text-slate-500">${window.t('budget_consumption')}</p>
-                                                    <span class="text-base font-black ${isOverBudget ? 'text-red-300' : 'text-gold'}">${hasBudget ? `${f.budgetSpentPerc.toFixed(1)}%` : '—'}</span>
+                                            <div class="h-2.5 rounded-full bg-white/10 overflow-hidden mb-3">
+                                                <div class="h-full rounded-full ${budgetProgressTone}" style="width:${hasBudget ? Math.max(8, Math.min(100, budgetProgressWidth)) : 100}%"></div>
+                                            </div>
+                                            <p class="text-sm ${budgetHeadlineColor} font-bold">${hasBudget ? `${Math.min(100, f.budgetSpentPerc).toFixed(1)}% ${state.lang === 'pt' ? 'do budget monitorado' : 'of budget tracked'}` : window.t('budget_not_set')}</p>
+                                        </div>
+
+                                        <div class="mt-6 rounded-[20px] border ${budgetStatusClass} px-4 py-4">
+                                            <div class="flex items-start gap-3">
+                                                <i data-lucide="info" class="w-5 h-5 mt-0.5 ${!hasBudget ? 'text-slate-300' : (isOverBudget ? 'text-red-300' : 'text-emerald-300')}"></i>
+                                                <div>
+                                                    <p class="text-[10px] font-black uppercase tracking-[0.22em] mb-1">${budgetStatusLabel}</p>
+                                                    <p class="text-sm leading-relaxed ${!hasBudget ? 'text-slate-300' : 'text-slate-200'}">${!hasBudget ? window.t('budget_not_set_hint') : (isOverBudget ? `${window.t('chart_spent')}: ${spentSummary}. ${window.t('chart_over_budget')}: ${chartSecondaryValue}.` : `${window.t('chart_spent')}: ${spentSummary}. ${chartSecondaryLabel}: ${chartSecondaryValue}.`)}</p>
                                                 </div>
-                                                ${hasBudget ? `
-                                                    <div class="h-3 rounded-full bg-white/10 overflow-hidden border border-white/5">
-                                                        <div class="h-full ${budgetProgressTone}" style="width:${budgetProgressWidth}%"></div>
-                                                    </div>
-                                                    <div class="grid grid-cols-1 sm:grid-cols-3 gap-3 mt-4 text-sm">
-                                                        <div>
-                                                            <p class="text-[10px] font-black uppercase tracking-[0.2em] text-slate-500 mb-1">${window.t('budget')}</p>
-                                                            <p class="font-black text-slate-200">${budgetSummary}</p>
-                                                        </div>
-                                                        <div>
-                                                            <p class="text-[10px] font-black uppercase tracking-[0.2em] text-slate-500 mb-1">${window.t('chart_spent')}</p>
-                                                            <p class="font-black text-slate-200">${spentSummary}</p>
-                                                        </div>
-                                                        <div>
-                                                            <p class="text-[10px] font-black uppercase tracking-[0.2em] text-slate-500 mb-1">${chartSecondaryLabel}</p>
-                                                            <p class="font-black ${isOverBudget ? 'text-red-300' : 'text-emerald-300'}">${chartSecondaryValue}</p>
-                                                        </div>
-                                                    </div>
-                                                ` : `
-                                                    <div class="rounded-2xl border border-white/10 bg-white/5 px-4 py-4 text-sm text-slate-400">
-                                                        ${window.t('budget_not_set_hint')}
-                                                    </div>
-                                                `}
                                             </div>
                                         </div>
                                     </div>
 
-                                    <div class="flex flex-col gap-4">
-                                        <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 content-start auto-rows-fr">
-                                            <div class="rounded-[24px] border border-white/10 bg-white/5 px-5 py-5">
-                                                <p class="text-[10px] font-black uppercase tracking-[0.22em] text-slate-500 mb-2">${window.t('budget')}</p>
-                                                <p class="${budgetMetricClass} font-black text-slate-100 leading-none tracking-tight whitespace-nowrap">${budgetSummary}</p>
+                                    <div class="grid grid-cols-2 md:grid-cols-3 xl:grid-cols-5 gap-4">
+                                        <div class="rounded-[24px] border border-white/10 bg-white/5 p-5 flex flex-col justify-between min-h-[152px]">
+                                            <div class="flex items-center justify-between gap-3 mb-5">
+                                                <p class="text-[10px] font-black uppercase tracking-[0.24em] text-slate-500">${window.t('budget')}</p>
+                                                <i data-lucide="wallet-cards" class="w-5 h-5 text-indigo-300"></i>
                                             </div>
-                                            <div class="rounded-[24px] border border-white/10 bg-white/5 px-5 py-5">
-                                                <p class="text-[10px] font-black uppercase tracking-[0.22em] text-slate-500 mb-2">${window.t('budget_spent_perc')}</p>
-                                                <p class="${getMetricDisplayClass(`${f.budgetSpentPerc.toFixed(1)}%`, true)} font-black ${isOverBudget ? 'text-red-300' : 'text-gold'} leading-none tracking-tight whitespace-nowrap">${hasBudget ? `${f.budgetSpentPerc.toFixed(1)}%` : '—'}</p>
+                                            <p class="${budgetMetricClass} font-black text-slate-100 leading-tight tracking-tight break-words">${budgetSummary}</p>
+                                        </div>
+                                        <div class="rounded-[24px] border border-white/10 bg-white/5 p-5 flex flex-col justify-between min-h-[152px]">
+                                            <div class="flex items-center justify-between gap-3 mb-5">
+                                                <p class="text-[10px] font-black uppercase tracking-[0.24em] text-slate-500">${window.t('budget_spent_perc')}</p>
+                                                <i data-lucide="pie-chart" class="w-5 h-5 text-emerald-300"></i>
                                             </div>
-                                            <div class="rounded-[24px] border ${marginAlert.isLow ? 'border-red-500/30 bg-red-500/10 balance-due-pulse' : 'border-white/10 bg-white/5'} px-5 py-5">
-                                                <p class="text-[10px] font-black uppercase tracking-[0.22em] text-slate-500 mb-2">${window.t('margin_current')}</p>
+                                            <p class="${getMetricDisplayClass(`${f.budgetSpentPerc.toFixed(1)}%`, true)} font-black ${hasBudget ? (isOverBudget ? 'text-red-300' : 'text-emerald-300') : 'text-slate-300'} leading-tight tracking-tight break-words">${hasBudget ? `${f.budgetSpentPerc.toFixed(1)}%` : '—'}</p>
+                                        </div>
+                                        <div class="rounded-[24px] border border-white/10 bg-white/5 p-5 flex flex-col justify-between min-h-[152px]">
+                                            <div class="flex items-center justify-between gap-3 mb-5">
+                                                <p class="text-[10px] font-black uppercase tracking-[0.24em] text-slate-500">${window.t('total_expenses')}</p>
+                                                <i data-lucide="tags" class="w-5 h-5 text-red-300"></i>
+                                            </div>
+                                            <p class="${expensesMetricClass} font-black ${f.totalDespesas > 0 ? 'text-red-300' : 'text-slate-100'} leading-tight tracking-tight break-words">${formatCurr(f.totalDespesas)}</p>
+                                        </div>
+                                        <div class="rounded-[24px] border border-white/10 bg-white/5 p-5 flex flex-col justify-between min-h-[152px]">
+                                            <div class="flex items-center justify-between gap-3 mb-5">
+                                                <p class="text-[10px] font-black uppercase tracking-[0.24em] text-slate-500">${window.t('real_profit')}</p>
+                                                <i data-lucide="badge-dollar-sign" class="w-5 h-5 text-cyan-300"></i>
+                                            </div>
+                                            <p class="${profitMetricClass} font-black ${f.lucroBruto >= 0 ? 'text-cyan-300' : 'text-red-300'} leading-tight tracking-tight break-words">${formatCurr(f.lucroBruto)}</p>
+                                        </div>
+                                        <div class="rounded-[24px] border ${marginAlert.isLow ? 'border-red-500/30 bg-red-500/10' : 'border-white/10 bg-white/5'} p-5 flex flex-col justify-between min-h-[152px]">
+                                            <div class="flex items-center justify-between gap-3 mb-5">
+                                                <p class="text-[10px] font-black uppercase tracking-[0.24em] text-slate-500">${window.t('margin_current')}</p>
+                                                <i data-lucide="percent" class="w-5 h-5 ${marginAlert.isLow ? 'text-red-300' : 'text-gold'}"></i>
+                                            </div>
+                                            <div>
                                                 ${marginAlert.isLow ? `<div class="mb-3">${renderAlertChip(window.t('margin_alert_low'), 'red', true)}</div>` : ''}
-                                                <p class="${getMetricDisplayClass(`${f.margemLucro.toFixed(1)}%`, true)} font-black ${marginColor} leading-none tracking-tight whitespace-nowrap">${f.margemLucro.toFixed(1)}%</p>
+                                                <p class="${getMetricDisplayClass(`${f.margemLucro.toFixed(1)}%`, true)} font-black ${marginColor} leading-tight tracking-tight break-words">${f.margemLucro.toFixed(1)}%</p>
                                             </div>
-                                            <div class="rounded-[24px] border border-white/10 bg-white/5 px-5 py-5">
-                                                <p class="text-[10px] font-black uppercase tracking-[0.22em] text-slate-500 mb-2">${window.t('expense_entries')}</p>
-                                                <p class="${entriesMetricClass} font-black text-slate-100 leading-none tracking-tight whitespace-nowrap">${expenseCount}</p>
+                                        </div>
+                                        <div class="rounded-[24px] border border-white/10 bg-white/5 p-5 flex flex-col justify-between min-h-[152px]">
+                                            <div class="flex items-center justify-between gap-3 mb-5">
+                                                <p class="text-[10px] font-black uppercase tracking-[0.24em] text-slate-500">${window.t('expense_entries')}</p>
+                                                <i data-lucide="file-text" class="w-5 h-5 text-slate-300"></i>
                                             </div>
-                                            <div class="rounded-[24px] border border-white/10 bg-white/5 px-5 py-5">
-                                                <p class="text-[10px] font-black uppercase tracking-[0.22em] text-slate-500 mb-2">${window.t('avg_expense')}</p>
-                                                <p class="${avgExpenseMetricClass} font-black text-slate-100 leading-none tracking-tight whitespace-nowrap">${expenseCount ? formatCurr(avgExpense) : '—'}</p>
+                                            <p class="${entriesMetricClass} font-black text-slate-100 leading-tight tracking-tight break-words">${expenseCount}</p>
+                                        </div>
+                                        <div class="rounded-[24px] border border-white/10 bg-white/5 p-5 flex flex-col justify-between min-h-[152px]">
+                                            <div class="flex items-center justify-between gap-3 mb-5">
+                                                <p class="text-[10px] font-black uppercase tracking-[0.24em] text-slate-500">${window.t('avg_expense')}</p>
+                                                <i data-lucide="calculator" class="w-5 h-5 text-slate-300"></i>
                                             </div>
-                                            <div class="rounded-[24px] border border-white/10 bg-white/5 px-5 py-5">
-                                                <p class="text-[10px] font-black uppercase tracking-[0.22em] text-slate-500 mb-2">${window.t('largest_expense')}</p>
-                                                <p class="${maxExpenseMetricClass} font-black text-slate-100 leading-none tracking-tight whitespace-nowrap">${expenseCount ? formatCurr(maxExpenseValue) : '—'}</p>
+                                            <p class="${avgExpenseMetricClass} font-black text-slate-100 leading-tight tracking-tight break-words">${expenseCount ? formatCurr(avgExpense) : '—'}</p>
+                                        </div>
+                                        <div class="rounded-[24px] border border-white/10 bg-white/5 p-5 flex flex-col justify-between min-h-[152px]">
+                                            <div class="flex items-center justify-between gap-3 mb-5">
+                                                <p class="text-[10px] font-black uppercase tracking-[0.24em] text-slate-500">${window.t('largest_expense')}</p>
+                                                <i data-lucide="trending-up" class="w-5 h-5 text-slate-300"></i>
                                             </div>
-                                            <div class="rounded-[24px] border border-white/10 bg-white/5 px-5 py-5 sm:col-span-2">
-                                                <div class="grid grid-cols-1 sm:grid-cols-[minmax(0,1fr)_auto] gap-4 items-start">
-                                                    <div>
-                                                        <p class="text-[10px] font-black uppercase tracking-[0.22em] text-slate-500 mb-2">${window.t('top_category')}</p>
-                                                        <p class="${leaderMetricClass} font-black text-cyan-300 leading-tight break-words">${topCategoryLabel}</p>
-                                                    </div>
-                                                    <div class="sm:text-right">
-                                                        <p class="text-[10px] font-black uppercase tracking-[0.22em] text-slate-500 mb-2">${window.t('planned_profit')}</p>
-                                                        <p class="${plannedProfitMetricClass} font-black ${plannedProfitColor} leading-none tracking-tight whitespace-nowrap">${plannedProfitSummary}</p>
-                                                    </div>
-                                                </div>
+                                            <p class="${maxExpenseMetricClass} font-black text-slate-100 leading-tight tracking-tight break-words">${expenseCount ? formatCurr(maxExpenseValue) : '—'}</p>
+                                        </div>
+                                        <div class="rounded-[24px] border border-white/10 bg-white/5 p-5 flex flex-col justify-between min-h-[152px]">
+                                            <div class="flex items-center justify-between gap-3 mb-5">
+                                                <p class="text-[10px] font-black uppercase tracking-[0.24em] text-slate-500">${window.t('top_category')}</p>
+                                                <i data-lucide="folders" class="w-5 h-5 text-cyan-300"></i>
                                             </div>
+                                            <p class="${leaderMetricClass} font-black text-cyan-300 leading-tight break-words">${topCategoryLabel}</p>
+                                        </div>
+                                        <div class="rounded-[24px] border border-white/10 bg-white/5 p-5 flex flex-col justify-between min-h-[152px]">
+                                            <div class="flex items-center justify-between gap-3 mb-5">
+                                                <p class="text-[10px] font-black uppercase tracking-[0.24em] text-slate-500">${window.t('planned_profit')}</p>
+                                                <i data-lucide="target" class="w-5 h-5 ${plannedProfit === null ? 'text-slate-300' : (plannedProfit >= 0 ? 'text-emerald-300' : 'text-red-300')}"></i>
+                                            </div>
+                                            <p class="${plannedProfitMetricClass} font-black ${plannedProfitColor} leading-tight tracking-tight break-words">${plannedProfitSummary}</p>
                                         </div>
                                     </div>
                                 </div>
-                            </div>
+                            </section>
 
                             <div class="grid grid-cols-1 xl:grid-cols-2 gap-6 no-print">
-                                <div class="bg-black/20 p-6 rounded-[24px] border border-cyan-500/10 shadow-lg print:border-slate-300 print:bg-transparent">
+                                <section class="rounded-[30px] border border-white/10 bg-black/20 p-6 sm:p-7 shadow-[0_18px_50px_-30px_rgba(0,0,0,0.75)] print:border-slate-300 print:bg-transparent print:shadow-none">
                                     <div class="flex items-center justify-between gap-4 mb-4">
                                         <p class="text-[11px] font-black uppercase text-cyan-300/70 tracking-widest print:text-black">${window.t('budget_vs_spent')}</p>
                                         ${hasBudget ? `<span class="text-xs font-black uppercase tracking-widest ${isOverBudget ? 'text-red-300' : 'text-emerald-300'}">${f.budgetSpentPerc.toFixed(1)}%</span>` : ''}
                                     </div>
-                                    <div class="relative w-48 h-48 mx-auto print:w-32 print:h-32"><canvas id="chart-budget-${p.id}"></canvas></div>
-                                </div>
-                                <div class="bg-black/20 p-6 rounded-[24px] border border-cyan-500/10 shadow-lg print:border-slate-300 print:bg-transparent">
+                                    <div class="relative w-52 h-52 mx-auto print:w-32 print:h-32"><canvas id="chart-budget-${p.id}"></canvas></div>
+                                    <p class="text-sm text-slate-400 mt-4 text-center">${hasBudget ? `${window.t('budget')}: ${budgetSummary}` : window.t('budget_not_set_hint')}</p>
+                                </section>
+                                <section class="rounded-[30px] border border-white/10 bg-black/20 p-6 sm:p-7 shadow-[0_18px_50px_-30px_rgba(0,0,0,0.75)] print:border-slate-300 print:bg-transparent print:shadow-none">
                                     <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 mb-4">
                                         <p class="text-[11px] font-black uppercase text-cyan-300/70 tracking-widest print:text-black">${window.t('dist_category')}</p>
                                         <span class="inline-flex items-center gap-2 rounded-xl border border-white/10 bg-white/5 px-3 py-2 text-[10px] font-black uppercase tracking-widest text-slate-400 max-w-full">
@@ -3529,51 +3739,54 @@
                                         </span>
                                     </div>
                                     <div class="relative w-full h-64 print:h-32"><canvas id="chart-cat-${p.id}"></canvas></div>
-                                </div>
+                                </section>
                             </div>
-                        <!-- Formulário e Tabela de Despesas -->
-                        <div class="bg-cyan-950/20 p-6 sm:p-8 rounded-[32px] border border-cyan-500/20 shadow-2xl print:bg-transparent print:border-slate-300 print:p-0 print:shadow-none">
-                            <div class="no-print mb-8 pb-8 border-b border-cyan-500/20">
-                                <p class="text-sm sm:text-base font-black text-cyan-400 uppercase mb-4 tracking-widest flex items-center gap-2"><i data-lucide="plus-circle" class="w-6 h-6"></i> ${window.t('reg_expense')}</p>
-                                <div class="grid grid-cols-1 sm:grid-cols-12 gap-4">
-                                    <input type="date" id="exp-date-${p.id}" class="modern-input relative !bg-black/40 !border-cyan-500/30 !text-sm sm:col-span-3" onclick="event.stopPropagation();">
-                                    <input type="text" id="exp-desc-${p.id}" placeholder="${window.t('desc_expense')}" class="modern-input !bg-black/40 !border-cyan-500/30 !text-sm sm:col-span-4" onclick="event.stopPropagation();">
-                                    <select id="exp-cat-${p.id}" class="modern-input !bg-black/40 !border-cyan-500/30 !text-sm sm:col-span-3 !pr-8" onclick="event.stopPropagation();">
+
+                            <section class="rounded-[30px] border border-cyan-500/20 bg-cyan-950/20 p-6 sm:p-8 shadow-[0_18px_50px_-30px_rgba(0,0,0,0.75)] print:hidden">
+                                <div class="flex items-center gap-3 mb-6">
+                                    <div class="w-11 h-11 rounded-2xl border border-cyan-500/25 bg-cyan-500/10 flex items-center justify-center shrink-0"><i data-lucide="plus-circle" class="w-5 h-5 text-cyan-300"></i></div>
+                                    <div>
+                                        <p class="text-sm sm:text-base font-black text-cyan-300 uppercase tracking-[0.18em]">${window.t('reg_expense')}</p>
+                                        <p class="text-sm text-slate-400">${state.lang === 'pt' ? 'Registre novas despesas do projeto com categoria e valor.' : 'Register new project expenses with category and amount.'}</p>
+                                    </div>
+                                </div>
+                                <div class="grid grid-cols-1 md:grid-cols-12 gap-4">
+                                    <input type="date" id="exp-date-${p.id}" class="modern-input relative !bg-black/40 !border-cyan-500/30 !text-sm md:col-span-2" onclick="event.stopPropagation();">
+                                    <input type="text" id="exp-desc-${p.id}" placeholder="${window.t('desc_expense')}" class="modern-input !bg-black/40 !border-cyan-500/30 !text-sm md:col-span-4" onclick="event.stopPropagation();">
+                                    <select id="exp-cat-${p.id}" class="modern-input !bg-black/40 !border-cyan-500/30 !text-sm md:col-span-3 !pr-8" onclick="event.stopPropagation();">
                                         <option value="Materiais">Materiais</option><option value="Mão-de-obra">Mão-de-obra</option><option value="Equipamentos">Equipamentos</option>
                                         <option value="Licenças">Licenças (Permits)</option><option value="Outros">Outros</option>
                                     </select>
-                                    <input type="number" id="exp-val-${p.id}" placeholder="$ Valor" step="0.01" class="modern-input !bg-black/40 !border-cyan-500/30 !text-sm sm:col-span-2 text-gold font-bold" onclick="event.stopPropagation();">
-                                    <button onclick="event.stopPropagation(); window.addExpense('${p.id}')" class="bg-cyan-600 hover:bg-cyan-500 text-white force-white-text p-4 rounded-xl font-black text-xs uppercase tracking-widest transition-colors sm:col-span-12 mt-2 shadow-lg force-dark-bg">${window.t('add_table')}</button>
+                                    <input type="number" id="exp-val-${p.id}" placeholder="$ Valor" step="0.01" class="modern-input !bg-black/40 !border-cyan-500/30 !text-sm md:col-span-1 text-gold font-bold" onclick="event.stopPropagation();">
+                                    <button onclick="event.stopPropagation(); window.addExpense('${p.id}')" class="md:col-span-2 bg-emerald-500 hover:bg-emerald-400 text-slate-950 p-4 rounded-xl font-black text-xs uppercase tracking-widest transition-colors shadow-lg">${window.t('add_table')}</button>
                                 </div>
-                            </div>
+                            </section>
 
-                            <p class="text-sm font-black text-cyan-300 uppercase mb-4 tracking-widest print:text-black print:mb-2">${window.t('expense_history')}</p>
-                            <div class="max-h-96 overflow-y-auto scrollbar-hide pr-2 print:max-h-none">
-                                ${expensesList}
-                            </div>
+                            <section class="rounded-[30px] border border-white/10 bg-black/20 p-6 sm:p-8 shadow-[0_18px_50px_-30px_rgba(0,0,0,0.75)] print:bg-transparent print:border-slate-300 print:shadow-none">
+                                <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 mb-5">
+                                    <div>
+                                        <p class="text-sm sm:text-base font-black text-cyan-300 uppercase tracking-[0.18em] print:text-black">${window.t('expense_history')}</p>
+                                        <p class="text-sm text-slate-400 print:text-slate-600">${state.lang === 'pt' ? 'Histórico completo das despesas registradas nesta obra.' : 'Complete history of expenses recorded for this project.'}</p>
+                                    </div>
+                                    <span class="inline-flex items-center gap-2 rounded-xl border border-white/10 bg-white/5 px-3 py-2 text-[11px] font-black uppercase tracking-widest text-slate-300 print:text-slate-700 print:border-slate-300 print:bg-transparent">${getReportCountLabel(expenseCount, 'lançamento', 'lançamentos', 'entry', 'entries')}</span>
+                                </div>
+                                <div class="max-h-[32rem] overflow-y-auto scrollbar-hide pr-2 print:max-h-none">
+                                    ${expensesList}
+                                </div>
+                            </section>
                         </div>
                     `;
                 }
 
                 grid.innerHTML += `
-                <div class="glass project-module-shell clean-module-shell p-6 md:p-10 rounded-[40px] border-l-[8px] relative shadow-2xl flex flex-col w-full print:border print:border-none print:shadow-none animate-fade-in mt-6" style="border-left-color: ${p.status === 'Finalizado' ? '#10b981' : '#f59e0b'}">
+                <div class="project-module-shell clean-module-shell relative flex flex-col w-full print:shadow-none animate-fade-in mt-3">
                     <div class="project-watermark-print">${finishedWatermark}</div>
-                    <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-8 border-b border-white/10 pb-6 gap-6 no-print relative z-[1]">
-                        <div class="flex flex-col sm:flex-row items-start sm:items-center gap-4 w-full sm:w-auto">
-                            <button onclick="window.closeProjectModule()" class="p-4 w-full sm:w-auto bg-slate-800 hover:bg-slate-700 rounded-2xl transition-all border border-white/10 shadow-lg flex items-center justify-center gap-3 text-xs font-black uppercase text-white force-white-text force-dark-bg">
-                                <i data-lucide="arrow-left" class="w-5 h-5"></i> ${window.t('back')}
-                            </button>
-                            <div class="mt-2 sm:mt-0 space-y-3">
-                                <div>
-                                    <h4 class="font-black text-2xl sm:text-3xl uppercase tracking-tight text-white force-white-text leading-none truncate max-w-full sm:max-w-md">${p.cliente || 'Sem Nome'}</h4>
-                                    <p class="text-xs sm:text-sm font-black text-gold uppercase tracking-widest mt-2">${moduleTitle}</p>
-                                </div>
-                                ${finishedBadge}
-                            </div>
+                    <div class="c2-module-header no-print relative z-[1]">
+                        <div class="flex items-start gap-4 min-w-0">
+                            <button onclick="window.closeProjectModule()" class="c2-secondary-btn shrink-0"><i data-lucide="arrow-left" class="w-4 h-4"></i><span class="hidden sm:inline">${window.t('back')}</span></button>
+                            <div class="min-w-0"><div class="flex flex-wrap items-center gap-2 mb-2">${p.status==='Finalizado'?`<span class="c2-project-status success">${state.lang==='pt'?'Finalizado':'Completed'} ${formatProjectDate(p.dataConclusao)||''}</span>`:`<span class="c2-project-status warning">${escapeInlineHtml(tStatus(p.status))}</span>`}</div><h4 class="c2-module-title">${escapeInlineHtml(getProjectPrimaryTitle(p))}</h4><p class="c2-module-subtitle">${moduleTitle}</p></div>
                         </div>
-                        ${canPrintProjectSheet() ? `<button onclick="window.printReport()" class="w-full sm:w-auto mt-4 sm:mt-0 flex items-center justify-center gap-2 text-white force-white-text bg-slate-800 hover:bg-slate-700 transition-all font-black text-xs uppercase tracking-widest px-6 py-4 rounded-2xl border border-white/10 shadow-lg force-dark-bg">
-                            <i data-lucide="printer" class="w-5 h-5"></i> ${window.t('print_ficha')}
-                        </button>` : ''}
+                        ${canPrintProjectSheet()?`<button onclick="window.printReport()" class="c2-secondary-btn"><i data-lucide="printer" class="w-4 h-4"></i>${window.t('print_ficha')}</button>`:''}
                     </div>
 
                     <div class="project-legacy-print-header hidden print:block mb-8 border-b border-slate-300 pb-4">
@@ -3598,140 +3811,92 @@
 
             const cardClickEvent = isFocused ? '' : `onclick="window.openProjectDetails('${p.id}')"`;
             const cardHoverClasses = isFocused ? '' : 'project-card clickable cursor-pointer';
-
             if (!isFocused) {
-                const dueLabel = p.status === 'Finalizado'
-                    ? formatProjectDate(p.dataConclusao)
-                    : (scheduleAlert.isLate
-                        ? window.t('late')
-                        : (scheduleAlert.isDueSoon
-                            ? window.t('timeline_due_soon')
-                            : (Number.isFinite(e) ? Math.ceil((e - n) / (1000 * 3600 * 24)) + ' ' + window.t('days_left') : '-')));
-                const compactStatusTone = p.status === 'Finalizado' ? 'text-emerald-400' : (scheduleAlert.isLate ? 'text-red-400' : (scheduleAlert.isDueSoon ? 'text-amber-400' : 'text-gold'));
-                const statusBorder = p.status === 'Finalizado' ? '#10b981' : (scheduleAlert.isLate ? '#ef4444' : '#f59e0b');
-                const quickInvoice = p.numeroInvoice || '---';
-                const quickProposal = p.numeroProposta || '---';
-                grid.innerHTML += `<div class="glass p-5 sm:p-6 rounded-[34px] border-l-[8px] relative shadow-2xl flex flex-col print:border print:border-slate-300 print:shadow-none print:break-inside-avoid ${cardHoverClasses}" style="border-left-color: ${statusBorder}" ${cardClickEvent}>
-                    ${finishedStamp}
-                    <div class="flex justify-between items-start gap-4 mb-5 relative z-[1]">
-                        <span class="px-3 py-2 bg-white/5 border border-white/10 rounded-xl text-[10px] font-black uppercase tracking-widest text-slate-300 shadow-sm">${p.empresa || 'Sem Unidade'} ${p.archived ? '<span class="text-indigo-400 ml-1">(ARQ)</span>' : ''}</span>
-                        <div class="flex items-center gap-2 bg-black/20 p-2 px-3 rounded-full border border-white/5 print:hidden shrink-0" onclick="event.stopPropagation()">
-                            <span class="status-badge ${f.statusColor}" title="Status Financeiro"></span>
-                            ${actionButtons}
-                        </div>
-                    </div>
-                    <div class="space-y-4">
-                        <div>
-                            <h4 class="compact-card-name text-white force-white-text">${escapeInlineHtml(getProjectPrimaryTitle(p))}</h4>
-                            ${renderProjectIdentityBlock(p, true)}
-                        </div>
-                        ${p.status === 'Finalizado' ? '' : `<div class="flex flex-wrap items-center gap-2"><span class="compact-status-chip ${compactStatusTone}">${p.archived ? (state.lang === 'pt' ? 'Arquivada • ' : 'Archived • ') : ''}${tStatus(p.status)}</span>${timelineBadge ? `<span class="shrink-0">${timelineBadge}</span>` : ''}</div>`}
-                        <div class="compact-kpi-card">
-                            <p class="compact-kpi-label mb-2">${window.t('gross_contract')}</p>
-                            <p class="compact-kpi-value">${formatCurr(p.valorTotal)}</p>
-                        </div>
-                        <div class="compact-meta-grid">
-                            <div class="compact-kpi-card compact-reference-card">
-                                <div class="compact-reference-row">
-                                    <p class="compact-kpi-label mb-2">${window.t('invoice_label')}</p>
-                                    <p class="compact-reference-value">${escapeInlineHtml(quickInvoice)}</p>
-                                </div>
-                                <div class="compact-reference-row">
-                                    <p class="compact-kpi-label mb-2">${window.t('proposal_label')}</p>
-                                    <p class="compact-reference-value">${escapeInlineHtml(quickProposal)}</p>
-                                </div>
+                const dueLabel = p.status === 'Finalizado' ? formatProjectDate(p.dataConclusao) : (scheduleAlert.isLate ? window.t('late') : (scheduleAlert.isDueSoon ? window.t('timeline_due_soon') : tStatus(p.status)));
+                const statusClass = p.archived ? '' : (p.status === 'Finalizado' || p.status === '✅ Aprovado' ? 'success' : (scheduleAlert.isLate ? 'danger' : 'warning'));
+                const statusLabel = p.archived ? (state.lang === 'pt' ? 'Arquivada' : 'Archived') : (p.status === 'Finalizado' ? (state.lang === 'pt' ? 'Finalizada' : 'Completed') : tStatus(p.status).replace('✅ ',''));
+                const marginLow = f.margemLucro < 45;
+                const projectReference = escapeInlineHtml(p.nomeProjeto || (p.empresa === 'HVAC' ? 'HVAC' : 'Smart Home'));
+                const address = escapeInlineHtml(p.endereco || (state.lang === 'pt' ? 'Endereço não cadastrado' : 'Address not registered'));
+                const sellerName = escapeInlineHtml(getUserDisplayName(p.vendedor, '—'));
+                const proposalRef = `${escapeInlineHtml(p.numeroInvoice || '—')} / ${escapeInlineHtml(p.numeroProposta || '—')}`;
+                const updateDate = formatProjectDate(p.dataConclusao || p.dataInicio) || '—';
+                grid.innerHTML += `
+                    <article class="c2-project-card" onclick="window.openProjectDetails('${p.id}')">
+                        <div class="c2-project-top">
+                            <div class="c2-project-title-wrap">
+                                <div class="c2-project-icon"><i data-lucide="building-2" class="w-5 h-5"></i></div>
+                                <div><h3 class="c2-project-name">${escapeInlineHtml(getProjectPrimaryTitle(p))}</h3><p class="c2-project-reference">${projectReference}</p></div>
                             </div>
-                            <div class="compact-kpi-card compact-seller-status-card flex flex-col justify-between">
-                                <div class="min-w-0">
-                                    <p class="compact-kpi-label mb-2">${window.t('seller')}</p>
-                                    <p class="text-sm sm:text-base font-black text-slate-100 leading-tight break-words" title="${escapeInlineHtml(getUserDisplayName(p.vendedor, '--'))}">${escapeInlineHtml(getUserDisplayName(p.vendedor, '--'))}</p>
-                                </div>
-                                <div class="mt-3 pt-3 border-t border-white/5 min-w-0">
-                                    <p class="compact-kpi-label mb-2">${window.t('status_obra')}</p>
-                                    <p class="text-base sm:text-lg font-black ${compactStatusTone} leading-tight break-words">${p.status === 'Finalizado' ? getProjectCompletionText(p, true) : tStatus(p.status)}</p>
-                                </div>
-                            </div>
+                            <span class="c2-project-status ${statusClass}">${statusLabel}</span>
                         </div>
-                        <div class="space-y-3 pt-1">
-                            <div class="flex justify-between items-center gap-3 text-[11px] font-black uppercase text-slate-400">
-                                <span>${window.t('timeline')}</span>
-                                <span style="color: ${colorHex}">${prog}%</span>
-                            </div>
-                            <div class="progress-track"><div class="progress-bar-fill" style="width:${prog}%; background-color:${colorHex};"></div></div>
-                            <div class="flex justify-between text-[11px] font-extrabold uppercase gap-3">
-                                <span class="text-slate-300">${formatProjectDate(p.dataInicio)}</span>
-                                <span class="${compactStatusTone}">${p.status === 'Finalizado' && p.dataConclusao ? formatProjectDate(p.dataConclusao) : dueLabel}</span>
-                            </div>
+                        <div class="c2-project-address"><i data-lucide="map-pin" class="w-4 h-4 shrink-0 mt-0.5"></i><span>${address}</span></div>
+                        <div class="c2-project-meta">
+                            <div><label>${state.lang === 'pt' ? 'Vendedor' : 'Seller'}</label><strong>${sellerName}</strong></div>
+                            <div><label>${state.lang === 'pt' ? 'Invoice / Proposta' : 'Invoice / Proposal'}</label><strong>${proposalRef}</strong></div>
                         </div>
-                    </div>
-                    <div class="mt-6 text-center text-[11px] text-slate-500 font-bold uppercase tracking-widest no-print opacity-70 flex items-center justify-center gap-2">${window.t('click_to_open')} <i data-lucide="chevron-right" class="w-4 h-4"></i></div>
-                </div>`;
+                        <div class="c2-project-fin">
+                            <div><label>${state.lang === 'pt' ? 'Valor do contrato' : 'Contract value'}</label><strong>${formatCurr(p.valorTotal)}</strong></div>
+                            <div><label>${state.lang === 'pt' ? 'Margem da obra' : 'Project margin'}</label><strong class="${marginLow ? 'margin-low' : ''}">${f.margemLucro.toFixed(1)}%</strong></div>
+                        </div>
+                        <div class="c2-project-footer">
+                            <div><label>${p.status === 'Finalizado' ? (state.lang === 'pt' ? 'Finalização' : 'Completion') : (state.lang === 'pt' ? 'Referência' : 'Reference')}</label><div class="c2-project-update">${p.status === 'Finalizado' ? updateDate : dueLabel}</div></div>
+                            <div class="c2-row-actions no-print" onclick="event.stopPropagation()">${actionButtons}</div>
+                        </div>
+                    </article>`;
                 return;
             }
 
             if (isFocused && !state.activeModule) {
                 const identityAddress = [p.nomeProjeto, p.endereco].filter(Boolean).map(v => escapeInlineHtml(v)).join(' • ');
-                const dueClassClean = f.dueNow > 0.009 ? 'clean-warning' : 'clean-positive';
                 const scheduleStatusText = p.status === 'Finalizado' ? getProjectCompletionText(p, true) : tStatus(p.status);
-                const cleanSummaryText = f.dueNow > 0.009
-                    ? (state.lang === 'pt' ? `${formatCurr(f.dueNow)} de comissão está disponível para pagamento ao vendedor.` : `${formatCurr(f.dueNow)} commission is available for seller payment.`)
-                    : (f.clientOutstanding > 0.009
-                        ? (state.lang === 'pt' ? `A comissão liberada está quitada. O cliente ainda possui ${formatCurr(f.clientOutstanding)} a pagar.` : `Released commission is settled. The client still owes ${formatCurr(f.clientOutstanding)}.`)
-                        : (state.lang === 'pt' ? `Projeto conciliado: recebimentos e comissão estão atualizados.` : `Project reconciled: receipts and commission are up to date.`));
+                const marginAlertFocused = getMarginAlertState(f);
+                const budgetLabelFocused = Number(f.orcamento) > 0 ? (f.totalDespesas > f.orcamento ? (state.lang === 'pt' ? 'Acima do budget' : 'Over budget') : (state.lang === 'pt' ? 'Definido' : 'Defined')) : (state.lang === 'pt' ? 'Não definido' : 'Not set');
+                const categoryEntriesFocused = Object.entries(f.gastosPorCategoria || {}).sort((a,b)=>b[1]-a[1]);
+                const topCategoryFocused = categoryEntriesFocused[0] && categoryEntriesFocused[0][1] > 0 ? categoryEntriesFocused[0][0] : (state.lang === 'pt' ? 'Sem despesas' : 'No expenses');
+                const expenseCountFocused = (p.despesas || []).length;
+                const maxExpenseFocused = expenseCountFocused ? Math.max(...(p.despesas || []).map(exp => Number(exp.valor)||0)) : 0;
+                const summaryTextFocused = f.dueNow > 0.009 ? `${formatCurr(f.dueNow)} ${state.lang === 'pt' ? 'de comissão está disponível para pagamento.' : 'commission is available for payment.'}` : (f.clientOutstanding > 0.009 ? `${state.lang === 'pt' ? 'Cliente ainda deve' : 'Client still owes'} ${formatCurr(f.clientOutstanding)}.` : (state.lang === 'pt' ? 'Projeto financeiro conciliado e sem pendências atuais.' : 'Project finances are reconciled with no current pending balance.'));
                 grid.innerHTML += `
-                    <div class="clean-project-dashboard w-full">
-                        <div class="flex flex-col sm:flex-row sm:items-start sm:justify-between gap-5 pb-5 border-b border-white/10">
-                            <div class="min-w-0">
-                                <div class="flex flex-wrap items-center gap-3 mb-3">
-                                    <span class="clean-pill">${escapeInlineHtml(p.empresa || '—')}</span>
-                                    ${p.status === 'Finalizado' ? `<span class="clean-pill success"><i data-lucide="check-circle-2" class="w-4 h-4"></i>${state.lang === 'pt' ? 'Finalizado' : 'Completed'} ${p.dataConclusao ? formatProjectDate(p.dataConclusao) : ''}</span>` : `<span class="clean-pill warning">${escapeInlineHtml(tStatus(p.status))}</span>`}
+                    <div class="c2-overview-dashboard w-full">
+                        <section class="c2-panel p-5 sm:p-7">
+                            <div class="flex flex-col lg:flex-row lg:items-start lg:justify-between gap-5">
+                                <div class="min-w-0">
+                                    <div class="flex flex-wrap gap-2 mb-3"><span class="c2-tag green">${escapeInlineHtml(getCompanyDisplayName(p.empresa))}</span><span class="c2-project-status ${p.status === 'Finalizado' ? 'success' : 'warning'}">${escapeInlineHtml(scheduleStatusText)}</span></div>
+                                    <h2 class="text-3xl sm:text-4xl font-black tracking-tight text-slate-50 leading-tight break-words">${escapeInlineHtml(getProjectPrimaryTitle(p))}</h2>
+                                    ${identityAddress ? `<p class="mt-2 text-sm text-slate-400 leading-relaxed break-words">${identityAddress}</p>` : ''}
                                 </div>
-                                <h3 class="text-3xl sm:text-4xl font-black tracking-tight text-slate-50 leading-tight">${escapeInlineHtml(getProjectPrimaryTitle(p))}</h3>
-                                ${identityAddress ? `<p class="mt-2 text-sm text-slate-400">${identityAddress}</p>` : ''}
+                                <div class="flex flex-wrap gap-2 no-print">${canPrintProjectSheet() ? `<button onclick="window.printReport()" class="c2-secondary-btn"><i data-lucide="printer" class="w-4 h-4"></i>${window.t('print_ficha')}</button>` : ''}<div class="c2-row-actions" onclick="event.stopPropagation()">${actionButtons}</div></div>
                             </div>
-                            <div class="flex flex-wrap gap-2 no-print">
-                                ${canPrintProjectSheet() ? `<button onclick="window.printReport()" class="clean-pill hover:text-white"><i data-lucide="printer" class="w-4 h-4"></i>${window.t('print_ficha')}</button>` : ''}
-                                <div class="flex items-center gap-2 clean-pill" onclick="event.stopPropagation()">${actionButtons}</div>
+                            <div class="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-4 gap-3 mt-6">
+                                <div class="c2-metric-card"><span>${state.lang === 'pt' ? 'Vendedor' : 'Seller'}</span><strong>${escapeInlineHtml(getUserDisplayName(p.vendedor,'—'))}</strong></div>
+                                <div class="c2-metric-card"><span>${state.lang === 'pt' ? 'Invoice / Proposta' : 'Invoice / Proposal'}</span><strong>${escapeInlineHtml(p.numeroInvoice || '—')} / ${escapeInlineHtml(p.numeroProposta || '—')}</strong></div>
+                                <div class="c2-metric-card"><span>${state.lang === 'pt' ? 'Recebimento / Comissão' : 'Payment / Commission'}</span><strong>${escapeInlineHtml(p.metodo || '—')} • ${Number(p.percComissao||0).toFixed(0)}%</strong></div>
+                                <div class="c2-metric-card"><span>${state.lang === 'pt' ? 'Budget' : 'Budget'}</span><strong>${budgetLabelFocused}</strong></div>
                             </div>
-                        </div>
+                        </section>
 
-                        <div class="clean-meta-grid mt-5">
-                            <div class="clean-meta-card"><div class="clean-label">${state.lang === 'pt' ? 'Vendedor' : 'Seller'}</div><div class="clean-meta-value">${escapeInlineHtml(getUserDisplayName(p.vendedor, '—'))}</div></div>
-                            <div class="clean-meta-card"><div class="clean-label">${state.lang === 'pt' ? 'Status da obra' : 'Project status'}</div><div class="clean-meta-value">${escapeInlineHtml(scheduleStatusText)}</div></div>
-                            <div class="clean-meta-card"><div class="clean-label">${state.lang === 'pt' ? 'Invoice / Proposta' : 'Invoice / Proposal'}</div><div class="clean-meta-value">${escapeInlineHtml(p.numeroInvoice || '—')} / ${escapeInlineHtml(p.numeroProposta || '—')}</div></div>
-                            <div class="clean-meta-card"><div class="clean-label">${state.lang === 'pt' ? 'Recebimento • Comissão' : 'Payment • Commission'}</div><div class="clean-meta-value">${escapeInlineHtml(p.metodo || '—')} • ${Number(p.percComissao || 0).toFixed(0)}%</div></div>
-                        </div>
-
-                        <div class="mt-5 grid grid-cols-1 lg:grid-cols-[1.1fr_.9fr] gap-5">
-                            <section class="clean-section p-5 sm:p-6">
-                                <h5 class="clean-section-title mb-2">${state.lang === 'pt' ? 'Resumo financeiro' : 'Financial summary'}</h5>
-                                <div class="clean-kpi-row"><div class="flex gap-3 items-center"><span class="clean-icon-box"><i data-lucide="file-text" class="w-5 h-5"></i></span><div><div class="text-sm font-bold">${state.lang === 'pt' ? 'Valor do contrato' : 'Contract value'}</div><div class="clean-subtext">${state.lang === 'pt' ? 'Contrato bruto' : 'Gross contract'}</div></div></div><div class="clean-value">${formatCurr(p.valorTotal)}</div></div>
-                                <div class="clean-kpi-row"><div class="flex gap-3 items-center"><span class="clean-icon-box positive"><i data-lucide="credit-card" class="w-5 h-5"></i></span><div><div class="text-sm font-bold">${state.lang === 'pt' ? 'Recebido do cliente' : 'Received from client'}</div><div class="clean-subtext">${clientPaidPerc}% ${state.lang === 'pt' ? 'do contrato' : 'of contract'}</div></div></div><div class="clean-value clean-positive">${formatCurr(f.totalRecebido)}</div></div>
-                                <div class="clean-kpi-row"><div class="flex gap-3 items-center"><span class="clean-icon-box"><i data-lucide="user-check" class="w-5 h-5"></i></span><div><div class="text-sm font-bold">${state.lang === 'pt' ? 'Pago ao vendedor' : 'Paid to seller'}</div><div class="clean-subtext">${p.percComissao || 0}% ${state.lang === 'pt' ? 'de comissão' : 'commission'}</div></div></div><div class="clean-value">${formatCurr(f.totalPaid)}</div></div>
-                                <div class="clean-kpi-row"><div class="flex gap-3 items-center"><span class="clean-icon-box"><i data-lucide="wallet-cards" class="w-5 h-5"></i></span><div><div class="text-sm font-bold">${state.lang === 'pt' ? 'Saldo do cliente' : 'Client balance'}</div><div class="clean-subtext">${state.lang === 'pt' ? 'A receber do cliente' : 'Receivable from client'}</div></div></div><div class="clean-value ${f.clientOutstanding > 0.009 ? 'clean-warning' : 'clean-positive'}">${formatCurr(f.clientOutstanding)}</div></div>
-                                <div class="clean-kpi-row"><div class="flex gap-3 items-center"><span class="clean-icon-box ${f.dueNow > 0.009 ? 'warning' : 'positive'}"><i data-lucide="badge-percent" class="w-5 h-5"></i></span><div><div class="text-sm font-bold">${state.lang === 'pt' ? 'Saldo de comissão a pagar' : 'Commission balance due'}</div><div class="clean-subtext">${state.lang === 'pt' ? 'Pendente de repasse' : 'Pending transfer'}</div></div></div><div class="clean-value ${dueClassClean}">${formatCurr(f.dueNow)}</div></div>
+                        <div class="grid grid-cols-1 xl:grid-cols-[1.05fr_.95fr] gap-5 mt-5">
+                            <section class="c2-panel p-5 sm:p-6">
+                                <div class="c2-section-heading"><div><p class="c2-eyebrow">VISÃO FINANCEIRA</p><h2>${state.lang === 'pt' ? 'Resumo do projeto' : 'Project summary'}</h2></div><i data-lucide="line-chart" class="w-5 h-5 text-emerald-300"></i></div>
+                                <div class="grid grid-cols-2 lg:grid-cols-4 gap-3 mt-5">
+                                    <div class="c2-kpi"><span>${state.lang === 'pt' ? 'Valor do contrato' : 'Contract value'}</span><strong>${formatCurr(p.valorTotal)}</strong></div>
+                                    <div class="c2-kpi"><span>${state.lang === 'pt' ? 'Comissão liberada' : 'Released commission'}</span><strong class="green">${formatCurr(f.commLiberada)}</strong></div>
+                                    <div class="c2-kpi"><span>${state.lang === 'pt' ? 'Recebido do cliente' : 'Client received'}</span><strong class="cyan">${formatCurr(f.totalRecebido)}</strong></div>
+                                    <div class="c2-kpi"><span>${state.lang === 'pt' ? 'Pago ao vendedor' : 'Paid to seller'}</span><strong class="${f.dueNow>0.009?'amber':'green'}">${formatCurr(f.totalPaid)}</strong></div>
+                                </div>
+                                <div class="mt-5 c2-analytic-strip">
+                                    <div class="c2-margin-ring" style="--pct:${Math.max(0,Math.min(100,f.margemLucro))};--ring:${marginAlertFocused.isLow?'#ff6e6e':'#45d89c'}"><div><strong>${f.margemLucro.toFixed(1)}%</strong><span>${state.lang === 'pt' ? 'Margem' : 'Margin'}</span></div></div>
+                                    <div class="grid grid-cols-2 gap-x-6 gap-y-4 flex-1"><div><span class="c2-data-label">${window.t('real_profit')}</span><strong class="c2-data-value">${formatCurr(f.lucroBruto)}</strong></div><div><span class="c2-data-label">${window.t('total_expenses')}</span><strong class="c2-data-value">${formatCurr(f.totalDespesas)}</strong></div><div><span class="c2-data-label">${window.t('avg_expense')}</span><strong class="c2-data-value">${expenseCountFocused?formatCurr(f.totalDespesas/expenseCountFocused):'—'}</strong></div><div><span class="c2-data-label">${window.t('planned_profit')}</span><strong class="c2-data-value">${Number(f.orcamento)>0?formatCurr(f.baseProjetada-f.orcamento):'—'}</strong></div></div>
+                                </div>
                             </section>
-
-                            <div class="space-y-4">
-                                <section class="clean-section p-5 sm:p-6">
-                                    <div class="flex justify-between items-center mb-4"><h5 class="clean-section-title">${state.lang === 'pt' ? 'Linha do tempo' : 'Timeline'}</h5><span class="clean-pill ${prog >= 100 ? 'success' : ''}">${prog}%</span></div>
-                                    <div class="clean-progress"><span style="width:${Math.min(100,Math.max(0,prog))}%"></span></div>
-                                    <div class="grid grid-cols-2 gap-4 mt-4"><div><div class="clean-label">${state.lang === 'pt' ? 'Início' : 'Start'}</div><div class="clean-meta-value">${formatProjectDate(p.dataInicio)}</div></div><div class="text-right"><div class="clean-label">${p.status === 'Finalizado' ? (state.lang === 'pt' ? 'Finalizado' : 'Completed') : (state.lang === 'pt' ? 'Prazo' : 'Due')}</div><div class="clean-meta-value">${p.status === 'Finalizado' ? formatProjectDate(p.dataConclusao) : formatProjectDate(p.dataEntrega)}</div></div></div>
-                                </section>
-                                <div class="clean-support-grid">
-                                    <div class="clean-support-card"><div class="clean-label">${state.lang === 'pt' ? 'Empresa pagadora' : 'Paying company'}</div><div class="clean-meta-value">${escapeInlineHtml(getCompanyDisplayName(p.empresa))}</div></div>
-                                    <div class="clean-support-card"><div class="clean-label">${state.lang === 'pt' ? 'Desconto cartão' : 'Card discount'}</div><div class="clean-value">${formatCurr(f.commissionCardFeeReduction)}</div></div>
-                                    <div class="clean-support-card"><div class="clean-label">${state.lang === 'pt' ? 'Comissão elegível' : 'Eligible commission'}</div><div class="clean-value clean-positive">${formatCurr(f.commLiberada)}</div></div>
-                                    <div class="clean-support-card"><div class="clean-label">${state.lang === 'pt' ? 'Comissão futura' : 'Future commission'}</div><div class="clean-value ${f.futureCommissionAfterAdvance > 0.009 ? 'clean-warning' : ''}">${formatCurr(f.futureCommissionAfterAdvance)}</div></div>
-                                </div>
-                                <div class="clean-note">${cleanSummaryText}</div>
+                            <div class="space-y-5">
+                                <section class="c2-panel p-5 sm:p-6"><div class="flex items-center justify-between mb-4"><div><p class="c2-eyebrow">PROGRESSO DO PROJETO</p><h2 class="text-lg font-extrabold mt-1">Timeline</h2></div><span class="c2-project-status ${prog>=100?'success':''}">${prog}%</span></div><div class="c2-progress"><span style="width:${Math.min(100,Math.max(0,prog))}%"></span></div><div class="grid grid-cols-3 gap-3 mt-4 text-xs"><div><span class="c2-data-label">${state.lang==='pt'?'Início':'Start'}</span><strong class="c2-data-value">${formatProjectDate(p.dataInicio)}</strong></div><div class="text-center"><span class="c2-data-label">${state.lang==='pt'?'Prazo':'Due'}</span><strong class="c2-data-value">${formatProjectDate(p.dataEntrega)}</strong></div><div class="text-right"><span class="c2-data-label">${state.lang==='pt'?'Conclusão':'Completion'}</span><strong class="c2-data-value">${formatProjectDate(p.dataConclusao)||'—'}</strong></div></div></section>
+                                <section class="c2-panel p-5 sm:p-6"><div class="c2-section-heading"><div><p class="c2-eyebrow">RESUMO RÁPIDO</p><h2>${state.lang==='pt'?'Indicadores':'Indicators'}</h2></div><i data-lucide="gauge" class="w-5 h-5 text-cyan-300"></i></div><div class="grid grid-cols-2 gap-3 mt-4"><div class="c2-mini-stat"><span>${window.t('expense_entries')}</span><strong>${expenseCountFocused}</strong></div><div class="c2-mini-stat"><span>${window.t('top_category')}</span><strong>${topCategoryFocused}</strong></div><div class="c2-mini-stat"><span>${window.t('largest_expense')}</span><strong>${maxExpenseFocused?formatCurr(maxExpenseFocused):'—'}</strong></div><div class="c2-mini-stat"><span>${state.lang==='pt'?'Orçamento':'Budget'}</span><strong>${budgetLabelFocused}</strong></div></div></section>
                             </div>
                         </div>
-
-                        <div class="grid grid-cols-1 ${canViewCosts ? 'sm:grid-cols-2' : ''} gap-3 mt-5 no-print">
-                            <button onclick="event.stopPropagation(); window.openProjectModule('commissions')" class="clean-action-card"><span class="clean-icon-box positive"><i data-lucide="wallet" class="w-5 h-5"></i></span><div class="text-left"><div class="font-black">${window.t('comm_finances')}</div><div class="clean-subtext">${state.lang === 'pt' ? 'Recebimentos, comissão e pagamentos' : 'Receipts, commission and payments'}</div></div><i data-lucide="chevron-right" class="w-5 h-5 ml-auto clean-muted"></i></button>
-                            ${canViewCosts ? `<button onclick="event.stopPropagation(); window.openProjectModule('costs')" class="clean-action-card"><span class="clean-icon-box"><i data-lucide="calculator" class="w-5 h-5"></i></span><div class="text-left"><div class="font-black">${window.t('cost_management')}</div><div class="clean-subtext">${state.lang === 'pt' ? 'Despesas, margem e orçamento' : 'Expenses, margin and budget'}</div></div><i data-lucide="chevron-right" class="w-5 h-5 ml-auto clean-muted"></i></button>` : ''}
-                        </div>
+                        <div class="c2-note-row mt-5"><i data-lucide="message-circle" class="w-5 h-5 text-emerald-300 shrink-0"></i><span>${summaryTextFocused}</span></div>
+                        <div class="grid grid-cols-1 ${canViewCosts?'sm:grid-cols-2':''} gap-3 mt-5 no-print"><button onclick="event.stopPropagation(); window.openProjectModule('commissions')" class="c2-action-tile"><i data-lucide="wallet-cards" class="w-5 h-5"></i><span><strong>${window.t('comm_finances')}</strong><small>${state.lang==='pt'?'Recebimentos, comissão e pagamentos':'Receipts, commissions and payments'}</small></span><i data-lucide="chevron-right" class="w-4 h-4 ml-auto"></i></button>${canViewCosts?`<button onclick="event.stopPropagation(); window.openProjectModule('costs')" class="c2-action-tile"><i data-lucide="calculator" class="w-5 h-5"></i><span><strong>${window.t('cost_management')}</strong><small>${state.lang==='pt'?'Despesas, budget e margem':'Expenses, budget and margin'}</small></span><i data-lucide="chevron-right" class="w-4 h-4 ml-auto"></i></button>`:''}</div>
                     </div>`;
                 return;
             }
@@ -3935,6 +4100,20 @@
         state.reportPeriodStart = toIso(start);
         state.reportPeriodEnd = toIso(end);
         window.safeRenderReport();
+    };
+
+
+    window.showMonthDetails = (sellerEmail, monthIndex, encodedProjects) => {
+        try {
+            const items = JSON.parse(decodeURIComponent(encodedProjects || '[]')) || [];
+            const sellerName = getUserDisplayName(sellerEmail, sellerEmail || '—');
+            const monthLabel = (state.lang === 'pt' ? ['Janeiro','Fevereiro','Março','Abril','Maio','Junho','Julho','Agosto','Setembro','Outubro','Novembro','Dezembro'] : ['January','February','March','April','May','June','July','August','September','October','November','December'])[Number(monthIndex) || 0];
+            const total = roundMoney(items.reduce((sum, item) => sum + Number(item?.val || 0), 0));
+            const lines = items.length ? items.map(item => `${item?.cliente || '—'} • ${item?.invoice || '—'} / ${item?.proposta || '—'} • ${formatCurr(item?.val || 0)}`).join('\n') : (state.lang === 'pt' ? 'Nenhum pagamento de comissão neste mês.' : 'No commission payments in this month.');
+            window.showModal(`${sellerName} • ${monthLabel}`, `${lines}\n\n${state.lang === 'pt' ? 'Total do mês' : 'Month total'}: ${formatCurr(total)}`, 'alert');
+        } catch (err) {
+            console.error('Erro ao abrir detalhe mensal:', err);
+        }
     };
 
     function getReportSellerOptions(projects) {
@@ -4328,7 +4507,7 @@ function getSellerCommissionPeriodReport(projects, startStr, endStr) {
             quick90: '90 dias',
             quickYear: 'Ano atual',
             controlsTitle: 'Filtro do relatório de vendas',
-            controlsSubtitle: 'Selecione empresa, vendedor e período para ver cada obra iniciada no intervalo, organizada por mês, com comissão paga e comissão ainda em aberto.',
+            controlsSubtitle: '',
             selectedSeller: 'Vendedor selecionado',
             viewDetails: 'Ver detalhes ➔',
             kpiTitle: 'Comissões no período',
@@ -4372,7 +4551,7 @@ function getSellerCommissionPeriodReport(projects, startStr, endStr) {
             quick90: '90 days',
             quickYear: 'Current year',
             controlsTitle: 'Sales report filter',
-            controlsSubtitle: 'Choose company, seller and period to review each project started in the interval, grouped by start month with paid commission and open balance.',
+            controlsSubtitle: '',
             selectedSeller: 'Selected seller',
             viewDetails: 'See details ➔',
             kpiTitle: 'Period commissions',
@@ -4444,8 +4623,8 @@ function getSellerCommissionPeriodReport(projects, startStr, endStr) {
             : `<div class="modern-input min-w-[220px] flex items-center">${escapeInlineHtml(getUserDisplayName(state.user.email, state.user.email.split('@')[0] || state.user.email))}</div>`;
         const periodControlsHTML = `
             <div class="no-print mb-6 sm:mb-8">
-                <div class="glass rounded-[28px] border border-white/5 p-5 sm:p-6 shadow-xl">
-                    <div class="grid grid-cols-1 xl:grid-cols-[auto_auto_auto_1fr] gap-4 items-end">
+                <div class="c2-filter-panel">
+                    <div class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-[minmax(220px,1fr)_170px_170px_minmax(280px,1fr)] gap-4 items-end">
                         <div class="flex flex-col gap-1 min-w-[220px]">
                             <label class="text-[10px] font-black uppercase tracking-[0.2em] text-slate-500">${window.t('report_filter_seller')}</label>
                             ${reportSellerOptionsHTML}
@@ -4787,29 +4966,14 @@ function getSellerCommissionPeriodReport(projects, startStr, endStr) {
         }
 
         out.innerHTML = `
+            <div class="c2-page-heading no-print"><div><p class="c2-eyebrow">ANÁLISE COMERCIAL</p><h1>Relatórios</h1><p class="c2-page-subtitle">${selectedReportSeller ? `${state.lang==='pt'?'Relatório de vendas':'Sales report'} • ${escapeInlineHtml(selectedReportSeller.name)}` : (state.lang==='pt'?'Relatório executivo e de vendas por vendedor':'Executive and seller sales report')}</p></div><button onclick="window.printReport()" class="c2-secondary-btn"><i data-lucide="printer" class="w-4 h-4"></i>${window.t('print_view')}</button></div>
             ${periodControlsHTML}
-            <div class="glass p-6 sm:p-12 rounded-[50px] shadow-2xl border border-white/5 text-left print:bg-white print:border-none print:shadow-none print:p-0 animate-fade-in force-dark-bg">
-                <div class="flex flex-col md:flex-row justify-between items-start md:items-center border-b-[8px] border-white/10 pb-8 mb-8 print:border-b-2 print:border-slate-300 gap-4">
-                    <div class="flex flex-col sm:flex-row items-start sm:items-center gap-4 sm:gap-6">
-                        <div class="logo-frame-sm p-3 rounded-2xl print:border-none print:p-0 bg-white shadow-lg"><img src="logo-D2-Group-preto.png" class="h-10 sm:h-14"></div>
-                        <div class="flex gap-2 sm:gap-3 no-print flex-wrap">
-                            ${state.userPerms.smart ? `<button onclick="window.selectUnit('Smart Home')" class="unit-pill unit-pill-btn ${state.company === 'Smart Home' ? 'active':''} force-dark-bg">SMART HOME</button>` : ''}
-                            ${state.userPerms.hvac ? `<button onclick="window.selectUnit('HVAC')" class="unit-pill unit-pill-btn ${state.company === 'HVAC' ? 'active':''} force-dark-bg">HVAC</button>` : ''}
-                            ${(state.userPerms.smart && state.userPerms.hvac) ? `<button onclick="window.selectUnit('Ambas')" class="unit-pill unit-pill-btn ${state.company === 'Ambas' ? 'active':''} force-dark-bg" data-i18n="filter_both">${window.t('filter_both')}</button>` : ''}
-                        </div>
-                    </div>
-                    <div class="text-left md:text-right w-full md:w-auto mt-4 md:mt-0">
-                        <h2 class="text-2xl sm:text-3xl font-black uppercase tracking-tighter text-white force-white-text print:text-slate-900">${reportTitle}</h2>
-                        <p class="text-slate-400 font-black uppercase text-xs tracking-widest mt-1">${window.t('date')}: ${new Date().toLocaleDateString(state.lang === 'pt' ? 'pt-BR' : 'en-US')}</p>
-                        <p class="text-slate-500 font-bold uppercase text-[10px] tracking-[0.2em] mt-2">${periodTerms.periodLabel}: <span class="text-slate-300 print:text-slate-700">${periodLabel}</span></p>
-                    </div>
+            <div class="c2-panel p-5 sm:p-7 text-left print:bg-white print:border-none print:shadow-none print:p-0 animate-fade-in">
+                <div class="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 pb-5 mb-5 border-b border-white/10 print:border-slate-300">
+                    <div><p class="c2-eyebrow">${periodTerms.periodLabel}</p><h2 class="text-2xl sm:text-3xl font-black tracking-tight text-slate-50 print:text-slate-900 mt-1">${reportTitle}</h2><p class="text-xs text-slate-500 mt-2">${periodLabel}</p></div>
+                    <div class="flex gap-2 no-print flex-wrap">${state.userPerms.smart?`<button onclick="window.selectUnit('Smart Home')" class="unit-pill ${state.company==='Smart Home'?'active':''}">SMART HOME</button>`:''}${state.userPerms.hvac?`<button onclick="window.selectUnit('HVAC')" class="unit-pill ${state.company==='HVAC'?'active':''}">HVAC</button>`:''}${state.userPerms.smart&&state.userPerms.hvac?`<button onclick="window.selectUnit('Ambas')" class="unit-pill ${state.company==='Ambas'?'active':''}">${window.t('filter_both')}</button>`:''}</div>
                 </div>
-                <div class="bg-black/20 print:bg-transparent p-6 sm:p-10 rounded-[40px] shadow-inner text-slate-200 print:p-0 print:shadow-none border border-white/5 print:border-none">
-                    ${ceoDashHTML}
-                    ${commissionPeriodSectionHTML}
-                    <div id="dynamic-report-content">${bottomHTML}</div>
-                    ${state.reportActiveKpi === 'overview' ? `<div class="mt-12 pt-8 border-t-4 border-white/10 print:border-slate-200 flex justify-center no-print"><button onclick="window.printReport()" class="flex items-center gap-3 text-white force-white-text bg-slate-800 hover:bg-slate-700 transition-all font-black text-sm uppercase tracking-widest px-8 py-4 rounded-2xl shadow-xl hover:-translate-y-1"><i data-lucide="printer" class="w-5 h-5"></i> ${window.t('print_full_rep')}</button></div>` : ''}
-                </div>
+                <div class="c2-report-body">${ceoDashHTML}${commissionPeriodSectionHTML}<div id="dynamic-report-content">${bottomHTML}</div></div>
             </div>`;
         try { lucide.createIcons(); } catch {}
     };
@@ -4855,6 +5019,7 @@ function getSellerCommissionPeriodReport(projects, startStr, endStr) {
             const team = snap.docs.map(d => ({ id: d.id, ...d.data() })); state.team = team;
             const userDisplayEl = document.getElementById('user-display');
             if (userDisplayEl && auth.currentUser?.email) userDisplayEl.innerText = getUserDisplayName(auth.currentUser.email, 'USR').toUpperCase();
+            const avatarEl = document.getElementById('c2-user-avatar'); if (avatarEl && auth.currentUser?.email) avatarEl.textContent = getUserDisplayName(auth.currentUser.email, 'D2').split(/\s+/).filter(Boolean).slice(0,2).map(x=>x[0]).join('').toUpperCase();
             
             if (state.isSuperAdmin) {
                 // SUPER ADMIN tem passe livre para tudo
@@ -4910,7 +5075,10 @@ function getSellerCommissionPeriodReport(projects, startStr, endStr) {
                     const encodedName = encodeURIComponent(String(u.name || ''));
                     const encodedEmail = encodeURIComponent(String(u.email || ''));
                     const encodedPassword = encodeURIComponent(String(u.password || ''));
-                    return `<div class="glass p-6 rounded-[24px] flex justify-between items-center border-l-8 border-gold shadow-lg transition-all hover:scale-[1.01]"><div class="text-left"><p class="font-black text-slate-100 text-lg flex items-center gap-2 flex-wrap">${sellerName} ${tagsHTML}</p><p class="text-[11px] text-slate-500 mt-1 font-bold normal-case tracking-normal">${sellerEmail}</p><p class="text-[10px] text-slate-400 mt-2 uppercase tracking-widest font-bold">Abas Liberadas: <span class="text-gold">${tabsHTML}</span></p><p class="text-[10px] text-slate-500 mt-1 uppercase tracking-widest">Senha: <span class="text-gold font-bold normal-case">${safePassword}</span></p></div><div class="flex gap-2"><button onclick="window.editTeamMember('${u.id}', decodeURIComponent('${encodedName}'), decodeURIComponent('${encodedEmail}'), decodeURIComponent('${encodedPassword}'), JSON.parse(decodeURIComponent('${tagObj}')))" class="p-2 text-gold hover:bg-gold/10 rounded-lg"><i data-lucide="edit" size="18"></i></button><button onclick="window.deleteTeam('${u.id}')" class="p-2 text-red-500 hover:bg-red-500/10 rounded-lg ${u.email.toLowerCase() === SUPER_ADMIN.toLowerCase() ? 'hidden' : ''}"><i data-lucide="user-minus" size="18"></i></button></div></div>`;
+                    const initials = sellerName.split(/\s+/).filter(Boolean).slice(0,2).map(part => part[0]).join('').toUpperCase() || 'U';
+                    const scopeText = [p.smart ? 'Smart Home' : '', p.hvac ? 'HVAC' : '', p.global ? 'Global' : ''].filter(Boolean).join(' • ') || '—';
+                    const permissionText = [p.fin ? 'Finanças' : '', p.costs ? 'Custos' : '', p.tab_rep ? 'Relatórios' : ''].filter(Boolean).join(' • ') || 'Projetos';
+                    return `<div class="c2-user-row"><div class="c2-user-identity"><div class="c2-user-initials">${escapeInlineHtml(initials)}</div><div class="min-w-0"><div class="c2-user-name">${sellerName}</div><div class="c2-user-email">${sellerEmail}</div></div></div><div><span class="c2-tag ${roleStr==='Admin'?'green':''}">${roleStr}</span><div class="c2-user-perms mt-2">${escapeInlineHtml(scopeText)}</div></div><div class="c2-user-perms"><strong class="text-slate-300">Acessos</strong><br>${escapeInlineHtml(permissionText)}</div><div class="c2-row-actions"><button onclick="window.editTeamMember('${u.id}', decodeURIComponent('${encodedName}'), decodeURIComponent('${encodedEmail}'), decodeURIComponent('${encodedPassword}'), JSON.parse(decodeURIComponent('${tagObj}')))" title="Editar"><i data-lucide="edit-3" class="w-4 h-4"></i></button><button onclick="window.deleteTeam('${u.id}')" title="Excluir" class="${u.email.toLowerCase() === SUPER_ADMIN.toLowerCase() ? 'hidden' : ''}"><i data-lucide="trash-2" class="w-4 h-4 text-red-400"></i></button></div></div>`;
                 }).join('');
                 try { lucide.createIcons(); } catch {}
             }
