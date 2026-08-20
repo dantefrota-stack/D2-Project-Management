@@ -200,6 +200,23 @@
             .project-print-sheet .sheet-list-value { font-weight: 900; white-space: nowrap; }
             .project-print-sheet .sheet-note { margin-top: 10px; padding: 10px 12px; border-radius: 12px; background: #f8fafc !important; border: 1px solid #e2e8f0; font-size: 11px; line-height: 1.45; color: #475569 !important; }
             .project-print-sheet .sheet-footer { margin-top: 10px; padding-top: 8px; border-top: 1px solid #cbd5e1; font-size: 10px; color: #64748b !important; display: flex; justify-content: space-between; gap: 10px; }
+            .project-print-sheet .sheet-payment-history { margin-top: 12px; }
+            .project-print-sheet .sheet-payment-summary { display: flex; align-items: center; justify-content: space-between; gap: 12px; margin-bottom: 8px; padding: 8px 10px; border: 1px solid #e2e8f0; border-radius: 10px; background: #f8fafc !important; }
+            .project-print-sheet .sheet-payment-summary-text { font-size: 10px; line-height: 1.35; color: #475569 !important; font-weight: 700; }
+            .project-print-sheet .sheet-payment-summary-total { font-size: 13px; font-weight: 900; color: #047857 !important; white-space: nowrap; }
+            .project-print-sheet .sheet-payment-table { width: 100%; border-collapse: separate; border-spacing: 0; table-layout: fixed; }
+            .project-print-sheet .sheet-payment-table th { padding: 7px 8px; border-top: 1px solid #e2e8f0; border-bottom: 1px solid #cbd5e1; background: #f8fafc !important; color: #64748b !important; font-size: 8px; font-weight: 900; text-transform: uppercase; letter-spacing: 0.12em; text-align: left; }
+            .project-print-sheet .sheet-payment-table td { padding: 8px; border-bottom: 1px solid #e2e8f0; font-size: 10px; color: #334155 !important; vertical-align: middle; }
+            .project-print-sheet .sheet-payment-table tbody tr:last-child td { border-bottom: 0; }
+            .project-print-sheet .sheet-payment-table .col-seq { width: 7%; text-align: center; }
+            .project-print-sheet .sheet-payment-table .col-date { width: 20%; }
+            .project-print-sheet .sheet-payment-table .col-type { width: 25%; }
+            .project-print-sheet .sheet-payment-table .col-value, .project-print-sheet .sheet-payment-table .col-running { width: 24%; text-align: right; font-variant-numeric: tabular-nums; white-space: nowrap; }
+            .project-print-sheet .sheet-payment-table .payment-value { font-weight: 900; color: #0f172a !important; }
+            .project-print-sheet .sheet-payment-table .payment-running { font-weight: 900; color: #047857 !important; }
+            .project-print-sheet .sheet-payment-type { display: inline-block; padding: 3px 7px; border-radius: 999px; border: 1px solid #cbd5e1; background: #ffffff !important; color: #475569 !important; font-size: 8px; font-weight: 900; text-transform: uppercase; letter-spacing: 0.08em; }
+            .project-print-sheet .sheet-payment-type.advance { border-color: #67e8f9; background: #ecfeff !important; color: #0e7490 !important; }
+            .project-print-sheet .sheet-payment-empty { padding: 14px; text-align: center; color: #64748b !important; font-size: 10px; font-style: italic; }
             .print-keep-together { break-inside: avoid-page !important; page-break-inside: avoid !important; }
             .print-break-before { break-before: page !important; page-break-before: always !important; }
             .report-table-monthly { table-layout: fixed !important; width: 100% !important; }
@@ -326,10 +343,6 @@
         .compact-reference-row + .compact-reference-row { margin-top:.8rem; padding-top:.8rem; border-top:1px solid rgba(255,255,255,.06); }
         .compact-reference-value { font-size:clamp(.9rem, 2.4vw, 1.075rem); line-height:1.22; font-weight:900; color:#f8fafc; white-space:normal; overflow-wrap:anywhere; word-break:break-word; }
         .compact-seller-status-card { min-width:0; overflow:hidden; }
-        .quick-edit-label { display:block; margin-bottom:.5rem; color:#64748b; font-size:10px; font-weight:900; text-transform:uppercase; letter-spacing:.14em; }
-        .quick-edit-target { border-radius:12px; transition:background-color .18s ease, box-shadow .18s ease; cursor:pointer; }
-        .quick-edit-target:hover { background:rgba(255,255,255,.045); box-shadow:0 0 0 1px rgba(255,255,255,.07); }
-        .team-management-title { letter-spacing:0; word-spacing:.22em; }
         @media (max-width: 420px) {
             .compact-meta-grid { grid-template-columns:minmax(0,1fr) minmax(0,.9fr); gap:.6rem; }
             .compact-kpi-card { padding:.9rem; }
@@ -345,7 +358,129 @@
             #main-nav .tab-active { border-bottom-color: rgba(251,191,36,0.35); background:rgba(251,191,36,0.06); border-radius:16px; }
             #projects-filters { gap:1rem; }
         }
-    </style>
+    
+
+        /* v81 — Executive Clean UI system */
+        :root {
+            --d2-surface: #0d131b;
+            --d2-surface-2: #111923;
+            --d2-surface-3: #151f2b;
+            --d2-line: rgba(148, 163, 184, 0.14);
+            --d2-text: #f3f6fa;
+            --d2-muted: #8e9bad;
+            --d2-green: #2fd19b;
+            --d2-green-soft: rgba(47, 209, 155, 0.10);
+            --d2-amber: #f0b429;
+            --d2-amber-soft: rgba(240, 180, 41, 0.10);
+            --d2-red: #f06a6a;
+            --d2-blue: #5ba7e8;
+        }
+        .clean-project-dashboard,
+        .clean-finance-dashboard {
+            background: linear-gradient(180deg, rgba(17,25,35,.98), rgba(10,15,22,.99));
+            border: 1px solid var(--d2-line);
+            border-radius: 28px;
+            box-shadow: 0 24px 70px -42px rgba(0,0,0,.95);
+            color: var(--d2-text);
+        }
+        .clean-project-dashboard { padding: 26px; }
+        .clean-finance-dashboard { padding: 0; overflow: hidden; }
+        .clean-section {
+            background: rgba(255,255,255,.022);
+            border: 1px solid var(--d2-line);
+            border-radius: 20px;
+        }
+        .clean-section-title {
+            font-size: 13px;
+            font-weight: 900;
+            letter-spacing: .02em;
+            color: #e6edf5;
+        }
+        .clean-label {
+            font-size: 9px;
+            line-height: 1.25;
+            font-weight: 900;
+            letter-spacing: .14em;
+            text-transform: uppercase;
+            color: var(--d2-muted);
+        }
+        .clean-value {
+            font-size: clamp(18px, 2vw, 26px);
+            font-weight: 900;
+            line-height: 1.05;
+            letter-spacing: -.025em;
+            color: var(--d2-text);
+            font-variant-numeric: tabular-nums;
+        }
+        .clean-subtext { font-size: 11px; color: var(--d2-muted); line-height: 1.45; }
+        .clean-kpi-row { display: grid; grid-template-columns: 1fr auto; gap: 16px; align-items: center; padding: 17px 0; }
+        .clean-kpi-row + .clean-kpi-row { border-top: 1px solid var(--d2-line); }
+        .clean-icon-box {
+            width: 38px; height: 38px; border-radius: 12px; display: inline-flex; align-items: center; justify-content: center;
+            background: rgba(255,255,255,.045); border: 1px solid rgba(255,255,255,.055); color: #b9c4d1; flex: none;
+        }
+        .clean-icon-box.positive { background: var(--d2-green-soft); color: var(--d2-green); border-color: rgba(47,209,155,.16); }
+        .clean-icon-box.warning { background: var(--d2-amber-soft); color: var(--d2-amber); border-color: rgba(240,180,41,.18); }
+        .clean-icon-box.negative { background: rgba(240,106,106,.10); color: var(--d2-red); border-color: rgba(240,106,106,.17); }
+        .clean-positive { color: var(--d2-green) !important; }
+        .clean-warning { color: var(--d2-amber) !important; }
+        .clean-negative { color: var(--d2-red) !important; }
+        .clean-muted { color: var(--d2-muted) !important; }
+        .clean-meta-grid { display:grid; grid-template-columns: repeat(4,minmax(0,1fr)); gap: 10px; }
+        .clean-meta-card { padding: 14px 15px; min-width:0; background: rgba(255,255,255,.025); border:1px solid var(--d2-line); border-radius:16px; }
+        .clean-meta-value { margin-top: 6px; font-size: 13px; line-height: 1.35; font-weight: 800; color:#dce4ed; overflow-wrap:anywhere; }
+        .clean-support-grid { display:grid; grid-template-columns: repeat(2,minmax(0,1fr)); gap:12px; }
+        .clean-support-card { padding: 15px 16px; border-radius:17px; border:1px solid var(--d2-line); background:rgba(255,255,255,.024); }
+        .clean-support-card .clean-value { font-size:17px; margin-top:5px; }
+        .clean-primary-grid { display:grid; grid-template-columns:minmax(0,.92fr) minmax(0,1.28fr); gap:18px; }
+        .clean-table-card { background:rgba(255,255,255,.02); border:1px solid var(--d2-line); border-radius:20px; overflow:hidden; }
+        .clean-table-head { display:flex; align-items:center; justify-content:space-between; gap:16px; padding:18px 20px; border-bottom:1px solid var(--d2-line); }
+        .clean-table-total { font-size:13px; font-weight:900; color:var(--d2-green); white-space:nowrap; }
+        .clean-table-row { display:grid; grid-template-columns: 112px minmax(110px,.8fr) 1fr 1fr 1fr; gap:12px; align-items:center; padding:16px 20px; border-bottom:1px solid var(--d2-line); color:#d7e0ea; font-size:12px; }
+        .clean-table-row.payment { grid-template-columns:112px minmax(145px,1.15fr) 1fr 1fr; }
+        .clean-table-row:last-child { border-bottom:0; }
+        .clean-table-labels { color:var(--d2-muted); font-size:9px; text-transform:uppercase; letter-spacing:.12em; font-weight:900; background:rgba(255,255,255,.012); }
+        .clean-add-row { width:100%; padding:15px; text-align:center; font-size:11px; font-weight:800; color:#cbd5df; border-top:1px solid var(--d2-line); background:rgba(255,255,255,.012); transition:.2s; }
+        .clean-add-row:hover { background:rgba(255,255,255,.045); color:#fff; }
+        .clean-pill { display:inline-flex; align-items:center; gap:7px; border-radius:999px; padding:7px 10px; font-size:10px; font-weight:900; letter-spacing:.04em; border:1px solid var(--d2-line); background:rgba(255,255,255,.025); color:#cbd5df; }
+        .clean-pill.success { color:var(--d2-green); background:var(--d2-green-soft); border-color:rgba(47,209,155,.18); }
+        .clean-pill.warning { color:var(--d2-amber); background:var(--d2-amber-soft); border-color:rgba(240,180,41,.18); }
+        .clean-status-block { display:inline-flex; align-items:center; gap:10px; padding:10px 14px; border-radius:14px; background:var(--d2-green-soft); border:1px solid rgba(47,209,155,.18); color:var(--d2-green); }
+        .clean-progress { height:7px; background:rgba(148,163,184,.12); border-radius:999px; overflow:hidden; }
+        .clean-progress > span { display:block; height:100%; border-radius:999px; background:var(--d2-green); }
+        .clean-note { border:1px solid var(--d2-line); background:rgba(255,255,255,.018); border-radius:18px; padding:16px 18px; color:#b9c4d1; font-size:12px; line-height:1.55; }
+        .clean-action-card { border:1px solid var(--d2-line); background:rgba(255,255,255,.022); border-radius:18px; padding:18px; display:flex; align-items:center; gap:13px; color:#e4ebf2; transition:.2s; }
+        .clean-action-card:hover { border-color:rgba(47,209,155,.35); background:rgba(47,209,155,.06); transform:translateY(-1px); }
+
+        /* Clean focused project and module shell */
+        #projects-grid .project-module-shell.clean-module-shell { background:transparent !important; border:0 !important; border-radius:0 !important; box-shadow:none !important; padding:0 !important; }
+        #projects-grid .project-module-shell.clean-module-shell > .no-print { margin-bottom:18px !important; padding:0 0 18px !important; }
+
+        /* Receipt modal, calmer hierarchy */
+        #edit-rec-modal .modal-content { background:#0e1621 !important; border:1px solid var(--d2-line) !important; box-shadow:0 30px 90px -40px rgba(0,0,0,.95) !important; }
+        #edit-rec-modal #rec-edit-summary > div { background:rgba(255,255,255,.018) !important; border-color:var(--d2-line) !important; box-shadow:none !important; }
+        #edit-rec-modal #rec-edit-summary .bg-white\/5,
+        #edit-rec-modal #rec-edit-summary .bg-red-500\/10,
+        #edit-rec-modal #rec-edit-summary .bg-cyan-500\/10,
+        #edit-rec-modal #rec-edit-summary .bg-emerald-500\/10 { background:rgba(255,255,255,.025) !important; border-color:var(--d2-line) !important; }
+        #edit-rec-modal #rec-edit-list > div { background:rgba(255,255,255,.018) !important; border-color:var(--d2-line) !important; box-shadow:none !important; }
+        #edit-rec-modal .modern-input { background:#0a111a !important; border-color:rgba(148,163,184,.16) !important; }
+
+        @media (max-width: 900px) {
+            .clean-primary-grid { grid-template-columns:1fr; }
+            .clean-meta-grid { grid-template-columns:repeat(2,minmax(0,1fr)); }
+            .clean-table-row, .clean-table-row.payment { grid-template-columns:1fr 1fr; gap:8px 14px; }
+            .clean-table-labels { display:none; }
+        }
+        @media (max-width: 560px) {
+            .clean-project-dashboard { padding:18px; border-radius:22px; }
+            .clean-meta-grid, .clean-support-grid { grid-template-columns:1fr; }
+            .clean-value { font-size:21px; }
+            .clean-table-row, .clean-table-row.payment { grid-template-columns:1fr; padding:14px 16px; }
+            .clean-table-head { padding:16px; }
+        }
+
+</style>
 </head>
 <body class="auth-body">
 
@@ -362,12 +497,12 @@
             <div id="login-hint-msg" class="hidden p-4 bg-amber-50 border border-amber-100 rounded-xl text-amber-700 text-xs font-bold text-center uppercase tracking-widest leading-relaxed"></div>
 
             <div>
-                <label class="label-auth" data-i18n="lbl_email">Corporate Email</label>
+                <label class="label-auth" data-i18n="lbl_email">E-mail Corporativo</label>
                 <input type="email" id="email" required class="auth-input" placeholder="usuario@allcablingtech.com">
             </div>
 
             <div class="relative">
-                <label class="label-auth" data-i18n="lbl_pass">Access Password</label>
+                <label class="label-auth" data-i18n="lbl_pass">Senha de Acesso</label>
                 <input type="password" id="password" required class="auth-input !pr-10" placeholder="••••••••">
                 <button type="button" onclick="window.togglePassword('password', 'eye-login-btn')" class="password-toggle !text-slate-400" id="eye-login-btn" style="top: 70%;">
                     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>
@@ -375,16 +510,13 @@
             </div>
 
             <button type="submit" id="btn-entrar" class="btn-access">
-                <span data-i18n="btn_login">Access System</span>
+                <span data-i18n="btn_login">Acessar Sistema</span>
             </button>
         </form>
 
-        <div class="mt-8 flex flex-col items-center gap-3">
-            <p class="text-[10px] font-black uppercase tracking-[0.18em] text-slate-500" data-i18n="language_label">Language</p>
-            <div class="flex justify-center gap-4">
-                <button type="button" onclick="window.setLang('en')" class="flag-btn active" id="l-en" aria-label="English" title="English"><img src="https://flagcdn.com/w80/us.png" class="w-6" alt="USA"></button>
-                <button type="button" onclick="window.setLang('pt')" class="flag-btn" id="l-pt" aria-label="Português" title="Português"><img src="https://flagcdn.com/w80/br.png" class="w-6" alt="Brasil"></button>
-            </div>
+        <div class="mt-8 flex justify-center gap-4">
+            <button onclick="window.setLang('pt')" class="flag-btn active" id="l-pt"><img src="https://flagcdn.com/w80/br.png" class="w-6"></button>
+            <button onclick="window.setLang('en')" class="flag-btn" id="l-en"><img src="https://flagcdn.com/w80/us.png" class="w-6"></button>
         </div>
     </div>
 </div>
@@ -394,7 +526,7 @@
     <div class="modal-content animate-fade-in max-w-sm w-full p-8 text-center !rounded-[32px]">
         <div id="custom-modal-icon" class="flex justify-center mb-5"></div>
         <h3 id="custom-modal-title" class="text-xl font-black text-white force-white-text mb-2">Atenção</h3>
-        <div id="custom-modal-msg" class="text-sm text-slate-400 mb-8"></div>
+        <p id="custom-modal-msg" class="text-sm text-slate-400 mb-8"></p>
         <div class="flex justify-center gap-3" id="custom-modal-buttons"></div>
     </div>
 </div>
@@ -585,10 +717,6 @@
                         <option value="Finalizado">Finalizado</option>
                     </select>
                 </div>
-                <div class="col-span-2 space-y-2">
-                    <label class="text-xs font-black uppercase text-slate-500 ml-1 tracking-widest">Observação</label>
-                    <input type="text" id="f-observacao" maxlength="180" class="modern-input" placeholder="Ex: Aguardando permit ou pagamento do cliente">
-                </div>
                 <div class="col-span-2 flex flex-col sm:flex-row gap-6 mt-10">
                     <button type="submit" class="flex-1 btn-premium-gold shadow-xl" data-i18n="btn_save">Salvar Registro</button>
                     <button type="button" onclick="window.cancelEdit(); window.showView('projects')" class="px-10 py-4 text-slate-500 uppercase font-black text-sm hover:text-white transition-all" data-i18n="btn_cancel">Cancelar</button>
@@ -598,19 +726,16 @@
 
         <div id="view-users" class="hidden space-y-10 animate-fade-in">
             <div class="glass p-6 sm:p-10 max-w-2xl mx-auto rounded-[32px] text-left border border-white/5 shadow-2xl">
-                <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 mb-8">
-                    <h3 class="team-management-title text-2xl font-black text-gold uppercase" data-i18n="team_title">Gestão de Equipe</h3>
-                    <button type="button" onclick="window.startNewTeamMember()" class="inline-flex items-center justify-center gap-2 px-4 py-3 rounded-xl border border-gold/30 bg-gold/10 text-gold text-[10px] font-black uppercase tracking-widest hover:bg-gold/20 transition-colors"><i data-lucide="user-plus" class="w-4 h-4"></i><span data-i18n="team_new">Novo vendedor</span></button>
-                </div>
-                <form id="team-form" class="space-y-6" autocomplete="off">
+                <h3 class="text-2xl font-black text-gold mb-8 uppercase tracking-tighter" data-i18n="team_title">Gestão de Equipe</h3>
+                <form id="team-form" class="space-y-6">
                     <input type="hidden" id="t-id">
 
                     <div class="grid grid-cols-1 sm:grid-cols-3 gap-6">
-                        <div class="space-y-1"><label class="label-auth text-xs" data-i18n="team_name">Nome do Vendedor</label><input type="text" id="t-name" required class="modern-input" autocomplete="off" data-lpignore="true"></div>
-                        <div class="space-y-1"><label class="label-auth text-xs" data-i18n="team_email">E-mail</label><input type="email" id="t-email" required class="modern-input" autocomplete="off" data-lpignore="true"></div>
+                        <div class="space-y-1"><label class="label-auth text-xs" data-i18n="team_name">Nome do Vendedor</label><input type="text" id="t-name" required class="modern-input"></div>
+                        <div class="space-y-1"><label class="label-auth text-xs" data-i18n="team_email">E-mail</label><input type="email" id="t-email" required class="modern-input"></div>
                         <div class="space-y-1 relative">
                             <label class="label-auth text-xs" data-i18n="team_pass">Senha</label>
-                            <input type="password" id="t-pass" required class="modern-input !pr-10" autocomplete="new-password" data-lpignore="true">
+                            <input type="password" id="t-pass" required class="modern-input !pr-10">
                             <button type="button" onclick="window.togglePassword('t-pass', 'eye-team-btn')" class="password-toggle" id="eye-team-btn" style="top:70%"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg></button>
                         </div>
                     </div>
@@ -644,7 +769,7 @@
                         </div>
                     </div>
                     
-                    <button type="submit" id="btn-save-team" class="btn-premium-gold shadow-xl mt-6">Criar vendedor</button>
+                    <button type="submit" id="btn-save-team" class="btn-premium-gold shadow-xl mt-6" data-i18n="btn_team">Salvar e Autorizar Acesso</button>
                 </form>
             </div>
             <div id="users-list" class="flex flex-col gap-4 text-left max-w-7xl mx-auto mt-10"></div>
@@ -652,9 +777,21 @@
 
         <div id="view-logs" class="hidden space-y-6 max-w-7xl mx-auto animate-fade-in">
             <div class="glass p-6 sm:p-8 rounded-[32px] border border-white/5">
-                <div class="flex justify-between items-center mb-6">
+                <div class="flex flex-col sm:flex-row justify-between sm:items-center gap-4 mb-5">
                     <h3 class="text-2xl font-black text-gold uppercase tracking-tighter">📋 Logs de Auditoria</h3>
-                    <button onclick="window.clearLogs()" class="text-[10px] font-bold text-red-500 hover:text-red-400 uppercase tracking-widest border border-red-500/20 px-4 py-2 rounded-xl transition-all">Limpar Histórico</button>
+                    <button onclick="window.clearLogs()" class="text-[10px] font-bold text-red-500 hover:text-red-400 uppercase tracking-widest border border-red-500/20 px-4 py-2 rounded-xl transition-all self-start sm:self-auto">Limpar Histórico</button>
+                </div>
+                <div class="grid grid-cols-1 md:grid-cols-[minmax(260px,420px)_1fr] gap-4 items-end mb-6 p-4 rounded-2xl border border-white/5 bg-black/10">
+                    <div class="text-left">
+                        <label for="logs-user-filter" class="block text-[10px] font-black uppercase tracking-[0.18em] text-slate-500 mb-2" data-i18n="logs_filter_user">Filtrar por usuário</label>
+                        <select id="logs-user-filter" onchange="window.setLogsUserFilter(this.value)" class="w-full modern-input py-3 px-4 text-sm font-bold">
+                            <option value="" data-i18n="logs_all_users">Todos os usuários</option>
+                        </select>
+                    </div>
+                    <div class="flex flex-col sm:flex-row md:justify-end gap-3 sm:items-center">
+                        <div id="logs-filter-summary" class="text-sm font-bold text-slate-400 text-left md:text-right"></div>
+                        <button id="logs-clear-filter" onclick="window.setLogsUserFilter('')" class="hidden text-[10px] font-black uppercase tracking-widest text-gold border border-gold/20 hover:border-gold/50 px-4 py-3 rounded-xl transition-all" data-i18n="logs_clear_filter">Limpar filtro</button>
+                    </div>
                 </div>
                 <div class="overflow-x-auto">
                     <table class="w-full text-left" id="logs-table">
@@ -702,9 +839,9 @@
         user: null, 
         isSuperAdmin: false,
         userPerms: { tab_proj: true, tab_new: false, tab_rep: false, fin: false, costs: false, smart: true, hvac: false, global: false },
-        projects: [], team: [], logs: [], company: 'Ambas', lang: 'en', theme: 'dark', 
+        projects: [], team: [], logs: [], logsUserFilter: '', company: 'Ambas', lang: 'pt', theme: 'dark', 
         editingPayments: null, editingRecs: null, focusedProject: null, activeModule: null, archiveFilter: 'active',
-        reportActiveKpi: 'receita', projectSellerFilter: 'all', projectSearchQuery: '', reportPeriodStart: '', reportPeriodEnd: '', reportSellerFilter: 'all', reportStatusFilter: 'all', reportRangePreset: 'year', mobileNavOpen: false, currentView: 'projects' 
+        reportActiveKpi: 'receita', projectSellerFilter: 'all', projectSearchQuery: '', reportPeriodStart: '', reportPeriodEnd: '', reportSellerFilter: 'all', reportRangePreset: 'year', mobileNavOpen: false, currentView: 'projects' 
     };
 
     window.d2Charts = {};
@@ -731,11 +868,10 @@
 
     const translations = {
         pt: {
-            language_label: "Idioma",
             admin_panel: "Gestão Corporativa", nav_proj: "Projetos", nav_new: "Nova Obra", nav_rep: "Relatórios", nav_users: "Equipe", project_search_label: "Busca rápida", project_search_placeholder: "Buscar por cliente, projeto, endereço, invoice, proposta ou valor",
-            form_new_title: "Registrar Obra", team_title: "Gestão de Equipe", btn_team: "Salvar e Autorizar Acesso", team_new: "Novo vendedor",
+            form_new_title: "Registrar Obra", team_title: "Gestão de Equipe", btn_team: "Salvar e Autorizar Acesso",
             filter_both: "AMBAS", filter_active: "ATIVAS", filter_archived: "ARQUIVADAS", filter_all: "TODAS",
-            project_filter_seller: "Filtro por Vendedor", project_filter_all_sellers: "Todos os vendedores", report_filter_seller: "Vendedor no relatório", report_filter_all_sellers: "Todos os vendedores", logs_empty: "Nenhum log registrado", margin_alert_low: "Margem abaixo de 45%", margin_current: "Margem Atual", completed_on: "Concluída em", category_commission: "Comissões", seller_margin_cover: "Margem da obra",
+            project_filter_seller: "Filtro por Vendedor", project_filter_all_sellers: "Todos os vendedores", report_filter_seller: "Vendedor no relatório", report_filter_all_sellers: "Todos os vendedores", logs_empty: "Nenhum log registrado", logs_filter_user: "Filtrar por usuário", logs_all_users: "Todos os usuários", logs_clear_filter: "Limpar filtro", logs_results: "registros exibidos", margin_alert_low: "Margem abaixo de 45%", margin_current: "Margem Atual", completed_on: "Concluída em", category_commission: "Comissões", seller_margin_cover: "Margem da obra",
             lbl_email: "E-mail Corporativo", lbl_pass: "Senha de Acesso", btn_login: "Acessar Sistema",
             f_prop: "Nº Proposta", f_inv: "Nº Invoice", f_unit: "Unidade Responsável", f_client: "Cliente", f_project_name: "Nome do Projeto / Referência", f_address: "Endereço da Obra", f_seller: "Vendedor",
             f_gross: "Valor Contrato Bruto", f_budget: "Orçamento Custo (Budget)", f_comm_perc: "% Comissão",
@@ -747,7 +883,7 @@
             timeline: "Timeline", days_left: "DIAS RESTANTES", completed: "CONCLUÍDA", late: "ATRASADA", gross_contract: "Valor Contrato Bruto",
             client: "Cliente", commission: "Comissão", paid_100: "100% PAGO", paid_perc: "% PAGO", pending: "PENDENTE",
             click_to_open: "CLIQUE NO CARD PARA ABRIR", comm_finances: "Comissões e Finanças", cost_management: "Gestão de Custos",
-            comm_projected: "Comissão Projetada", comm_contract_gross: "Comissão bruta do contrato", comm_released: "Comissão liberada e elegível", paid_seller: "Pago ao vendedor", balance_pay: "A PAGAR AGORA",
+            comm_projected: "Comissão Projetada", comm_contract_gross: "Comissão bruta do contrato", comm_released: "Comissão elegível", paid_seller: "Pago ao vendedor", balance_pay: "A PAGAR AGORA",
             balance_over: "PAGO A MAIOR", balance_paid: "TOTALMENTE PAGO", client_receipts: "Recebimentos do Cliente",
             no_receipts: "Nenhum recebimento registrado.", save_client_pay: "Guardar Pagamento do Cliente", seller_payments: "Pagamentos ao Vendedor",
             no_payments: "Nenhum pagamento efetuado.", make_seller_pay: "Efetuar Pagamento ao Vendedor", back: "Voltar", print_ficha: "Imprimir Ficha",
@@ -781,14 +917,13 @@
             rec_summary_gross: "Recebido bruto", rec_summary_fees: "Taxas de cartão 3%", rec_summary_net: "Base líquida elegível", rec_summary_release: "Comissão liberada",
             rec_method_actual: "Forma real recebida", rec_method_locked: "Recebimento protegido. Para corrigir, exclua e crie uma nova entrada.", rec_method_admin_locked: "Recebimento protegido. Como Super Admin, use o botão Editar para corrigir este lançamento sem recriá-lo.", rec_method_admin_editing: "Modo de edição do Super Admin ativo. Revise os dados e clique em Salvar Alterações. A correção ficará registrada nos logs.", rec_edit_title: "Editar lançamento", rec_cancel_edit_title: "Cancelar edição", rec_method_card_note: "Cartão deduz 3% automaticamente da base de comissão.",
             rec_line_gross: "Bruto", rec_line_fee: "Taxa", rec_line_net: "Líquido base", rec_add_new: "Adicionar Novo Recebimento", rec_save_block: "Preencha data, valor e forma de pagamento em todas as novas entradas antes de salvar.",
-            payment_summary_card_fees: "Taxas cartão (cliente)", payment_summary_net_basis: "Base líquida recebida", payment_summary_received: "Recebido do cliente", pay_pending_badge: "Pagamento pendente", timeline_due_soon: "Prazo próximo", invoice_label: "Invoice", proposal_label: "Proposta", client_outstanding: "Saldo cliente a receber", comm_remaining_projected: "Comissão potencial sobre saldo do cliente", comm_card_fee_reduction: "Redução por taxas de cartão", commission_released_settled: "Liberada quitada", commission_total_paid: "Comissão total quitada", commission_due_now: "Pendente agora", commission_paid_from_released: "Pago da liberada", commission_still_to_release: "Ainda a liberar", commission_waiting_receipts: "Aguardando recebimentos", commission_future_pending: "Comissão futura estimada", commission_released_paid_label: "Liberada paga", commission_overall_paid_label: "Pago do total projetado", commission_note_released_only: "A comissão do vendedor foi quitada apenas sobre o valor já recebido do cliente.", commission_note_future_release: "Ainda restam {commission} de comissão projetada, que serão liberados conforme o cliente pagar os {client} em aberto.", commission_note_due_now: "Existe {due} de comissão liberada pendente agora e ainda {future} de comissão projetada aguardando novos recebimentos.", commission_note_waiting_receipts: "Ainda não há comissão liberada. O cliente ainda deve {client} e isso pode liberar até {commission} de comissão projetada.", client_received_label: "Recebido", client_balance_short: "Saldo a receber", commission_paid_simple: "Comissão paga", commission_to_receive_label: "Comissão a receber", commission_to_receive_short: "Comissão restante", commission_partial_status: "Parcial", commission_review_status: "Revisar pagamento", commission_due_now_short: "Pendente agora", client_received_compact: "Recebido", client_balance_compact: "Falta receber", commission_paid_compact: "Paga", commission_remaining_compact: "A receber", commission_due_now_compact: "Pendente agora"
+            payment_summary_card_fees: "Taxas cartão (cliente)", payment_summary_net_basis: "Base líquida recebida", payment_summary_received: "Recebido do cliente", pay_pending_badge: "Pagamento pendente", timeline_due_soon: "Prazo próximo", invoice_label: "Invoice", proposal_label: "Proposta", client_outstanding: "Cliente ainda deve", comm_remaining_projected: "Comissão futura estimada", comm_card_fee_reduction: "Desconto cartão", commission_released_settled: "Liberada quitada", commission_total_paid: "Comissão total quitada", commission_due_now: "Pendente agora", commission_paid_from_released: "Pago da liberada", commission_still_to_release: "Ainda a liberar", commission_waiting_receipts: "Aguardando recebimentos", commission_future_pending: "Comissão futura estimada", commission_released_paid_label: "Liberada paga", commission_overall_paid_label: "Pago do total projetado", commission_note_released_only: "A comissão do vendedor foi quitada apenas sobre o valor já recebido do cliente.", commission_note_future_release: "Ainda restam {commission} de comissão projetada, que serão liberados conforme o cliente pagar os {client} em aberto.", commission_note_due_now: "Existe {due} de comissão liberada pendente agora e ainda {future} de comissão projetada aguardando novos recebimentos.", commission_note_waiting_receipts: "Ainda não há comissão liberada. O cliente ainda deve {client} e isso pode liberar até {commission} de comissão projetada.", client_received_label: "Recebido", client_balance_short: "Saldo a receber", commission_paid_simple: "Comissão paga", commission_to_receive_label: "Comissão a receber", commission_to_receive_short: "Comissão restante", commission_partial_status: "Parcial", commission_review_status: "Revisar pagamento", commission_due_now_short: "Pendente agora", client_received_compact: "Recebido", client_balance_compact: "Falta receber", commission_paid_compact: "Paga", commission_remaining_compact: "A receber", commission_due_now_compact: "Pendente agora"
         },
         en: {
-            language_label: "Language",
             admin_panel: "Corporate Management", nav_proj: "Projects", nav_new: "New Entry", nav_rep: "Reports", nav_users: "Team", project_search_label: "Quick search", project_search_placeholder: "Search by client, project, address, invoice, proposal, or value",
-            form_new_title: "Register Project", team_title: "Team Management", btn_team: "Authorize Access", team_new: "New seller",
+            form_new_title: "Register Project", team_title: "Team Management", btn_team: "Authorize Access",
             filter_both: "BOTH", filter_active: "ACTIVE", filter_archived: "ARCHIVED", filter_all: "ALL",
-            project_filter_seller: "Seller Filter", project_filter_all_sellers: "All sellers", report_filter_seller: "Seller in report", report_filter_all_sellers: "All sellers", logs_empty: "No logs recorded", margin_alert_low: "Margin below 45%", margin_current: "Current Margin", completed_on: "Completed on", category_commission: "Commissions", seller_margin_cover: "Project margin",
+            project_filter_seller: "Seller Filter", project_filter_all_sellers: "All sellers", report_filter_seller: "Seller in report", report_filter_all_sellers: "All sellers", logs_empty: "No logs recorded", logs_filter_user: "Filter by user", logs_all_users: "All users", logs_clear_filter: "Clear filter", logs_results: "records shown", margin_alert_low: "Margin below 45%", margin_current: "Current Margin", completed_on: "Completed on", category_commission: "Commissions", seller_margin_cover: "Project margin",
             lbl_email: "Corporate Email", lbl_pass: "Password", btn_login: "Access System",
             f_prop: "Proposal No.", f_inv: "Invoice No.", f_unit: "Responsible Unit", f_client: "Client", f_seller: "Seller",
             f_gross: "Gross Contract Value", f_budget: "Cost Budget", f_comm_perc: "% Commission",
@@ -833,7 +968,7 @@
             rec_summary_gross: "Gross received", rec_summary_fees: "Card fees 3%", rec_summary_net: "Eligible net basis", rec_summary_release: "Commission released",
             rec_method_actual: "Actual received method", rec_method_locked: "Protected receipt. To correct it, delete it and create a new entry.", rec_method_admin_locked: "Protected receipt. As Super Admin, use the Edit button to correct this entry without recreating it.", rec_method_admin_editing: "Super Admin edit mode is active. Review the data and click Save Changes. The correction will be recorded in the audit logs.", rec_edit_title: "Edit entry", rec_cancel_edit_title: "Cancel edit", rec_method_card_note: "Card payments automatically deduct 3% from the commission basis.",
             rec_line_gross: "Gross", rec_line_fee: "Fee", rec_line_net: "Net basis", rec_add_new: "Add New Receipt", rec_save_block: "Fill in date, amount, and payment method on all new or edited entries before saving.",
-            payment_summary_card_fees: "Client card fees", payment_summary_net_basis: "Net received basis", payment_summary_received: "Client received", pay_pending_badge: "Payment pending", timeline_due_soon: "Due soon", invoice_label: "Invoice", proposal_label: "Proposal", client_outstanding: "Client outstanding", comm_remaining_projected: "Potential commission on client balance", comm_card_fee_reduction: "Card-fee commission reduction", commission_released_settled: "Released portion settled", commission_total_paid: "Total commission settled", commission_due_now: "Due now", commission_paid_from_released: "Paid from released", commission_still_to_release: "Still to release", commission_waiting_receipts: "Waiting for receipts", commission_future_pending: "Estimated future commission", commission_released_paid_label: "Released paid", commission_overall_paid_label: "Paid from projected total", commission_note_released_only: "The seller commission has been fully paid only on the amount already received from the client.", commission_note_future_release: "There is still {commission} of projected commission to be released as the client pays the remaining {client}.", commission_note_due_now: "There is {due} of released commission due now and another {future} of projected commission waiting for new client receipts.", commission_note_waiting_receipts: "There is no released commission yet. The client still owes {client}, which may release up to {commission} of projected commission.", client_received_label: "Received", client_balance_short: "Balance due", commission_paid_simple: "Commission paid", commission_to_receive_label: "Commission to receive", commission_to_receive_short: "Commission remaining", commission_partial_status: "Partial", commission_review_status: "Review payment", commission_due_now_short: "Due now", client_received_compact: "Received", client_balance_compact: "To collect", commission_paid_compact: "Paid", commission_remaining_compact: "Remaining", commission_due_now_compact: "Due now"
+            payment_summary_card_fees: "Client card fees", payment_summary_net_basis: "Net received basis", payment_summary_received: "Client received", pay_pending_badge: "Payment pending", timeline_due_soon: "Due soon", invoice_label: "Invoice", proposal_label: "Proposal", client_outstanding: "Client balance", comm_remaining_projected: "Estimated future commission", comm_card_fee_reduction: "Card discount", commission_released_settled: "Released portion settled", commission_total_paid: "Total commission settled", commission_due_now: "Due now", commission_paid_from_released: "Paid from released", commission_still_to_release: "Still to release", commission_waiting_receipts: "Waiting for receipts", commission_future_pending: "Estimated future commission", commission_released_paid_label: "Released paid", commission_overall_paid_label: "Paid from projected total", commission_note_released_only: "The seller commission has been fully paid only on the amount already received from the client.", commission_note_future_release: "There is still {commission} of projected commission to be released as the client pays the remaining {client}.", commission_note_due_now: "There is {due} of released commission due now and another {future} of projected commission waiting for new client receipts.", commission_note_waiting_receipts: "There is no released commission yet. The client still owes {client}, which may release up to {commission} of projected commission.", client_received_label: "Received", client_balance_short: "Balance due", commission_paid_simple: "Commission paid", commission_to_receive_label: "Commission to receive", commission_to_receive_short: "Commission remaining", commission_partial_status: "Partial", commission_review_status: "Review payment", commission_due_now_short: "Due now", client_received_compact: "Received", client_balance_compact: "To collect", commission_paid_compact: "Paid", commission_remaining_compact: "Remaining", commission_due_now_compact: "Due now"
         }
     };
     
@@ -853,7 +988,7 @@
         const m = normalizeMethod(method);
         return m === 'CC' || m.includes('CART') || m.includes('CARD') || m.includes('CREDIT');
     };
-    const getReceiptEffectiveMethod = (receipt) => receipt?.metodo || 'Zelle';
+    const getReceiptEffectiveMethod = (receipt, project = null) => receipt?.metodo || project?.metodo || 'Zelle';
     const getReceiptFee = (receipt, project = null) => {
         const amount = roundMoney(Number(receipt?.valor || 0));
         return isCardMethod(getReceiptEffectiveMethod(receipt, project)) ? roundMoney(amount * 0.03) : 0;
@@ -871,27 +1006,19 @@
     };
 
     window.setLang = (l) => { 
-        state.lang = l === 'pt' ? 'pt' : 'en';
-        localStorage.setItem('d2_lang_preference', state.lang);
-        if (state.user?.email) localStorage.setItem(`d2_lang_user_${state.user.email.toLowerCase()}`, state.lang);
-        else {
-            const loginEmail = String(document.getElementById('email')?.value || '').trim().toLowerCase();
-            if (loginEmail) localStorage.setItem(`d2_lang_user_${loginEmail}`, state.lang);
-        }
-        document.documentElement.lang = state.lang === 'pt' ? 'pt-BR' : 'en';
-        document.querySelectorAll('.flag-btn').forEach(b => b.classList.toggle('active', b.id === 'l-' + state.lang)); 
+        state.lang = l; 
+        document.querySelectorAll('.flag-btn').forEach(b => b.classList.toggle('active', b.id === 'l-' + l)); 
         document.querySelectorAll('[data-i18n]').forEach(el => {
             const key = el.getAttribute('data-i18n');
-            if (translations[state.lang] && translations[state.lang][key]) {
-                if (el.tagName === 'INPUT' && el.type === 'button') el.value = translations[state.lang][key];
-                else el.innerText = translations[state.lang][key];
+            if (translations[l] && translations[l][key]) {
+                if (el.tagName === 'INPUT' && el.type === 'button') el.value = translations[l][key];
+                else el.innerText = translations[l][key];
             }
         });
         document.querySelectorAll('[data-i18n-placeholder]').forEach(el => {
             const key = el.getAttribute('data-i18n-placeholder');
-            if (translations[state.lang] && translations[state.lang][key]) el.setAttribute('placeholder', translations[state.lang][key]);
+            if (translations[l] && translations[l][key]) el.setAttribute('placeholder', translations[l][key]);
         });
-        updateTeamFormMode(!!document.getElementById('t-id')?.value);
         window.renderProjectSellerFilter();
         window.renderLogs();
         if(state.projects.length > 0) {
@@ -1063,19 +1190,79 @@
         });
     }
 
+    window.setLogsUserFilter = (userEmail = '') => {
+        state.logsUserFilter = String(userEmail || '').trim().toLowerCase();
+        window.renderLogs();
+    };
+
     window.renderLogs = () => {
         const tbody = document.getElementById('logs-body');
         if (!tbody || !state.isSuperAdmin) return;
-        const logs = getMergedLogs();
+
+        const allLogs = getMergedLogs();
+        const selectedUser = String(state.logsUserFilter || '').trim().toLowerCase();
+        const userMap = new Map();
+
+        allLogs.forEach(log => {
+            const email = String(log?.user || '').trim();
+            if (!email) return;
+            const normalized = email.toLowerCase();
+            if (!userMap.has(normalized)) {
+                userMap.set(normalized, {
+                    email,
+                    name: getUserDisplayName(email, email.split('@')[0] || email)
+                });
+            }
+        });
+
+        const userOptions = Array.from(userMap.entries())
+            .sort((a, b) => a[1].name.localeCompare(b[1].name, state.lang === 'pt' ? 'pt-BR' : 'en-US'));
+        const select = document.getElementById('logs-user-filter');
+        if (select) {
+            const optionsHtml = [
+                `<option value="">${escapeInlineHtml(window.t('logs_all_users'))}</option>`,
+                ...userOptions.map(([normalized, info]) => {
+                    const label = info.name && info.name.toLowerCase() !== info.email.toLowerCase()
+                        ? `${info.name} — ${info.email}`
+                        : info.email;
+                    return `<option value="${escapeInlineHtml(normalized)}">${escapeInlineHtml(label)}</option>`;
+                })
+            ].join('');
+            if (select.innerHTML !== optionsHtml) select.innerHTML = optionsHtml;
+            select.value = userMap.has(selectedUser) ? selectedUser : '';
+            if (selectedUser && !userMap.has(selectedUser)) state.logsUserFilter = '';
+        }
+
+        const effectiveUser = String(state.logsUserFilter || '').trim().toLowerCase();
+        const logs = effectiveUser
+            ? allLogs.filter(log => String(log?.user || '').trim().toLowerCase() === effectiveUser)
+            : allLogs;
+
+        const summary = document.getElementById('logs-filter-summary');
+        if (summary) {
+            const selectedInfo = effectiveUser ? userMap.get(effectiveUser) : null;
+            const selectedLabel = selectedInfo ? `<span class="text-gold">${escapeInlineHtml(selectedInfo.name)}</span> · ` : '';
+            summary.innerHTML = `${selectedLabel}<span class="text-white">${logs.length}</span> ${escapeInlineHtml(window.t('logs_results'))}`;
+        }
+        const clearFilterBtn = document.getElementById('logs-clear-filter');
+        if (clearFilterBtn) clearFilterBtn.classList.toggle('hidden', !effectiveUser);
+
         tbody.innerHTML = logs.map(log => {
             const logDate = log._renderDate || getLogDate(log);
             const renderedDate = Number.isNaN(logDate.getTime()) ? '-' : logDate.toLocaleString(state.lang === 'pt' ? 'pt-BR' : 'en-US');
             const info = getLogProjectInfo(log);
             const projectMetaLine = [info.invoice ? `${window.t('invoice_label')}: ${info.invoice}` : '', info.proposal ? `${window.t('proposal_label')}: ${info.proposal}` : ''].filter(Boolean).join(' • ');
+            const logUserEmail = String(log?.user || '').trim();
+            const logUserName = getUserDisplayName(logUserEmail, '-');
             return `
             <tr class="border-b border-white/5 hover:bg-white/5 align-top">
                 <td class="py-4 px-4 text-sm whitespace-nowrap">${renderedDate}</td>
-                <td class="py-4 px-4 text-sm font-bold text-gold whitespace-nowrap">${escapeInlineHtml(getUserDisplayName(log.user, '-'))}</td>
+                <td class="py-4 px-4 text-sm font-bold text-gold whitespace-nowrap">
+                    <button type="button" onclick="window.setLogsUserFilter('${escapeInlineHtml(logUserEmail.toLowerCase())}')" class="text-left hover:text-yellow-300 transition-colors" title="${escapeInlineHtml(state.lang === 'pt' ? 'Ver somente os logs deste usuário' : 'Show only this user logs')}">
+                        <span class="block">${escapeInlineHtml(logUserName)}</span>
+                        ${logUserEmail ? `<span class="block text-[10px] text-slate-500 font-bold normal-case mt-1">${escapeInlineHtml(logUserEmail)}</span>` : ''}
+                    </button>
+                </td>
                 <td class="py-4 px-4 text-sm text-slate-300 min-w-[240px]">
                     ${info.projectName ? `<div class="font-black text-white">${escapeInlineHtml(info.projectName)}</div>` : `<div class="text-slate-500">-</div>`}
                     ${projectMetaLine ? `<div class="text-[11px] text-slate-400 mt-1">${escapeInlineHtml(projectMetaLine)}</div>` : ''}
@@ -1195,18 +1382,14 @@
         const box = document.getElementById('seller-filter-box');
         if (!box) return;
 
-        if (!state.userPerms.global) {
+        if (!state.isSuperAdmin) {
             box.classList.add('hidden');
             box.innerHTML = '';
             state.projectSellerFilter = 'all';
             return;
         }
 
-        const sellers = [...new Set(state.projects
-            .filter(p => ((p.empresa === 'Smart Home' && state.userPerms.smart) || (p.empresa === 'HVAC' && state.userPerms.hvac)))
-            .map(p => p.vendedor)
-            .filter(Boolean))]
-            .sort((a, b) => getUserDisplayName(a, a).localeCompare(getUserDisplayName(b, b), state.lang === 'pt' ? 'pt-BR' : 'en-US'));
+        const sellers = [...new Set(state.projects.map(p => p.vendedor).filter(Boolean))].sort((a, b) => a.localeCompare(b));
         if (state.projectSellerFilter !== 'all' && !sellers.includes(state.projectSellerFilter)) {
             state.projectSellerFilter = 'all';
         }
@@ -1512,8 +1695,8 @@
     function getProjectSellerPaymentAlert(project) {
         const fin = getFin(project);
         return {
-            hasPending: fin.commLiberada > 0.009 && fin.balance > 0.009,
-            amount: roundMoney(Math.max(0, fin.balance))
+            hasPending: Number(fin?.dueNow || 0) > 0.009,
+            amount: roundMoney(Math.max(0, Number(fin?.dueNow || 0)))
         };
     }
 
@@ -1591,6 +1774,43 @@
             .slice(0, 6)
             .map(([label, value]) => `<li><span class="sheet-list-label">${escapeInlineHtml(label)}</span><span class="sheet-list-value">${formatCurr(value)}</span></li>`)
             .join('');
+        const sellerPayments = normalizePaymentEntries(project?.pagamentosEfetuados || [])
+            .filter(pay => Number(pay?.valor || 0) > 0.004)
+            .sort((a, b) => {
+                const dateCompare = String(a?.data || '').localeCompare(String(b?.data || ''));
+                if (dateCompare !== 0) return dateCompare;
+                return String(a?.criadoEm || '').localeCompare(String(b?.criadoEm || ''));
+            });
+        let sellerPaymentRunningTotal = 0;
+        const sellerPaymentRows = sellerPayments.map((pay, index) => {
+            sellerPaymentRunningTotal = roundMoney(sellerPaymentRunningTotal + Number(pay?.valor || 0));
+            const isAdvance = isAdvanceCommissionPayment(pay);
+            const paymentTypeLabel = isAdvance
+                ? (isPt ? 'Adiantamento' : 'Advance')
+                : (isPt ? 'Comissão' : 'Commission');
+            return `
+                <tr>
+                    <td class="col-seq">${index + 1}</td>
+                    <td class="col-date">${formatProjectDate(pay?.data)}</td>
+                    <td class="col-type"><span class="sheet-payment-type${isAdvance ? ' advance' : ''}">${paymentTypeLabel}</span></td>
+                    <td class="col-value payment-value">${formatCurr(pay?.valor || 0)}</td>
+                    <td class="col-running payment-running">${formatCurr(sellerPaymentRunningTotal)}</td>
+                </tr>`;
+        }).join('');
+        const sellerPaymentHistoryHTML = sellerPayments.length
+            ? `<table class="sheet-payment-table">
+                    <thead>
+                        <tr>
+                            <th class="col-seq">#</th>
+                            <th class="col-date">${isPt ? 'Data' : 'Date'}</th>
+                            <th class="col-type">${isPt ? 'Tipo' : 'Type'}</th>
+                            <th class="col-value">${isPt ? 'Valor pago' : 'Amount paid'}</th>
+                            <th class="col-running">${isPt ? 'Total acumulado' : 'Running total'}</th>
+                        </tr>
+                    </thead>
+                    <tbody>${sellerPaymentRows}</tbody>
+                </table>`
+            : `<div class="sheet-payment-empty">${isPt ? 'Nenhum pagamento ao vendedor foi registrado nesta obra.' : 'No seller payment has been recorded for this project.'}</div>`;
         const metric = (label, value, tone = '', small = false) => `
             <div class="sheet-metric">
                 <span class="sheet-metric-label">${label}</span>
@@ -1605,7 +1825,7 @@
             metric(isPt ? 'Saldo Cliente a Receber' : 'Client Outstanding', formatCurr(fin?.clientOutstanding || 0), Number(fin?.clientOutstanding || 0) > 0 ? 'warn' : ''),
             metric(isPt ? 'Comissão Projetada' : 'Projected Commission', formatCurr(fin?.commTotalProjetada || 0), '', true),
             metric(isPt ? 'Pago ao Vendedor' : 'Seller Paid', formatCurr(fin?.totalPaid || 0), '', true),
-            metric(isPt ? 'Comissão futura sobre saldo' : 'Future commission on balance', formatCurr(fin?.commissionFuturePotential ?? fin?.commRemainingProjected ?? 0), Number(fin?.commissionFuturePotential ?? fin?.commRemainingProjected ?? 0) > 0 ? 'warn' : '', true),
+            metric(isPt ? 'Comissão futura após adiantamentos' : 'Future commission after advances', formatCurr(fin?.futureCommissionAfterAdvance ?? fin?.commissionFuturePotential ?? fin?.commRemainingProjected ?? 0), Number(fin?.futureCommissionAfterAdvance ?? fin?.commissionFuturePotential ?? fin?.commRemainingProjected ?? 0) > 0 ? 'warn' : '', true),
             metric(isPt ? '% do Budget Usado' : '% Budget Used', budgetDefined ? `${Number(fin?.budgetSpentPerc || 0).toFixed(1)}%` : '—', budgetDefined && Number(fin?.budgetSpentPerc || 0) >= 100 ? 'negative' : ''),
             metric(isPt ? 'Lucro Atual' : 'Current Profit', formatCurr(fin?.lucroBruto || 0), Number(fin?.lucroBruto || 0) >= 0 ? 'positive' : 'negative'),
             metric(isPt ? 'Margem Atual' : 'Current Margin', `${Number(fin?.margemLucro || 0).toFixed(1)}%`, Number(fin?.margemLucro || 0) >= 0 ? 'positive' : 'negative')
@@ -1667,6 +1887,16 @@
                         </ul>
                     </div>
                 </div>
+                <div class="sheet-card sheet-payment-history">
+                    <div class="sheet-section-title">${isPt ? 'Histórico de pagamentos ao vendedor' : 'Seller payment history'}</div>
+                    <div class="sheet-payment-summary">
+                        <div class="sheet-payment-summary-text">
+                            ${sellerPayments.length} ${sellerPayments.length === 1 ? (isPt ? 'pagamento registrado' : 'payment recorded') : (isPt ? 'pagamentos registrados' : 'payments recorded')} • ${companyName}
+                        </div>
+                        <div class="sheet-payment-summary-total">${isPt ? 'Total pago' : 'Total paid'}: ${formatCurr(fin?.totalPaid || 0)}</div>
+                    </div>
+                    ${sellerPaymentHistoryHTML}
+                </div>
                 <div class="sheet-footer">
                     <span>${footerLeft}</span>
                     <span>${footerRight}</span>
@@ -1708,18 +1938,21 @@
         const released = roundMoney(Number(fin?.commLiberada || 0));
         const paid = roundMoney(Number(fin?.totalPaid || 0));
         const releasedPaidAmount = roundMoney(Math.min(paid, released));
-        const currentDue = roundMoney(Math.max(0, Number(fin?.balance || 0)));
-        const overpaidAmount = roundMoney(Math.max(0, -Number(fin?.balance || 0)));
+        const currentDue = roundMoney(Number(fin?.dueNow ?? Math.max(0, Number(fin?.balance || 0))));
+        const advanceCredit = roundMoney(Number(fin?.advanceCredit || 0));
+        const overpaidAmount = roundMoney(Number(fin?.overpaidBeyondProjected ?? Math.max(0, paid - released - Number(fin?.commissionFuturePotential || 0))));
         const clientOutstanding = roundMoney(Math.max(0, Number(project?.valorTotal || 0) - Number(fin?.totalRecebido || 0)));
         const futureCommissionPotential = roundMoney(Number(fin?.commissionFuturePotential ?? fin?.commRemainingProjected ?? 0));
+        const futureCommissionAfterAdvance = roundMoney(Number(fin?.futureCommissionAfterAdvance ?? Math.max(0, futureCommissionPotential - advanceCredit)));
+        const advanceAvailable = roundMoney(Number(fin?.advanceAvailable ?? Math.max(0, released + futureCommissionPotential - paid)));
         const cardFeeReduction = roundMoney(Number(fin?.commissionCardFeeReduction || 0));
-        // Compatibility alias: projectedRemaining now excludes card-fee reductions.
-        const projectedRemaining = futureCommissionPotential;
+        // Compatibility alias: projectedRemaining now represents only what may still need payment after advances.
+        const projectedRemaining = futureCommissionAfterAdvance;
         const releasedPaidPerc = released > 0 ? Math.min(100, Math.floor((releasedPaidAmount / released) * 100)) : 0;
         const eligibleTotal = roundMoney(released + futureCommissionPotential);
         const overallPaidPerc = eligibleTotal > 0 ? Math.min(100, Math.floor((Math.min(paid, eligibleTotal) / eligibleTotal) * 100)) : 0;
-        const remainingToPayTotal = roundMoney(currentDue + futureCommissionPotential);
-        return { projectedTotal, released, paid, releasedPaidAmount, currentDue, overpaidAmount, projectedRemaining, futureCommissionPotential, cardFeeReduction, clientOutstanding, releasedPaidPerc, overallPaidPerc, remainingToPayTotal };
+        const remainingToPayTotal = roundMoney(currentDue + futureCommissionAfterAdvance);
+        return { projectedTotal, released, paid, releasedPaidAmount, currentDue, advanceCredit, advanceAvailable, overpaidAmount, projectedRemaining, futureCommissionPotential, futureCommissionAfterAdvance, cardFeeReduction, clientOutstanding, releasedPaidPerc, overallPaidPerc, remainingToPayTotal };
     }
 
     function getCommissionStatusPresentation(project, finOverride = null) {
@@ -1734,6 +1967,10 @@
             toneClass = 'border-blue-500/30 bg-blue-500/10';
             headlineClass = 'text-blue-300';
             headline = window.t('commission_review_status');
+        } else if (data.advanceCredit > 0.009) {
+            toneClass = 'border-cyan-500/30 bg-cyan-500/10';
+            headlineClass = 'text-cyan-300';
+            headline = state.lang === 'pt' ? 'Adiantamento ativo' : 'Active advance';
         } else if (data.currentDue > 0.009) {
             toneClass = 'border-gold/30 bg-gold/10';
             headlineClass = 'text-gold';
@@ -1764,16 +2001,20 @@
             parts.push(isPT
                 ? `${formatCurr(data.currentDue)} está liberado e deve ser pago agora ao vendedor.`
                 : `${formatCurr(data.currentDue)} is released and payable to the seller now.`);
+        } else if (data.advanceCredit > 0.009) {
+            parts.push(isPT
+                ? `${formatCurr(data.advanceCredit)} está registrado como adiantamento e será compensado pelas próximas liberações.`
+                : `${formatCurr(data.advanceCredit)} is recorded as an advance and will be offset by future releases.`);
         } else if (data.released > 0.009 && data.overpaidAmount <= 0.009) {
             parts.push(isPT
                 ? 'Toda a comissão já liberada está quitada.'
                 : 'All commission released so far has been settled.');
         }
 
-        if (data.futureCommissionPotential > 0.009) {
+        if (data.futureCommissionAfterAdvance > 0.009) {
             parts.push(isPT
-                ? `Até ${formatCurr(data.futureCommissionPotential)} ainda poderá ser liberado sobre os ${formatCurr(data.clientOutstanding)} que o cliente deve. O valor final pode diminuir se a futura parcela for paga com cartão.`
-                : `Up to ${formatCurr(data.futureCommissionPotential)} may still be released on the client's ${formatCurr(data.clientOutstanding)} outstanding balance. The final amount may be lower if a future installment is paid by card.`);
+                ? `Até ${formatCurr(data.futureCommissionAfterAdvance)} ainda poderá precisar ser pago sobre os ${formatCurr(data.clientOutstanding)} que o cliente deve. O valor final pode diminuir se a futura parcela for paga com cartão.`
+                : `Up to ${formatCurr(data.futureCommissionAfterAdvance)} may still need to be paid on the client's ${formatCurr(data.clientOutstanding)} outstanding balance. The final amount may be lower if a future installment is paid by card.`);
         }
 
         if (data.cardFeeReduction > 0.009) {
@@ -1789,12 +2030,17 @@
         const p = state.projects.find(x => x.id === projectId);
         if (!p) return null;
         const f = getFin(p);
-        const payments = Array.isArray(draftPayments) ? draftPayments : (Array.isArray(p?.pagamentosEfetuados) ? p.pagamentosEfetuados : []);
+        const payments = Array.isArray(draftPayments) ? normalizePaymentEntries(draftPayments) : normalizePaymentEntries(p?.pagamentosEfetuados || []);
         const draftTotalPaid = roundMoney(payments.reduce((a, c) => a + Number(c?.valor || 0), 0));
         const draftBalance = roundMoney(f.commLiberada - draftTotalPaid);
         const remainingToPay = roundMoney(Math.max(0, draftBalance));
-        const overpaidAmount = roundMoney(Math.max(0, -draftBalance));
-        return { ...f, draftTotalPaid, draftBalance, remainingToPay, overpaidAmount };
+        const projectedCommissionCap = roundMoney(Number(f.commLiberada || 0) + Number(f.commissionFuturePotential || 0));
+        const advanceCredit = roundMoney(Math.max(0, Math.min(draftTotalPaid - Number(f.commLiberada || 0), Number(f.commissionFuturePotential || 0))));
+        const overpaidAmount = roundMoney(Math.max(0, draftTotalPaid - projectedCommissionCap));
+        const advanceAvailable = roundMoney(Math.max(0, projectedCommissionCap - draftTotalPaid));
+        const futureCommissionAfterAdvance = roundMoney(Math.max(0, Number(f.commissionFuturePotential || 0) - advanceCredit));
+        const declaredAdvanceTotal = roundMoney(payments.filter(pay => isAdvanceCommissionPayment(pay)).reduce((sum, pay) => sum + Number(pay?.valor || 0), 0));
+        return { ...f, payments, draftTotalPaid, draftBalance, remainingToPay, projectedCommissionCap, advanceCredit, overpaidAmount, advanceAvailable, futureCommissionAfterAdvance, declaredAdvanceTotal };
     }
 
     function getReceiptDraftSummary(projectId, draftReceipts = null) {
@@ -1810,23 +2056,35 @@
     }
 
 
+    function isAdvanceCommissionPayment(pay) {
+        const kind = String(pay?.tipo || pay?.paymentType || '').toLowerCase();
+        return pay?.isAdvance === true || pay?.adiantado === true || kind === 'adiantamento' || kind === 'advance';
+    }
+
     function normalizePaymentEntries(payments = []) {
-        return (Array.isArray(payments) ? payments : []).map(pay => ({
-            ...pay,
-            id: pay?.id || crypto.randomUUID(),
-            valor: roundMoney(Number(pay?.valor || 0))
-        }));
+        return (Array.isArray(payments) ? payments : []).map(pay => {
+            const isAdvance = isAdvanceCommissionPayment(pay);
+            return {
+                ...pay,
+                id: pay?.id || crypto.randomUUID(),
+                valor: roundMoney(Number(pay?.valor || 0)),
+                tipo: isAdvance ? 'adiantamento' : (pay?.tipo || 'comissao'),
+                isAdvance
+            };
+        });
     }
 
     function buildCommissionExpenseFromPayment(pay, project) {
         const sellerLabel = getUserDisplayName(project?.vendedor, state.lang === 'pt' ? 'Vendedor' : 'Seller');
+        const isAdvance = isAdvanceCommissionPayment(pay);
         return {
             id: `auto-commission-${pay.id}`,
             data: pay?.data || new Date().toISOString().split('T')[0],
-            descricao: `${state.lang === 'pt' ? 'Comissão paga' : 'Commission paid'} - ${sellerLabel}`,
+            descricao: `${state.lang === 'pt' ? (isAdvance ? 'Adiantamento de comissão' : 'Comissão paga') : (isAdvance ? 'Commission advance' : 'Commission paid')} - ${sellerLabel}`,
             categoria: 'Comissões',
             valor: roundMoney(Number(pay?.valor || 0)),
             autoType: 'commission_payment',
+            paymentType: isAdvance ? 'advance' : 'regular',
             autoGenerated: true,
             linkedPaymentId: pay.id,
             adicionadoPor: pay?.adicionadoPor || state.user?.email || '',
@@ -1840,19 +2098,7 @@
         const commissionExpenses = payments
             .filter(pay => Number(pay?.valor || 0) > 0)
             .map(pay => buildCommissionExpenseFromPayment(pay, project));
-        const cardFeeExpenses = (Array.isArray(project?.recebimentos) ? project.recebimentos : [])
-            .map((receipt, index) => ({ receipt, index, fee: getReceiptFee(receipt, project) }))
-            .filter(item => item.fee > 0)
-            .map(({ receipt, index, fee }) => ({
-                id: `auto-card-fee-${receipt?.id || index}`,
-                data: receipt?.data || '',
-                descricao: state.lang === 'pt' ? 'Taxa de cartão do recebimento' : 'Card processing fee',
-                categoria: state.lang === 'pt' ? 'Taxas de cartão' : 'Card fees',
-                valor: fee,
-                autoType: 'card_processing_fee',
-                autoGenerated: true
-            }));
-        return [...manualExpenses, ...commissionExpenses, ...cardFeeExpenses].sort((a, b) => String(b?.data || '').localeCompare(String(a?.data || '')));
+        return [...manualExpenses, ...commissionExpenses].sort((a, b) => String(b?.data || '').localeCompare(String(a?.data || '')));
     }
 
     function buildSyncedCommissionExpensePayload(project, payments = []) {
@@ -1896,7 +2142,7 @@
         if (!summary || !receiptSummary) return;
 
         const isPT = state.lang === 'pt';
-        const isSettled = summary.commLiberada > 0 && summary.remainingToPay <= 0.009;
+        const isSettled = summary.commLiberada > 0 && summary.remainingToPay <= 0.009 && summary.overpaidAmount <= 0.009;
         const noReleasedCommission = summary.commLiberada <= 0.009;
         const hasPayments = state.editingPayments.payments.length > 0;
         const projectName = getProjectDisplayName(project);
@@ -1920,6 +2166,15 @@
             nextValueLabel = isPT ? 'Excesso lançado' : 'Over recorded';
             nextValueDisplay = '+ ' + formatCurr(summary.overpaidAmount);
             helperStateText = isPT ? 'Revise os lançamentos abaixo antes de salvar para evitar pagamento indevido.' : 'Review the entries below before saving to avoid an incorrect payment.';
+        } else if (summary.advanceCredit > 0.009) {
+            statusTitle = isPT ? 'Adiantamento registrado' : 'Advance recorded';
+            statusDesc = isPT ? `${formatCurr(summary.advanceCredit)} foi pago antes da liberação final e será compensado pelos próximos recebimentos do cliente.` : `${formatCurr(summary.advanceCredit)} was paid before final release and will be offset by future client receipts.`;
+            statusChipClass = 'border-cyan-500/30 bg-cyan-500/10';
+            statusDotClass = 'bg-cyan-400';
+            statusTextClass = 'text-cyan-300';
+            nextValueLabel = isPT ? 'Adiantamento ativo' : 'Active advance';
+            nextValueDisplay = formatCurr(summary.advanceCredit);
+            helperStateText = isPT ? 'Este pagamento já entrou como despesa e ficará identificado nos logs como adiantamento de comissão.' : 'This payment is already included as an expense and is identified in the logs as a commission advance.';
         } else if (isSettled) {
             const commissionProgress = getCommissionProgressData(project, summary);
             const hasFutureRelease = commissionProgress.projectedRemaining > 0.009;
@@ -2021,7 +2276,7 @@
                             <p class="text-[10px] font-black uppercase tracking-widest text-cyan-300/80">${window.t('comm_remaining_projected')}</p>
                             ${renderInfoMiniButton(isPT ? 'Comissão potencial sobre saldo do cliente' : 'Potential commission on client balance', isPT ? 'Estimativa máxima sobre o saldo ainda não pago pelo cliente. Se a futura parcela for paga com cartão, o valor elegível será reduzido pela taxa de 3%.' : 'Maximum estimate on the client unpaid balance. If a future installment is paid by card, the eligible amount will be reduced by the 3% fee.')}
                         </div>
-                        <p class="text-xl font-black text-cyan-300">${formatCurr(summary.commissionFuturePotential)}</p>
+                        <p class="text-xl font-black text-cyan-300">${formatCurr(summary.futureCommissionAfterAdvance)}</p>
                     </div>
                     <div class="rounded-2xl border border-rose-500/20 bg-rose-500/10 p-4">
                         <div class="flex items-center justify-between gap-3 mb-1">
@@ -2032,15 +2287,16 @@
                     </div>
                 </div>
 
-                <div class="mt-4 rounded-[26px] border ${summary.overpaidAmount > 0.009 ? 'border-blue-500/30 bg-blue-500/10' : 'border-gold/20 bg-gold/10'} ${exactDuePulseClass} p-5">
+                <div ${summary.overpaidAmount <= 0.009 && ((summary.remainingToPay > 0.009 && state.userPerms.fin) || (summary.advanceCredit <= 0.009 && summary.advanceAvailable > 0.009 && state.isSuperAdmin)) ? `onclick="window.confirmCommissionPayment('${project.id}', '${summary.remainingToPay > 0.009 ? 'due' : 'advance'}')" role="button" tabindex="0"` : ''} class="mt-4 rounded-[26px] border ${summary.overpaidAmount > 0.009 ? 'border-blue-500/30 bg-blue-500/10' : (summary.advanceCredit > 0.009 ? 'border-cyan-500/30 bg-cyan-500/10' : 'border-gold/20 bg-gold/10')} ${exactDuePulseClass} p-5 ${summary.overpaidAmount <= 0.009 && ((summary.remainingToPay > 0.009 && state.userPerms.fin) || (summary.advanceCredit <= 0.009 && summary.advanceAvailable > 0.009 && state.isSuperAdmin)) ? 'cursor-pointer hover:-translate-y-0.5 hover:border-cyan-400/60 transition-all' : ''}">
                     <div class="flex flex-col gap-4">
                         <div class="flex flex-col lg:flex-row lg:items-end lg:justify-between gap-4">
                             <div class="min-w-0 flex-1">
                                 <div class="flex items-center gap-3 mb-2">
-                                    <p class="text-[10px] font-black uppercase tracking-widest ${summary.overpaidAmount > 0.009 ? 'text-blue-300' : 'text-gold'}">${window.t('pay_exact_due')}</p>
+                                    <p class="text-[10px] font-black uppercase tracking-widest ${summary.overpaidAmount > 0.009 ? 'text-blue-300' : (summary.advanceCredit > 0.009 ? 'text-cyan-300' : 'text-gold')}">${summary.remainingToPay > 0.009 ? window.t('pay_exact_due') : (summary.advanceCredit > 0.009 ? (isPT ? 'Adiantamento registrado' : 'Advance recorded') : (summary.advanceAvailable > 0.009 ? (isPT ? 'Adiantamento disponível' : 'Advance available') : window.t('pay_exact_due')))}</p>
                                     ${renderInfoMiniButton(isPT ? 'Saldo exato a pagar' : 'Exact amount due', exactDueInfo)}
                                 </div>
-                                <p class="text-3xl sm:text-4xl font-black ${summary.overpaidAmount > 0.009 ? 'text-blue-300' : 'text-gold'}">${summary.overpaidAmount > 0.009 ? '+ ' + formatCurr(summary.overpaidAmount) : formatCurr(summary.remainingToPay)}</p>
+                                <p class="text-3xl sm:text-4xl font-black ${summary.overpaidAmount > 0.009 ? 'text-blue-300' : (summary.advanceCredit > 0.009 ? 'text-cyan-300' : 'text-gold')}">${summary.overpaidAmount > 0.009 ? '+ ' + formatCurr(summary.overpaidAmount) : (summary.advanceCredit > 0.009 ? formatCurr(summary.advanceCredit) : formatCurr(summary.remainingToPay > 0.009 ? summary.remainingToPay : summary.advanceAvailable))}</p>
+                                ${summary.overpaidAmount <= 0.009 && ((summary.remainingToPay > 0.009 && state.userPerms.fin) || (summary.advanceCredit <= 0.009 && summary.advanceAvailable > 0.009 && state.isSuperAdmin)) ? `<p class="mt-2 text-[10px] font-black uppercase tracking-widest text-cyan-300/80">${isPT ? 'Clique para confirmar e registrar' : 'Click to confirm and record'}</p>` : ''}
                                 <p class="text-sm mt-2 ${statusTextClass}">${statusDesc}</p>
                             </div>
                             <div class="lg:max-w-[320px]">
@@ -2060,8 +2316,11 @@
         `;
 
         const paymentsHtml = hasPayments
-            ? state.editingPayments.payments.map((pay, i) => `
-                <div class="rounded-2xl border border-white/10 bg-white/5 p-4 shadow-inner">
+            ? state.editingPayments.payments.map((pay, i) => {
+                const isAdvance = isAdvanceCommissionPayment(pay);
+                return `
+                <div class="rounded-2xl border ${isAdvance ? 'border-cyan-500/25 bg-cyan-500/5' : 'border-white/10 bg-white/5'} p-4 shadow-inner">
+                    ${isAdvance ? `<div class="mb-3 flex items-center justify-between gap-3"><span class="inline-flex items-center gap-2 rounded-full border border-cyan-500/25 bg-cyan-500/10 px-3 py-1 text-[10px] font-black uppercase tracking-widest text-cyan-300"><i data-lucide="fast-forward" class="w-3.5 h-3.5"></i>${isPT ? 'Adiantamento' : 'Advance'}</span><span class="text-[10px] font-bold text-slate-500">${isPT ? 'Pago antes da liberação final' : 'Paid before final release'}</span></div>` : ''}
                     <div class="grid grid-cols-1 md:grid-cols-[1fr_1fr_auto] gap-4 items-end">
                         <label class="block">
                             <span class="text-[10px] font-black uppercase tracking-widest text-slate-500 mb-2 block">${isPT ? 'Data do pagamento' : 'Payment date'}</span>
@@ -2076,7 +2335,7 @@
                         </button>
                     </div>
                 </div>
-            `).join('')
+            `;}).join('')
             : `
                 <div class="rounded-2xl border border-dashed border-white/10 bg-black/20 px-5 py-8 text-center">
                     <p class="text-sm font-black uppercase tracking-widest text-slate-400 mb-2">${window.t('no_payments')}</p>
@@ -2084,10 +2343,13 @@
                 </div>
             `;
 
-        const canAddPayment = !noReleasedCommission && summary.remainingToPay > 0.009;
+        const canAddPayment = summary.remainingToPay > 0.009;
+        const canAdvancePayment = state.isSuperAdmin && summary.remainingToPay <= 0.009 && summary.advanceAvailable > 0.009 && summary.overpaidAmount <= 0.009;
         const addButton = canAddPayment
             ? `<button onclick="window.addNewPaymentToEdit()" class="w-full p-4 mt-2 rounded-2xl border border-gold/30 bg-gold/10 text-gold font-black uppercase tracking-widest hover:bg-gold/15 hover:border-gold/50 transition-all shadow-[0_12px_30px_-18px_rgba(251,191,36,0.7)]">+ ${window.t('pay_add_remaining')}</button>`
-            : `<div class="rounded-2xl border border-white/10 bg-white/5 px-5 py-4 text-center text-sm text-slate-400">${isSettled ? (summary.commRemainingProjected > 0.009 ? getCommissionContextNote(project, summary) : (isPT ? 'Nenhum pagamento adicional disponível. Comissão já quitada.' : 'No additional payment available. Commission is already settled.')) : noReleasedCommission ? (isPT ? 'Aguardando liberação de comissão para habilitar novos pagamentos.' : 'Waiting for commission release to enable new payments.') : summary.overpaidAmount > 0.009 ? (isPT ? 'Corrija o excesso lançado antes de adicionar um novo pagamento.' : 'Correct the over recorded amount before adding a new payment.') : (isPT ? 'Nenhum novo pagamento sugerido no momento.' : 'No new payment suggested at this time.')}</div>`;
+            : canAdvancePayment
+                ? `<button onclick="window.addAdvancePaymentToEdit()" class="w-full p-4 mt-2 rounded-2xl border border-cyan-500/30 bg-cyan-500/10 text-cyan-300 font-black uppercase tracking-widest hover:bg-cyan-500/15 hover:border-cyan-500/50 transition-all shadow-[0_12px_30px_-18px_rgba(34,211,238,0.55)]"><span class="inline-flex items-center gap-2"><i data-lucide="fast-forward" class="w-4 h-4"></i>${isPT ? `Registrar adiantamento de ${formatCurr(summary.advanceAvailable)}` : `Record advance of ${formatCurr(summary.advanceAvailable)}`}</span></button>`
+                : `<div class="rounded-2xl border border-white/10 bg-white/5 px-5 py-4 text-center text-sm text-slate-400">${summary.advanceCredit > 0.009 ? (isPT ? `${formatCurr(summary.advanceCredit)} já está registrado como adiantamento e será compensado pelas próximas liberações.` : `${formatCurr(summary.advanceCredit)} is recorded as an advance and will be offset by future releases.`) : isSettled ? (summary.futureCommissionAfterAdvance > 0.009 ? getCommissionContextNote(project, summary) : (isPT ? 'Nenhum pagamento adicional disponível. Comissão já quitada.' : 'No additional payment available. Commission is already settled.')) : noReleasedCommission ? (isPT ? 'Aguardando liberação de comissão para habilitar novos pagamentos.' : 'Waiting for commission release to enable new payments.') : summary.overpaidAmount > 0.009 ? (isPT ? 'Corrija o excesso lançado antes de adicionar um novo pagamento.' : 'Correct the over recorded amount before adding a new payment.') : (isPT ? 'Nenhum novo pagamento sugerido no momento.' : 'No new payment suggested at this time.')}</div>`;
 
         container.innerHTML = paymentsHtml + `<div class="space-y-4 mt-4">${addButton}</div>`;
         try { lucide.createIcons(); } catch {}
@@ -2108,33 +2370,145 @@
     window.addNewPaymentToEdit = () => {
         if (!state.editingPayments) return;
         const summary = getPaymentDraftSummary(state.editingPayments.projectId, state.editingPayments.payments);
-        if (!summary || summary.commLiberada <= 0.009 || summary.remainingToPay <= 0.009) {
+        if (!summary || summary.remainingToPay <= 0.009) {
             window.renderPaymentEditList();
             return;
         }
-        state.editingPayments.payments.push({ id: crypto.randomUUID(), data: new Date().toISOString().split('T')[0], valor: summary.remainingToPay, adicionadoPor: state.user?.email || '', criadoEm: new Date().toISOString() });
+        state.editingPayments.payments.push({ id: crypto.randomUUID(), data: new Date().toISOString().split('T')[0], valor: summary.remainingToPay, tipo: 'comissao', isAdvance: false, adicionadoPor: state.user?.email || '', criadoEm: new Date().toISOString() });
         window.renderPaymentEditList();
     };
+
+    window.addAdvancePaymentToEdit = () => {
+        if (!state.isSuperAdmin || !state.editingPayments) return;
+        const summary = getPaymentDraftSummary(state.editingPayments.projectId, state.editingPayments.payments);
+        const project = state.projects.find(x => x.id === state.editingPayments.projectId);
+        if (!summary || !project || summary.advanceAvailable <= 0.009 || summary.remainingToPay > 0.009 || summary.overpaidAmount > 0.009) {
+            window.renderPaymentEditList();
+            return;
+        }
+        const sellerName = getUserDisplayName(project?.vendedor, state.lang === 'pt' ? 'Vendedor' : 'Seller');
+        const message = state.lang === 'pt'
+            ? `Confirmar o adiantamento de ${formatCurr(summary.advanceAvailable)} para ${sellerName}, pela ${getCompanyDisplayName(project?.empresa)}? O valor será pago antes da liberação final, entrará como despesa e será compensado pelos próximos recebimentos do cliente. Se a futura parcela for paga com cartão, poderá existir ajuste pela taxa de 3%.`
+            : `Confirm the ${formatCurr(summary.advanceAvailable)} advance to ${sellerName} from ${getCompanyDisplayName(project?.empresa)}? It will be paid before final release, recorded as an expense and offset by future client receipts. If a future installment is paid by card, a 3% fee adjustment may be required.`;
+        window.showModal(state.lang === 'pt' ? 'Confirmar adiantamento' : 'Confirm advance', message, 'confirm', () => {
+            state.editingPayments.payments.push({
+                id: crypto.randomUUID(),
+                data: new Date().toISOString().split('T')[0],
+                valor: summary.advanceAvailable,
+                tipo: 'adiantamento',
+                isAdvance: true,
+                adiantado: true,
+                commissionEligibleAtPayment: roundMoney(summary.commLiberada),
+                clientOutstandingAtPayment: roundMoney(summary.clientOutstanding),
+                adicionadoPor: state.user?.email || '',
+                criadoEm: new Date().toISOString()
+            });
+            window.renderPaymentEditList();
+        });
+    };
+
     window.saveEditedPayments = async () => {
         if (!state.editingPayments) return;
         const project = state.projects.find(x => x.id === state.editingPayments.projectId);
         const summary = getPaymentDraftSummary(state.editingPayments.projectId, state.editingPayments.payments);
-        if (summary && summary.draftTotalPaid > summary.commLiberada + 0.009) {
-            window.showModal(window.t('pay_block_over_title'), window.t('pay_block_over_msg'), 'error');
+        if (!project || !summary) return;
+        if (summary.draftTotalPaid > summary.projectedCommissionCap + 0.009) {
+            window.showModal(window.t('pay_block_over_title'), state.lang === 'pt' ? `O total lançado ultrapassa a comissão máxima estimada do projeto (${formatCurr(summary.projectedCommissionCap)}).` : `The recorded total exceeds the project's estimated maximum commission (${formatCurr(summary.projectedCommissionCap)}).`, 'error');
             return;
         }
-        if (!project) return;
+        const excessOverReleased = roundMoney(Math.max(0, summary.draftTotalPaid - summary.commLiberada));
+        if (excessOverReleased > 0.009) {
+            if (!state.isSuperAdmin) {
+                window.showModal(window.t('modal_access_denied'), state.lang === 'pt' ? 'Somente o Super Admin pode registrar pagamento antes da liberação da comissão.' : 'Only the Super Admin can record payment before commission release.', 'error');
+                return;
+            }
+            if (summary.declaredAdvanceTotal + 0.009 < excessOverReleased) {
+                window.showModal(state.lang === 'pt' ? 'Identificação obrigatória' : 'Identification required', state.lang === 'pt' ? 'O valor pago antes da liberação precisa ser criado pelo botão Registrar adiantamento para ficar corretamente identificado nos logs e relatórios.' : 'The amount paid before release must be created with the Record advance button so it is correctly identified in logs and reports.', 'error');
+                return;
+            }
+        }
         const { normalizedPayments, syncedExpenses } = buildSyncedCommissionExpensePayload(project, state.editingPayments.payments);
+        const advanceTotal = roundMoney(normalizedPayments.filter(pay => isAdvanceCommissionPayment(pay)).reduce((sum, pay) => sum + Number(pay?.valor || 0), 0));
         try {
             await updateDoc(doc(db, 'artifacts', appId, 'public', 'data', 'projects', state.editingPayments.projectId), {
                 pagamentosEfetuados: normalizedPayments,
                 despesas: syncedExpenses
             });
-            logAccess(state.user?.email, `Salvou pagamentos do vendedor: ${getProjectDisplayName(project)}`, getProjectLogMeta(project));
+            const logMessage = advanceTotal > 0.009
+                ? `Salvou pagamentos do vendedor com adiantamento de ${formatCurr(advanceTotal)}: ${getProjectDisplayName(project)}`
+                : `Salvou pagamentos do vendedor: ${getProjectDisplayName(project)}`;
+            logAccess(state.user?.email, logMessage, { ...getProjectLogMeta(project), paymentType: advanceTotal > 0.009 ? 'commission_advance' : 'commission_payment', advanceAmount: advanceTotal });
             window.closeEditPaymentModal();
         } catch (e) {
             window.showModal(window.t('error'), 'Erro ao salvar pagamentos: ' + e.message, 'error');
         }
+    };
+
+    window.confirmCommissionPayment = (projectId, mode = 'auto') => {
+        const project = state.projects.find(x => x.id === projectId);
+        if (!project || !state.userPerms.fin) return;
+        const usesDraft = state.editingPayments?.projectId === projectId;
+        const summary = usesDraft
+            ? getPaymentDraftSummary(projectId, state.editingPayments.payments)
+            : getPaymentDraftSummary(projectId, project?.pagamentosEfetuados || []);
+        if (!summary) return;
+        const dueNow = roundMoney(Number(summary.remainingToPay || 0));
+        const advanceAvailable = roundMoney(Number(summary.advanceAvailable || 0));
+        const shouldAdvance = mode === 'advance' || (mode === 'auto' && dueNow <= 0.009 && advanceAvailable > 0.009);
+        const amount = shouldAdvance ? advanceAvailable : dueNow;
+        if (amount <= 0.009) {
+            window.showModal(state.lang === 'pt' ? 'Nenhum valor disponível' : 'No amount available', state.lang === 'pt' ? 'Não existe valor disponível para registrar neste momento.' : 'There is no amount available to record at this time.', 'info');
+            return;
+        }
+        if (shouldAdvance && !state.isSuperAdmin) {
+            window.showModal(window.t('modal_access_denied'), state.lang === 'pt' ? 'Somente o Super Admin pode antecipar comissão antes do recebimento do cliente.' : 'Only the Super Admin can advance commission before client payment.', 'error');
+            return;
+        }
+        const sellerName = getUserDisplayName(project?.vendedor, state.lang === 'pt' ? 'Vendedor' : 'Seller');
+        const companyName = getCompanyDisplayName(project?.empresa);
+        const title = shouldAdvance ? (state.lang === 'pt' ? 'Confirmar adiantamento' : 'Confirm advance') : (state.lang === 'pt' ? 'Confirmar pagamento' : 'Confirm payment');
+        const message = shouldAdvance
+            ? (state.lang === 'pt'
+                ? `Registrar ${formatCurr(amount)} como adiantamento de comissão para ${sellerName}, com saída da ${companyName}? O lançamento será feito com a data de hoje, entrará nas despesas e será compensado pelas próximas comissões liberadas. Se o cliente pagar a futura parcela com cartão, o sistema poderá indicar ajuste pela taxa de 3%.`
+                : `Record ${formatCurr(amount)} as a commission advance to ${sellerName}, paid by ${companyName}? It will use today's date, be included in expenses and offset future released commission. If the client later pays by card, the system may indicate a 3% fee adjustment.`)
+            : (state.lang === 'pt'
+                ? `Registrar o pagamento de ${formatCurr(amount)} para ${sellerName}, com saída da ${companyName}, usando a data de hoje?`
+                : `Record a ${formatCurr(amount)} payment to ${sellerName}, paid by ${companyName}, using today's date?`);
+        window.showModal(title, message, 'confirm', async () => {
+            try {
+                const payment = {
+                    id: crypto.randomUUID(),
+                    data: new Date().toISOString().split('T')[0],
+                    valor: amount,
+                    tipo: shouldAdvance ? 'adiantamento' : 'comissao',
+                    isAdvance: shouldAdvance,
+                    adiantado: shouldAdvance,
+                    commissionEligibleAtPayment: roundMoney(summary.commLiberada || 0),
+                    clientOutstandingAtPayment: roundMoney(summary.clientOutstanding || 0),
+                    adicionadoPor: state.user?.email || '',
+                    criadoEm: new Date().toISOString(),
+                    origem: 'quick_commission_action'
+                };
+                const currentPayments = usesDraft ? normalizePaymentEntries(state.editingPayments.payments || []) : normalizePaymentEntries(project?.pagamentosEfetuados || []);
+                const updatedPayments = [...currentPayments, payment];
+                const { normalizedPayments, syncedExpenses } = buildSyncedCommissionExpensePayload(project, updatedPayments);
+                await updateDoc(doc(db, 'artifacts', appId, 'public', 'data', 'projects', projectId), {
+                    pagamentosEfetuados: normalizedPayments,
+                    despesas: syncedExpenses
+                });
+                logAccess(state.user?.email,
+                    shouldAdvance
+                        ? `Registrou adiantamento de comissão de ${formatCurr(amount)} para ${sellerName}: ${getProjectDisplayName(project)}`
+                        : `Registrou pagamento de comissão de ${formatCurr(amount)} para ${sellerName}: ${getProjectDisplayName(project)}`,
+                    { ...getProjectLogMeta(project), paymentType: shouldAdvance ? 'commission_advance' : 'commission_payment', amount, sellerName, payingCompany: companyName }
+                );
+                window.closeEditPaymentModal();
+                setTimeout(() => window.showModal(state.lang === 'pt' ? 'Pagamento registrado' : 'Payment recorded', shouldAdvance ? (state.lang === 'pt' ? `${formatCurr(amount)} foi registrado como adiantamento de comissão.` : `${formatCurr(amount)} was recorded as a commission advance.`) : (state.lang === 'pt' ? `${formatCurr(amount)} foi registrado como pagamento de comissão.` : `${formatCurr(amount)} was recorded as a commission payment.`), 'info'), 180);
+            } catch (error) {
+                console.error('Erro ao registrar comissão:', error);
+                setTimeout(() => window.showModal(window.t('error'), (state.lang === 'pt' ? 'Não foi possível registrar o pagamento: ' : 'Unable to record payment: ') + (error?.message || error), 'error'), 180);
+            }
+        });
     };
 
     window.openEditRecModal = (projectId) => {
@@ -2380,17 +2754,6 @@
         window.scrollTo({ top: 0, behavior: 'smooth' });
     };
 
-    window.openProjectFromReport = (projectId, moduleName = 'commissions') => {
-        const project = state.projects.find(item => item.id === projectId);
-        if (!project) return;
-        window.showView('projects');
-        state.focusedProject = projectId;
-        state.activeModule = moduleName;
-        logAccess(state.user?.email, `Abriu pelo relatório: ${getProjectDisplayName(project)}`, getProjectLogMeta(project));
-        window.renderProjects();
-        window.scrollTo({ top: 0, behavior: 'smooth' });
-    };
-
     window.closeProjectModule = () => {
         state.activeModule = null; 
         window.renderProjects();
@@ -2468,6 +2831,23 @@
             .sheet-list-value { font-weight: 900; white-space: nowrap; }
             .sheet-note { margin-top: 10px; padding: 10px 12px; border-radius: 12px; background: #f8fafc; border: 1px solid #e2e8f0; font-size: 11px; line-height: 1.45; color: #475569; }
             .sheet-footer { margin-top: 10px; padding-top: 8px; border-top: 1px solid #cbd5e1; font-size: 10px; color: #64748b; display: flex; justify-content: space-between; gap: 10px; }
+            .sheet-payment-history { margin-top: 12px; }
+            .sheet-payment-summary { display: flex; align-items: center; justify-content: space-between; gap: 12px; margin-bottom: 8px; padding: 8px 10px; border: 1px solid #e2e8f0; border-radius: 10px; background: #f8fafc; }
+            .sheet-payment-summary-text { font-size: 10px; line-height: 1.35; color: #475569; font-weight: 700; }
+            .sheet-payment-summary-total { font-size: 13px; font-weight: 900; color: #047857; white-space: nowrap; }
+            .sheet-payment-table { width: 100%; border-collapse: separate; border-spacing: 0; table-layout: fixed; }
+            .sheet-payment-table th { padding: 7px 8px; border-top: 1px solid #e2e8f0; border-bottom: 1px solid #cbd5e1; background: #f8fafc; color: #64748b; font-size: 8px; font-weight: 900; text-transform: uppercase; letter-spacing: 0.12em; text-align: left; }
+            .sheet-payment-table td { padding: 8px; border-bottom: 1px solid #e2e8f0; font-size: 10px; color: #334155; vertical-align: middle; }
+            .sheet-payment-table tbody tr:last-child td { border-bottom: 0; }
+            .sheet-payment-table .col-seq { width: 7%; text-align: center; }
+            .sheet-payment-table .col-date { width: 20%; }
+            .sheet-payment-table .col-type { width: 25%; }
+            .sheet-payment-table .col-value, .sheet-payment-table .col-running { width: 24%; text-align: right; font-variant-numeric: tabular-nums; white-space: nowrap; }
+            .sheet-payment-table .payment-value { font-weight: 900; color: #0f172a; }
+            .sheet-payment-table .payment-running { font-weight: 900; color: #047857; }
+            .sheet-payment-type { display: inline-block; padding: 3px 7px; border-radius: 999px; border: 1px solid #cbd5e1; background: #ffffff; color: #475569; font-size: 8px; font-weight: 900; text-transform: uppercase; letter-spacing: 0.08em; }
+            .sheet-payment-type.advance { border-color: #67e8f9; background: #ecfeff; color: #0e7490; }
+            .sheet-payment-empty { padding: 14px; text-align: center; color: #64748b; font-size: 10px; font-style: italic; }
             @media print {
                 html, body { width: 100%; }
                 .project-print-sheet { margin: 0; }
@@ -2512,29 +2892,6 @@
         window.safeRenderReport();
     };
 
-    function updateTeamFormMode(isEditing = false) {
-        const button = document.getElementById('btn-save-team');
-        if (button) button.textContent = isEditing
-            ? (state.lang === 'pt' ? 'Salvar alterações' : 'Save changes')
-            : (state.lang === 'pt' ? 'Criar vendedor' : 'Create seller');
-    }
-
-    window.startNewTeamMember = () => {
-        const form = document.getElementById('team-form');
-        if (!form) return;
-        form.reset();
-        document.getElementById('t-id').value = '';
-        document.getElementById('t-name').value = '';
-        document.getElementById('t-email').value = '';
-        document.getElementById('t-pass').value = '';
-        document.querySelectorAll('#team-form .perm-checkbox').forEach(box => { box.checked = false; });
-        document.getElementById('p_smart').checked = true;
-        document.getElementById('p_hvac').checked = true;
-        document.getElementById('p_tab_proj').checked = true;
-        updateTeamFormMode(false);
-        document.getElementById('t-name').focus();
-    };
-
     window.editTeamMember = (id, name, email, password, permObj) => {
         document.getElementById('t-id').value = id; 
         document.getElementById('t-name').value = name || ''; 
@@ -2549,7 +2906,6 @@
         document.getElementById('p_tab_rep').checked = permObj.tab_rep;
         document.getElementById('p_fin').checked = permObj.fin;
         document.getElementById('p_costs').checked = permObj.costs;
-        updateTeamFormMode(true);
 
         window.scrollTo({ top: 0, behavior: 'smooth' });
     };
@@ -2580,122 +2936,6 @@
         });
     };
 
-    window.quickEditBudget = (projectId) => {
-        if (!state.userPerms.costs) return;
-        const project = state.projects.find(item => item.id === projectId);
-        if (!project) return;
-        document.getElementById('custom-modal-title').innerText = state.lang === 'pt' ? 'Editar budget' : 'Edit budget';
-        document.getElementById('custom-modal-icon').innerHTML = '<i data-lucide="calculator" class="w-10 h-10 text-cyan-400"></i>';
-        document.getElementById('custom-modal-msg').innerHTML = `<label class="block text-left text-[10px] font-black uppercase tracking-widest text-slate-500 mb-2">Budget</label><div class="relative"><span class="absolute left-4 top-1/2 -translate-y-1/2 font-bold text-cyan-400">$</span><input id="quick-budget-input" type="number" min="0" step="0.01" value="${Number(project.orcamento || 0) || ''}" class="modern-input !pl-8"></div>`;
-        document.getElementById('custom-modal-buttons').innerHTML = `<button type="button" onclick="window.closeCustomModal()" class="flex-1 px-4 py-3 bg-slate-700 text-white rounded-xl font-bold text-xs uppercase">${window.t('cancel')}</button><button type="button" onclick="window.saveQuickBudget('${projectId}')" class="flex-1 px-4 py-3 bg-cyan-600 text-white rounded-xl font-black text-xs uppercase">${state.lang === 'pt' ? 'Salvar' : 'Save'}</button>`;
-        document.getElementById('custom-modal').classList.add('active');
-        setTimeout(() => document.getElementById('quick-budget-input')?.focus(), 50);
-        try { lucide.createIcons(); } catch {}
-    };
-
-    window.saveQuickBudget = async (projectId) => {
-        const value = Number(document.getElementById('quick-budget-input')?.value || 0);
-        if (!Number.isFinite(value) || value < 0) return;
-        const project = state.projects.find(item => item.id === projectId);
-        await updateDoc(doc(db, 'artifacts', appId, 'public', 'data', 'projects', projectId), { orcamento: roundMoney(value), updatedAt: serverTimestamp() });
-        logAccess(state.user?.email, `Atualizou budget para ${formatCurr(value)}: ${getProjectDisplayName(project)}`, getProjectLogMeta(project));
-        window.closeCustomModal();
-    };
-
-    window.quickEditObservation = (projectId) => {
-        if (!state.userPerms.tab_proj) return;
-        const project = state.projects.find(item => item.id === projectId);
-        if (!project) return;
-        document.getElementById('custom-modal-title').innerText = state.lang === 'pt' ? 'Editar observação' : 'Edit note';
-        document.getElementById('custom-modal-icon').innerHTML = '<i data-lucide="message-square-text" class="w-10 h-10 text-amber-400"></i>';
-        document.getElementById('custom-modal-msg').innerHTML = `<label class="block text-left text-[10px] font-black uppercase tracking-widest text-slate-500 mb-2">${state.lang === 'pt' ? 'Observação da obra' : 'Project note'}</label><textarea id="quick-observation-input" maxlength="180" rows="3" class="modern-input resize-none" placeholder="${state.lang === 'pt' ? 'Informe uma observação curta' : 'Enter a short note'}">${escapeInlineHtml(project.observacao || '')}</textarea><p class="text-right text-[10px] text-slate-500 mt-2">${state.lang === 'pt' ? 'Máximo 180 caracteres' : 'Maximum 180 characters'}</p>`;
-        document.getElementById('custom-modal-buttons').innerHTML = `<button type="button" onclick="window.closeCustomModal()" class="flex-1 px-4 py-3 bg-slate-700 text-white rounded-xl font-bold text-xs uppercase">${window.t('cancel')}</button><button type="button" onclick="window.saveQuickObservation('${projectId}')" class="flex-1 px-4 py-3 bg-amber-500 text-slate-950 rounded-xl font-black text-xs uppercase">${state.lang === 'pt' ? 'Salvar' : 'Save'}</button>`;
-        document.getElementById('custom-modal').classList.add('active');
-        setTimeout(() => document.getElementById('quick-observation-input')?.focus(), 50);
-        try { lucide.createIcons(); } catch {}
-    };
-
-    window.saveQuickObservation = async (projectId) => {
-        const value = String(document.getElementById('quick-observation-input')?.value || '').trim().slice(0, 180);
-        const project = state.projects.find(item => item.id === projectId);
-        if (!project) return;
-        await updateDoc(doc(db, 'artifacts', appId, 'public', 'data', 'projects', projectId), { observacao: value, updatedAt: serverTimestamp() });
-        logAccess(state.user?.email, `Atualizou observação: ${getProjectDisplayName(project)}`, getProjectLogMeta(project));
-        window.closeCustomModal();
-    };
-
-    function getProjectReceiptMethodSummary(project) {
-        const receipts = Array.isArray(project?.recebimentos) ? project.recebimentos : [];
-        const methods = [...new Set(receipts.map(receipt => getReceiptEffectiveMethod(receipt)).filter(Boolean))];
-        if (!methods.length) return state.lang === 'pt' ? 'Sem recebimentos' : 'No receipts';
-        return methods.map(method => getReceiptMethodBadge(method).label).join(' / ');
-    }
-
-    window.quickEditProjectSection = (projectId, section) => {
-        if (!state.userPerms.tab_proj) return;
-        const project = state.projects.find(item => item.id === projectId);
-        if (!project) return;
-        const isPT = state.lang === 'pt';
-        const sellerOptions = [...new Map(state.team
-            .filter(user => user?.email)
-            .map(user => [user.email, { email: user.email, name: getUserDisplayName(user.email, user.name || user.email) }])).values()];
-        if (project.vendedor && !sellerOptions.some(item => item.email === project.vendedor)) sellerOptions.push({ email: project.vendedor, name: getUserDisplayName(project.vendedor, project.vendedor) });
-        let title = isPT ? 'Editar obra' : 'Edit project';
-        let fields = '';
-        if (section === 'identity') {
-            title = isPT ? 'Identificação da obra' : 'Project identity';
-            fields = `<label class="block text-left"><span class="quick-edit-label">${isPT ? 'Cliente' : 'Client'}</span><input id="quick-client" class="modern-input" value="${escapeInlineHtml(project.cliente || '')}"></label><label class="block text-left mt-3"><span class="quick-edit-label">${isPT ? 'Projeto / referência' : 'Project / reference'}</span><input id="quick-project-name" class="modern-input" value="${escapeInlineHtml(project.nomeProjeto || '')}"></label><label class="block text-left mt-3"><span class="quick-edit-label">${isPT ? 'Endereço' : 'Address'}</span><input id="quick-address" class="modern-input" value="${escapeInlineHtml(project.endereco || '')}"></label>`;
-        } else if (section === 'seller') {
-            title = isPT ? 'Alterar vendedor' : 'Change seller';
-            fields = `<label class="block text-left"><span class="quick-edit-label">${isPT ? 'Vendedor' : 'Seller'}</span><select id="quick-seller" class="modern-input !pr-10">${sellerOptions.map(item => `<option value="${escapeInlineHtml(item.email)}" ${item.email === project.vendedor ? 'selected' : ''}>${escapeInlineHtml(item.name)}</option>`).join('')}</select></label>`;
-        } else if (section === 'status') {
-            title = isPT ? 'Alterar status' : 'Change status';
-            fields = `<label class="block text-left"><span class="quick-edit-label">Status</span><select id="quick-status" class="modern-input !pr-10"><option value="✅ Aprovado" ${project.status === '✅ Aprovado' ? 'selected' : ''}>${window.t('status_appr')}</option><option value="Aguardando Início" ${project.status === 'Aguardando Início' ? 'selected' : ''}>${window.t('status_wait')}</option><option value="Em Execução" ${project.status === 'Em Execução' ? 'selected' : ''}>${window.t('status_exec')}</option><option value="Finalizado" ${project.status === 'Finalizado' ? 'selected' : ''}>${window.t('status_fin')}</option></select></label>`;
-        } else if (section === 'documents') {
-            title = isPT ? 'Invoice e proposta' : 'Invoice and proposal';
-            fields = `<div class="grid grid-cols-2 gap-3"><label class="block text-left"><span class="quick-edit-label">Invoice</span><input id="quick-invoice" class="modern-input" value="${escapeInlineHtml(project.numeroInvoice || '')}"></label><label class="block text-left"><span class="quick-edit-label">${isPT ? 'Proposta' : 'Proposal'}</span><input id="quick-proposal" class="modern-input" value="${escapeInlineHtml(project.numeroProposta || '')}"></label></div>`;
-        } else if (section === 'schedule') {
-            title = isPT ? 'Datas da obra' : 'Project dates';
-            fields = `<div class="grid grid-cols-2 gap-3"><label class="block text-left"><span class="quick-edit-label">${isPT ? 'Início' : 'Start'}</span><input id="quick-start" type="date" class="modern-input" value="${project.dataInicio || ''}"></label><label class="block text-left"><span class="quick-edit-label">${isPT ? 'Entrega' : 'Due date'}</span><input id="quick-end" type="date" class="modern-input" value="${project.dataEntrega || ''}"></label></div>`;
-        } else if (section === 'contract') {
-            title = isPT ? 'Valor do contrato' : 'Contract value';
-            fields = `<label class="block text-left"><span class="quick-edit-label">${isPT ? 'Valor bruto' : 'Gross value'}</span><div class="relative"><span class="absolute left-4 top-1/2 -translate-y-1/2 font-bold text-gold">$</span><input id="quick-contract" type="number" min="0" step="0.01" class="modern-input !pl-8" value="${Number(project.valorTotal || 0)}"></div></label>`;
-        } else if (section === 'commission') {
-            title = isPT ? 'Comissão e recebimentos' : 'Commission and receipts';
-            fields = `<div class="rounded-2xl border border-white/10 bg-white/5 p-4 text-left mb-4"><span class="quick-edit-label">${isPT ? 'Formas já recebidas' : 'Received methods'}</span><p class="text-base font-black text-slate-200">${escapeInlineHtml(getProjectReceiptMethodSummary(project))}</p><p class="text-xs text-slate-500 mt-2">${isPT ? 'A forma é definida individualmente ao registrar cada parcela.' : 'The method is selected for each receipt.'}</p>${state.userPerms.fin ? `<button type="button" onclick="window.openReceiptsFromQuickEdit('${projectId}')" class="mt-4 w-full inline-flex items-center justify-center gap-2 rounded-xl border border-emerald-500/30 bg-emerald-500/10 px-4 py-3 text-[10px] font-black uppercase tracking-widest text-emerald-300 hover:bg-emerald-500/20"><i data-lucide="wallet-cards" class="w-4 h-4"></i>${isPT ? 'Gerenciar parcelas recebidas' : 'Manage received installments'}</button>` : ''}</div><label class="block text-left"><span class="quick-edit-label">${isPT ? 'Comissão do vendedor' : 'Seller commission'}</span><div class="relative"><input id="quick-commission" type="number" min="0" max="100" step="0.01" class="modern-input !pr-10" value="${Number(project.percComissao || 0)}"><span class="absolute right-4 top-1/2 -translate-y-1/2 font-bold text-gold">%</span></div></label>`;
-        }
-        document.getElementById('custom-modal-title').innerText = title;
-        document.getElementById('custom-modal-icon').innerHTML = '<i data-lucide="pencil" class="w-10 h-10 text-gold"></i>';
-        document.getElementById('custom-modal-msg').innerHTML = fields;
-        document.getElementById('custom-modal-buttons').innerHTML = `<button type="button" onclick="window.closeCustomModal()" class="flex-1 px-4 py-3 bg-slate-700 text-white rounded-xl font-bold text-xs uppercase">${window.t('cancel')}</button><button type="button" onclick="window.saveQuickProjectSection('${projectId}', '${section}')" class="flex-1 px-4 py-3 bg-gold text-slate-950 rounded-xl font-black text-xs uppercase">${isPT ? 'Salvar' : 'Save'}</button>`;
-        document.getElementById('custom-modal').classList.add('active');
-        try { lucide.createIcons(); } catch {}
-    };
-
-    window.saveQuickProjectSection = async (projectId, section) => {
-        const project = state.projects.find(item => item.id === projectId);
-        if (!project) return;
-        const payload = { updatedAt: serverTimestamp() };
-        if (section === 'identity') Object.assign(payload, { cliente: document.getElementById('quick-client').value.trim(), nomeProjeto: document.getElementById('quick-project-name').value.trim(), endereco: document.getElementById('quick-address').value.trim() });
-        if (section === 'seller') payload.vendedor = document.getElementById('quick-seller').value;
-        if (section === 'status') {
-            payload.status = document.getElementById('quick-status').value;
-            payload.dataConclusao = payload.status === 'Finalizado' ? (project.dataConclusao || new Date().toISOString().split('T')[0]) : '';
-        }
-        if (section === 'documents') Object.assign(payload, { numeroInvoice: document.getElementById('quick-invoice').value.trim(), numeroProposta: document.getElementById('quick-proposal').value.trim() });
-        if (section === 'schedule') Object.assign(payload, { dataInicio: document.getElementById('quick-start').value, dataEntrega: document.getElementById('quick-end').value });
-        if (section === 'contract') payload.valorTotal = roundMoney(document.getElementById('quick-contract').value || 0);
-        if (section === 'commission') payload.percComissao = Number(document.getElementById('quick-commission').value || 0);
-        await updateDoc(doc(db, 'artifacts', appId, 'public', 'data', 'projects', projectId), payload);
-        logAccess(state.user?.email, `Edição rápida (${section}): ${getProjectDisplayName(project)}`, getProjectLogMeta(project));
-        window.closeCustomModal();
-    };
-
-    window.openReceiptsFromQuickEdit = (projectId) => {
-        window.closeCustomModal();
-        window.openEditRecModal(projectId);
-    };
-
     window.editP = (id) => {
         const p = state.projects.find(x => x.id === id); if (!p) return;
         renderVendedores(); const vendSelect = document.getElementById('f-vendedor');
@@ -2713,7 +2953,6 @@
         document.getElementById('f-cliente').value = p.cliente || ''; document.getElementById('f-project-name').value = p.nomeProjeto || ''; document.getElementById('f-address').value = p.endereco || ''; document.getElementById('f-vendedor').value = p.vendedor || ''; document.getElementById('f-valor').value = p.valorTotal ?? ''; document.getElementById('f-orcamento').value = p.orcamento ?? ''; 
         document.getElementById('f-comm').value = p.percComissao ?? 5; document.getElementById('f-metodo').value = p.metodo || 'Zelle'; document.getElementById('f-inicio').value = p.dataInicio || ''; document.getElementById('f-entrega').value = p.dataEntrega || ''; 
         document.getElementById('f-status').value = p.status || '✅ Aprovado';
-        document.getElementById('f-observacao').value = p.observacao || '';
         window.showView('new');
     };
 
@@ -2765,10 +3004,9 @@
         const valorTotal = Number(p?.valorTotal || 0);
         const orcamento = Number(p?.orcamento || 0);
 
-        // The expected contract method is informational only. Card fees are applied
-        // exclusively to each receipt whose actual method is credit card.
-        const globalIsCC = false;
-        const baseProjetada = valorTotal;
+        const globalMetodo = String(p?.metodo || '');
+        const globalIsCC = isCardMethod(globalMetodo);
+        const baseProjetada = globalIsCC ? valorTotal * 0.97 : valorTotal;
         const commTotalProjetada = roundMoney(baseProjetada * percComissao);
 
         const recebimentos = Array.isArray(p?.recebimentos) ? p.recebimentos : [];
@@ -2798,17 +3036,25 @@
         const balance = roundMoney(commLiberada - totalPaid);
         const clientOutstanding = roundMoney(Math.max(0, valorTotal - totalRecebido));
         const commissionFuturePotential = roundMoney(Math.max(0, clientOutstanding * percComissao));
+        const projectedCommissionCap = roundMoney(commLiberada + commissionFuturePotential);
+        const dueNow = roundMoney(Math.max(0, balance));
+        const advanceCredit = roundMoney(Math.max(0, Math.min(totalPaid - commLiberada, commissionFuturePotential)));
+        const overpaidBeyondProjected = roundMoney(Math.max(0, totalPaid - projectedCommissionCap));
+        const advanceAvailable = roundMoney(Math.max(0, projectedCommissionCap - totalPaid));
+        const futureCommissionAfterAdvance = roundMoney(Math.max(0, commissionFuturePotential - advanceCredit));
+        const advancePaidTotal = roundMoney(pays.filter(pay => isAdvanceCommissionPayment(pay)).reduce((sum, pay) => sum + Number(pay?.valor || 0), 0));
         // Legacy field kept for compatibility, but now represents only genuine future commission
         // tied to unpaid client balance (not card-fee deductions).
         const commRemainingProjected = commissionFuturePotential;
         
         let statusColor = "bg-red-500";
-        if (balance < 0) statusColor = "bg-blue-500"; 
+        if (overpaidBeyondProjected > 0.009) statusColor = "bg-blue-500";
+        else if (advanceCredit > 0.009) statusColor = "bg-cyan-500";
         else if (balance === 0 && commLiberada > 0) statusColor = "bg-emerald-500";
         else if (totalPaid > 0) statusColor = "bg-orange-500"; 
 
         const despesas = getProjectExpensesForMetrics({ ...p, pagamentosEfetuados: pays });
-        let totalDespesas = 0; let gastosPorCategoria = { 'Materiais': 0, 'Mão-de-obra': 0, 'Equipamentos': 0, 'Licenças': 0, 'Outros': 0, 'Comissões': 0, 'Taxas de cartão': 0, 'Card fees': 0 };
+        let totalDespesas = 0; let gastosPorCategoria = { 'Materiais': 0, 'Mão-de-obra': 0, 'Equipamentos': 0, 'Licenças': 0, 'Outros': 0, 'Comissões': 0 };
         
         despesas.forEach(d => {
             const val = Number(d.valor || 0); totalDespesas += val;
@@ -2821,7 +3067,7 @@
         const budgetRemaining = roundMoney((Number(orcamento) || 0) - totalDespesas);
         const budgetSpentPerc = Number(orcamento) > 0 ? (totalDespesas / Number(orcamento)) * 100 : 0;
 
-        return { baseProjetada, commTotalProjetada, commGrossContract, commGrossOnReceived, commissionCardFeeReduction, commissionFuturePotential, totalRecebido, commLiberada, totalPaid, balance, clientOutstanding, commRemainingProjected, statusColor, globalIsCC, orcamento, totalDespesas, lucroBruto, margemLucro, gastosPorCategoria, budgetRemaining, budgetSpentPerc, despesasMetricas: despesas };
+        return { baseProjetada, commTotalProjetada, commGrossContract, commGrossOnReceived, commissionCardFeeReduction, commissionFuturePotential, projectedCommissionCap, futureCommissionAfterAdvance, advanceAvailable, advanceCredit, advancePaidTotal, overpaidBeyondProjected, dueNow, totalRecebido, commLiberada, totalPaid, balance, clientOutstanding, commRemainingProjected, statusColor, globalIsCC, orcamento, totalDespesas, lucroBruto, margemLucro, gastosPorCategoria, budgetRemaining, budgetSpentPerc, despesasMetricas: despesas };
     }
 
     window.renderProjects = () => {
@@ -2842,7 +3088,7 @@
             const matchCompany = (p.empresa === 'Smart Home' && state.userPerms.smart) || (p.empresa === 'HVAC' && state.userPerms.hvac);
             const matchSelectedTab = state.company === 'Ambas' || p.empresa === state.company;
             const matchUser = canViewAll || p.vendedor === state.user.email; 
-            const matchSellerFilter = !canViewAll || state.projectSellerFilter === 'all' || p.vendedor === state.projectSellerFilter;
+            const matchSellerFilter = !state.isSuperAdmin || state.projectSellerFilter === 'all' || p.vendedor === state.projectSellerFilter;
             const isArchived = p.archived === true;
             const matchArchive = state.archiveFilter === 'all' ? true : (state.archiveFilter === 'archived' ? isArchived : !isArchived);
             const q = state.projectSearchQuery;
@@ -2872,10 +3118,8 @@
             
             if (!state.activeModule) {
                 grid.innerHTML += `
-                    <div class="mb-2 flex justify-between items-center no-print w-full">
-                        <button onclick="window.closeProjectDetails()" class="inline-flex items-center gap-3 text-white hover:text-gold transition-all font-black text-xs sm:text-sm uppercase tracking-widest px-6 py-4 bg-slate-800 rounded-2xl border border-white/10 hover:bg-slate-700 hover:scale-105 shadow-xl w-full sm:w-auto justify-center force-white-text">
-                            <i data-lucide="arrow-left" class="w-5 h-5"></i> ${window.t('back')}
-                        </button>
+                    <div class="mb-1 flex justify-between items-center no-print w-full">
+                        <button onclick="window.closeProjectDetails()" class="clean-pill hover:text-white"><i data-lucide="arrow-left" class="w-4 h-4"></i>${window.t('back')}</button>
                     </div>
                 `;
             }
@@ -2919,9 +3163,39 @@
                     : (scheduleAlert.isDueSoon ? renderAlertChip(window.t('timeline_due_soon'), 'amber', true) : ''));
             const timelineWrapClass = (scheduleAlert.isLate || scheduleAlert.isDueSoon) ? 'timeline-alert-pulse rounded-2xl p-3 -mx-3' : '';
 
-            let balText = state.lang === 'pt' ? 'A PAGAR AGORA' : 'DUE NOW'; let balColor = "text-red-400"; let balDisplay = formatCurr(f.balance);
-            if (f.balance < 0) { balText = window.t('balance_over'); balColor = "text-blue-400"; balDisplay = "+ " + formatCurr(Math.abs(f.balance)); } 
-            else if (f.balance === 0) { balText = window.t('balance_paid'); balColor = "text-emerald-400"; }
+            let balText = state.lang === 'pt' ? 'A PAGAR AGORA' : 'DUE NOW';
+            let balColor = "text-red-400";
+            let balDisplay = formatCurr(f.dueNow || 0);
+            let balTone = 'due';
+            let commissionQuickMode = '';
+            if (f.overpaidBeyondProjected > 0.009) {
+                balText = window.t('balance_over');
+                balColor = "text-blue-400";
+                balDisplay = "+ " + formatCurr(f.overpaidBeyondProjected);
+                balTone = 'over';
+            } else if (f.advanceCredit > 0.009) {
+                balText = state.lang === 'pt' ? 'ADIANTAMENTO REGISTRADO' : 'ADVANCE RECORDED';
+                balColor = "text-cyan-300";
+                balDisplay = formatCurr(f.advanceCredit);
+                balTone = 'advance';
+            } else if (f.dueNow > 0.009) {
+                commissionQuickMode = 'due';
+            } else if (f.advanceAvailable > 0.009 && state.isSuperAdmin) {
+                balText = state.lang === 'pt' ? 'ADIANTAR COMISSÃO' : 'ADVANCE COMMISSION';
+                balColor = "text-cyan-300";
+                balDisplay = formatCurr(f.advanceAvailable);
+                balTone = 'advance-available';
+                commissionQuickMode = 'advance';
+            } else {
+                balText = window.t('balance_paid');
+                balColor = "text-emerald-400";
+                balDisplay = formatCurr(0);
+                balTone = 'paid';
+            }
+            const balBorderClass = balTone === 'due' ? 'border-red-500/35 bg-red-500/10' : balTone === 'over' ? 'border-blue-500/35 bg-blue-500/10' : (balTone === 'advance' || balTone === 'advance-available') ? 'border-cyan-500/35 bg-cyan-500/10' : 'border-emerald-500/35 bg-emerald-500/10';
+            const balTextClass = balTone === 'due' ? 'text-red-300' : balTone === 'over' ? 'text-blue-300' : (balTone === 'advance' || balTone === 'advance-available') ? 'text-cyan-300' : 'text-emerald-300';
+            const balActionAttrs = commissionQuickMode ? `onclick="window.confirmCommissionPayment('${p.id}', '${commissionQuickMode}')" role="button" tabindex="0"` : '';
+            const balActionClass = commissionQuickMode ? 'cursor-pointer hover:-translate-y-0.5 hover:shadow-[0_18px_45px_-28px_rgba(34,211,238,0.8)] transition-all' : '';
 
             let clientPaidPerc = p.valorTotal > 0 ? Math.floor((f.totalRecebido / p.valorTotal) * 100) : 0; if (clientPaidPerc > 100) clientPaidPerc = 100;
             const commissionStatus = getCommissionStatusPresentation(p, f);
@@ -2948,50 +3222,104 @@
                 
                 if (state.activeModule === 'commissions') {
                     moduleTitle = window.t('comm_finances');
+                    const commissionDueColor = f.dueNow > 0.009 ? 'clean-warning' : 'clean-positive';
+                    const commissionDueLabel = f.dueNow > 0.009 ? (state.lang === 'pt' ? 'Saldo de comissão a pagar' : 'Commission balance due') : (state.lang === 'pt' ? 'Saldo de comissão' : 'Commission balance');
+                    const receiptRowsClean = (p.recebimentos || []).map(r => {
+                        const method = getReceiptEffectiveMethod(r, p);
+                        const fee = getReceiptFee(r, p);
+                        const net = getReceiptNet(r, p);
+                        return `<div class="clean-table-row">
+                            <div>${r.data ? new Date(r.data + 'T12:00:00').toLocaleDateString(state.lang === 'pt' ? 'pt-BR' : 'en-US') : '-'}</div>
+                            <div><span class="clean-pill">${escapeInlineHtml(method || '-')}</span></div>
+                            <div class="font-extrabold tabular-nums">${formatCurr(r.valor)}</div>
+                            <div class="tabular-nums ${fee > 0 ? 'clean-negative' : 'clean-muted'}">${formatCurr(fee)}</div>
+                            <div class="font-extrabold tabular-nums clean-positive">${formatCurr(net)}</div>
+                        </div>`;
+                    }).join('') || `<div class="px-5 py-8 text-center clean-muted text-sm">${window.t('no_receipts')}</div>`;
+                    const paymentRowsClean = normalizePaymentEntries(p.pagamentosEfetuados || []).map(pay => {
+                        const isAdvance = isAdvanceCommissionPayment(pay);
+                        return `<div class="clean-table-row payment">
+                            <div>${pay.data ? new Date(pay.data + 'T12:00:00').toLocaleDateString(state.lang === 'pt' ? 'pt-BR' : 'en-US') : '-'}</div>
+                            <div>${escapeInlineHtml(getCompanyDisplayName(p.empresa))}${isAdvance ? `<span class="clean-pill warning ml-2">${state.lang === 'pt' ? 'Adiantamento' : 'Advance'}</span>` : ''}</div>
+                            <div class="font-extrabold tabular-nums">${formatCurr(pay.valor)}</div>
+                            <div><span class="clean-pill success">${state.lang === 'pt' ? 'Pago' : 'Paid'}</span></div>
+                        </div>`;
+                    }).join('') || `<div class="px-5 py-8 text-center clean-muted text-sm">${window.t('no_payments')}</div>`;
+                    const financeStatusText = f.dueNow > 0.009
+                        ? (state.lang === 'pt' ? `${formatCurr(f.dueNow)} está liberado para pagamento ao vendedor.` : `${formatCurr(f.dueNow)} is currently due to the seller.`)
+                        : (f.clientOutstanding > 0.009
+                            ? (state.lang === 'pt' ? `A comissão liberada está quitada. Novos valores dependem dos próximos recebimentos do cliente.` : `Released commission is settled. Future amounts depend on new client receipts.`)
+                            : (state.lang === 'pt' ? `Projeto financeiramente conciliado. Não há saldo de comissão pendente.` : `Project is financially reconciled. No commission balance is pending.`));
                     moduleContent = `
-                        <div class="space-y-6 text-left print:bg-transparent print:border-slate-300 print:shadow-none print:p-0">
-                            ${renderProjectDocumentMeta(p)}
-                            <div class="grid grid-cols-2 xl:grid-cols-3 print:grid-cols-3 gap-4 sm:gap-6 pb-8 border-b border-white/5 print:border-slate-200">
-                                <div class="print:p-3"><p class="text-[11px] font-bold text-slate-500 uppercase print:text-black tracking-widest mb-1 print:text-[9px]">${window.t('comm_contract_gross')}</p><p class="text-xl font-black text-slate-400 print:text-black print:text-base">${formatCurr(f.commGrossContract)}</p></div>
-                                <div class="text-right print:text-left print:p-3"><p class="text-[11px] font-bold text-emerald-500/80 uppercase print:text-emerald-700 tracking-widest mb-1 print:text-[9px]">${window.t('comm_released')}</p><p class="text-3xl font-black text-emerald-500 print:text-emerald-700 print:text-base truncate">${formatCurr(f.commLiberada)}</p></div>
-                                <div class="print:p-3"><p class="text-[11px] font-bold text-slate-500 uppercase print:text-black tracking-widest mb-1 print:text-[9px]">${window.t('paid_seller')}</p><p class="text-xl font-black text-slate-300 print:text-black print:text-base">${formatCurr(f.totalPaid)}</p></div>
-                                <div class="text-right print:text-left print:p-3"><p class="text-[11px] font-bold ${balColor} uppercase print:text-black tracking-widest mb-1 print:text-[9px]">${balText}</p><p class="text-3xl font-black ${balColor} tracking-tighter print:text-black print:text-base truncate">${balDisplay}</p></div>
-                                <div class="print:p-3"><p class="text-[11px] font-bold text-amber-400/80 uppercase print:text-black tracking-widest mb-1 print:text-[9px]">${window.t('client_outstanding')}</p><p class="text-xl font-black text-amber-400 print:text-black print:text-base">${formatCurr(f.clientOutstanding)}</p></div>
-                                <div class="text-right print:text-left print:p-3"><p class="text-[11px] font-bold text-cyan-400/80 uppercase print:text-black tracking-widest mb-1 print:text-[9px]">${window.t('comm_remaining_projected')}</p><p class="text-xl font-black text-cyan-400 print:text-black print:text-base truncate">${formatCurr(f.commissionFuturePotential)}</p></div>
-                                <div class="print:p-3"><p class="text-[11px] font-bold text-rose-300/80 uppercase print:text-black tracking-widest mb-1 print:text-[9px]">${window.t('comm_card_fee_reduction')}</p><p class="text-xl font-black text-rose-300 print:text-black print:text-base">${formatCurr(f.commissionCardFeeReduction)}</p></div>
-                            </div>
-                            ${getCommissionContextNote(p, f) ? `<div class="rounded-2xl border border-cyan-500/20 bg-cyan-500/10 px-5 py-4 text-sm text-cyan-100 print:bg-slate-50 print:border-slate-300 print:text-black">${getCommissionContextNote(p, f)}</div>` : ''}
+                        <div class="clean-finance-dashboard text-left print:bg-transparent print:border-slate-300">
+                            <div class="clean-primary-grid p-5 sm:p-6">
+                                <div class="space-y-4">
+                                    <section class="clean-section p-5">
+                                        <div class="flex items-center justify-between gap-4 mb-2">
+                                            <h5 class="clean-section-title">${state.lang === 'pt' ? 'Resumo financeiro' : 'Financial summary'}</h5>
+                                            <span class="clean-pill ${f.dueNow > 0.009 ? 'warning' : 'success'}">${f.dueNow > 0.009 ? (state.lang === 'pt' ? 'Pagamento pendente' : 'Payment due') : (state.lang === 'pt' ? 'Conciliado' : 'Settled')}</span>
+                                        </div>
+                                        <div class="clean-kpi-row">
+                                            <div class="flex items-center gap-3"><span class="clean-icon-box"><i data-lucide="file-text" class="w-5 h-5"></i></span><div><div class="text-sm font-bold text-slate-200">${state.lang === 'pt' ? 'Valor do contrato' : 'Contract value'}</div><div class="clean-subtext">${state.lang === 'pt' ? 'Contrato bruto' : 'Gross contract'}</div></div></div>
+                                            <div class="clean-value">${formatCurr(p.valorTotal)}</div>
+                                        </div>
+                                        <div class="clean-kpi-row">
+                                            <div class="flex items-center gap-3"><span class="clean-icon-box positive"><i data-lucide="credit-card" class="w-5 h-5"></i></span><div><div class="text-sm font-bold text-slate-200">${state.lang === 'pt' ? 'Recebido do cliente' : 'Received from client'}</div><div class="clean-subtext">${clientPaidPerc}% ${state.lang === 'pt' ? 'do contrato' : 'of contract'}</div></div></div>
+                                            <div class="clean-value clean-positive">${formatCurr(f.totalRecebido)}</div>
+                                        </div>
+                                        <div class="clean-kpi-row">
+                                            <div class="flex items-center gap-3"><span class="clean-icon-box"><i data-lucide="user-check" class="w-5 h-5"></i></span><div><div class="text-sm font-bold text-slate-200">${state.lang === 'pt' ? 'Pago ao vendedor' : 'Paid to seller'}</div><div class="clean-subtext">${p.percComissao || 0}% ${state.lang === 'pt' ? 'de comissão' : 'commission'}</div></div></div>
+                                            <div class="clean-value">${formatCurr(f.totalPaid)}</div>
+                                        </div>
+                                        <div class="clean-kpi-row">
+                                            <div class="flex items-center gap-3"><span class="clean-icon-box"><i data-lucide="wallet-cards" class="w-5 h-5"></i></span><div><div class="text-sm font-bold text-slate-200">${state.lang === 'pt' ? 'Saldo do cliente' : 'Client balance'}</div><div class="clean-subtext">${state.lang === 'pt' ? 'Ainda a receber' : 'Still receivable'}</div></div></div>
+                                            <div class="clean-value ${f.clientOutstanding > 0.009 ? 'clean-warning' : 'clean-positive'}">${formatCurr(f.clientOutstanding)}</div>
+                                        </div>
+                                        <div ${balActionAttrs} class="clean-kpi-row ${balActionClass}">
+                                            <div class="flex items-center gap-3"><span class="clean-icon-box ${f.dueNow > 0.009 ? 'warning' : 'positive'}"><i data-lucide="badge-percent" class="w-5 h-5"></i></span><div><div class="text-sm font-bold text-slate-200">${commissionDueLabel}</div><div class="clean-subtext">${state.lang === 'pt' ? 'Pendente de repasse' : 'Pending transfer'}</div></div></div>
+                                            <div class="clean-value ${commissionDueColor}">${formatCurr(f.dueNow)}</div>
+                                        </div>
+                                    </section>
 
-                            <div class="space-y-4 relative z-[1]">
-                                <div class="flex justify-between items-center bg-emerald-500/10 p-4 px-5 rounded-2xl border border-emerald-500/20 print:bg-emerald-50 print:border-emerald-200">
-                                    <p class="text-xs sm:text-sm font-black text-emerald-400 uppercase tracking-widest print:text-emerald-800">${window.t('client_receipts')}</p>
-                                    <div class="flex items-center gap-4">
-                                        <span class="text-xs sm:text-sm font-bold text-emerald-500 print:text-emerald-800">${formatCurr(f.totalRecebido)} / ${formatCurr(p.valorTotal)}</span>
-                                        ${state.userPerms.fin ? `<button onclick="window.openEditRecModal('${p.id}')" class="flex items-center gap-2 text-[10px] font-black text-white force-white-text hover:text-emerald-200 transition-colors no-print px-4 py-2 bg-emerald-600 rounded-xl shadow-md force-dark-bg uppercase tracking-widest"><i data-lucide="settings-2" class="w-4 h-4"></i> ${window.t('btn_manage')}</button>` : ''}
+                                    <div class="clean-support-grid">
+                                        <div class="clean-support-card"><div class="clean-label">${state.lang === 'pt' ? 'Empresa pagadora' : 'Paying company'}</div><div class="clean-meta-value">${escapeInlineHtml(getCompanyDisplayName(p.empresa))}</div></div>
+                                        <div class="clean-support-card"><div class="clean-label">${state.lang === 'pt' ? 'Desconto cartão' : 'Card discount'}</div><div class="clean-value">${formatCurr(f.commissionCardFeeReduction)}</div></div>
+                                        <div class="clean-support-card"><div class="clean-label">${state.lang === 'pt' ? 'Comissão elegível' : 'Eligible commission'}</div><div class="clean-value clean-positive">${formatCurr(f.commLiberada)}</div></div>
+                                        <div class="clean-support-card"><div class="clean-label">${state.lang === 'pt' ? 'Comissão futura sobre saldo' : 'Future commission on balance'}</div><div class="clean-value ${f.futureCommissionAfterAdvance > 0.009 ? 'clean-warning' : ''}">${formatCurr(f.futureCommissionAfterAdvance)}</div></div>
                                     </div>
+                                    <div class="clean-note">${financeStatusText}</div>
                                 </div>
-                                <div class="max-h-60 overflow-y-auto scrollbar-hide px-2 print:max-h-none">
-                                    ${(p.recebimentos || []).map(r => {
-                                        const method = getReceiptEffectiveMethod(r, p);
-                                        const badge = getReceiptMethodBadge(method);
-                                        const fee = getReceiptFee(r, p);
-                                        const net = getReceiptNet(r, p);
-                                        return `<div class="flex justify-between items-start text-sm sm:text-base py-4 border-b border-white/5 last:border-0 print:border-slate-200 hover:bg-white/5 rounded px-2 gap-4"><div><span class="text-slate-300 print:text-black">${r.data ? new Date(r.data + 'T12:00:00').toLocaleDateString(state.lang === 'pt' ? 'pt-BR' : 'en-US') : '-'} <span class="text-[10px] font-black ml-2 uppercase border px-2 py-1 rounded ${badge.pill} print:bg-slate-200 print:text-slate-800 print:border-slate-300">${badge.label}</span></span><div class="mt-2 text-[11px] text-slate-500 flex flex-wrap gap-x-4 gap-y-1"><span>${window.t('rec_line_gross')}: <strong class="text-slate-300">${formatCurr(r.valor)}</strong></span><span>${window.t('rec_line_fee')}: <strong class="${fee > 0 ? 'text-red-300' : 'text-slate-300'}">${formatCurr(fee)}</strong></span><span>${window.t('rec_line_net')}: <strong class="${fee > 0 ? 'text-gold' : 'text-emerald-300'}">${formatCurr(net)}</strong></span></div></div><span class="font-black text-emerald-400 print:text-emerald-700 whitespace-nowrap">+ ${formatCurr(r.valor)}</span></div>`;
-                                    }).join('') || `<p class="text-sm italic text-slate-600 text-center py-6">${window.t('no_receipts')}</p>`}
-                                </div>
-                            </div>
 
-                            <div class="space-y-4 pt-8 border-t border-white/10 print:border-slate-200">
-                                <div class="flex flex-col sm:flex-row sm:justify-between sm:items-center gap-3 bg-gold/10 p-4 px-5 rounded-2xl border border-gold/20 print:bg-amber-50 print:border-amber-200 ${sellerPaymentAlert.hasPending ? 'balance-due-pulse' : ''}">
-                                    <div class="flex flex-wrap items-center gap-3">
-                                        <p class="text-xs sm:text-sm font-black text-gold uppercase tracking-widest print:text-amber-800">${window.t('seller_payments')}</p>
-                                        ${sellerPendingBadge}
-                                        <span class="inline-flex items-center rounded-full border border-emerald-500/20 bg-emerald-500/10 px-3 py-1 text-[10px] font-black uppercase tracking-widest text-emerald-300">${state.lang === 'pt' ? 'Empresa pagadora' : 'Paying company'}: <span class="ml-2 text-emerald-200 normal-case tracking-normal">${escapeInlineHtml(getCompanyDisplayName(p.empresa))}</span></span>
-                                    </div>
-                                    ${state.userPerms.fin ? `<button onclick="window.openEditPaymentModal('${p.id}')" class="flex items-center gap-2 text-[10px] font-black text-white force-white-text hover:text-gold transition-colors no-print px-4 py-2 bg-slate-800 rounded-xl shadow-md border border-gold/30 force-dark-bg uppercase tracking-widest"><i data-lucide="settings-2" class="w-4 h-4"></i> ${window.t('btn_manage')}</button>` : ''}
-                                </div>
-                                <div class="max-h-60 overflow-y-auto scrollbar-hide px-2 print:max-h-none">
-                                    ${(p.pagamentosEfetuados || []).map(pay => `<div class="flex justify-between items-center text-sm sm:text-base py-4 border-b border-white/5 last:border-0 print:border-slate-200 hover:bg-white/5 rounded px-2"><span class="text-slate-300 print:text-black">${pay.data ? new Date(pay.data + 'T12:00:00').toLocaleDateString(state.lang === 'pt' ? 'pt-BR' : 'en-US') : '-'}</span><span class="font-black text-gold print:text-amber-700">- ${formatCurr(pay.valor)}</span></div>`).join('') || `<p class="text-sm italic text-slate-600 text-center py-6">${window.t('no_payments')}</p>`}
+                                <div class="space-y-4">
+                                    <section class="clean-table-card">
+                                        <div class="clean-table-head">
+                                            <div class="flex items-center gap-3"><span class="clean-icon-box positive"><i data-lucide="circle-dollar-sign" class="w-5 h-5"></i></span><div><h5 class="clean-section-title">${state.lang === 'pt' ? 'Recebimentos do Cliente' : 'Client Receipts'}</h5><div class="clean-subtext">${(p.recebimentos || []).length} ${(p.recebimentos || []).length === 1 ? (state.lang === 'pt' ? 'lançamento' : 'entry') : (state.lang === 'pt' ? 'lançamentos' : 'entries')}</div></div></div>
+                                            <div class="clean-table-total">${state.lang === 'pt' ? 'Total recebido' : 'Total received'} &nbsp; ${formatCurr(f.totalRecebido)}</div>
+                                        </div>
+                                        <div class="clean-table-row clean-table-labels"><div>${state.lang === 'pt' ? 'Data' : 'Date'}</div><div>${state.lang === 'pt' ? 'Forma' : 'Method'}</div><div>${state.lang === 'pt' ? 'Bruto' : 'Gross'}</div><div>${state.lang === 'pt' ? 'Taxa / desconto' : 'Fee / discount'}</div><div>${state.lang === 'pt' ? 'Líquido' : 'Net'}</div></div>
+                                        ${receiptRowsClean}
+                                        ${state.userPerms.fin ? `<button onclick="window.openEditRecModal('${p.id}')" class="clean-add-row no-print"><i data-lucide="plus" class="w-4 h-4 inline-block mr-2"></i>${state.lang === 'pt' ? 'Adicionar ou gerenciar recebimento' : 'Add or manage receipt'}</button>` : ''}
+                                    </section>
+
+                                    <section class="clean-table-card">
+                                        <div class="clean-table-head">
+                                            <div class="flex items-center gap-3"><span class="clean-icon-box"><i data-lucide="hand-coins" class="w-5 h-5"></i></span><div><h5 class="clean-section-title">${state.lang === 'pt' ? 'Pagamentos ao Vendedor' : 'Seller Payments'}</h5><div class="clean-subtext">${normalizePaymentEntries(p.pagamentosEfetuados || []).length} ${state.lang === 'pt' ? 'registros' : 'records'}</div></div></div>
+                                            <div class="clean-table-total" style="color:#e6edf5">${state.lang === 'pt' ? 'Total pago' : 'Total paid'} &nbsp; ${formatCurr(f.totalPaid)}</div>
+                                        </div>
+                                        <div class="clean-table-row payment clean-table-labels"><div>${state.lang === 'pt' ? 'Data' : 'Date'}</div><div>${state.lang === 'pt' ? 'Empresa pagadora' : 'Paying company'}</div><div>${state.lang === 'pt' ? 'Valor pago' : 'Paid amount'}</div><div>${state.lang === 'pt' ? 'Status' : 'Status'}</div></div>
+                                        ${paymentRowsClean}
+                                        ${state.userPerms.fin ? `<button onclick="window.openEditPaymentModal('${p.id}')" class="clean-add-row no-print"><i data-lucide="plus" class="w-4 h-4 inline-block mr-2"></i>${state.lang === 'pt' ? 'Adicionar ou gerenciar pagamento' : 'Add or manage payment'}</button>` : ''}
+                                    </section>
+
+                                    <section class="clean-section p-5">
+                                        <h5 class="clean-section-title mb-4">${state.lang === 'pt' ? 'Resumo rápido' : 'Quick summary'}</h5>
+                                        <div class="clean-meta-grid">
+                                            <div><div class="clean-label">${state.lang === 'pt' ? 'Situação' : 'Status'}</div><div class="clean-meta-value">${p.status === 'Finalizado' ? (state.lang === 'pt' ? 'Finalizado' : 'Completed') : escapeInlineHtml(tStatus(p.status))}</div></div>
+                                            <div><div class="clean-label">${state.lang === 'pt' ? 'Finalização' : 'Completion'}</div><div class="clean-meta-value">${formatProjectDate(p.dataConclusao) || '—'}</div></div>
+                                            <div><div class="clean-label">${state.lang === 'pt' ? 'Invoice / Proposta' : 'Invoice / Proposal'}</div><div class="clean-meta-value">${escapeInlineHtml(p.numeroInvoice || '—')} / ${escapeInlineHtml(p.numeroProposta || '—')}</div></div>
+                                            <div><div class="clean-label">${state.lang === 'pt' ? 'Vendedor' : 'Seller'}</div><div class="clean-meta-value">${escapeInlineHtml(getUserDisplayName(p.vendedor, '—'))}</div></div>
+                                        </div>
+                                    </section>
                                 </div>
                             </div>
                         </div>
@@ -3004,7 +3332,7 @@
                     const profitColor = f.lucroBruto >= 0 ? 'text-cyan-400' : 'text-red-400';
                     const marginAlert = getMarginAlertState(f);
                     const marginColor = marginAlert.isLow ? 'text-red-400' : (f.margemLucro >= 0 ? 'text-emerald-400' : 'text-red-400');
-                    const expenseCount = f.despesasMetricas.length;
+                    const expenseCount = (p.despesas || []).length;
                     const categoryEntries = Object.entries(f.gastosPorCategoria || {});
                     const topCategoryEntry = categoryEntries.sort((a, b) => b[1] - a[1])[0] || ['-', 0];
                     const topCategoryLabel = topCategoryEntry[1] > 0 ? topCategoryEntry[0] : window.t('no_expenses_short');
@@ -3042,7 +3370,7 @@
                     const plannedProfitMetricClass = getMetricDisplayClass(plannedProfit === null ? '—' : formatCurr(plannedProfit), true);
                     const plannedProfitColor = plannedProfit === null ? 'text-slate-300' : (plannedProfit >= 0 ? 'text-emerald-300' : 'text-red-300');
                     const avgExpense = expenseCount ? roundMoney(f.totalDespesas / expenseCount) : 0;
-                    const maxExpenseValue = expenseCount ? Math.max(...f.despesasMetricas.map(exp => Number(exp.valor) || 0)) : 0;
+                    const maxExpenseValue = expenseCount ? Math.max(...(p.despesas || []).map(exp => Number(exp.valor) || 0)) : 0;
                     const avgExpenseMetricClass = getMetricDisplayClass(formatCurr(avgExpense), true);
                     const maxExpenseMetricClass = getMetricDisplayClass(formatCurr(maxExpenseValue), true);
                     const entriesMetricClass = getMetricDisplayClass(String(expenseCount), true);
@@ -3053,7 +3381,7 @@
                     const plannedProfitSummary = plannedProfit === null ? '—' : formatCurr(plannedProfit);
                     const progressSummary = hasBudget ? `${window.t('chart_spent')}: ${spentSummary} • ${chartSecondaryLabel}: ${chartSecondaryValue}` : window.t('budget_not_set_hint');
 
-                    const expensesList = f.despesasMetricas.map(exp => `
+                    const expensesList = (p.despesas || []).sort((a,b) => new Date(b.data) - new Date(a.data)).map(exp => `
                         <div class="flex justify-between items-center text-sm py-4 border-b border-cyan-500/10 last:border-0 hover:bg-white/5 transition-colors px-3 rounded-lg print:border-slate-200">
                             <div class="flex-1 flex flex-col sm:flex-row sm:items-center gap-1.5 sm:gap-4">
                                 <span class="text-slate-400 print:text-slate-600 font-bold text-xs">${exp.data ? new Date(exp.data + 'T12:00:00').toLocaleDateString(state.lang === 'pt' ? 'pt-BR' : 'en-US') : '-'}</span>
@@ -3062,7 +3390,7 @@
                             </div>
                             <div class="flex items-center gap-4">
                                 <span class="font-black text-gold text-lg print:text-black">${formatCurr(exp.valor)}</span>
-                                ${!exp.autoGenerated ? `<button onclick="window.deleteExpense('${p.id}', '${exp.id}', '${exp.descricao.replace(/'/g,"\\'")}', ${exp.valor})" class="p-3 text-red-500/70 hover:text-red-400 hover:bg-red-500/10 rounded-xl transition-colors no-print"><i data-lucide="trash-2" class="w-5 h-5"></i></button>` : ''}
+                                <button onclick="window.deleteExpense('${p.id}', '${exp.id}', '${exp.descricao.replace(/'/g,"\\'")}', ${exp.valor})" class="p-3 text-red-500/70 hover:text-red-400 hover:bg-red-500/10 rounded-xl transition-colors no-print"><i data-lucide="trash-2" class="w-5 h-5"></i></button>
                             </div>
                         </div>
                     `).join('') || `<p class="text-sm italic text-cyan-300/50 text-center py-8">${window.t('no_expenses')}</p>`;
@@ -3079,7 +3407,6 @@
                                                     <span class="w-2.5 h-2.5 rounded-full ${!hasBudget ? 'bg-slate-400' : (isOverBudget ? 'bg-red-400' : 'bg-emerald-400')}"></span>
                                                     ${budgetStatusLabel}
                                                 </span>
-                                                ${state.userPerms.costs ? `<button type="button" onclick="window.quickEditBudget('${p.id}')" class="no-print inline-flex items-center gap-2 rounded-xl border border-cyan-500/30 bg-cyan-500/10 px-3 py-2 text-[10px] font-black uppercase tracking-widest text-cyan-300 hover:bg-cyan-500/20 transition-colors"><i data-lucide="pencil" class="w-3.5 h-3.5"></i>${hasBudget ? (state.lang === 'pt' ? 'Editar' : 'Edit') : (state.lang === 'pt' ? 'Definir' : 'Set')}</button>` : ''}
                                                 ${marginAlert.isLow ? `<span class="inline-flex items-center gap-2 rounded-2xl border border-red-500/30 bg-red-500/10 px-3 py-2 text-[10px] font-black uppercase tracking-widest text-red-300 balance-due-pulse"><span class="w-2.5 h-2.5 rounded-full bg-red-400"></span>${window.t('margin_alert_low')}</span>` : ''}
                                             </div>
 
@@ -3202,7 +3529,7 @@
                 }
 
                 grid.innerHTML += `
-                <div class="glass project-module-shell p-6 md:p-10 rounded-[40px] border-l-[8px] relative shadow-2xl flex flex-col w-full print:border print:border-none print:shadow-none animate-fade-in mt-6" style="border-left-color: ${p.status === 'Finalizado' ? '#10b981' : '#f59e0b'}">
+                <div class="glass project-module-shell clean-module-shell p-6 md:p-10 rounded-[40px] border-l-[8px] relative shadow-2xl flex flex-col w-full print:border print:border-none print:shadow-none animate-fade-in mt-6" style="border-left-color: ${p.status === 'Finalizado' ? '#10b981' : '#f59e0b'}">
                     <div class="project-watermark-print">${finishedWatermark}</div>
                     <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-8 border-b border-white/10 pb-6 gap-6 no-print relative z-[1]">
                         <div class="flex flex-col sm:flex-row items-start sm:items-center gap-4 w-full sm:w-auto">
@@ -3308,12 +3635,77 @@
                                 <span class="text-slate-300">${formatProjectDate(p.dataInicio)}</span>
                                 <span class="${compactStatusTone}">${p.status === 'Finalizado' && p.dataConclusao ? formatProjectDate(p.dataConclusao) : dueLabel}</span>
                             </div>
-                            <button type="button" onclick="event.stopPropagation(); window.quickEditObservation('${p.id}')" class="no-print w-full text-left text-xs leading-relaxed border-l-2 ${scheduleAlert.isLate ? 'border-red-500' : 'border-amber-400'} pl-3 py-1 ${p.observacao ? 'text-slate-300 hover:text-white' : 'text-slate-500 hover:text-amber-300'} transition-colors" title="${state.lang === 'pt' ? 'Clique para editar' : 'Click to edit'}">${p.observacao ? escapeInlineHtml(p.observacao) : (state.lang === 'pt' ? '+ Adicionar observação' : '+ Add note')}</button>
-                            ${p.observacao ? `<p class="hidden print:block text-xs text-slate-800 border-l-2 border-slate-400 pl-3">${escapeInlineHtml(p.observacao)}</p>` : ''}
                         </div>
                     </div>
                     <div class="mt-6 text-center text-[11px] text-slate-500 font-bold uppercase tracking-widest no-print opacity-70 flex items-center justify-center gap-2">${window.t('click_to_open')} <i data-lucide="chevron-right" class="w-4 h-4"></i></div>
                 </div>`;
+                return;
+            }
+
+            if (isFocused && !state.activeModule) {
+                const identityAddress = [p.nomeProjeto, p.endereco].filter(Boolean).map(v => escapeInlineHtml(v)).join(' • ');
+                const dueClassClean = f.dueNow > 0.009 ? 'clean-warning' : 'clean-positive';
+                const scheduleStatusText = p.status === 'Finalizado' ? getProjectCompletionText(p, true) : tStatus(p.status);
+                const cleanSummaryText = f.dueNow > 0.009
+                    ? (state.lang === 'pt' ? `${formatCurr(f.dueNow)} de comissão está disponível para pagamento ao vendedor.` : `${formatCurr(f.dueNow)} commission is available for seller payment.`)
+                    : (f.clientOutstanding > 0.009
+                        ? (state.lang === 'pt' ? `A comissão liberada está quitada. O cliente ainda possui ${formatCurr(f.clientOutstanding)} a pagar.` : `Released commission is settled. The client still owes ${formatCurr(f.clientOutstanding)}.`)
+                        : (state.lang === 'pt' ? `Projeto conciliado: recebimentos e comissão estão atualizados.` : `Project reconciled: receipts and commission are up to date.`));
+                grid.innerHTML += `
+                    <div class="clean-project-dashboard w-full">
+                        <div class="flex flex-col sm:flex-row sm:items-start sm:justify-between gap-5 pb-5 border-b border-white/10">
+                            <div class="min-w-0">
+                                <div class="flex flex-wrap items-center gap-3 mb-3">
+                                    <span class="clean-pill">${escapeInlineHtml(p.empresa || '—')}</span>
+                                    ${p.status === 'Finalizado' ? `<span class="clean-pill success"><i data-lucide="check-circle-2" class="w-4 h-4"></i>${state.lang === 'pt' ? 'Finalizado' : 'Completed'} ${p.dataConclusao ? formatProjectDate(p.dataConclusao) : ''}</span>` : `<span class="clean-pill warning">${escapeInlineHtml(tStatus(p.status))}</span>`}
+                                </div>
+                                <h3 class="text-3xl sm:text-4xl font-black tracking-tight text-slate-50 leading-tight">${escapeInlineHtml(getProjectPrimaryTitle(p))}</h3>
+                                ${identityAddress ? `<p class="mt-2 text-sm text-slate-400">${identityAddress}</p>` : ''}
+                            </div>
+                            <div class="flex flex-wrap gap-2 no-print">
+                                ${canPrintProjectSheet() ? `<button onclick="window.printReport()" class="clean-pill hover:text-white"><i data-lucide="printer" class="w-4 h-4"></i>${window.t('print_ficha')}</button>` : ''}
+                                <div class="flex items-center gap-2 clean-pill" onclick="event.stopPropagation()">${actionButtons}</div>
+                            </div>
+                        </div>
+
+                        <div class="clean-meta-grid mt-5">
+                            <div class="clean-meta-card"><div class="clean-label">${state.lang === 'pt' ? 'Vendedor' : 'Seller'}</div><div class="clean-meta-value">${escapeInlineHtml(getUserDisplayName(p.vendedor, '—'))}</div></div>
+                            <div class="clean-meta-card"><div class="clean-label">${state.lang === 'pt' ? 'Status da obra' : 'Project status'}</div><div class="clean-meta-value">${escapeInlineHtml(scheduleStatusText)}</div></div>
+                            <div class="clean-meta-card"><div class="clean-label">${state.lang === 'pt' ? 'Invoice / Proposta' : 'Invoice / Proposal'}</div><div class="clean-meta-value">${escapeInlineHtml(p.numeroInvoice || '—')} / ${escapeInlineHtml(p.numeroProposta || '—')}</div></div>
+                            <div class="clean-meta-card"><div class="clean-label">${state.lang === 'pt' ? 'Recebimento • Comissão' : 'Payment • Commission'}</div><div class="clean-meta-value">${escapeInlineHtml(p.metodo || '—')} • ${Number(p.percComissao || 0).toFixed(0)}%</div></div>
+                        </div>
+
+                        <div class="mt-5 grid grid-cols-1 lg:grid-cols-[1.1fr_.9fr] gap-5">
+                            <section class="clean-section p-5 sm:p-6">
+                                <h5 class="clean-section-title mb-2">${state.lang === 'pt' ? 'Resumo financeiro' : 'Financial summary'}</h5>
+                                <div class="clean-kpi-row"><div class="flex gap-3 items-center"><span class="clean-icon-box"><i data-lucide="file-text" class="w-5 h-5"></i></span><div><div class="text-sm font-bold">${state.lang === 'pt' ? 'Valor do contrato' : 'Contract value'}</div><div class="clean-subtext">${state.lang === 'pt' ? 'Contrato bruto' : 'Gross contract'}</div></div></div><div class="clean-value">${formatCurr(p.valorTotal)}</div></div>
+                                <div class="clean-kpi-row"><div class="flex gap-3 items-center"><span class="clean-icon-box positive"><i data-lucide="credit-card" class="w-5 h-5"></i></span><div><div class="text-sm font-bold">${state.lang === 'pt' ? 'Recebido do cliente' : 'Received from client'}</div><div class="clean-subtext">${clientPaidPerc}% ${state.lang === 'pt' ? 'do contrato' : 'of contract'}</div></div></div><div class="clean-value clean-positive">${formatCurr(f.totalRecebido)}</div></div>
+                                <div class="clean-kpi-row"><div class="flex gap-3 items-center"><span class="clean-icon-box"><i data-lucide="user-check" class="w-5 h-5"></i></span><div><div class="text-sm font-bold">${state.lang === 'pt' ? 'Pago ao vendedor' : 'Paid to seller'}</div><div class="clean-subtext">${p.percComissao || 0}% ${state.lang === 'pt' ? 'de comissão' : 'commission'}</div></div></div><div class="clean-value">${formatCurr(f.totalPaid)}</div></div>
+                                <div class="clean-kpi-row"><div class="flex gap-3 items-center"><span class="clean-icon-box"><i data-lucide="wallet-cards" class="w-5 h-5"></i></span><div><div class="text-sm font-bold">${state.lang === 'pt' ? 'Saldo do cliente' : 'Client balance'}</div><div class="clean-subtext">${state.lang === 'pt' ? 'A receber do cliente' : 'Receivable from client'}</div></div></div><div class="clean-value ${f.clientOutstanding > 0.009 ? 'clean-warning' : 'clean-positive'}">${formatCurr(f.clientOutstanding)}</div></div>
+                                <div class="clean-kpi-row"><div class="flex gap-3 items-center"><span class="clean-icon-box ${f.dueNow > 0.009 ? 'warning' : 'positive'}"><i data-lucide="badge-percent" class="w-5 h-5"></i></span><div><div class="text-sm font-bold">${state.lang === 'pt' ? 'Saldo de comissão a pagar' : 'Commission balance due'}</div><div class="clean-subtext">${state.lang === 'pt' ? 'Pendente de repasse' : 'Pending transfer'}</div></div></div><div class="clean-value ${dueClassClean}">${formatCurr(f.dueNow)}</div></div>
+                            </section>
+
+                            <div class="space-y-4">
+                                <section class="clean-section p-5 sm:p-6">
+                                    <div class="flex justify-between items-center mb-4"><h5 class="clean-section-title">${state.lang === 'pt' ? 'Linha do tempo' : 'Timeline'}</h5><span class="clean-pill ${prog >= 100 ? 'success' : ''}">${prog}%</span></div>
+                                    <div class="clean-progress"><span style="width:${Math.min(100,Math.max(0,prog))}%"></span></div>
+                                    <div class="grid grid-cols-2 gap-4 mt-4"><div><div class="clean-label">${state.lang === 'pt' ? 'Início' : 'Start'}</div><div class="clean-meta-value">${formatProjectDate(p.dataInicio)}</div></div><div class="text-right"><div class="clean-label">${p.status === 'Finalizado' ? (state.lang === 'pt' ? 'Finalizado' : 'Completed') : (state.lang === 'pt' ? 'Prazo' : 'Due')}</div><div class="clean-meta-value">${p.status === 'Finalizado' ? formatProjectDate(p.dataConclusao) : formatProjectDate(p.dataEntrega)}</div></div></div>
+                                </section>
+                                <div class="clean-support-grid">
+                                    <div class="clean-support-card"><div class="clean-label">${state.lang === 'pt' ? 'Empresa pagadora' : 'Paying company'}</div><div class="clean-meta-value">${escapeInlineHtml(getCompanyDisplayName(p.empresa))}</div></div>
+                                    <div class="clean-support-card"><div class="clean-label">${state.lang === 'pt' ? 'Desconto cartão' : 'Card discount'}</div><div class="clean-value">${formatCurr(f.commissionCardFeeReduction)}</div></div>
+                                    <div class="clean-support-card"><div class="clean-label">${state.lang === 'pt' ? 'Comissão elegível' : 'Eligible commission'}</div><div class="clean-value clean-positive">${formatCurr(f.commLiberada)}</div></div>
+                                    <div class="clean-support-card"><div class="clean-label">${state.lang === 'pt' ? 'Comissão futura' : 'Future commission'}</div><div class="clean-value ${f.futureCommissionAfterAdvance > 0.009 ? 'clean-warning' : ''}">${formatCurr(f.futureCommissionAfterAdvance)}</div></div>
+                                </div>
+                                <div class="clean-note">${cleanSummaryText}</div>
+                            </div>
+                        </div>
+
+                        <div class="grid grid-cols-1 ${canViewCosts ? 'sm:grid-cols-2' : ''} gap-3 mt-5 no-print">
+                            <button onclick="event.stopPropagation(); window.openProjectModule('commissions')" class="clean-action-card"><span class="clean-icon-box positive"><i data-lucide="wallet" class="w-5 h-5"></i></span><div class="text-left"><div class="font-black">${window.t('comm_finances')}</div><div class="clean-subtext">${state.lang === 'pt' ? 'Recebimentos, comissão e pagamentos' : 'Receipts, commission and payments'}</div></div><i data-lucide="chevron-right" class="w-5 h-5 ml-auto clean-muted"></i></button>
+                            ${canViewCosts ? `<button onclick="event.stopPropagation(); window.openProjectModule('costs')" class="clean-action-card"><span class="clean-icon-box"><i data-lucide="calculator" class="w-5 h-5"></i></span><div class="text-left"><div class="font-black">${window.t('cost_management')}</div><div class="clean-subtext">${state.lang === 'pt' ? 'Despesas, margem e orçamento' : 'Expenses, margin and budget'}</div></div><i data-lucide="chevron-right" class="w-5 h-5 ml-auto clean-muted"></i></button>` : ''}
+                        </div>
+                    </div>`;
                 return;
             }
 
@@ -3328,16 +3720,15 @@
                 </div>
 
                 <div class="text-left mb-8 space-y-4 relative z-[1]">
-                    <button type="button" onclick="window.quickEditProjectSection('${p.id}', 'identity')" class="quick-edit-target group w-full text-left space-y-3 p-2 -m-2 no-print"><h4 class="font-black text-3xl uppercase tracking-tight text-white force-white-text leading-none">${escapeInlineHtml(getProjectPrimaryTitle(p))}</h4>${renderProjectIdentityBlock(p)}<span class="text-[9px] uppercase tracking-widest text-slate-600 group-hover:text-gold transition-colors">${state.lang === 'pt' ? 'Editar identificação' : 'Edit identity'}</span></button>
-                    <div class="hidden print:block space-y-3"><h4 class="font-black text-3xl uppercase tracking-tight text-black leading-none">${escapeInlineHtml(getProjectPrimaryTitle(p))}</h4>${renderProjectIdentityBlock(p)}</div>
+                    <div class="space-y-3"><h4 class="font-black text-3xl uppercase tracking-tight text-white force-white-text leading-none print:text-black">${escapeInlineHtml(getProjectPrimaryTitle(p))}</h4>${renderProjectIdentityBlock(p)}</div>
                     ${canPrintProjectSheet() ? `<div class="flex justify-start no-print"><button onclick="window.printReport()" class="inline-flex items-center justify-center gap-2 text-white force-white-text bg-slate-800 hover:bg-slate-700 transition-all font-black text-[11px] uppercase tracking-widest px-5 py-3 rounded-2xl border border-white/10 shadow-lg force-dark-bg"><i data-lucide="printer" class="w-4 h-4"></i> ${window.t('print_ficha')}</button></div>` : ''}
                 </div>
 
                 <div class="grid grid-cols-2 gap-y-6 gap-x-4 p-6 bg-black/20 rounded-[24px] border border-white/5 mb-10 text-left shadow-inner print:bg-transparent print:border-slate-200">
-                    <button type="button" onclick="window.quickEditProjectSection('${p.id}', 'seller')" class="quick-edit-target text-left p-2 -m-2"><p class="text-xs font-black text-slate-500 uppercase tracking-widest mb-1.5">${window.t('seller')}</p><p class="text-sm font-bold text-slate-200 truncate" title="${escapeInlineHtml(getUserDisplayName(p.vendedor, p.vendedor || "--"))}">${escapeInlineHtml(getUserDisplayName(p.vendedor, '--'))}</p></button>
-                    <button type="button" onclick="window.quickEditProjectSection('${p.id}', 'status')" class="quick-edit-target text-left p-2 -m-2"><p class="text-xs font-black text-slate-500 uppercase tracking-widest mb-1.5">${window.t('status_obra')}</p><p class="text-sm font-black ${p.status === 'Finalizado' ? 'text-emerald-400' : 'text-gold'} uppercase">${p.status === 'Finalizado' ? getProjectCompletionText(p, true) : tStatus(p.status)}</p></button>
-                    <button type="button" onclick="window.quickEditProjectSection('${p.id}', 'documents')" class="quick-edit-target text-left p-2 -m-2"><p class="text-xs font-black text-slate-500 uppercase tracking-widest mb-1.5">${window.t('prop_inv')}</p><p class="text-sm font-bold text-slate-200">${p.numeroInvoice || '---'} <span class="text-slate-600 font-normal mx-1">|</span> ${p.numeroProposta || '---'}</p></button>
-                    <button type="button" onclick="window.quickEditProjectSection('${p.id}', 'commission')" class="quick-edit-target text-left p-2 -m-2"><p class="text-xs font-black text-slate-500 uppercase tracking-widest mb-1.5">${state.lang === 'pt' ? 'Recebimentos • Comissão' : 'Receipts • Commission'}</p><p class="text-sm font-bold text-slate-200">${escapeInlineHtml(getProjectReceiptMethodSummary(p))} <span class="text-slate-600 font-normal mx-1">•</span> ${p.percComissao || 0}%</p></button>
+                    <div><p class="text-xs font-black text-slate-500 uppercase tracking-widest mb-1.5">${window.t('seller')}</p><p class="text-sm font-bold text-slate-200 truncate print:text-black" title="${escapeInlineHtml(getUserDisplayName(p.vendedor, p.vendedor || "--"))}">${escapeInlineHtml(getUserDisplayName(p.vendedor, '--'))}</p></div>
+                    <div><p class="text-xs font-black text-slate-500 uppercase tracking-widest mb-1.5">${window.t('status_obra')}</p><p class="text-sm font-black ${p.status === 'Finalizado' ? 'text-emerald-400 print:text-emerald-700' : 'text-gold print:text-amber-700'} uppercase">${p.status === 'Finalizado' ? getProjectCompletionText(p, true) : tStatus(p.status)}</p></div>
+                    <div><p class="text-xs font-black text-slate-500 uppercase tracking-widest mb-1.5">${window.t('prop_inv')}</p><p class="text-sm font-bold text-slate-200 print:text-black">${p.numeroInvoice || '---'} <span class="text-slate-600 font-normal mx-1">|</span> ${p.numeroProposta || '---'}</p></div>
+                    <div><p class="text-xs font-black text-slate-500 uppercase tracking-widest mb-1.5">${window.t('pay_comm')}</p><p class="text-sm font-bold text-slate-200 print:text-black">${p.metodo || '--'} <span class="text-slate-600 font-normal mx-1">•</span> ${p.percComissao || 0}%</p></div>
                 </div>
 
                 <div class="mt-auto"></div>
@@ -3351,18 +3742,16 @@
                         <span style="color: ${colorHex}">${prog}%</span>
                     </div>
                     <div class="progress-track print:bg-slate-200 ${scheduleAlert.isLate || scheduleAlert.isDueSoon ? 'timeline-alert-pulse' : ''}"><div class="progress-bar-fill print:!bg-black" style="width: ${prog}%; background-color: ${colorHex};"></div></div>
-                    <button type="button" onclick="window.quickEditProjectSection('${p.id}', 'schedule')" class="quick-edit-target w-full flex justify-between text-xs font-extrabold uppercase mt-2 p-2 -m-2">
+                    <div class="flex justify-between text-xs font-extrabold uppercase mt-2">
                         <span class="print:text-black">${formatProjectDate(p.dataInicio)}</span>
                         <span class="${p.status === 'Finalizado' ? 'text-emerald-400' : (scheduleAlert.isLate ? 'text-red-500' : (scheduleAlert.isDueSoon ? 'text-amber-400' : 'text-gold'))} print:!text-black">${p.status === 'Finalizado' && p.dataConclusao ? formatProjectDate(p.dataConclusao) : (scheduleAlert.isLate ? window.t('late') : (prog === 100 ? window.t('completed') : (Number.isFinite(e) ? Math.ceil((e - n) / (1000 * 3600 * 24)) : 0) + ' ' + window.t('days_left')))}</span>
-                    </button>
-                    <button type="button" onclick="window.quickEditObservation('${p.id}')" class="no-print group w-full flex items-start gap-2 text-left text-sm leading-relaxed border-l-2 ${scheduleAlert.isLate ? 'border-red-500' : 'border-amber-400'} pl-3 py-1 ${p.observacao ? 'text-slate-300 hover:text-white' : 'text-slate-500 hover:text-amber-300'} transition-colors" title="${state.lang === 'pt' ? 'Clique para editar' : 'Click to edit'}"><span class="flex-1">${p.observacao ? escapeInlineHtml(p.observacao) : (state.lang === 'pt' ? '+ Adicionar observação' : '+ Add note')}</span><i data-lucide="pencil" class="w-3.5 h-3.5 opacity-0 group-hover:opacity-100 transition-opacity"></i></button>
-                    ${p.observacao ? `<p class="hidden print:block text-sm text-black border-l-2 border-slate-400 pl-3">${escapeInlineHtml(p.observacao)}</p>` : ''}
+                    </div>
                 </div>
 
-                <button type="button" onclick="window.quickEditProjectSection('${p.id}', 'contract')" class="quick-edit-target w-full bg-gradient-to-br from-black/50 to-transparent p-6 rounded-[24px] border border-white/5 shadow-inner print:bg-transparent print:border-slate-300">
+                <div class="bg-gradient-to-br from-black/50 to-transparent p-6 rounded-[24px] border border-white/5 shadow-inner print:bg-transparent print:border-slate-300">
                     <p class="text-xs font-black text-slate-500 uppercase mb-2 text-center tracking-widest">${window.t('gross_contract')}</p>
                     <p class="text-4xl font-black text-white force-white-text text-center tracking-tight print:text-black">${formatCurr(p.valorTotal)}</p>
-                </button>
+                </div>
 
                 <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mt-6 no-print project-finance-snapshot">
                     <div class="rounded-[28px] p-4 sm:p-5 border ${clientBorderColor} shadow-inner transition-colors min-h-[208px] flex flex-col bg-gradient-to-br from-black/20 to-transparent overflow-hidden">
@@ -3541,11 +3930,6 @@
         window.safeRenderReport();
     };
 
-    window.setReportStatusFilter = (status) => {
-        state.reportStatusFilter = ['all', 'ongoing', 'late', 'finished', 'archived'].includes(status) ? status : 'all';
-        window.safeRenderReport();
-    };
-
     function getMonthRangeBuckets(start, end, lang = 'pt') {
         if (!start || !end) return [];
         const buckets = [];
@@ -3581,14 +3965,19 @@
         return Array.from(methods);
     }
 
-    function getReceiptCommissionValue(receipt, project) {
+    function getReceiptCommissionBase(receipt, project) {
         const amount = Number(receipt?.valor || 0);
-        const rate = Number(project?.percComissao || 0) / 100;
         const method = getReceiptEffectiveMethod(receipt, project);
-        const base = isCardMethod(method) ? amount * 0.97 : amount;
-        // Keep sub-cent precision per installment. Rounding each receipt first can
-        // create a false $0.01 balance when multiple half-cent values are summed.
-        return base * rate;
+        return isCardMethod(method) ? amount * 0.97 : amount;
+    }
+
+    function getCommissionFromBase(base, project) {
+        const rate = Number(project?.percComissao || 0) / 100;
+        return roundMoney(Number(base || 0) * rate);
+    }
+
+    function getReceiptCommissionValue(receipt, project) {
+        return getCommissionFromBase(getReceiptCommissionBase(receipt, project), project);
     }
 
     
@@ -3599,22 +3988,20 @@
         let releasedToEnd = 0;
         let paidToEnd = 0;
 
+        let commissionBaseToEnd = 0;
         (Array.isArray(project?.recebimentos) ? project.recebimentos : []).forEach(receipt => {
             const dt = toDateOnly(receipt?.data);
             if (!dt || (end && dt > end)) return;
-            receivedToEnd += Number(receipt?.valor || 0);
-            releasedToEnd += getReceiptCommissionValue(receipt, project);
+            receivedToEnd = roundMoney(receivedToEnd + Number(receipt?.valor || 0));
+            commissionBaseToEnd += getReceiptCommissionBase(receipt, project);
         });
+        releasedToEnd = getCommissionFromBase(commissionBaseToEnd, project);
 
         normalizePaymentEntries(project?.pagamentosEfetuados || []).forEach(payment => {
             const dt = toDateOnly(payment?.data);
             if (!dt || (end && dt > end)) return;
-            paidToEnd += Number(payment?.valor || 0);
+            paidToEnd = roundMoney(paidToEnd + Number(payment?.valor || 0));
         });
-
-        receivedToEnd = roundMoney(receivedToEnd);
-        releasedToEnd = roundMoney(releasedToEnd);
-        paidToEnd = roundMoney(paidToEnd);
 
         const hasFinancialMovement = receivedToEnd > 0.009 || releasedToEnd > 0.009 || paidToEnd > 0.009;
         const isFinished = project?.status === 'Finalizado';
@@ -3730,6 +4117,8 @@ function getSellerCommissionPeriodReport(projects, startStr, endStr) {
             let receivedToEnd = 0;
             let releasedPeriod = 0;
             let releasedToEnd = 0;
+            let commissionBasePeriod = 0;
+            let commissionBaseToEnd = 0;
             let paidPeriod = 0;
             let paidToEnd = 0;
 
@@ -3737,14 +4126,14 @@ function getSellerCommissionPeriodReport(projects, startStr, endStr) {
                 const dt = toDateOnly(receipt?.data);
                 if (!dt) return;
                 const amount = roundMoney(Number(receipt?.valor || 0));
-                const commValue = getReceiptCommissionValue(receipt, project);
+                const commissionBase = getReceiptCommissionBase(receipt, project);
                 if (dt <= end) {
                     receivedToEnd += amount;
-                    releasedToEnd += commValue;
+                    commissionBaseToEnd += commissionBase;
                 }
                 if (dt >= start && dt <= end) {
                     receivedPeriod += amount;
-                    releasedPeriod += commValue;
+                    commissionBasePeriod += commissionBase;
                 }
             });
 
@@ -3762,8 +4151,8 @@ function getSellerCommissionPeriodReport(projects, startStr, endStr) {
 
             receivedPeriod = roundMoney(receivedPeriod);
             receivedToEnd = roundMoney(receivedToEnd);
-            releasedPeriod = roundMoney(releasedPeriod);
-            releasedToEnd = roundMoney(releasedToEnd);
+            releasedPeriod = getCommissionFromBase(commissionBasePeriod, project);
+            releasedToEnd = getCommissionFromBase(commissionBaseToEnd, project);
             paidPeriod = roundMoney(paidPeriod);
             paidToEnd = roundMoney(paidToEnd);
             const pendingEnd = roundMoney(Math.max(0, releasedToEnd - paidToEnd));
@@ -3868,13 +4257,7 @@ function getSellerCommissionPeriodReport(projects, startStr, endStr) {
             const sellerMatch = state.reportSellerFilter === 'all' || project.vendedor === state.reportSellerFilter;
             const startDate = toDateOnly(project?.dataInicio);
             const startMatch = !!startDate && !!reportStartDate && !!reportEndDate && startDate >= reportStartDate && startDate <= reportEndDate;
-            const schedule = getProjectScheduleAlert(project);
-            const statusMatch = state.reportStatusFilter === 'all'
-                || (state.reportStatusFilter === 'archived' && project.archived === true)
-                || (state.reportStatusFilter === 'finished' && project.archived !== true && project.status === 'Finalizado')
-                || (state.reportStatusFilter === 'late' && project.archived !== true && schedule.isLate)
-                || (state.reportStatusFilter === 'ongoing' && project.archived !== true && project.status !== 'Finalizado' && !schedule.isLate);
-            return sellerMatch && startMatch && statusMatch;
+            return sellerMatch && startMatch;
         });
         const commissionPeriod = getSellerCommissionPeriodReport(filteredForReport, state.reportPeriodStart, state.reportPeriodEnd);
         const selectedReportSeller = state.reportSellerFilter === 'all'
@@ -4032,25 +4415,13 @@ function getSellerCommissionPeriodReport(projects, startStr, endStr) {
                     ${reportSellerOptions.map(item => `<option value="${item.email}" ${state.reportSellerFilter === item.email ? 'selected' : ''}>${escapeInlineHtml(item.name)}</option>`).join('')}
                </select>`
             : `<div class="modern-input min-w-[220px] flex items-center">${escapeInlineHtml(getUserDisplayName(state.user.email, state.user.email.split('@')[0] || state.user.email))}</div>`;
-        const reportStatusOptionsHTML = `
-            <select onchange="window.setReportStatusFilter(this.value)" class="modern-input min-w-[190px]">
-                <option value="all" ${state.reportStatusFilter === 'all' ? 'selected' : ''}>${isPT ? 'Todas as obras' : 'All projects'}</option>
-                <option value="ongoing" ${state.reportStatusFilter === 'ongoing' ? 'selected' : ''}>${isPT ? 'Em andamento' : 'Ongoing'}</option>
-                <option value="late" ${state.reportStatusFilter === 'late' ? 'selected' : ''}>${isPT ? 'Atrasadas' : 'Late'}</option>
-                <option value="finished" ${state.reportStatusFilter === 'finished' ? 'selected' : ''}>${isPT ? 'Finalizadas' : 'Finished'}</option>
-                <option value="archived" ${state.reportStatusFilter === 'archived' ? 'selected' : ''}>${isPT ? 'Arquivadas' : 'Archived'}</option>
-            </select>`;
         const periodControlsHTML = `
             <div class="no-print mb-6 sm:mb-8">
                 <div class="glass rounded-[28px] border border-white/5 p-5 sm:p-6 shadow-xl">
-                    <div class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-[auto_auto_auto_auto_1fr] gap-4 items-end">
+                    <div class="grid grid-cols-1 xl:grid-cols-[auto_auto_auto_1fr] gap-4 items-end">
                         <div class="flex flex-col gap-1 min-w-[220px]">
                             <label class="text-[10px] font-black uppercase tracking-[0.2em] text-slate-500">${window.t('report_filter_seller')}</label>
                             ${reportSellerOptionsHTML}
-                        </div>
-                        <div class="flex flex-col gap-1 min-w-[190px]">
-                            <label class="text-[10px] font-black uppercase tracking-[0.2em] text-slate-500">${isPT ? 'Situação' : 'Status'}</label>
-                            ${reportStatusOptionsHTML}
                         </div>
                         <div class="flex flex-col gap-1 min-w-[160px]">
                             <label class="text-[10px] font-black uppercase tracking-[0.2em] text-slate-500">${isPT ? 'Início' : 'Start'}</label>
@@ -4223,7 +4594,7 @@ function getSellerCommissionPeriodReport(projects, startStr, endStr) {
             const rowsHtml = group.rows.map(row => {
                 const p = row.project;
                 return `
-                    <tr onclick="window.openProjectFromReport('${p.id}', 'commissions')" onkeydown="if(event.key==='Enter'||event.key===' '){event.preventDefault();window.openProjectFromReport('${p.id}', 'commissions')}" role="link" tabindex="0" aria-label="${state.lang === 'pt' ? 'Abrir obra' : 'Open project'} ${escapeInlineHtml(getProjectPrimaryTitle(p))}" class="cursor-pointer border-b border-white/5 print:border-slate-100 text-[10px] sm:text-xs text-left text-slate-300 print:text-slate-800 hover:bg-white/10 hover:ring-1 hover:ring-inset hover:ring-gold/20 focus:outline-none focus:ring-2 focus:ring-inset focus:ring-gold/50 transition-colors">
+                    <tr class="border-b border-white/5 print:border-slate-100 text-[10px] sm:text-xs text-left text-slate-300 print:text-slate-800 hover:bg-white/5 transition-colors">
                         ${showCompanyColumn ? `<td class="p-3 sm:p-4 text-slate-400 print:text-slate-500 report-col-unit">${escapeInlineHtml(getCompanyDisplayName(p?.empresa))}</td>` : ''}
                         <td class="p-3 sm:p-4 font-bold text-slate-400 print:text-slate-500 report-col-prop">${p.numeroInvoice || '-'} / ${p.numeroProposta || '-'}</td>
                         <td class="p-3 sm:p-4 font-black uppercase text-white force-white-text print:!text-slate-900 report-col-client">${escapeInlineHtml(getProjectPrimaryTitle(p))}</td>
@@ -4419,10 +4790,6 @@ function getSellerCommissionPeriodReport(projects, startStr, endStr) {
 
     onAuthStateChanged(auth, (u) => {
         state.user = u;
-        if (u?.email) {
-            const userLanguage = localStorage.getItem(`d2_lang_user_${u.email.toLowerCase()}`);
-            state.lang = userLanguage === 'pt' ? 'pt' : (userLanguage === 'en' ? 'en' : state.lang);
-        }
         applyThemeConfig(); 
         if (u) {
             document.getElementById('auth-screen').classList.add('hidden'); document.getElementById('main-app').classList.remove('hidden');
@@ -4433,7 +4800,6 @@ function getSellerCommissionPeriodReport(projects, startStr, endStr) {
 
             initData(); logAccess(u.email, 'Fez login no sistema');
         } else {
-            state.lang = 'en';
             document.getElementById('auth-screen').classList.remove('hidden'); document.getElementById('main-app').classList.add('hidden'); document.body.className = 'auth-body';
         }
         window.setLang(state.lang); try { lucide.createIcons(); } catch {}
@@ -4526,19 +4892,10 @@ function getSellerCommissionPeriodReport(projects, startStr, endStr) {
 
     document.addEventListener('DOMContentLoaded', () => {
         try { lucide.createIcons(); } catch {}
-        setTimeout(() => {
-            if (!document.getElementById('t-id')?.value) window.startNewTeamMember();
-        }, 350);
 
         document.getElementById('login-form').onsubmit = async (e) => {
             e.preventDefault(); hideLoginMessages(); const btn = document.getElementById('btn-entrar'); btn.disabled = true;
             const email = document.getElementById('email').value.trim(); const pass = document.getElementById('password').value;
-            if (email) {
-                const languageKey = `d2_lang_user_${email.toLowerCase()}`;
-                const savedLanguage = localStorage.getItem(languageKey);
-                if (savedLanguage === 'pt' || savedLanguage === 'en') state.lang = savedLanguage;
-                localStorage.setItem(languageKey, state.lang);
-            }
             try {
                 await signInWithEmailAndPassword(auth, email, pass);
             } catch (err) {
@@ -4549,12 +4906,6 @@ function getSellerCommissionPeriodReport(projects, startStr, endStr) {
                 else { showLoginError('Falha no login: ' + err.message); }
             } finally { btn.disabled = false; }
         };
-
-        document.getElementById('email').addEventListener('change', (event) => {
-            const email = String(event.target.value || '').trim().toLowerCase();
-            const savedLanguage = email ? localStorage.getItem(`d2_lang_user_${email}`) : null;
-            if (savedLanguage === 'pt' || savedLanguage === 'en') window.setLang(savedLanguage);
-        });
 
         document.getElementById('project-form').onsubmit = async (e) => {
             e.preventDefault(); if (!auth.currentUser) return;
@@ -4575,7 +4926,7 @@ function getSellerCommissionPeriodReport(projects, startStr, endStr) {
                 metodo: document.getElementById('f-metodo').value, percComissao: parseInt(document.getElementById('f-comm').value),
                 dataInicio: document.getElementById('f-inicio').value, dataEntrega: document.getElementById('f-entrega').value,
                 dataConclusao: completionDate,
-                status: nextStatus, observacao: document.getElementById('f-observacao').value.trim(), updatedAt: serverTimestamp()
+                status: nextStatus, updatedAt: serverTimestamp()
             };
 
             try {
@@ -4611,7 +4962,9 @@ function getSellerCommissionPeriodReport(projects, startStr, endStr) {
                 try { const secApp = initializeApp(firebaseConfig, "SecApp_" + Date.now()); const secAuth = getAuth(secApp); await createUserWithEmailAndPassword(secAuth, mail, pass); await signOut(secAuth); await deleteApp(secApp); } catch (authErr) {}
                 if (!id) { await addDoc(collection(db, 'artifacts', appId, 'public', 'data', 'user_credentials'), permData); logAccess(state.user.email, `Adicionou usuário: ${name}`); } 
                 else { await updateDoc(doc(db, 'artifacts', appId, 'public', 'data', 'user_credentials', id), permData); logAccess(state.user.email, `Atualizou usuário: ${name}`); }
-                window.startNewTeamMember();
+                e.target.reset(); document.getElementById('t-id').value = ''; document.getElementById('t-name').value = ''; 
+                document.querySelectorAll('.perm-checkbox').forEach(c => c.checked = false);
+                document.getElementById('p_smart').checked = true; document.getElementById('p_hvac').checked = true; document.getElementById('p_tab_proj').checked = true;
             } catch (err) { window.showModal('Erro', 'Erro ao salvar usuário: ' + err.message, 'error'); }
         };
     });
