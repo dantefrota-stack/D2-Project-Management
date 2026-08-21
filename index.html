@@ -6,6 +6,7 @@
     <title>D2 Project Management - Premium Official</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+    <link href="report-print.css" rel="stylesheet">
     <script src="https://unpkg.com/lucide@latest"></script>
     <!-- Chart.js para Gráficos Interativos -->
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
@@ -3195,6 +3196,77 @@
             printWindow.onload = () => setTimeout(triggerPrint, 250);
         }
     };
+
+    window.printSalesReport = () => {
+        const reportPage = document.querySelector('#report-output .v86-page');
+        if (!reportPage) return;
+
+        const isPt = state.lang === 'pt';
+        const companyName = state.company === 'Smart Home'
+            ? 'D2 Smart Home'
+            : state.company === 'HVAC'
+                ? 'D2 HVAC Solutions'
+                : 'D2 Group';
+        const logoFile = state.company === 'Smart Home'
+            ? 'logo-D2-SmartHome-preto.png'
+            : state.company === 'HVAC'
+                ? 'logo-D2-HVAC-Solutions-preto.png'
+                : 'logo-D2-Group-preto.png';
+        const sellerName = state.reportSellerFilter === 'all'
+            ? (isPt ? 'Todos os vendedores' : 'All sellers')
+            : getUserDisplayName(state.reportSellerFilter, state.reportSellerFilter);
+        const period = `${formatProjectDate(state.reportPeriodStart)} → ${formatProjectDate(state.reportPeriodEnd)}`;
+        const generatedAt = new Intl.DateTimeFormat(isPt ? 'pt-BR' : 'en-US', {
+            dateStyle: 'medium', timeStyle: 'short'
+        }).format(new Date());
+        const existingHost = document.getElementById('report-print-host');
+        if (existingHost) return;
+
+        const logoUrl = new URL(logoFile, window.location.href).href;
+        const header = `<header class="report-print-header"><div class="report-print-brand"><img class="report-print-logo" src="${logoUrl}" alt="${escapeInlineHtml(companyName)}"><div><h1 class="report-print-title">${isPt ? 'Relatório de vendas' : 'Sales report'}</h1><p class="report-print-subtitle">D2 Project Management</p></div></div><dl class="report-print-meta"><dt>${isPt ? 'Empresa' : 'Company'}</dt><dd>${escapeInlineHtml(companyName)}</dd><dt>${isPt ? 'Vendedor' : 'Seller'}</dt><dd>${escapeInlineHtml(sellerName)}</dd><dt>${isPt ? 'Período' : 'Period'}</dt><dd>${escapeInlineHtml(period)}</dd><dt>${isPt ? 'Gerado em' : 'Generated'}</dt><dd>${escapeInlineHtml(generatedAt)}</dd></dl></header>`;
+        const footer = `<footer class="report-print-footer"><span>D2 Project Management</span><span>${isPt ? 'Relatório confidencial para uso corporativo' : 'Confidential report for corporate use'}</span></footer>`;
+        const host = document.createElement('main');
+        host.id = 'report-print-host';
+        host.className = 'report-print-shell';
+        host.innerHTML = `${header}${reportPage.outerHTML}${footer}`;
+        document.body.appendChild(host);
+        document.body.classList.add('report-print-document', 'report-print-active');
+
+        const cleanup = () => {
+            host.remove();
+            document.body.classList.remove('report-print-document', 'report-print-active');
+        };
+        window.addEventListener('afterprint', cleanup, { once: true });
+
+        const logo = host.querySelector('.report-print-logo');
+        const logoReady = !logo || logo.complete
+            ? Promise.resolve()
+            : new Promise(resolve => {
+                logo.addEventListener('load', resolve, { once: true });
+                logo.addEventListener('error', resolve, { once: true });
+            });
+        const fontsReady = document.fonts?.ready || Promise.resolve();
+        const stylesheet = document.querySelector('link[href="report-print.css"]');
+        const stylesheetReady = !stylesheet || stylesheet.sheet
+            ? Promise.resolve()
+            : new Promise(resolve => {
+                stylesheet.addEventListener('load', resolve, { once: true });
+                stylesheet.addEventListener('error', resolve, { once: true });
+            });
+        Promise.all([fontsReady, logoReady, stylesheetReady]).then(() => {
+            // Flush the professional document before requesting the native print UI.
+            void host.offsetHeight;
+            requestAnimationFrame(() => window.print());
+        });
+    };
+
+    document.addEventListener('click', (event) => {
+        const printButton = event.target.closest('#report-output .v86-head button');
+        if (!printButton) return;
+        event.preventDefault();
+        event.stopPropagation();
+        window.printSalesReport();
+    }, true);
 
     window.printKpiReport = () => {
         document.body.classList.add('printing-kpi');
