@@ -829,6 +829,11 @@
 @media(max-width:410px){.v86-kpis,.v86-budget-kpis,.v86-metrics{grid-template-columns:1fr}.v86-project-meta,.v86-project-fin{grid-template-columns:1fr}.v86-head-left{gap:10px}.v86-btn{width:100%}}
 @media print{.v86-page{color:#111827!important}.v86-section,.v86-kpi,.v86-metric{background:#fff!important;border-color:#d7e0ea!important;box-shadow:none!important}.v86-title,.v86-value,.v86-project-name{color:#111827!important}.v86-table td{color:#334155!important}.v86-table th{color:#64748b!important}}
 
+/* Ação de quitação em lote disponível apenas no KPI de comissão pendente. */
+#report-output .v86-kpis .v86-kpi:nth-child(3){cursor:pointer;transition:border-color .18s ease,background .18s ease,transform .18s ease}
+#report-output .v86-kpis .v86-kpi:nth-child(3):hover{border-color:rgba(243,188,61,.52);background:rgba(243,188,61,.07);transform:translateY(-1px)}
+#report-output .v86-kpis .v86-kpi:nth-child(3):focus-visible{outline:2px solid var(--v86-amber);outline-offset:3px}
+
 </style>
 </head>
 <body class="auth-body">
@@ -921,6 +926,25 @@
                 <button onclick="window.saveEditedPayments()" class="px-8 py-3 bg-slate-800 text-white force-white-text border border-gold/30 font-black rounded-xl hover:bg-slate-700 transition-colors shadow-lg" data-i18n="btn_save_changes">Salvar Alterações</button>
             </div>
         </div>
+    </div>
+</div>
+
+<!-- Modal de Pagamentos Pendentes do Relatório -->
+<div id="report-pending-payment-modal" class="modal-overlay modal-overlay-scroll">
+    <div class="modal-content modal-panel-scroll animate-fade-in max-w-4xl !p-0">
+        <div class="px-7 pt-7 pb-5 border-b border-white/10 bg-gradient-to-r from-slate-900 via-slate-900 to-black/90">
+            <div class="flex items-start justify-between gap-4">
+                <div>
+                    <p class="text-[10px] font-black uppercase tracking-[0.28em] text-slate-500 mb-2">Comissões pendentes</p>
+                    <h3 class="text-2xl font-black text-amber-300">Pagamentos do relatório</h3>
+                    <p class="text-sm text-slate-400 mt-2">Selecione as obras que deseja quitar para o vendedor.</p>
+                </div>
+                <button type="button" onclick="window.closeReportPendingPayments()" class="shrink-0 inline-flex items-center justify-center w-11 h-11 rounded-2xl border border-white/10 bg-slate-900 text-slate-300 hover:text-white hover:border-white/20 transition-colors" aria-label="Fechar">
+                    <i data-lucide="x" class="w-5 h-5"></i>
+                </button>
+            </div>
+        </div>
+        <div id="report-pending-payment-content" class="px-7 py-6"></div>
     </div>
 </div>
 
@@ -1137,7 +1161,7 @@
         isSuperAdmin: false,
         userPerms: { tab_proj: true, tab_new: false, tab_rep: false, fin: false, costs: false, smart: true, hvac: false, global: false },
         projects: [], team: [], logs: [], logsUserFilter: '', logsSearchQuery: '', company: 'Ambas', lang: 'pt', theme: 'dark', 
-        editingPayments: null, editingRecs: null, focusedProject: null, activeModule: null, archiveFilter: 'active',
+        editingPayments: null, editingRecs: null, reportPendingPayments: null, focusedProject: null, activeModule: null, archiveFilter: 'active',
         reportActiveKpi: 'receita', projectSellerFilter: 'all', projectSearchQuery: '', reportPeriodStart: '', reportPeriodEnd: '', reportSellerFilter: 'all', reportRangePreset: 'year', mobileNavOpen: false, currentView: 'projects' 
     };
 
@@ -2826,6 +2850,163 @@
             }
         });
     };
+
+    function getReportPendingPaymentItems() {
+        ensureReportPeriod();
+        const canAll = state.userPerms.global;
+        const base = state.projects.filter(p => {
+            const companyAllowed = (p.empresa === 'Smart Home' && state.userPerms.smart) || (p.empresa === 'HVAC' && state.userPerms.hvac);
+            return companyAllowed && (state.company === 'Ambas' || p.empresa === state.company) && (canAll || p.vendedor === state.user?.email);
+        });
+        const start = toDateOnly(state.reportPeriodStart);
+        const end = toDateOnly(state.reportPeriodEnd);
+        const reportProjects = base.filter(p => {
+            const date = toDateOnly(p.dataInicio);
+            return p.vendedor === state.reportSellerFilter && date && date >= start && date <= end;
+        });
+        const report = getSellerCommissionPeriodReport(reportProjects, state.reportPeriodStart, state.reportPeriodEnd);
+        return report.projectRows.map(row => {
+            const reportPendingAmount = roundMoney(row.pendingEnd || 0);
+            const currentSummary = getPaymentDraftSummary(row.project.id, row.project.pagamentosEfetuados || []);
+            const currentDue = roundMoney(currentSummary?.remainingToPay || 0);
+            return {
+                projectId: row.project.id,
+                project: row.project,
+                reportPendingAmount,
+                currentDue,
+                payableAmount: roundMoney(Math.min(reportPendingAmount, currentDue))
+            };
+        }).filter(item => item.payableAmount > 0.009);
+    }
+
+    window.openReportPendingPayments = () => {
+        if (!state.userPerms.fin) {
+            window.showModal(window.t('modal_access_denied'), state.lang === 'pt' ? 'Você não possui permissão financeira para registrar pagamentos de comissão.' : 'You do not have financial permission to record commission payments.', 'error');
+            return;
+        }
+        if (!state.reportSellerFilter || state.reportSellerFilter === 'all') {
+            window.showModal(state.lang === 'pt' ? 'Selecione um vendedor' : 'Select a seller', state.lang === 'pt' ? 'Selecione um vendedor específico no filtro do relatório antes de registrar pagamentos em lote.' : 'Select a specific seller in the report filter before recording batch payments.', 'info');
+            return;
+        }
+        const items = getReportPendingPaymentItems();
+        if (!items.length) {
+            window.showModal(state.lang === 'pt' ? 'Nenhuma comissão disponível' : 'No commission available', state.lang === 'pt' ? 'Não há comissões pendentes e liberadas para pagamento nas obras deste relatório.' : 'There are no pending, released commissions available for payment in this report.', 'info');
+            return;
+        }
+        state.reportPendingPayments = { items, selectedIds: new Set() };
+        window.renderReportPendingPayments();
+        document.getElementById('report-pending-payment-modal')?.classList.add('active');
+    };
+
+    window.closeReportPendingPayments = () => {
+        state.reportPendingPayments = null;
+        document.getElementById('report-pending-payment-modal')?.classList.remove('active');
+    };
+
+    window.toggleReportPendingPayment = (projectId, checked) => {
+        const pending = state.reportPendingPayments;
+        if (!pending) return;
+        if (checked) pending.selectedIds.add(projectId);
+        else pending.selectedIds.delete(projectId);
+        window.renderReportPendingPayments();
+    };
+
+    window.toggleAllReportPendingPayments = (checked) => {
+        const pending = state.reportPendingPayments;
+        if (!pending) return;
+        pending.selectedIds = checked ? new Set(pending.items.map(item => item.projectId)) : new Set();
+        window.renderReportPendingPayments();
+    };
+
+    window.renderReportPendingPayments = () => {
+        const container = document.getElementById('report-pending-payment-content');
+        const pending = state.reportPendingPayments;
+        if (!container || !pending) return;
+        const selectedItems = pending.items.filter(item => pending.selectedIds.has(item.projectId));
+        const selectedTotal = roundMoney(selectedItems.reduce((sum, item) => sum + item.payableAmount, 0));
+        const allSelected = pending.items.length > 0 && selectedItems.length === pending.items.length;
+        const sellerName = getUserDisplayName(state.reportSellerFilter, state.lang === 'pt' ? 'Vendedor' : 'Seller');
+        const rows = pending.items.map(item => {
+            const project = item.project;
+            const checked = pending.selectedIds.has(item.projectId) ? 'checked' : '';
+            return `<label class="flex items-start gap-4 rounded-2xl border border-white/10 bg-white/[.025] p-4 cursor-pointer hover:border-amber-300/40 transition-colors"><input type="checkbox" class="mt-1 h-5 w-5 accent-amber-400" ${checked} onchange="window.toggleReportPendingPayment('${item.projectId}', this.checked)"><div class="min-w-0 flex-1"><div class="flex flex-col sm:flex-row sm:items-start sm:justify-between gap-3"><div class="min-w-0"><p class="font-black text-slate-100 break-words">${escapeInlineHtml(getProjectPrimaryTitle(project))}</p><p class="mt-1 text-xs text-slate-400">${escapeInlineHtml(project.numeroInvoice || '—')} / ${escapeInlineHtml(project.numeroProposta || '—')} · ${escapeInlineHtml(getCompanyDisplayName(project.empresa))}</p></div><strong class="shrink-0 text-lg font-black text-amber-300 tabular-nums">${formatCurr(item.payableAmount)}</strong></div><p class="mt-2 text-xs text-slate-500">${state.lang === 'pt' ? 'Em aberto no fim do período selecionado' : 'Outstanding at the selected period end'}: ${formatCurr(item.reportPendingAmount)}</p></div></label>`;
+        }).join('');
+        container.innerHTML = `<div class="space-y-5"><div class="rounded-2xl border border-amber-300/20 bg-amber-300/[.06] p-4"><div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3"><div><p class="text-xs font-black uppercase tracking-[.18em] text-amber-200">${escapeInlineHtml(sellerName)}</p><p class="mt-1 text-sm text-slate-300">${formatProjectDate(state.reportPeriodStart)} → ${formatProjectDate(state.reportPeriodEnd)}</p></div><div class="sm:text-right"><p class="text-xs text-slate-400">${state.lang === 'pt' ? 'Selecionado para pagamento' : 'Selected for payment'}</p><strong class="text-2xl font-black text-amber-300 tabular-nums">${formatCurr(selectedTotal)}</strong></div></div></div><div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3"><label class="inline-flex items-center gap-3 text-sm font-bold text-slate-200 cursor-pointer"><input type="checkbox" class="h-5 w-5 accent-amber-400" ${allSelected ? 'checked' : ''} onchange="window.toggleAllReportPendingPayments(this.checked)">${state.lang === 'pt' ? 'Selecionar todas as obras' : 'Select all projects'}</label><span class="text-sm text-slate-400">${selectedItems.length} ${state.lang === 'pt' ? 'de' : 'of'} ${pending.items.length} ${state.lang === 'pt' ? 'obras selecionadas' : 'projects selected'}</span></div><div class="max-h-[48vh] overflow-y-auto space-y-3 pr-1">${rows}</div><div class="flex flex-col-reverse sm:flex-row sm:justify-end gap-3 pt-2 border-t border-white/10"><button type="button" onclick="window.closeReportPendingPayments()" class="px-5 py-3 rounded-xl border border-white/10 text-slate-300 font-bold hover:bg-white/5">${state.lang === 'pt' ? 'Cancelar' : 'Cancel'}</button><button type="button" onclick="window.confirmReportPendingPayments()" class="px-5 py-3 rounded-xl bg-amber-400 text-slate-950 font-black disabled:opacity-40 disabled:cursor-not-allowed" ${selectedItems.length ? '' : 'disabled'}>${state.lang === 'pt' ? 'Registrar pagamentos selecionados' : 'Record selected payments'}</button></div></div>`;
+        try { lucide.createIcons(); } catch {}
+    };
+
+    window.confirmReportPendingPayments = () => {
+        const pending = state.reportPendingPayments;
+        if (!state.userPerms.fin || !pending) return;
+        const selectedItems = pending.items.filter(item => pending.selectedIds.has(item.projectId));
+        const selectedTotal = roundMoney(selectedItems.reduce((sum, item) => sum + item.payableAmount, 0));
+        if (!selectedItems.length || selectedTotal <= 0.009) return;
+        const sellerName = getUserDisplayName(state.reportSellerFilter, state.lang === 'pt' ? 'Vendedor' : 'Seller');
+        const projectLabel = selectedItems.length === 1 ? (state.lang === 'pt' ? 'obra' : 'project') : (state.lang === 'pt' ? 'obras' : 'projects');
+        window.showModal(
+            state.lang === 'pt' ? 'Confirmar pagamentos em lote' : 'Confirm batch payments',
+            state.lang === 'pt'
+                ? `Registrar ${formatCurr(selectedTotal)} de comissões para ${sellerName} em ${selectedItems.length} ${projectLabel}? Cada lançamento será registrado individualmente na obra correspondente com a data de hoje.`
+                : `Record ${formatCurr(selectedTotal)} in commissions for ${sellerName} across ${selectedItems.length} ${projectLabel}? Each payment will be recorded individually in its corresponding project using today's date.`,
+            'confirm',
+            async () => {
+                try {
+                    const plans = [];
+                    for (const item of selectedItems) {
+                        const project = state.projects.find(p => p.id === item.projectId);
+                        if (!project || project.vendedor !== state.reportSellerFilter) continue;
+                        const summary = getPaymentDraftSummary(project.id, project.pagamentosEfetuados || []);
+                        const amount = roundMoney(Math.min(item.reportPendingAmount, Number(summary?.remainingToPay || 0)));
+                        if (amount <= 0.009) continue;
+                        const payment = {
+                            id: crypto.randomUUID(),
+                            data: new Date().toISOString().split('T')[0],
+                            valor: amount,
+                            tipo: 'comissao',
+                            isAdvance: false,
+                            adiantado: false,
+                            commissionEligibleAtPayment: roundMoney(summary.commLiberada || 0),
+                            clientOutstandingAtPayment: roundMoney(summary.clientOutstanding || 0),
+                            adicionadoPor: state.user?.email || '',
+                            criadoEm: new Date().toISOString(),
+                            origem: 'report_batch_commission_payment'
+                        };
+                        const updatedPayments = [...normalizePaymentEntries(project.pagamentosEfetuados || []), payment];
+                        const payload = buildSyncedCommissionExpensePayload(project, updatedPayments);
+                        plans.push({ project, amount, payload });
+                    }
+                    if (!plans.length) {
+                        window.closeReportPendingPayments();
+                        window.showModal(state.lang === 'pt' ? 'Nenhum pagamento registrado' : 'No payments recorded', state.lang === 'pt' ? 'Os saldos selecionados já não estavam disponíveis para pagamento.' : 'The selected balances were no longer available for payment.', 'info');
+                        return;
+                    }
+                    for (let index = 0; index < plans.length; index += 450) {
+                        const batch = writeBatch(db);
+                        plans.slice(index, index + 450).forEach(plan => {
+                            batch.update(doc(db, 'artifacts', appId, 'public', 'data', 'projects', plan.project.id), {
+                                pagamentosEfetuados: plan.payload.normalizedPayments,
+                                despesas: plan.payload.syncedExpenses
+                            });
+                        });
+                        await batch.commit();
+                    }
+                    plans.forEach(plan => logAccess(state.user?.email, `Registrou pagamento em lote de comissão de ${formatCurr(plan.amount)} para ${sellerName}: ${getProjectDisplayName(plan.project)}`, { ...getProjectLogMeta(plan.project), paymentType: 'report_batch_commission_payment', amount: plan.amount, sellerName }));
+                    const appliedTotal = roundMoney(plans.reduce((sum, plan) => sum + plan.amount, 0));
+                    window.closeReportPendingPayments();
+                    window.safeRenderReport();
+                    setTimeout(() => window.showModal(state.lang === 'pt' ? 'Pagamentos registrados' : 'Payments recorded', state.lang === 'pt' ? `${formatCurr(appliedTotal)} foi registrado em ${plans.length} ${plans.length === 1 ? 'obra.' : 'obras.'}` : `${formatCurr(appliedTotal)} was recorded in ${plans.length} ${plans.length === 1 ? 'project.' : 'projects.'}`, 'info'), 180);
+                } catch (error) {
+                    console.error('Erro ao registrar pagamentos em lote:', error);
+                    window.showModal(window.t('error'), (state.lang === 'pt' ? 'Não foi possível registrar os pagamentos: ' : 'Unable to record the payments: ') + (error?.message || error), 'error');
+                }
+            }
+        );
+    };
+
+    document.addEventListener('click', event => {
+        const outstandingCard = event.target.closest('#report-output .v86-kpis .v86-kpi:nth-child(3)');
+        if (outstandingCard) window.openReportPendingPayments();
+    });
 
     window.openEditRecModal = (projectId) => {
         const p = state.projects.find(x => x.id === projectId);
