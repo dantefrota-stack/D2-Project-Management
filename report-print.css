@@ -131,14 +131,14 @@ body.report-print-active #report-print-host {
 
 /* Keep the executive summary together, but let the detailed table fill the
    remaining space on page one and continue naturally on subsequent pages. */
-.report-print-document .v86-page > .v86-section:last-child {
+.report-print-document .v86-page > .report-print-detail-section {
     break-inside: auto;
     page-break-inside: auto;
     box-decoration-break: clone;
     -webkit-box-decoration-break: clone;
 }
 
-.report-print-document .v86-page > .v86-section:last-child > .v86-section-pad {
+.report-print-document .v86-page > .report-print-detail-section > .v86-section-pad {
     break-after: avoid-page;
     page-break-after: avoid;
 }
@@ -236,17 +236,30 @@ body.report-print-active #report-print-host {
 }
 
 .report-print-document .v86-table th:nth-child(1),
-.report-print-document .v86-table td:nth-child(1) { width: 14%; }
+.report-print-document .v86-table td:nth-child(1) { width: 12%; }
 .report-print-document .v86-table th:nth-child(2),
-.report-print-document .v86-table td:nth-child(2) { width: 24%; }
+.report-print-document .v86-table td:nth-child(2) { width: 21%; }
 .report-print-document .v86-table th:nth-child(3),
-.report-print-document .v86-table td:nth-child(3) { width: 12%; }
+.report-print-document .v86-table td:nth-child(3) { width: 11%; }
 .report-print-document .v86-table th:nth-child(4),
-.report-print-document .v86-table td:nth-child(4) { width: 17%; }
+.report-print-document .v86-table td:nth-child(4) { width: 12%; }
 .report-print-document .v86-table th:nth-child(5),
-.report-print-document .v86-table td:nth-child(5) { width: 16.5%; }
+.report-print-document .v86-table td:nth-child(5) { width: 15%; }
 .report-print-document .v86-table th:nth-child(6),
-.report-print-document .v86-table td:nth-child(6) { width: 16.5%; }
+.report-print-document .v86-table td:nth-child(6) { width: 14.5%; }
+.report-print-document .v86-table th:nth-child(7),
+.report-print-document .v86-table td:nth-child(7) { width: 14.5%; }
+
+.report-print-document .report-print-reference-section .v86-table th:nth-child(1),
+.report-print-document .report-print-reference-section .v86-table td:nth-child(1) { width: 15%; }
+.report-print-document .report-print-reference-section .v86-table th:nth-child(2),
+.report-print-document .report-print-reference-section .v86-table td:nth-child(2) { width: 28%; }
+.report-print-document .report-print-reference-section .v86-table th:nth-child(3),
+.report-print-document .report-print-reference-section .v86-table td:nth-child(3) { width: 16%; }
+.report-print-document .report-print-reference-section .v86-table th:nth-child(4),
+.report-print-document .report-print-reference-section .v86-table td:nth-child(4) { width: 24%; }
+.report-print-document .report-print-reference-section .v86-table th:nth-child(5),
+.report-print-document .report-print-reference-section .v86-table td:nth-child(5) { width: 17%; }
 
 .report-print-document .v86-table td.wrap {
     overflow-wrap: normal;

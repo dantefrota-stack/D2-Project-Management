@@ -821,7 +821,7 @@
 .v86-budget-hero{display:grid;grid-template-columns:minmax(300px,.9fr) minmax(0,2fr);gap:16px}.v86-budget-health{padding:22px;display:flex;flex-direction:column;justify-content:space-between;min-height:264px}.v86-budget-amount{font-size:clamp(1.9rem,4vw,2.8rem);font-weight:900;letter-spacing:-.045em;color:var(--v86-green);line-height:1.05;overflow-wrap:anywhere}.v86-budget-kpis{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:11px}.v86-budget-kpis .v86-kpi{min-height:123px;padding:14px}.v86-budget-kpis .v86-value{font-size:clamp(.95rem,1.8vw,1.25rem)}
 .v86-cost-charts{display:grid;grid-template-columns:minmax(300px,.85fr) minmax(0,1.5fr);gap:16px}.v86-chart{height:250px;position:relative}.v86-donut-wrap{display:flex;align-items:center;justify-content:center;gap:28px;height:250px}.v86-legend{display:flex;flex-direction:column;gap:12px}.v86-legend-row{display:flex;align-items:flex-start;gap:9px;color:#c5d1dd;font-size:10px;line-height:1.4}.v86-dot{width:8px;height:8px;border-radius:50%;margin-top:3px;flex:none}
 .v86-expense-form{display:grid;grid-template-columns:160px minmax(220px,1.5fr) minmax(180px,1fr) 150px auto;gap:12px;align-items:end}.v86-expense-form .modern-input{min-height:44px}.v86-note{display:flex;align-items:flex-start;gap:11px;padding:14px;border:1px solid var(--v86-line);border-radius:14px;background:rgba(255,255,255,.018);color:#b8c6d4;font-size:10px;line-height:1.55}
-.v86-report-filters{display:grid;grid-template-columns:1fr 1fr 1fr 1fr;gap:12px}.v86-month-head{background:rgba(255,255,255,.035)}.v86-month-head td{font-weight:900;color:#e3edf5}.v86-report-total{background:rgba(69,216,156,.045)}
+.v86-report-filters{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:12px}.v86-month-head{background:rgba(255,255,255,.035)}.v86-month-head td{font-weight:900;color:#e3edf5}.v86-report-total{background:rgba(69,216,156,.045)}
 .v86-quick-actions{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px}.v86-action-card{display:flex;align-items:center;gap:12px;padding:15px;border:1px solid var(--v86-line);border-radius:15px;background:rgba(255,255,255,.02);color:#dce6ef;text-align:left}.v86-action-card:hover{background:rgba(69,216,156,.045);border-color:rgba(69,216,156,.22)}.v86-action-card strong{display:block;font-size:10px;font-weight:850}.v86-action-card small{display:block;margin-top:3px;color:var(--v86-muted);font-size:8px;line-height:1.4}
 @media(max-width:1250px){.v86-project-grid{grid-template-columns:repeat(2,minmax(0,1fr))}.v86-budget-kpis{grid-template-columns:repeat(3,minmax(0,1fr))}.v86-metrics{grid-template-columns:repeat(3,minmax(0,1fr))}.v86-expense-form{grid-template-columns:repeat(2,minmax(0,1fr))}.v86-expense-form button{grid-column:span 2}.v86-report-filters{grid-template-columns:repeat(2,minmax(0,1fr))}}
 @media(max-width:900px){.v86-grid-overview,.v86-budget-hero,.v86-cost-charts{grid-template-columns:1fr}.v86-kpis{grid-template-columns:repeat(2,minmax(0,1fr))}.v86-budget-kpis,.v86-metrics{grid-template-columns:repeat(2,minmax(0,1fr))}.v86-project-grid{grid-template-columns:1fr}.v86-head{flex-direction:column}.v86-head>div:last-child{width:100%;display:flex;flex-wrap:wrap}.v86-head .v86-btn{flex:1}.v86-grid-2{grid-template-columns:1fr}}
@@ -1162,7 +1162,7 @@
         userPerms: { tab_proj: true, tab_new: false, tab_rep: false, fin: false, costs: false, smart: true, hvac: false, global: false },
         projects: [], team: [], logs: [], logsUserFilter: '', logsSearchQuery: '', company: 'Ambas', lang: 'pt', theme: 'dark', 
         editingPayments: null, editingRecs: null, reportPendingPayments: null, focusedProject: null, activeModule: null, archiveFilter: 'active',
-        reportActiveKpi: 'receita', projectSellerFilter: 'all', projectSearchQuery: '', reportPeriodStart: '', reportPeriodEnd: '', reportSellerFilter: 'all', reportRangePreset: 'year', mobileNavOpen: false, currentView: 'projects' 
+        reportActiveKpi: 'receita', projectSellerFilter: 'all', projectSearchQuery: '', reportPeriodStart: '', reportPeriodEnd: '', reportSellerFilter: 'all', reportArchiveFilter: 'all', reportRangePreset: 'year', mobileNavOpen: false, currentView: 'projects'
     };
 
     window.d2Charts = {};
@@ -2856,7 +2856,8 @@
         const canAll = state.userPerms.global;
         const base = state.projects.filter(p => {
             const companyAllowed = (p.empresa === 'Smart Home' && state.userPerms.smart) || (p.empresa === 'HVAC' && state.userPerms.hvac);
-            return companyAllowed && (state.company === 'Ambas' || p.empresa === state.company) && (canAll || p.vendedor === state.user?.email);
+            const archiveAllowed = state.reportArchiveFilter === 'all' || (state.reportArchiveFilter === 'archived' ? !!p.archived : !p.archived);
+            return companyAllowed && archiveAllowed && (state.company === 'Ambas' || p.empresa === state.company) && (canAll || p.vendedor === state.user?.email);
         });
         const start = toDateOnly(state.reportPeriodStart);
         const end = toDateOnly(state.reportPeriodEnd);
@@ -5360,6 +5361,128 @@ function getSellerCommissionPeriodReport(projects, startStr, endStr) {
         out.innerHTML=`<div class="v86-page"><div class="v86-head no-print"><div><h1 class="v86-title">${state.lang==='pt'?'Relatórios':'Reports'}</h1><p class="text-sm text-slate-400 mt-2">${seller?(state.lang==='pt'?'Relatório de vendas · ':'Sales report · ')+escapeInlineHtml(seller.name):(state.lang==='pt'?'Relatório de vendas por vendedor':'Sales report by seller')}</p></div><button onclick="window.print()" class="v86-btn"><i data-lucide="printer" class="w-4 h-4"></i>${window.t('print_view')}</button></div><section class="v86-section v86-section-pad mb-4 no-print"><div class="v86-report-filters"><div><span class="v86-label mb-2">${state.lang==='pt'?'Empresa':'Company'}</span><select class="modern-input" onchange="window.selectUnit(this.value)">${state.userPerms.smart&&state.userPerms.hvac?`<option value="Ambas" ${state.company==='Ambas'?'selected':''}>${state.lang==='pt'?'Ambas':'Both'}</option>`:''}${state.userPerms.smart?`<option value="Smart Home" ${state.company==='Smart Home'?'selected':''}>D2 Smart Home</option>`:''}${state.userPerms.hvac?`<option value="HVAC" ${state.company==='HVAC'?'selected':''}>D2 HVAC Solutions</option>`:''}</select></div><div><span class="v86-label mb-2">${state.lang==='pt'?'Vendedor':'Seller'}</span><select class="modern-input" onchange="window.setReportSellerFilter(this.value)">${sellerOptions}</select></div><div><span class="v86-label mb-2">${state.lang==='pt'?'Data inicial':'Start date'}</span><input type="date" class="modern-input" value="${state.reportPeriodStart}" onchange="window.updateReportPeriod('start',this.value)"></div><div><span class="v86-label mb-2">${state.lang==='pt'?'Data final':'End date'}</span><input type="date" class="modern-input" value="${state.reportPeriodEnd}" onchange="window.updateReportPeriod('end',this.value)"></div></div><div class="flex flex-wrap gap-2 mt-4 pt-4 border-t border-white/10"><button class="v86-btn" onclick="window.applyQuickReportRange('month')">${state.lang==='pt'?'Mês atual':'This month'}</button><button class="v86-btn" onclick="window.applyQuickReportRange('30d')">30 dias</button><button class="v86-btn" onclick="window.applyQuickReportRange('90d')">90 dias</button><button class="v86-btn" onclick="window.applyQuickReportRange('year')">${state.lang==='pt'?'Ano atual':'This year'}</button></div></section><section class="v86-section v86-section-pad mb-4"><div class="v86-section-title"><div><h2>${state.lang==='pt'?'Resumo do relatório':'Report Summary'}</h2><p>${formatProjectDate(state.reportPeriodStart)} → ${formatProjectDate(state.reportPeriodEnd)}</p></div></div><div class="v86-kpis"><div class="v86-kpi"><span>${state.lang==='pt'?'Valor total das obras':'Total project value'}</span><strong class="green">${formatCurr(rpt.totalWorkValue)}</strong></div><div class="v86-kpi"><span>${state.lang==='pt'?'Comissão paga no período':'Commission paid in period'}</span><strong class="cyan">${formatCurr(rpt.totalPaidPeriod)}</strong></div><div class="v86-kpi"><span>${state.lang==='pt'?'Em aberto no fim do período':'Outstanding at period end'}</span><strong class="amber">${formatCurr(rpt.totalPendingEnd)}</strong></div><div class="v86-kpi"><span>${state.lang==='pt'?'Obras no relatório':'Projects in report'}</span><strong>${rpt.totalProjects}</strong><small class="text-[9px] text-slate-500 mt-2">${rpt.activeProjects} ${state.lang==='pt'?(rpt.activeProjects===1?'ativa':'ativas'):'active'} · ${rpt.archivedProjects} ${state.lang==='pt'?(rpt.archivedProjects===1?'arquivada':'arquivadas'):'archived'}</small></div></div></section><section class="v86-section"><div class="v86-section-pad"><div class="v86-section-title"><div><h2>${state.lang==='pt'?'Relatório de vendas por vendedor':'Seller Sales Report'}</h2><p>${rpt.excludedProjects?`${rpt.excludedProjects} ${state.lang==='pt'?'obra(s) arquivada(s) sem movimento excluída(s) dos totais.':'archived project(s) without movement excluded from totals.'}`:''}</p></div></div></div><div class="v86-table-wrap"><table class="v86-table"><thead><tr><th>Invoice / Proposta</th><th>${state.lang==='pt'?'Cliente':'Client'}</th><th>${state.lang==='pt'?'Situação':'Status'}</th><th class="money">${state.lang==='pt'?'Valor contrato bruto':'Gross contract value'}</th><th class="money">${state.lang==='pt'?'Comissão paga no período':'Commission paid'}</th><th class="money">${state.lang==='pt'?'Em aberto no fim do período':'Outstanding'}</th></tr></thead><tbody>${rows}<tr class="v86-report-total"><td colspan="3" class="font-black">${state.lang==='pt'?'Total geral':'Grand total'}</td><td class="money font-black">${formatCurr(rpt.totalWorkValue)}</td><td class="money font-black text-emerald-300">${formatCurr(rpt.totalPaidPeriod)}</td><td class="money font-black text-amber-300">${formatCurr(rpt.totalPendingEnd)}</td></tr></tbody></table></div></section></div>`;try{lucide.createIcons()}catch{}
     };
 
+
+
+    function getCurrentReportData() {
+        ensureReportPeriod();
+        const canAll = state.userPerms.global;
+        const base = state.projects.filter(project => {
+            const companyAllowed = (project.empresa === 'Smart Home' && state.userPerms.smart) || (project.empresa === 'HVAC' && state.userPerms.hvac);
+            const archiveAllowed = state.reportArchiveFilter === 'all' || (state.reportArchiveFilter === 'archived' ? !!project.archived : !project.archived);
+            return companyAllowed && archiveAllowed && (state.company === 'Ambas' || project.empresa === state.company) && (canAll || project.vendedor === state.user.email);
+        });
+        const start = toDateOnly(state.reportPeriodStart);
+        const end = toDateOnly(state.reportPeriodEnd);
+        const projects = base.filter(project => {
+            const date = toDateOnly(project.dataInicio);
+            return (state.reportSellerFilter === 'all' || project.vendedor === state.reportSellerFilter) && date && date >= start && date <= end;
+        });
+        return getSellerCommissionPeriodReport(projects, state.reportPeriodStart, state.reportPeriodEnd);
+    }
+
+    function getReportCommissionStatus(row) {
+        if (row.pendingEnd > 0.009) return { text: state.lang === 'pt' ? 'Em aberto' : 'Outstanding', cls: 'warning' };
+        if (row.overpaidEnd > 0.009) return { text: state.lang === 'pt' ? 'Pago acima do liberado' : 'Overpaid', cls: 'danger' };
+        if (row.paidToEnd > 0.009 || row.releasedToEnd > 0.009) return { text: state.lang === 'pt' ? 'Paga' : 'Paid', cls: 'success' };
+        return { text: state.lang === 'pt' ? 'Sem comissão liberada' : 'No commission released', cls: 'info' };
+    }
+
+    window.setReportArchiveFilter = (filter) => {
+        state.reportArchiveFilter = ['all', 'active', 'archived'].includes(filter) ? filter : 'all';
+        window.safeRenderReport();
+    };
+
+    function decorateRenderedReportStatus() {
+        const out = document.getElementById('report-output');
+        const table = out?.querySelector('.v86-table');
+        if (!table || table.dataset.statusDecorated === 'true') return;
+        const report = getCurrentReportData();
+        const filters = out.querySelector('.v86-report-filters');
+        if (filters && !filters.querySelector('[data-report-archive-filter]')) {
+            const archiveControl = document.createElement('div');
+            archiveControl.dataset.reportArchiveFilter = 'true';
+            archiveControl.innerHTML = `<span class="v86-label mb-2">${state.lang === 'pt' ? 'Obras' : 'Projects'}</span><select class="modern-input" onchange="window.setReportArchiveFilter(this.value)"><option value="all" ${state.reportArchiveFilter === 'all' ? 'selected' : ''}>${state.lang === 'pt' ? 'Todas' : 'All'}</option><option value="active" ${state.reportArchiveFilter === 'active' ? 'selected' : ''}>${state.lang === 'pt' ? 'Ativas' : 'Active'}</option><option value="archived" ${state.reportArchiveFilter === 'archived' ? 'selected' : ''}>${state.lang === 'pt' ? 'Arquivadas' : 'Archived'}</option></select>`;
+            filters.appendChild(archiveControl);
+        }
+        if (report.excludedRows.length) {
+            const projectsKpi = out.querySelector('.v86-kpis .v86-kpi:nth-child(4)');
+            const projectsLabel = projectsKpi?.querySelector('span');
+            const projectsDetail = projectsKpi?.querySelector('small');
+            if (projectsLabel) projectsLabel.textContent = state.lang === 'pt' ? 'Obras nos totais' : 'Projects in totals';
+            if (projectsDetail) {
+                const excludedLabel = state.lang === 'pt'
+                    ? `${report.excludedRows.length} arquivada${report.excludedRows.length === 1 ? '' : 's'} sem movimentação exibida${report.excludedRows.length === 1 ? '' : 's'} abaixo`
+                    : `${report.excludedRows.length} archived project${report.excludedRows.length === 1 ? '' : 's'} without activity shown below`;
+                projectsDetail.textContent = `${projectsDetail.textContent} · ${excludedLabel}`;
+            }
+        }
+        const monthMap = new Map();
+        report.projectRows.forEach(row => {
+            const date = toDateOnly(row.project.dataInicio);
+            const key = date ? `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, '0')}` : '0000-00';
+            if (!monthMap.has(key)) monthMap.set(key, []);
+            monthMap.get(key).push(row);
+        });
+        const orderedRows = [...monthMap.entries()]
+            .sort((a, b) => a[0].localeCompare(b[0]))
+            .flatMap(([, rows]) => rows.sort((a, b) => String(a.project.cliente || '').localeCompare(String(b.project.cliente || ''))));
+
+        const headerRow = table.querySelector('thead tr');
+        const statusHeader = document.createElement('th');
+        statusHeader.textContent = state.lang === 'pt' ? 'Status da comissão' : 'Commission status';
+        headerRow?.children[2]?.after(statusHeader);
+
+        let rowIndex = 0;
+        table.querySelectorAll('tbody tr').forEach(tableRow => {
+            if (tableRow.classList.contains('v86-month-head')) {
+                const firstCell = tableRow.cells[0];
+                if (firstCell) firstCell.colSpan = 4;
+                return;
+            }
+            if (tableRow.classList.contains('v86-report-total')) {
+                const firstCell = tableRow.cells[0];
+                if (firstCell) firstCell.colSpan = 4;
+                return;
+            }
+            const row = orderedRows[rowIndex++];
+            if (!row) return;
+            const projectState = row.archived
+                ? { text: state.lang === 'pt' ? 'Arquivada' : 'Archived', cls: 'info' }
+                : { text: state.lang === 'pt' ? 'Ativa' : 'Active', cls: 'success' };
+            const commissionState = getReportCommissionStatus(row);
+            const projectStatus = escapeInlineHtml(tStatus(row.project.status || '—'));
+            tableRow.cells[2].innerHTML = `<div class="flex flex-col items-start gap-1"><span class="v86-status ${projectState.cls}">${projectState.text}</span><small class="text-[9px] text-slate-500">${projectStatus}</small></div>`;
+            const commissionCell = document.createElement('td');
+            commissionCell.innerHTML = `<span class="v86-status ${commissionState.cls}">${commissionState.text}</span>`;
+            tableRow.cells[3]?.before(commissionCell);
+        });
+        table.dataset.statusDecorated = 'true';
+        table.closest('.v86-section')?.classList.add('report-print-detail-section');
+
+        if (report.excludedRows.length) {
+            const section = document.createElement('section');
+            section.className = 'v86-section mt-4 report-print-reference-section';
+            const excludedRows = report.excludedRows.map(row => `<tr><td>${escapeInlineHtml(row.project.numeroInvoice || '—')} / ${escapeInlineHtml(row.project.numeroProposta || '—')}</td><td class="wrap font-bold text-slate-100">${escapeInlineHtml(getProjectPrimaryTitle(row.project))}</td><td><span class="v86-status info">${state.lang === 'pt' ? 'Arquivada' : 'Archived'}</span></td><td><span class="v86-status info">${state.lang === 'pt' ? 'Sem comissão liberada' : 'No commission released'}</span></td><td class="money">${formatCurr(row.totalWorkValue)}</td></tr>`).join('');
+            section.innerHTML = `<div class="v86-section-pad"><div class="v86-section-title"><div><h2>${state.lang === 'pt' ? 'Obras arquivadas sem movimentação financeira' : 'Archived projects without financial activity'}</h2><p>${state.lang === 'pt' ? 'Exibidas para consulta. Não compõem os totais financeiros acima.' : 'Shown for reference. They are not included in the financial totals above.'}</p></div></div></div><div class="v86-table-wrap"><table class="v86-table"><thead><tr><th>Invoice / Proposta</th><th>${state.lang === 'pt' ? 'Cliente' : 'Client'}</th><th>${state.lang === 'pt' ? 'Obra' : 'Project'}</th><th>${state.lang === 'pt' ? 'Status da comissão' : 'Commission status'}</th><th class="money">${state.lang === 'pt' ? 'Valor contrato bruto' : 'Gross contract value'}</th></tr></thead><tbody>${excludedRows}</tbody></table></div>`;
+            table.closest('.v86-section')?.after(section);
+        }
+        try { lucide.createIcons(); } catch {}
+    }
+
+    const baseRenderReport = window.renderReport;
+    window.renderReport = () => {
+        const originalProjects = state.projects;
+        const useArchiveFilter = state.reportArchiveFilter !== 'all';
+        if (useArchiveFilter) {
+            state.projects = originalProjects.filter(project => state.reportArchiveFilter === 'archived' ? !!project.archived : !project.archived);
+        }
+        try {
+            baseRenderReport();
+        } finally {
+            state.projects = originalProjects;
+        }
+        decorateRenderedReportStatus();
+    };
 
     onAuthStateChanged(auth, (u) => {
         state.user = u;
