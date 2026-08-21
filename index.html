@@ -864,6 +864,9 @@
 .app-body-light .v86-section{background:#ffffff;border-color:#cbd5e1;box-shadow:0 14px 34px -28px rgba(15,23,42,.32)}
 .app-body-light .v86-section-title h2,.app-body-light .v86-value,.app-body-light .v86-table td,.app-body-light .v86-project-name,.app-body-light .v86-ring strong,.app-body-light .v86-legend-row,.app-body-light .v86-action-card,.app-body-light .c2-data-value,.app-body-light .c2-metric-card strong,.app-body-light .c2-mini-stat strong,.app-body-light .c2-note-row,.app-body-light .c2-action-tile,.app-body-light .c2-project-update{color:#0f172a!important}
 .app-body-light .v86-section-title p,.app-body-light .v86-label,.app-body-light .v86-table th,.app-body-light .v86-meta-line,.app-body-light .v86-project-ref,.app-body-light .v86-project-address,.app-body-light .v86-project-footer,.app-body-light .v86-ring span,.app-body-light .v86-empty,.app-body-light .v86-action-card small{color:#475569!important}
+.app-body-light .v86-ring::after{background:#f8fafc;border-color:#cbd5e1}
+.app-body-light .v86-project-meta label,.app-body-light .v86-project-fin label,.app-body-light .v86-project-footer label{color:#475569!important}
+.app-body-light .v86-project-meta strong{color:#334155!important}
 .app-body-light .v86-kpi,.app-body-light .v86-metric,.app-body-light .v86-note,.app-body-light .v86-action-card,.app-body-light .c2-metric-card,.app-body-light .c2-kpi,.app-body-light .c2-mini-stat,.app-body-light .c2-note-row,.app-body-light .c2-action-tile,.app-body-light .clean-section,.app-body-light .clean-table-card,.app-body-light .clean-meta-card,.app-body-light .clean-support-card,.app-body-light .clean-note,.app-body-light .clean-action-card{background:#f8fafc!important;border-color:#cbd5e1!important}
 .app-body-light .c2-project-card,.app-body-light .v86-project-card{background:#ffffff!important;border-color:#cbd5e1!important;box-shadow:0 16px 34px -28px rgba(15,23,42,.28)!important}
 .app-body-light .c2-table thead,.app-body-light .v86-month-head{background:#eef4f8!important}
@@ -878,6 +881,23 @@
 .app-body-light #edit-rec-modal .modern-input{background:#ffffff!important;border-color:#cbd5e1!important;color:#0f172a!important}
 .app-body-light .modal-content .bg-gradient-to-r,.app-body-light .modal-content .bg-slate-800,.app-body-light .modal-content .bg-slate-900,.app-body-light .modal-content .bg-black\/20,.app-body-light .modal-content .bg-black\/30{background:#f8fafc!important}
 .app-body-light #main-nav.c2-nav{background:#ffffff!important;border-color:#cbd5e1!important;box-shadow:0 18px 42px -28px rgba(15,23,42,.35)!important}
+.app-body-light #logs-body .text-slate-100,.app-body-light #logs-body .text-slate-200,.app-body-light #logs-body .text-slate-300{color:#1e293b!important}
+.app-body-light #logs-body .text-slate-500{color:#475569!important}
+.app-body-light #logs-body .text-slate-600{color:#64748b!important}
+.app-body-light #logs-body .text-emerald-300{color:#047857!important}
+.app-body-light #report-project-list-modal .report-project-list-item{background:#ffffff!important;border-color:#cbd5e1!important}
+.app-body-light #report-project-list-modal .report-project-list-item .text-slate-100{color:#0f172a!important}
+.app-body-light #report-project-list-modal .report-project-list-item .text-slate-400,.app-body-light #report-project-list-modal .report-project-list-item .text-slate-500{color:#475569!important}
+.app-body-light #report-project-list-modal .report-project-list-item .text-amber-300{color:#b45309!important}
+.app-body-light #report-project-list-modal #report-project-list-title{color:#047857!important}
+.app-body-light #report-project-list-modal #report-project-list-subtitle,.app-body-light #report-project-list-modal .text-slate-500{color:#475569!important}
+.app-body-light #report-project-list-modal .bg-slate-900{background:#ffffff!important}
+
+/* Consulta do relatório: usa a largura disponível e preserva uma leitura confortável em telas pequenas. */
+#report-project-list-modal .report-project-list-dialog{width:min(96vw,1280px)!important;max-width:1280px!important;max-height:min(88vh,920px)!important}
+.report-project-list-scroll{max-height:calc(88vh - 188px);overflow-y:auto;overscroll-behavior:contain;padding-right:4px}
+.report-project-list-item{min-height:132px}.report-project-list-meta{display:flex;flex-wrap:wrap;gap:4px 10px;line-height:1.45}.report-project-list-meta span+span::before{content:'·';margin-right:10px;color:currentColor}.report-project-list-value{min-width:150px}
+@media(max-width:640px){#report-project-list-modal{padding:10px}.modal-overlay-scroll#report-project-list-modal{align-items:stretch;padding-top:10px;padding-bottom:10px}#report-project-list-modal .report-project-list-dialog{width:100%!important;max-height:calc(100dvh - 20px)!important;border-radius:20px!important}.report-project-list-scroll{max-height:calc(100dvh - 184px);padding-right:2px}.report-project-list-item{min-height:0;padding:15px!important}.report-project-list-value{display:flex;align-items:baseline;justify-content:space-between;gap:12px;min-width:0;margin-top:2px}.report-project-list-value p{margin:0}.report-project-list-meta{gap:4px 8px}}
 
 </style>
 </head>
@@ -995,7 +1015,7 @@
 
 <!-- Modal de Consulta do Resumo do Relatório -->
 <div id="report-project-list-modal" class="modal-overlay modal-overlay-scroll">
-    <div class="modal-content modal-panel-scroll animate-fade-in max-w-4xl !p-0">
+    <div class="modal-content report-project-list-dialog modal-panel-scroll animate-fade-in !p-0">
         <div class="px-7 pt-7 pb-5 border-b border-white/10 bg-gradient-to-r from-slate-900 via-slate-900 to-black/90">
             <div class="flex items-start justify-between gap-4">
                 <div>
@@ -1008,7 +1028,7 @@
                 </button>
             </div>
         </div>
-        <div id="report-project-list-content" class="px-7 py-6"></div>
+        <div id="report-project-list-content" class="px-5 py-5 sm:px-7 sm:py-6"></div>
     </div>
 </div>
 
@@ -1225,7 +1245,7 @@
         isSuperAdmin: false,
         userPerms: { tab_proj: true, tab_new: false, tab_rep: false, fin: false, costs: false, smart: true, hvac: false, global: false },
         projects: [], team: [], logs: [], logsUserFilter: '', logsSearchQuery: '', company: 'Ambas', lang: 'pt', theme: 'dark', 
-        editingPayments: null, editingRecs: null, reportPendingPayments: null, reportProjectList: null, returnToReport: false, returnToReportAfterEdit: false, focusedProject: null, activeModule: null, archiveFilter: 'active',
+        editingPayments: null, editingRecs: null, reportPendingPayments: null, reportProjectList: null, reportProjectListReturn: null, returnToReport: false, returnToReportAfterEdit: false, focusedProject: null, activeModule: null, archiveFilter: 'active',
         reportActiveKpi: 'receita', projectSellerFilter: 'all', projectSearchQuery: '', reportPeriodStart: '', reportPeriodEnd: '', reportSellerFilter: 'all', reportArchiveFilter: 'all', reportRangePreset: 'year', mobileNavOpen: false, currentView: 'projects'
     };
 
@@ -3111,11 +3131,14 @@
 
     window.closeReportProjectList = () => {
         state.reportProjectList = null;
+        state.reportProjectListReturn = null;
         document.getElementById('report-project-list-modal')?.classList.remove('active');
     };
 
     window.openProjectFromReportList = (projectId) => {
-        window.closeReportProjectList();
+        state.reportProjectListReturn = state.reportProjectList?.kind || null;
+        state.reportProjectList = null;
+        document.getElementById('report-project-list-modal')?.classList.remove('active');
         window.openReportProject(projectId);
     };
 
@@ -3137,9 +3160,9 @@
                 ? { text: isPt ? 'Sem comissão liberada' : 'No commission released', cls: 'info' }
                 : getReportCommissionStatus(row);
             const invoice = String(project.numeroInvoice || '').trim() || (isPt ? 'Sem invoice' : 'No invoice');
-            return `<button type="button" onclick="window.openProjectFromReportList('${project.id}')" class="w-full text-left rounded-2xl border border-white/10 bg-white/[.025] p-4 hover:border-emerald-300/40 hover:bg-emerald-300/[.04] transition-colors"><div class="flex flex-col sm:flex-row sm:items-start sm:justify-between gap-3"><div class="min-w-0"><p class="font-black text-slate-100 break-words">${escapeInlineHtml(getProjectPrimaryTitle(project))}</p><p class="mt-1 text-xs text-slate-400">${escapeInlineHtml(invoice)} / ${escapeInlineHtml(project.numeroProposta || '—')} · ${escapeInlineHtml(getCompanyDisplayName(project.empresa))} · ${isPt ? 'Vendedor' : 'Seller'}: ${escapeInlineHtml(getUserDisplayName(project.vendedor, '—'))}</p><div class="mt-3 flex flex-wrap gap-2"><span class="v86-status ${projectState.cls}">${projectState.text}</span><span class="v86-status ${commissionState.cls}">${commissionState.text}</span></div></div><div class="sm:text-right shrink-0"><p class="text-xs text-slate-500">${isPt ? 'Contrato' : 'Contract'}</p><strong class="text-lg font-black text-slate-100 tabular-nums">${formatCurr(row.totalWorkValue || project.valorTotal)}</strong>${Number(row.pendingEnd || 0) > 0.009 ? `<p class="mt-1 text-xs font-bold text-amber-300">${isPt ? 'Em aberto' : 'Outstanding'}: ${formatCurr(row.pendingEnd)}</p>` : ''}</div></div></button>`;
+            return `<button type="button" onclick="window.openProjectFromReportList('${project.id}')" class="report-project-list-item w-full text-left rounded-2xl border border-white/10 bg-white/[.025] p-4 hover:border-emerald-300/40 hover:bg-emerald-300/[.04] transition-colors"><div class="flex flex-col sm:flex-row sm:items-start sm:justify-between gap-4"><div class="min-w-0"><p class="font-black text-slate-100 break-words">${escapeInlineHtml(getProjectPrimaryTitle(project))}</p><p class="report-project-list-meta mt-1 text-xs text-slate-400"><strong>${escapeInlineHtml(invoice)} / ${escapeInlineHtml(project.numeroProposta || '—')}</strong><span>${escapeInlineHtml(getCompanyDisplayName(project.empresa))}</span><span>${isPt ? 'Vendedor' : 'Seller'}: ${escapeInlineHtml(getUserDisplayName(project.vendedor, '—'))}</span></p><div class="mt-3 flex flex-wrap gap-2"><span class="v86-status ${projectState.cls}">${projectState.text}</span><span class="v86-status ${commissionState.cls}">${commissionState.text}</span></div></div><div class="report-project-list-value sm:text-right shrink-0"><p class="text-xs text-slate-500">${isPt ? 'Contrato' : 'Contract'}</p><strong class="text-lg font-black text-slate-100 tabular-nums">${formatCurr(row.totalWorkValue || project.valorTotal)}</strong>${Number(row.pendingEnd || 0) > 0.009 ? `<p class="mt-1 text-xs font-bold text-amber-300">${isPt ? 'Em aberto' : 'Outstanding'}: ${formatCurr(row.pendingEnd)}</p>` : ''}</div></div></button>`;
         }).join('');
-        content.innerHTML = rows ? `<div class="max-h-[54vh] overflow-y-auto space-y-3 pr-1">${rows}</div>` : `<div class="v86-empty">${isPt ? 'Nenhuma obra encontrada para esta consulta.' : 'No projects found for this query.'}</div>`;
+        content.innerHTML = rows ? `<div class="report-project-list-scroll space-y-3 pr-1">${rows}</div>` : `<div class="v86-empty">${isPt ? 'Nenhuma obra encontrada para esta consulta.' : 'No projects found for this query.'}</div>`;
         try { lucide.createIcons(); } catch {}
     };
 
@@ -3384,10 +3407,15 @@
     
     window.closeProjectDetails = () => { 
         if (state.returnToReport) {
+            const returnListKind = state.reportProjectListReturn;
             state.returnToReport = false;
             state.focusedProject = null;
             state.activeModule = null;
             window.showView('reports');
+            if (returnListKind) {
+                state.reportProjectListReturn = null;
+                window.openReportProjectList(returnListKind);
+            }
             window.scrollTo({ top: 0, behavior: 'smooth' });
             return;
         }
@@ -5501,7 +5529,7 @@ function getSellerCommissionPeriodReport(projects, startStr, endStr) {
     }
     function v86Header(p, moduleTitle=''){
         const st=v86StatusInfo(p); const completed=p.status==='Finalizado'&&p.dataConclusao?formatProjectDate(p.dataConclusao):'';
-        return `<div class="v86-head no-print"><div class="v86-head-left"><button class="v86-back" onclick="${state.activeModule?'window.closeProjectModule()':'window.closeProjectDetails()'}"><i data-lucide="arrow-left" class="w-5 h-5"></i></button><div class="v86-head-copy"><div class="flex flex-wrap items-center gap-3"><h1 class="v86-title">${escapeInlineHtml(getProjectPrimaryTitle(p))}</h1><span class="v86-status ${st.cls}"><i data-lucide="${st.cls==='success'?'check-circle-2':st.cls==='warning'?'clock-3':'circle-dot'}" class="w-3.5 h-3.5"></i>${st.text}${completed?` · ${completed}`:''}</span></div>${moduleTitle?`<div class="v86-subtitle">${escapeInlineHtml(moduleTitle)}</div>`:''}${p.nomeProjeto?`<div class="v86-meta-line"><i data-lucide="bookmark" class="w-3.5 h-3.5 shrink-0"></i><span>${escapeInlineHtml(p.nomeProjeto)}</span></div>`:''}${p.endereco?`<div class="v86-meta-line"><i data-lucide="map-pin" class="w-3.5 h-3.5 shrink-0"></i><span>${escapeInlineHtml(p.endereco)}</span></div>`:''}</div></div><div class="flex gap-2">${canPrintProjectSheet()?`<button onclick="window.printReport()" class="v86-btn"><i data-lucide="printer" class="w-4 h-4"></i>${window.t('print_ficha')}</button>`:''}${state.isSuperAdmin?`<button onclick="window.editP('${p.id}')" class="v86-btn"><i data-lucide="edit-3" class="w-4 h-4"></i>${state.lang==='pt'?'Editar':'Edit'}</button>`:''}</div></div>`;
+        return `<div class="v86-head no-print"><div class="v86-head-left"><button class="v86-back" onclick="${state.activeModule?'window.closeProjectModule()':'window.closeProjectDetails()'}"><i data-lucide="arrow-left" class="w-5 h-5"></i></button><div class="v86-head-copy"><div class="flex flex-wrap items-center gap-3"><h1 class="v86-title">${escapeInlineHtml(getProjectPrimaryTitle(p))}</h1><span class="v86-status ${st.cls}"><i data-lucide="${st.cls==='success'?'check-circle-2':st.cls==='warning'?'clock-3':'circle-dot'}" class="w-3.5 h-3.5"></i>${st.text}${completed?` · ${completed}`:''}</span></div>${moduleTitle?`<div class="v86-subtitle">${escapeInlineHtml(moduleTitle)}</div>`:''}${p.nomeProjeto?`<div class="v86-meta-line"><i data-lucide="bookmark" class="w-3.5 h-3.5 shrink-0"></i><span>${escapeInlineHtml(p.nomeProjeto)}</span></div>`:''}${p.endereco?`<div class="v86-meta-line"><i data-lucide="map-pin" class="w-3.5 h-3.5 shrink-0"></i><span>${escapeInlineHtml(p.endereco)}</span></div>`:''}</div></div><div class="flex flex-wrap justify-end gap-2">${canPrintProjectSheet()?`<button onclick="window.printReport()" class="v86-btn"><i data-lucide="printer" class="w-4 h-4"></i>${window.t('print_ficha')}</button>`:''}${state.userPerms.tab_proj?`<button onclick="window.toggleArchive('${p.id}',${!!p.archived})" class="v86-btn"><i data-lucide="${p.archived?'package-open':'archive'}" class="w-4 h-4"></i>${state.lang==='pt'?(p.archived?'Reativar':'Arquivar'):(p.archived?'Restore':'Archive')}</button>`:''}${state.isSuperAdmin?`<button onclick="window.editP('${p.id}')" class="v86-btn"><i data-lucide="edit-3" class="w-4 h-4"></i>${state.lang==='pt'?'Editar':'Edit'}</button>`:''}</div></div>`;
     }
     function v86ReceiptRows(p){
         const rows=(p.recebimentos||[]).slice().sort((a,b)=>String(a.data||'').localeCompare(String(b.data||''))).map(r=>{const method=getReceiptEffectiveMethod(r,p);const fee=getReceiptFee(r,p);const net=getReceiptNet(r,p);return `<tr><td>${r.data?new Date(r.data+'T12:00:00').toLocaleDateString(state.lang==='pt'?'pt-BR':'en-US'):'—'}</td><td><span class="v86-status info">${escapeInlineHtml(method||'—')}</span></td><td class="money">${formatCurr(r.valor)}</td><td class="money ${fee>0?'text-red-300':''}">${formatCurr(fee)}</td><td class="money text-emerald-300">${formatCurr(net)}</td><td><span class="v86-status success">${state.lang==='pt'?'Recebido':'Received'}</span></td></tr>`}).join('');
@@ -5775,9 +5803,14 @@ function getSellerCommissionPeriodReport(projects, startStr, endStr) {
     const baseShowView = window.showView;
     window.showView = (view) => {
         if (view === 'projects' && state.returnToReportAfterEdit && state.currentView === 'new') {
+            const returnListKind = state.reportProjectListReturn;
             state.returnToReportAfterEdit = false;
             state.returnToReport = false;
             baseShowView('reports');
+            if (returnListKind) {
+                state.reportProjectListReturn = null;
+                window.openReportProjectList(returnListKind);
+            }
             return;
         }
         if (view === 'reports') state.returnToReportAfterEdit = false;
