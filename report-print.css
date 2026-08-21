@@ -129,6 +129,20 @@ body.report-print-active #report-print-host {
     font-size: 8px;
 }
 
+/* Keep the executive summary together, but let the detailed table fill the
+   remaining space on page one and continue naturally on subsequent pages. */
+.report-print-document .v86-page > .v86-section:last-child {
+    break-inside: auto;
+    page-break-inside: auto;
+    box-decoration-break: clone;
+    -webkit-box-decoration-break: clone;
+}
+
+.report-print-document .v86-page > .v86-section:last-child > .v86-section-pad {
+    break-after: avoid-page;
+    page-break-after: avoid;
+}
+
 .report-print-document .v86-kpis {
     display: grid;
     grid-template-columns: repeat(4, minmax(0, 1fr));
@@ -197,6 +211,10 @@ body.report-print-active #report-print-host {
 
 .report-print-document .v86-table thead { display: table-header-group; }
 .report-print-document .v86-table tr { break-inside: avoid; page-break-inside: avoid; }
+.report-print-document .v86-table tr.v86-month-head {
+    break-after: avoid-page;
+    page-break-after: avoid;
+}
 .report-print-document .v86-table th {
     padding: 6px 5px;
     border-bottom: 1px solid #94a3b8;
