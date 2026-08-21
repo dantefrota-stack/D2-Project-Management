@@ -1,0 +1,22 @@
+{
+  "hosting": {
+    "site": "d2-project-management",
+    "public": ".",
+    "ignore": [
+      "firebase.json",
+      ".firebaserc",
+      ".git/**",
+      ".github/**",
+      ".firebase/**",
+      ".vscode/**",
+      ".idea/**",
+      "**/node_modules/**",
+      "**/.env",
+      "**/.env.*",
+      "**/*.key",
+      "**/*.pem",
+      "**/*.log",
+      "**/*.local"
+    ]
+  }
+}
