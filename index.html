@@ -833,6 +833,15 @@
 #report-output .v86-kpis .v86-kpi:nth-child(3){cursor:pointer;transition:border-color .18s ease,background .18s ease,transform .18s ease}
 #report-output .v86-kpis .v86-kpi:nth-child(3):hover{border-color:rgba(243,188,61,.52);background:rgba(243,188,61,.07);transform:translateY(-1px)}
 #report-output .v86-kpis .v86-kpi:nth-child(3):focus-visible{outline:2px solid var(--v86-amber);outline-offset:3px}
+#report-output .v86-table tbody tr.report-project-row{cursor:pointer;transition:background .16s ease,outline-color .16s ease}
+#report-output .v86-table tbody tr.report-project-row:hover{background:rgba(69,216,156,.06)}
+#report-output .v86-table tbody tr.report-project-row:focus-visible{outline:2px solid var(--v86-green);outline-offset:-2px}
+#report-output .report-summary-card{cursor:pointer;transition:border-color .18s ease,background .18s ease,transform .18s ease;text-align:left}
+#report-output .report-summary-card:hover{border-color:rgba(69,216,156,.42);background:rgba(69,216,156,.07);transform:translateY(-1px)}
+#report-output .report-summary-card:focus-visible{outline:2px solid var(--v86-green);outline-offset:3px}
+.report-summary-drilldowns{display:grid;grid-template-columns:repeat(7,minmax(0,1fr));gap:10px}.report-summary-drilldowns .v86-kpi{min-height:92px;padding:12px}.report-summary-drilldowns .v86-kpi .v86-value{margin-top:7px}.report-summary-drilldowns .v86-kpi small{margin-top:6px;color:var(--v86-muted);font-size:8px;font-weight:800}
+@media(max-width:1250px){.report-summary-drilldowns{grid-template-columns:repeat(4,minmax(0,1fr))}}
+@media(max-width:700px){.report-summary-drilldowns{grid-template-columns:repeat(2,minmax(0,1fr))}}
 
 </style>
 </head>
@@ -945,6 +954,25 @@
             </div>
         </div>
         <div id="report-pending-payment-content" class="px-7 py-6"></div>
+    </div>
+</div>
+
+<!-- Modal de Consulta do Resumo do Relatório -->
+<div id="report-project-list-modal" class="modal-overlay modal-overlay-scroll">
+    <div class="modal-content modal-panel-scroll animate-fade-in max-w-4xl !p-0">
+        <div class="px-7 pt-7 pb-5 border-b border-white/10 bg-gradient-to-r from-slate-900 via-slate-900 to-black/90">
+            <div class="flex items-start justify-between gap-4">
+                <div>
+                    <p class="text-[10px] font-black uppercase tracking-[0.28em] text-slate-500 mb-2">Consulta do relatório</p>
+                    <h3 id="report-project-list-title" class="text-2xl font-black text-emerald-300">Obras</h3>
+                    <p id="report-project-list-subtitle" class="text-sm text-slate-400 mt-2"></p>
+                </div>
+                <button type="button" onclick="window.closeReportProjectList()" class="shrink-0 inline-flex items-center justify-center w-11 h-11 rounded-2xl border border-white/10 bg-slate-900 text-slate-300 hover:text-white hover:border-white/20 transition-colors" aria-label="Fechar">
+                    <i data-lucide="x" class="w-5 h-5"></i>
+                </button>
+            </div>
+        </div>
+        <div id="report-project-list-content" class="px-7 py-6"></div>
     </div>
 </div>
 
@@ -1161,7 +1189,7 @@
         isSuperAdmin: false,
         userPerms: { tab_proj: true, tab_new: false, tab_rep: false, fin: false, costs: false, smart: true, hvac: false, global: false },
         projects: [], team: [], logs: [], logsUserFilter: '', logsSearchQuery: '', company: 'Ambas', lang: 'pt', theme: 'dark', 
-        editingPayments: null, editingRecs: null, reportPendingPayments: null, focusedProject: null, activeModule: null, archiveFilter: 'active',
+        editingPayments: null, editingRecs: null, reportPendingPayments: null, reportProjectList: null, returnToReport: false, returnToReportAfterEdit: false, focusedProject: null, activeModule: null, archiveFilter: 'active',
         reportActiveKpi: 'receita', projectSellerFilter: 'all', projectSearchQuery: '', reportPeriodStart: '', reportPeriodEnd: '', reportSellerFilter: 'all', reportArchiveFilter: 'all', reportRangePreset: 'year', mobileNavOpen: false, currentView: 'projects'
     };
 
@@ -2882,11 +2910,11 @@
 
     window.openReportPendingPayments = () => {
         if (!state.userPerms.fin) {
-            window.showModal(window.t('modal_access_denied'), state.lang === 'pt' ? 'Você não possui permissão financeira para registrar pagamentos de comissão.' : 'You do not have financial permission to record commission payments.', 'error');
+            window.openReportProjectList('outstanding');
             return;
         }
         if (!state.reportSellerFilter || state.reportSellerFilter === 'all') {
-            window.showModal(state.lang === 'pt' ? 'Selecione um vendedor' : 'Select a seller', state.lang === 'pt' ? 'Selecione um vendedor específico no filtro do relatório antes de registrar pagamentos em lote.' : 'Select a specific seller in the report filter before recording batch payments.', 'info');
+            window.openReportProjectList('outstanding');
             return;
         }
         const items = getReportPendingPaymentItems();
@@ -3002,6 +3030,81 @@
                 }
             }
         );
+    };
+
+    function getReportProjectListRows() {
+        const report = getCurrentReportData();
+        return [
+            ...report.projectRows,
+            ...report.excludedRows.map(item => ({
+                project: item.project,
+                totalWorkValue: item.totalWorkValue,
+                paidPeriod: 0,
+                paidToEnd: 0,
+                releasedToEnd: 0,
+                pendingEnd: 0,
+                overpaidEnd: 0,
+                excludedFromTotals: true
+            }))
+        ];
+    }
+
+    function getReportProjectListDefinition(kind, rows) {
+        const isPt = state.lang === 'pt';
+        const definitions = {
+            projects: { title: isPt ? 'Todas as obras do relatório' : 'All report projects', rows },
+            paid: { title: isPt ? 'Obras com comissão paga no período' : 'Projects with commission paid in period', rows: rows.filter(row => Number(row.paidPeriod || 0) > 0.009) },
+            outstanding: { title: isPt ? 'Obras com comissão em aberto' : 'Projects with outstanding commission', rows: rows.filter(row => Number(row.pendingEnd || 0) > 0.009) },
+            noInvoice: { title: isPt ? 'Propostas sem invoice' : 'Proposals without invoice', rows: rows.filter(row => !String(row.project?.numeroInvoice || '').trim()) },
+            active: { title: isPt ? 'Obras ativas' : 'Active projects', rows: rows.filter(row => !row.project?.archived) },
+            archived: { title: isPt ? 'Obras arquivadas' : 'Archived projects', rows: rows.filter(row => !!row.project?.archived) },
+            completed: { title: isPt ? 'Obras finalizadas' : 'Completed projects', rows: rows.filter(row => row.project?.status === 'Finalizado') },
+            inProgress: { title: isPt ? 'Obras em execução' : 'Projects in progress', rows: rows.filter(row => row.project?.status === 'Em Execução') },
+            waiting: { title: isPt ? 'Obras aguardando início' : 'Projects awaiting start', rows: rows.filter(row => row.project?.status === 'Aguardando Início') },
+            approved: { title: isPt ? 'Obras aprovadas' : 'Approved projects', rows: rows.filter(row => String(row.project?.status || '').includes('Aprovado')) }
+        };
+        return definitions[kind] || definitions.projects;
+    }
+
+    window.openReportProjectList = (kind = 'projects') => {
+        const definition = getReportProjectListDefinition(kind, getReportProjectListRows());
+        state.reportProjectList = { kind, title: definition.title, rows: definition.rows };
+        window.renderReportProjectList();
+        document.getElementById('report-project-list-modal')?.classList.add('active');
+    };
+
+    window.closeReportProjectList = () => {
+        state.reportProjectList = null;
+        document.getElementById('report-project-list-modal')?.classList.remove('active');
+    };
+
+    window.openProjectFromReportList = (projectId) => {
+        window.closeReportProjectList();
+        window.openReportProject(projectId);
+    };
+
+    window.renderReportProjectList = () => {
+        const list = state.reportProjectList;
+        const title = document.getElementById('report-project-list-title');
+        const subtitle = document.getElementById('report-project-list-subtitle');
+        const content = document.getElementById('report-project-list-content');
+        if (!list || !title || !subtitle || !content) return;
+        const isPt = state.lang === 'pt';
+        title.textContent = list.title;
+        subtitle.textContent = `${list.rows.length} ${isPt ? (list.rows.length === 1 ? 'obra encontrada no filtro atual' : 'obras encontradas no filtro atual') : (list.rows.length === 1 ? 'project found in the current filter' : 'projects found in the current filter')}`;
+        const rows = list.rows.map(row => {
+            const project = row.project;
+            const projectState = project.archived
+                ? { text: isPt ? 'Arquivada' : 'Archived', cls: 'info' }
+                : { text: isPt ? 'Ativa' : 'Active', cls: 'success' };
+            const commissionState = row.excludedFromTotals
+                ? { text: isPt ? 'Sem comissão liberada' : 'No commission released', cls: 'info' }
+                : getReportCommissionStatus(row);
+            const invoice = String(project.numeroInvoice || '').trim() || (isPt ? 'Sem invoice' : 'No invoice');
+            return `<button type="button" onclick="window.openProjectFromReportList('${project.id}')" class="w-full text-left rounded-2xl border border-white/10 bg-white/[.025] p-4 hover:border-emerald-300/40 hover:bg-emerald-300/[.04] transition-colors"><div class="flex flex-col sm:flex-row sm:items-start sm:justify-between gap-3"><div class="min-w-0"><p class="font-black text-slate-100 break-words">${escapeInlineHtml(getProjectPrimaryTitle(project))}</p><p class="mt-1 text-xs text-slate-400">${escapeInlineHtml(invoice)} / ${escapeInlineHtml(project.numeroProposta || '—')} · ${escapeInlineHtml(getCompanyDisplayName(project.empresa))}</p><div class="mt-3 flex flex-wrap gap-2"><span class="v86-status ${projectState.cls}">${projectState.text}</span><span class="v86-status ${commissionState.cls}">${commissionState.text}</span></div></div><div class="sm:text-right shrink-0"><p class="text-xs text-slate-500">${isPt ? 'Contrato' : 'Contract'}</p><strong class="text-lg font-black text-slate-100 tabular-nums">${formatCurr(row.totalWorkValue || project.valorTotal)}</strong>${Number(row.pendingEnd || 0) > 0.009 ? `<p class="mt-1 text-xs font-bold text-amber-300">${isPt ? 'Em aberto' : 'Outstanding'}: ${formatCurr(row.pendingEnd)}</p>` : ''}</div></div></button>`;
+        }).join('');
+        content.innerHTML = rows ? `<div class="max-h-[54vh] overflow-y-auto space-y-3 pr-1">${rows}</div>` : `<div class="v86-empty">${isPt ? 'Nenhuma obra encontrada para esta consulta.' : 'No projects found for this query.'}</div>`;
+        try { lucide.createIcons(); } catch {}
     };
 
     document.addEventListener('click', event => {
@@ -3235,8 +3338,23 @@
         window.renderProjects(); 
         window.scrollTo({ top: 0, behavior: 'smooth' }); 
     };
+
+    window.openReportProject = (id) => {
+        if (!state.projects.some(project => project.id === id)) return;
+        state.returnToReport = true;
+        window.showView('projects');
+        window.openProjectDetails(id);
+    };
     
     window.closeProjectDetails = () => { 
+        if (state.returnToReport) {
+            state.returnToReport = false;
+            state.focusedProject = null;
+            state.activeModule = null;
+            window.showView('reports');
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+            return;
+        }
         state.focusedProject = null; 
         state.activeModule = null;
         window.renderProjects(); 
@@ -3505,6 +3623,43 @@
         });
     };
 
+    function isUnapprovedProposalDeletionCandidate(project) {
+        if (!project) return false;
+        const salesAudit = getProjectSalesAudit(project, new Date());
+        const hasExpenses = (project.despesas || []).some(expense => Number(expense?.valor || 0) > 0.009);
+        return !salesAudit.hasFinancialMovement && !hasExpenses && !project.dataConclusao;
+    }
+
+    window.deleteUnapprovedProposal = (id) => {
+        const project = state.projects.find(item => item.id === id);
+        if (!state.isSuperAdmin) {
+            logAccess(state.user?.email, `Tentativa bloqueada de exclusão de proposta: ${getProjectDisplayName(project) || id}`, getProjectLogMeta(project));
+            window.showModal(window.t('modal_access_denied'), window.t('modal_access_denied_msg'), 'error');
+            return;
+        }
+        if (!isUnapprovedProposalDeletionCandidate(project)) {
+            window.showModal(state.lang === 'pt' ? 'Proposta não elegível' : 'Proposal is not eligible', state.lang === 'pt' ? 'Somente propostas sem recebimentos, pagamentos de comissão, despesas ou conclusão podem ser excluídas por esta ação.' : 'Only proposals without receipts, commission payments, expenses, or completion can be deleted with this action.', 'info');
+            return;
+        }
+        window.showModal(
+            state.lang === 'pt' ? 'Excluir proposta sem movimentação' : 'Delete proposal without activity',
+            state.lang === 'pt'
+                ? `Excluir permanentemente a proposta ${getProjectDisplayName(project)}? Esta ação não pode ser desfeita.`
+                : `Permanently delete proposal ${getProjectDisplayName(project)}? This action cannot be undone.`,
+            'confirm',
+            async () => {
+                try {
+                    await deleteDoc(doc(db, 'artifacts', appId, 'public', 'data', 'projects', id));
+                    logAccess(state.user?.email, `Excluiu proposta sem movimentação: ${getProjectDisplayName(project)}`, getProjectLogMeta(project));
+                    if (state.focusedProject === id) window.closeProjectDetails();
+                } catch (error) {
+                    console.error('Erro ao excluir proposta:', error);
+                    window.showModal(window.t('error'), (state.lang === 'pt' ? 'Não foi possível excluir a proposta: ' : 'Unable to delete the proposal: ') + (error?.message || error), 'error');
+                }
+            }
+        );
+    };
+
     window.editP = (id) => {
         const p = state.projects.find(x => x.id === id); if (!p) return;
         renderVendedores(); const vendSelect = document.getElementById('f-vendedor');
@@ -3547,7 +3702,7 @@
 
         if (v === 'logs') window.renderLogs();
         if (v === 'projects') { state.focusedProject = null; state.activeModule = null; window.renderProjects(); }
-        if (v === 'reports') { state.reportActiveKpi = 'commissions_period'; window.safeRenderReport(); } 
+        if (v === 'reports') { state.returnToReport = false; state.reportActiveKpi = 'commissions_period'; window.safeRenderReport(); }
         try { lucide.createIcons(); } catch {}
     };
     window.toggleMobileNav = () => {
@@ -5392,6 +5547,33 @@ function getSellerCommissionPeriodReport(projects, startStr, endStr) {
         window.safeRenderReport();
     };
 
+    function makeReportRowNavigable(tableRow, projectId) {
+        tableRow.classList.add('report-project-row');
+        tableRow.tabIndex = 0;
+        tableRow.setAttribute('role', 'link');
+        tableRow.setAttribute('aria-label', state.lang === 'pt' ? 'Abrir obra' : 'Open project');
+        tableRow.addEventListener('click', () => window.openReportProject(projectId));
+        tableRow.addEventListener('keydown', event => {
+            if (event.key === 'Enter' || event.key === ' ') {
+                event.preventDefault();
+                window.openReportProject(projectId);
+            }
+        });
+    }
+
+    function makeReportSummaryCardNavigable(card, kind) {
+        card.classList.add('report-summary-card');
+        card.tabIndex = 0;
+        card.setAttribute('role', 'button');
+        card.addEventListener('click', () => window.openReportProjectList(kind));
+        card.addEventListener('keydown', event => {
+            if (event.key === 'Enter' || event.key === ' ') {
+                event.preventDefault();
+                window.openReportProjectList(kind);
+            }
+        });
+    }
+
     function decorateRenderedReportStatus() {
         const out = document.getElementById('report-output');
         const table = out?.querySelector('.v86-table');
@@ -5403,6 +5585,40 @@ function getSellerCommissionPeriodReport(projects, startStr, endStr) {
             archiveControl.dataset.reportArchiveFilter = 'true';
             archiveControl.innerHTML = `<span class="v86-label mb-2">${state.lang === 'pt' ? 'Obras' : 'Projects'}</span><select class="modern-input" onchange="window.setReportArchiveFilter(this.value)"><option value="all" ${state.reportArchiveFilter === 'all' ? 'selected' : ''}>${state.lang === 'pt' ? 'Todas' : 'All'}</option><option value="active" ${state.reportArchiveFilter === 'active' ? 'selected' : ''}>${state.lang === 'pt' ? 'Ativas' : 'Active'}</option><option value="archived" ${state.reportArchiveFilter === 'archived' ? 'selected' : ''}>${state.lang === 'pt' ? 'Arquivadas' : 'Archived'}</option></select>`;
             filters.appendChild(archiveControl);
+        }
+        const allReportRows = [
+            ...report.projectRows,
+            ...report.excludedRows.map(item => ({ project: item.project, totalWorkValue: item.totalWorkValue, excludedFromTotals: true }))
+        ];
+        const summaryCards = out.querySelectorAll('.v86-kpis .v86-kpi');
+        makeReportSummaryCardNavigable(summaryCards[0], 'projects');
+        makeReportSummaryCardNavigable(summaryCards[1], 'paid');
+        summaryCards[2]?.classList.add('report-summary-card');
+        summaryCards[2]?.setAttribute('title', state.lang === 'pt' ? 'Ver comissões em aberto' : 'View outstanding commissions');
+        summaryCards[2].tabIndex = 0;
+        summaryCards[2].setAttribute('role', 'button');
+        summaryCards[2].addEventListener('keydown', event => {
+            if (event.key === 'Enter' || event.key === ' ') {
+                event.preventDefault();
+                window.openReportPendingPayments();
+            }
+        });
+        makeReportSummaryCardNavigable(summaryCards[3], 'projects');
+        if (!out.querySelector('.report-summary-drilldowns')) {
+            const summaryDrilldowns = document.createElement('div');
+            summaryDrilldowns.className = 'report-summary-drilldowns mt-4';
+            const statusCards = [
+                { kind: 'noInvoice', label: state.lang === 'pt' ? 'Propostas sem invoice' : 'Proposals without invoice', value: allReportRows.filter(row => !String(row.project?.numeroInvoice || '').trim()).length, cls: 'amber' },
+                { kind: 'active', label: state.lang === 'pt' ? 'Obras ativas' : 'Active projects', value: allReportRows.filter(row => !row.project?.archived).length, cls: 'green' },
+                { kind: 'archived', label: state.lang === 'pt' ? 'Obras arquivadas' : 'Archived projects', value: allReportRows.filter(row => !!row.project?.archived).length, cls: 'cyan' },
+                { kind: 'completed', label: state.lang === 'pt' ? 'Finalizadas' : 'Completed', value: allReportRows.filter(row => row.project?.status === 'Finalizado').length, cls: 'green' },
+                { kind: 'inProgress', label: state.lang === 'pt' ? 'Em execução' : 'In progress', value: allReportRows.filter(row => row.project?.status === 'Em Execução').length, cls: 'cyan' },
+                { kind: 'waiting', label: state.lang === 'pt' ? 'Aguardando início' : 'Awaiting start', value: allReportRows.filter(row => row.project?.status === 'Aguardando Início').length, cls: 'amber' },
+                { kind: 'approved', label: state.lang === 'pt' ? 'Aprovadas' : 'Approved', value: allReportRows.filter(row => String(row.project?.status || '').includes('Aprovado')).length, cls: 'green' }
+            ];
+            summaryDrilldowns.innerHTML = statusCards.map(card => `<button type="button" class="v86-kpi report-summary-card" data-report-list-kind="${card.kind}"><span>${card.label}</span><strong class="${card.cls}">${card.value}</strong><small>${state.lang === 'pt' ? 'Ver lista' : 'View list'}</small></button>`).join('');
+            summaryCards[0]?.closest('.v86-kpis')?.after(summaryDrilldowns);
+            summaryDrilldowns.querySelectorAll('[data-report-list-kind]').forEach(card => makeReportSummaryCardNavigable(card, card.dataset.reportListKind));
         }
         if (report.excludedRows.length) {
             const projectsKpi = out.querySelector('.v86-kpis .v86-kpi:nth-child(4)');
@@ -5455,6 +5671,7 @@ function getSellerCommissionPeriodReport(projects, startStr, endStr) {
             const commissionCell = document.createElement('td');
             commissionCell.innerHTML = `<span class="v86-status ${commissionState.cls}">${commissionState.text}</span>`;
             tableRow.cells[3]?.before(commissionCell);
+            makeReportRowNavigable(tableRow, row.project.id);
         });
         table.dataset.statusDecorated = 'true';
         table.closest('.v86-section')?.classList.add('report-print-detail-section');
@@ -5464,6 +5681,7 @@ function getSellerCommissionPeriodReport(projects, startStr, endStr) {
             section.className = 'v86-section mt-4 report-print-reference-section';
             const excludedRows = report.excludedRows.map(row => `<tr><td>${escapeInlineHtml(row.project.numeroInvoice || '—')} / ${escapeInlineHtml(row.project.numeroProposta || '—')}</td><td class="wrap font-bold text-slate-100">${escapeInlineHtml(getProjectPrimaryTitle(row.project))}</td><td><span class="v86-status info">${state.lang === 'pt' ? 'Arquivada' : 'Archived'}</span></td><td><span class="v86-status info">${state.lang === 'pt' ? 'Sem comissão liberada' : 'No commission released'}</span></td><td class="money">${formatCurr(row.totalWorkValue)}</td></tr>`).join('');
             section.innerHTML = `<div class="v86-section-pad"><div class="v86-section-title"><div><h2>${state.lang === 'pt' ? 'Obras arquivadas sem movimentação financeira' : 'Archived projects without financial activity'}</h2><p>${state.lang === 'pt' ? 'Exibidas para consulta. Não compõem os totais financeiros acima.' : 'Shown for reference. They are not included in the financial totals above.'}</p></div></div></div><div class="v86-table-wrap"><table class="v86-table"><thead><tr><th>Invoice / Proposta</th><th>${state.lang === 'pt' ? 'Cliente' : 'Client'}</th><th>${state.lang === 'pt' ? 'Obra' : 'Project'}</th><th>${state.lang === 'pt' ? 'Status da comissão' : 'Commission status'}</th><th class="money">${state.lang === 'pt' ? 'Valor contrato bruto' : 'Gross contract value'}</th></tr></thead><tbody>${excludedRows}</tbody></table></div>`;
+            section.querySelectorAll('tbody tr').forEach((tableRow, index) => makeReportRowNavigable(tableRow, report.excludedRows[index].project.id));
             table.closest('.v86-section')?.after(section);
         }
         try { lucide.createIcons(); } catch {}
@@ -5482,6 +5700,45 @@ function getSellerCommissionPeriodReport(projects, startStr, endStr) {
             state.projects = originalProjects;
         }
         decorateRenderedReportStatus();
+    };
+
+    function mountSuperAdminProposalDeleteAction(projectId) {
+        const project = state.projects.find(item => item.id === projectId);
+        if (!state.isSuperAdmin || !isUnapprovedProposalDeletionCandidate(project)) return;
+        const actions = document.querySelector('#projects-grid .v86-head > div.flex.gap-2');
+        if (!actions || actions.querySelector('[data-delete-unapproved-proposal]')) return;
+        const button = document.createElement('button');
+        button.type = 'button';
+        button.dataset.deleteUnapprovedProposal = 'true';
+        button.className = 'v86-btn danger';
+        button.innerHTML = `<i data-lucide="trash-2" class="w-4 h-4"></i>${state.lang === 'pt' ? 'Excluir proposta' : 'Delete proposal'}`;
+        button.addEventListener('click', () => window.deleteUnapprovedProposal(projectId));
+        actions.appendChild(button);
+        try { lucide.createIcons(); } catch {}
+    }
+
+    const baseOpenProjectDetails = window.openProjectDetails;
+    window.openProjectDetails = (projectId) => {
+        baseOpenProjectDetails(projectId);
+        mountSuperAdminProposalDeleteAction(projectId);
+    };
+
+    const baseEditProject = window.editP;
+    window.editP = (projectId) => {
+        state.returnToReportAfterEdit = state.returnToReport;
+        baseEditProject(projectId);
+    };
+
+    const baseShowView = window.showView;
+    window.showView = (view) => {
+        if (view === 'projects' && state.returnToReportAfterEdit && state.currentView === 'new') {
+            state.returnToReportAfterEdit = false;
+            state.returnToReport = false;
+            baseShowView('reports');
+            return;
+        }
+        if (view === 'reports') state.returnToReportAfterEdit = false;
+        baseShowView(view);
     };
 
     onAuthStateChanged(auth, (u) => {
