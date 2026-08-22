@@ -295,6 +295,10 @@
         .report-table-monthly.monthly-single-seller .report-col-paid-total { width: 11%; }
         .flag-btn { border: 1px solid rgba(15,23,42,0.12); border-radius: 14px; padding: 10px; transition: .2s; background: #fff; }
         .flag-btn.active { border-color: var(--gold); box-shadow: 0 0 0 4px rgba(251,191,36,.12); }
+        .dashboard-language-switcher { display:flex; align-items:center; gap:5px; padding:4px; border:1px solid var(--c2-line); border-radius:14px; background:rgba(255,255,255,.025); }
+        .dashboard-language-option { width:32px; height:30px; padding:4px; border:1px solid transparent; border-radius:9px; opacity:.58; transition:.2s; }
+        .dashboard-language-option:hover, .dashboard-language-option.active { opacity:1; background:rgba(69,216,156,.12); border-color:rgba(69,216,156,.34); }
+        .dashboard-language-option img { width:100%; height:100%; object-fit:contain; border-radius:2px; }
         .tab-btn { color: rgba(148,163,184,0.9); font-size: 12px; }
         .tab-active { color: var(--gold); border-bottom: 2px solid var(--gold); }
         .app-body-light .tab-btn { color: #64748b; }
@@ -699,6 +703,8 @@
             #main-nav.c2-nav.nav-open { display:flex !important; }
             #main-nav.c2-nav .tab-btn { width:100%; padding:13px 14px; border-radius:11px; }
             .c2-header-actions { gap:7px; }
+            .dashboard-language-switcher { gap:2px; padding:2px; }
+            .dashboard-language-option { width:25px; height:25px; padding:3px; }
             .c2-icon-btn { width:40px; height:40px; }
             .c2-page-heading { flex-direction:column; align-items:stretch; }
             .c2-page-heading .c2-primary-btn,.c2-page-heading .c2-secondary-btn,.c2-page-heading .c2-danger-btn { width:100%; }
@@ -959,7 +965,7 @@
         <div class="px-7 pt-7 pb-5 border-b border-white/10 bg-gradient-to-r from-slate-900 via-slate-900 to-black/90">
             <div class="flex items-start justify-between gap-4">
                 <div>
-                    <p id="project-kpi-detail-eyebrow" class="text-[10px] font-black uppercase tracking-[0.28em] text-slate-500 mb-2">Fonte do indicador</p>
+                    <p id="project-kpi-detail-eyebrow" class="text-[10px] font-black uppercase tracking-[0.28em] text-slate-500 mb-2" data-i18n="indicator_source">Fonte do indicador</p>
                     <h3 id="project-kpi-detail-title" class="text-2xl font-black text-emerald-300">Detalhamento</h3>
                     <p id="project-kpi-detail-subtitle" class="text-sm text-slate-400 mt-2"></p>
                 </div>
@@ -996,9 +1002,9 @@
         <div class="px-8 pt-8 pb-6 border-b border-white/10 bg-gradient-to-r from-slate-900 via-slate-900 to-black/90">
             <div class="flex items-start justify-between gap-4">
                 <div>
-                    <p class="text-[10px] font-black uppercase tracking-[0.28em] text-slate-500 mb-2">Resumo Financeiro</p>
+                    <p class="text-[10px] font-black uppercase tracking-[0.28em] text-slate-500 mb-2" data-i18n="financial_summary">Resumo financeiro</p>
                     <h3 class="text-2xl font-black text-gold" data-i18n="modal_pay_title">Gerenciar Pagamentos (Vendedor)</h3>
-                    <p class="text-sm text-slate-400 mt-2">Confira o saldo exato antes de salvar qualquer ajuste.</p>
+                    <p class="text-sm text-slate-400 mt-2" data-i18n="payment_summary_hint">Confira o saldo exato antes de salvar qualquer ajuste.</p>
                 </div>
                 <button type="button" onclick="window.closeEditPaymentModal()" class="shrink-0 inline-flex items-center justify-center w-11 h-11 rounded-2xl border border-white/10 bg-slate-900 text-slate-300 hover:text-white hover:border-white/20 transition-colors" aria-label="Fechar">
                     <i data-lucide="x" class="w-5 h-5"></i>
@@ -1022,9 +1028,9 @@
         <div class="px-7 pt-7 pb-5 border-b border-white/10 bg-gradient-to-r from-slate-900 via-slate-900 to-black/90">
             <div class="flex items-start justify-between gap-4">
                 <div>
-                    <p class="text-[10px] font-black uppercase tracking-[0.28em] text-slate-500 mb-2">Comissões pendentes</p>
-                    <h3 class="text-2xl font-black text-amber-300">Pagamentos do relatório</h3>
-                    <p class="text-sm text-slate-400 mt-2">Selecione as obras que deseja quitar para o vendedor.</p>
+                    <p class="text-[10px] font-black uppercase tracking-[0.28em] text-slate-500 mb-2" data-i18n="pending_commissions">Comissões pendentes</p>
+                    <h3 class="text-2xl font-black text-amber-300" data-i18n="report_payments">Pagamentos do relatório</h3>
+                    <p class="text-sm text-slate-400 mt-2" data-i18n="report_payments_hint">Selecione as obras que deseja quitar para o vendedor.</p>
                 </div>
                 <button type="button" onclick="window.closeReportPendingPayments()" class="shrink-0 inline-flex items-center justify-center w-11 h-11 rounded-2xl border border-white/10 bg-slate-900 text-slate-300 hover:text-white hover:border-white/20 transition-colors" aria-label="Fechar">
                     <i data-lucide="x" class="w-5 h-5"></i>
@@ -1041,7 +1047,7 @@
         <div class="px-7 pt-7 pb-5 border-b border-white/10 bg-gradient-to-r from-slate-900 via-slate-900 to-black/90">
             <div class="flex items-start justify-between gap-4">
                 <div>
-                    <p class="text-[10px] font-black uppercase tracking-[0.28em] text-slate-500 mb-2">Consulta do relatório</p>
+                    <p class="text-[10px] font-black uppercase tracking-[0.28em] text-slate-500 mb-2" data-i18n="report_lookup">Consulta do relatório</p>
                     <h3 id="report-project-list-title" class="text-2xl font-black text-emerald-300">Obras</h3>
                     <p id="report-project-list-subtitle" class="text-sm text-slate-400 mt-2"></p>
                 </div>
@@ -1076,10 +1082,14 @@
                 <button onclick="window.cancelEdit(); window.showView('new')" class="tab-btn editor-only hidden" id="tab-new"><i data-lucide="circle-plus" class="w-4 h-4"></i><span data-i18n="nav_new">Nova Obra</span></button>
                 <button onclick="window.showView('reports')" class="tab-btn hidden" id="tab-reports"><i data-lucide="file-bar-chart" class="w-4 h-4"></i><span data-i18n="nav_rep">Relatórios</span></button>
                 <button onclick="window.showView('users')" class="tab-btn hidden" id="tab-users"><i data-lucide="users" class="w-4 h-4"></i><span data-i18n="nav_users">Equipe</span></button>
-                <button onclick="window.showView('logs')" class="tab-btn hidden" id="tab-logs"><i data-lucide="history" class="w-4 h-4"></i><span>Logs</span></button>
+                <button onclick="window.showView('logs')" class="tab-btn hidden" id="tab-logs"><i data-lucide="history" class="w-4 h-4"></i><span data-i18n="nav_logs">Logs</span></button>
             </nav>
 
             <div class="c2-header-actions">
+                <div id="dashboard-language-switcher" class="dashboard-language-switcher hidden" aria-label="Selecionar idioma">
+                    <button type="button" onclick="window.setLang('pt')" class="dashboard-language-option" data-dashboard-language="pt" title="Português (Brasil)" aria-label="Português (Brasil)"><img src="https://flagcdn.com/w80/br.png" alt="Brasil"></button>
+                    <button type="button" onclick="window.setLang('en')" class="dashboard-language-option" data-dashboard-language="en" title="English (United States)" aria-label="English (United States)"><img src="https://flagcdn.com/w80/us.png" alt="United States"></button>
+                </div>
                 <button onclick="window.toggleTheme()" class="c2-icon-btn" aria-label="Alternar tema"><i data-lucide="sun" id="theme-icon-light" class="hidden"></i><i data-lucide="moon" id="theme-icon-dark"></i></button>
                 <div class="c2-user hidden md:flex">
                     <div class="c2-avatar" id="c2-user-avatar">D2</div>
@@ -1098,9 +1108,9 @@
         <div id="view-projects" class="w-full hidden c2-view">
             <div class="c2-page-heading no-print">
                 <div>
-                    <p class="c2-eyebrow">PORTFÓLIO OPERACIONAL</p>
-                    <h1>Projetos</h1>
-                    <p class="c2-page-subtitle">Acompanhe status, contratos, margem e performance das obras em uma única visão.</p>
+                    <p class="c2-eyebrow" data-i18n="page_projects_eyebrow">Portfólio operacional</p>
+                    <h1 data-i18n="page_projects_title">Projetos</h1>
+                    <p class="c2-page-subtitle" data-i18n="page_projects_subtitle">Acompanhe status, contratos, margem e performance das obras em uma única visão.</p>
                 </div>
                 <button onclick="window.cancelEdit(); window.showView('new')" class="editor-only hidden c2-primary-btn"><i data-lucide="plus" class="w-4 h-4"></i>Nova Obra</button>
             </div>
@@ -1115,7 +1125,7 @@
                         </div>
                     </div>
                     <div class="c2-filter-field">
-                        <label>Unidade de negócio</label>
+                        <label data-i18n="unit_business">Unidade de negócio</label>
                         <div id="dynamic-unit-pills-proj" class="c2-unit-switch"></div>
                     </div>
                     <div id="seller-filter-box" class="hidden c2-filter-field"></div>
@@ -1126,7 +1136,7 @@
                         <button onclick="window.setArchiveFilter('archived')" id="filter-archived" class="filter-pill" data-i18n="filter_archived">Arquivadas</button>
                         <button onclick="window.setArchiveFilter('all')" id="filter-all" class="filter-pill" data-i18n="filter_all">Todas</button>
                     </div>
-                    <div class="c2-filter-hint"><i data-lucide="sliders-horizontal" class="w-4 h-4"></i><span>Filtros aplicados em tempo real</span></div>
+                    <div class="c2-filter-hint"><i data-lucide="sliders-horizontal" class="w-4 h-4"></i><span data-i18n="filters_realtime">Filtros aplicados em tempo real</span></div>
                 </div>
             </section>
             <div id="projects-grid" class="c2-project-grid text-left"></div>
@@ -1135,16 +1145,16 @@
         <div id="view-new" class="hidden c2-view c2-form-page text-left animate-fade-in">
             <div class="c2-page-heading no-print">
                 <div>
-                    <p class="c2-eyebrow">CADASTRO DE PROJETO</p>
+                    <p class="c2-eyebrow" data-i18n="page_new_eyebrow">Cadastro de projeto</p>
                     <h1 id="form-title" data-i18n="form_new_title">Registrar Obra</h1>
-                    <p class="c2-page-subtitle">Cadastre identificação, dados financeiros e cronograma com uma estrutura única e objetiva.</p>
+                    <p class="c2-page-subtitle" data-i18n="page_new_subtitle">Cadastre identificação, dados financeiros e cronograma com uma estrutura única e objetiva.</p>
                 </div>
-                <button type="button" onclick="window.cancelEdit(); window.showView('projects')" class="c2-secondary-btn"><i data-lucide="arrow-left" class="w-4 h-4"></i>Voltar</button>
+                <button type="button" onclick="window.cancelEdit(); window.showView('projects')" class="c2-secondary-btn"><i data-lucide="arrow-left" class="w-4 h-4"></i><span data-i18n="back_to_projects">Voltar</span></button>
             </div>
             <form id="project-form" class="space-y-6">
                 <input type="hidden" id="edit-id">
                 <section class="c2-panel p-6 sm:p-8">
-                    <div class="c2-section-heading"><div><p class="c2-eyebrow">IDENTIFICAÇÃO</p><h2>Dados da obra</h2></div><i data-lucide="building-2" class="w-5 h-5"></i></div>
+                    <div class="c2-section-heading"><div><p class="c2-eyebrow" data-i18n="section_identification">Identificação</p><h2 data-i18n="section_project_details">Dados da obra</h2></div><i data-lucide="building-2" class="w-5 h-5"></i></div>
                     <div class="grid grid-cols-1 md:grid-cols-2 gap-5 mt-6">
                         <div class="c2-form-field"><label data-i18n="f_inv">Nº Invoice</label><input type="text" id="f-invoice" class="modern-input" placeholder="Ex: INV-2026-001"></div>
                         <div class="c2-form-field"><label data-i18n="f_prop">Nº Proposta</label><input type="text" id="f-proposta" class="modern-input" placeholder="Ex: PROP-2026-001"></div>
@@ -1158,17 +1168,17 @@
                 </section>
 
                 <section class="c2-panel p-6 sm:p-8">
-                    <div class="c2-section-heading"><div><p class="c2-eyebrow">FINANCEIRO</p><h2>Contrato e comissão</h2></div><i data-lucide="badge-dollar-sign" class="w-5 h-5"></i></div>
+                    <div class="c2-section-heading"><div><p class="c2-eyebrow" data-i18n="section_financial">Financeiro</p><h2 data-i18n="section_contract_commission">Contrato e comissão</h2></div><i data-lucide="badge-dollar-sign" class="w-5 h-5"></i></div>
                     <div class="grid grid-cols-1 md:grid-cols-2 gap-5 mt-6">
                         <div class="c2-form-field"><label data-i18n="f_gross">Valor Contrato Bruto</label><div class="relative"><span class="c2-currency-prefix">$</span><input type="number" id="f-valor" step="0.01" required class="modern-input c2-input-money"></div></div>
-                        <div class="c2-form-field"><label data-i18n="f_budget">Orçamento Custo (Budget)</label><div class="relative"><span class="c2-currency-prefix">$</span><input type="number" id="f-orcamento" step="0.01" placeholder="Opcional" class="modern-input c2-input-money"></div></div>
+                        <div class="c2-form-field"><label data-i18n="f_budget">Orçamento Custo (Budget)</label><div class="relative"><span class="c2-currency-prefix">$</span><input type="number" id="f-orcamento" step="0.01" data-i18n-placeholder="optional" placeholder="Opcional" class="modern-input c2-input-money"></div></div>
                         <div class="c2-form-field"><label data-i18n="f_comm_perc">% Comissão</label><div class="relative"><input type="number" id="f-comm" value="5" class="modern-input !pr-10"><span class="c2-percent-suffix">%</span></div></div>
                         <div class="c2-form-field"><label data-i18n="f_pay_method">Forma Pagt. Prevista</label><select id="f-metodo" class="modern-input"><option value="Zelle">Zelle</option><option value="Wire Transfer">Wire Transfer</option><option value="ACH">ACH</option><option value="Check">Check</option><option value="Dinheiro">Dinheiro (Cash)</option><option value="CC">Cartão de Crédito (Dedução 3% Net)</option></select></div>
                     </div>
                 </section>
 
                 <section class="c2-panel p-6 sm:p-8">
-                    <div class="c2-section-heading"><div><p class="c2-eyebrow">CRONOGRAMA</p><h2>Datas do projeto</h2></div><i data-lucide="calendar-days" class="w-5 h-5"></i></div>
+                    <div class="c2-section-heading"><div><p class="c2-eyebrow" data-i18n="section_schedule">Cronograma</p><h2 data-i18n="section_project_dates">Datas do projeto</h2></div><i data-lucide="calendar-days" class="w-5 h-5"></i></div>
                     <div class="grid grid-cols-1 md:grid-cols-2 gap-5 mt-6">
                         <div class="c2-form-field"><label data-i18n="f_start">Início</label><div class="date-container" onclick="this.querySelector('input').showPicker()"><input type="date" id="f-inicio" required class="modern-input"><i data-lucide="calendar" class="calendar-icon-overlay w-5 h-5"></i></div></div>
                         <div class="c2-form-field"><label data-i18n="f_end">Entrega</label><div class="date-container" onclick="this.querySelector('input').showPicker()"><input type="date" id="f-entrega" required class="modern-input"><i data-lucide="calendar" class="calendar-icon-overlay w-5 h-5"></i></div></div>
@@ -1185,29 +1195,29 @@
         <div id="view-users" class="hidden c2-view animate-fade-in">
             <div class="c2-page-heading no-print">
                 <div>
-                    <p class="c2-eyebrow">ADMINISTRAÇÃO</p>
-                    <h1>Equipe</h1>
-                    <p class="c2-page-subtitle">Gerencie usuários, visibilidade e permissões do sistema.</p>
+                    <p class="c2-eyebrow" data-i18n="page_team_eyebrow">Administração</p>
+                    <h1 data-i18n="page_team_title">Equipe</h1>
+                    <p class="c2-page-subtitle" data-i18n="page_team_subtitle">Gerencie usuários, visibilidade e permissões do sistema.</p>
                 </div>
             </div>
             <div class="c2-team-layout">
                 <section class="c2-panel p-6 sm:p-8 text-left">
-                    <div class="c2-section-heading"><div><p class="c2-eyebrow">CADASTRO / EDIÇÃO</p><h2>Usuário</h2></div><span class="c2-status-soft">Campos obrigatórios</span></div>
+                    <div class="c2-section-heading"><div><p class="c2-eyebrow" data-i18n="section_user_registration">Cadastro / edição</p><h2 data-i18n="section_user">Usuário</h2></div><span class="c2-status-soft" data-i18n="required_fields">Campos obrigatórios</span></div>
                     <form id="team-form" class="space-y-6 mt-6">
                         <input type="hidden" id="t-id">
-                        <div class="c2-form-field"><label data-i18n="team_name">Nome completo</label><input type="text" id="t-name" required class="modern-input" placeholder="Digite o nome completo"></div>
+                        <div class="c2-form-field"><label data-i18n="team_name">Nome completo</label><input type="text" id="t-name" required class="modern-input" data-i18n-placeholder="full_name_placeholder" placeholder="Digite o nome completo"></div>
                         <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
                             <div class="c2-form-field"><label data-i18n="team_email">E-mail</label><input type="email" id="t-email" required class="modern-input" placeholder="usuario@email.com"></div>
                             <div class="c2-form-field relative"><label data-i18n="team_pass">Senha</label><input type="password" id="t-pass" required class="modern-input !pr-12"><button type="button" onclick="window.togglePassword('t-pass', 'eye-team-btn')" class="password-toggle" id="eye-team-btn" style="top:72%"><i data-lucide="eye" class="w-4 h-4"></i></button></div>
                         </div>
-                        <div class="c2-permission-group"><p class="c2-eyebrow" data-i18n="team_scope">Visibilidade e Escopo</p><div class="grid grid-cols-1 gap-2 mt-3"><label class="perm-box"><input type="checkbox" id="p_smart" class="perm-checkbox"><span><strong>D2 Smart Home</strong><small>Visualizar projetos e dados Smart Home</small></span></label><label class="perm-box"><input type="checkbox" id="p_hvac" class="perm-checkbox"><span><strong>D2 HVAC</strong><small>Visualizar projetos e dados HVAC</small></span></label><label class="perm-box"><input type="checkbox" id="p_global" class="perm-checkbox"><span><strong>Ver outros vendedores</strong><small>Acesso a projetos de outros responsáveis</small></span></label></div></div>
-                        <div class="c2-permission-group"><p class="c2-eyebrow" data-i18n="team_tabs">Acesso às Abas</p><div class="grid grid-cols-1 sm:grid-cols-3 gap-2 mt-3"><label class="perm-box"><input type="checkbox" id="p_tab_proj" class="perm-checkbox" checked><span><strong>Projetos</strong></span></label><label class="perm-box"><input type="checkbox" id="p_tab_new" class="perm-checkbox"><span><strong>Nova Obra</strong></span></label><label class="perm-box"><input type="checkbox" id="p_tab_rep" class="perm-checkbox"><span><strong>Relatórios</strong></span></label></div></div>
-                        <div class="c2-permission-group"><p class="c2-eyebrow" data-i18n="team_perms">Permissões Financeiras</p><div class="grid grid-cols-1 gap-2 mt-3"><label class="perm-box"><input type="checkbox" id="p_fin" class="perm-checkbox"><span><strong>Inserir recebimentos / pagamentos</strong><small>Registrar movimentações financeiras</small></span></label><label class="perm-box"><input type="checkbox" id="p_costs" class="perm-checkbox"><span><strong>Acesso a custos e margem</strong><small>Visualizar despesas, budget e margem</small></span></label></div></div>
-                        <div class="flex justify-end gap-3 pt-4 border-t border-white/10"><button type="button" onclick="document.getElementById('team-form').reset(); document.getElementById('t-id').value=''" class="c2-secondary-btn">Cancelar</button><button type="submit" id="btn-save-team" class="c2-primary-btn" data-i18n="btn_team"><i data-lucide="save" class="w-4 h-4"></i>Salvar usuário</button></div>
+                        <div class="c2-permission-group"><p class="c2-eyebrow" data-i18n="team_scope">Visibilidade e Escopo</p><div class="grid grid-cols-1 gap-2 mt-3"><label class="perm-box"><input type="checkbox" id="p_smart" class="perm-checkbox"><span><strong>D2 Smart Home</strong><small data-i18n="team_smart_visibility">Visualizar projetos e dados Smart Home</small></span></label><label class="perm-box"><input type="checkbox" id="p_hvac" class="perm-checkbox"><span><strong>D2 HVAC</strong><small data-i18n="team_hvac_visibility">Visualizar projetos e dados HVAC</small></span></label><label class="perm-box"><input type="checkbox" id="p_global" class="perm-checkbox"><span><strong data-i18n="team_global_visibility">Ver outros vendedores</strong><small data-i18n="team_global_visibility_hint">Acesso a projetos de outros responsáveis</small></span></label></div></div>
+                        <div class="c2-permission-group"><p class="c2-eyebrow" data-i18n="team_tabs">Acesso às Abas</p><div class="grid grid-cols-1 sm:grid-cols-3 gap-2 mt-3"><label class="perm-box"><input type="checkbox" id="p_tab_proj" class="perm-checkbox" checked><span><strong data-i18n="team_tab_projects">Projetos</strong></span></label><label class="perm-box"><input type="checkbox" id="p_tab_new" class="perm-checkbox"><span><strong data-i18n="team_tab_new">Nova obra</strong></span></label><label class="perm-box"><input type="checkbox" id="p_tab_rep" class="perm-checkbox"><span><strong data-i18n="team_tab_reports">Relatórios</strong></span></label></div></div>
+                        <div class="c2-permission-group"><p class="c2-eyebrow" data-i18n="team_perms">Permissões Financeiras</p><div class="grid grid-cols-1 gap-2 mt-3"><label class="perm-box"><input type="checkbox" id="p_fin" class="perm-checkbox"><span><strong data-i18n="team_finance_entry">Inserir recebimentos / pagamentos</strong><small data-i18n="team_finance_entry_hint">Registrar movimentações financeiras</small></span></label><label class="perm-box"><input type="checkbox" id="p_costs" class="perm-checkbox"><span><strong data-i18n="team_cost_access">Acesso a custos e margem</strong><small data-i18n="team_cost_access_hint">Visualizar despesas, orçamento e margem</small></span></label></div></div>
+                        <div class="flex justify-end gap-3 pt-4 border-t border-white/10"><button type="button" onclick="document.getElementById('team-form').reset(); document.getElementById('t-id').value=''" class="c2-secondary-btn" data-i18n="cancel">Cancelar</button><button type="submit" id="btn-save-team" class="c2-primary-btn" data-i18n="btn_team"><i data-lucide="save" class="w-4 h-4"></i>Salvar usuário</button></div>
                     </form>
                 </section>
                 <section class="c2-panel p-0 overflow-hidden text-left">
-                    <div class="c2-list-head"><div><p class="c2-eyebrow">USUÁRIOS CADASTRADOS</p><h2>Equipe ativa</h2></div><div class="c2-list-head-icon"><i data-lucide="users" class="w-5 h-5"></i></div></div>
+                    <div class="c2-list-head"><div><p class="c2-eyebrow" data-i18n="registered_users">Usuários cadastrados</p><h2 data-i18n="active_team">Equipe ativa</h2></div><div class="c2-list-head-icon"><i data-lucide="users" class="w-5 h-5"></i></div></div>
                     <div id="users-list" class="c2-users-list"></div>
                 </section>
             </div>
@@ -1216,23 +1226,23 @@
         <div id="view-logs" class="hidden c2-view animate-fade-in">
             <div class="c2-page-heading no-print">
                 <div>
-                    <p class="c2-eyebrow">AUDITORIA</p>
-                    <h1>Logs de Auditoria</h1>
-                    <p class="c2-page-subtitle">Acompanhe ações, alterações e referências registradas no sistema.</p>
+                    <p class="c2-eyebrow" data-i18n="page_logs_eyebrow">Auditoria</p>
+                    <h1 data-i18n="page_logs_title">Logs de auditoria</h1>
+                    <p class="c2-page-subtitle" data-i18n="page_logs_subtitle">Acompanhe ações, alterações e referências registradas no sistema.</p>
                 </div>
-                <button onclick="window.clearLogs()" class="c2-danger-btn"><i data-lucide="trash-2" class="w-4 h-4"></i>Limpar histórico</button>
+                <button onclick="window.clearLogs()" class="c2-danger-btn"><i data-lucide="trash-2" class="w-4 h-4"></i><span data-i18n="clear_history">Limpar histórico</span></button>
             </div>
             <section class="c2-filter-panel no-print">
                 <div class="grid grid-cols-1 md:grid-cols-[minmax(220px,320px)_minmax(260px,1fr)_auto] gap-4 items-end">
                     <div class="c2-filter-field"><label for="logs-user-filter" data-i18n="logs_filter_user">Usuário</label><select id="logs-user-filter" onchange="window.setLogsUserFilter(this.value)" class="modern-input"><option value="" data-i18n="logs_all_users">Todos os usuários</option></select></div>
-                    <div class="c2-filter-field"><label>Buscar</label><div class="relative"><i data-lucide="search" class="c2-input-icon w-4 h-4"></i><input id="logs-search" type="text" class="modern-input c2-input-with-icon" placeholder="Pesquisar ação, usuário, obra ou referência" oninput="window.setLogsSearchQuery(this.value)"></div></div>
-                    <button id="logs-clear-filter" onclick="window.resetLogsFilters()" class="c2-secondary-btn hidden"><i data-lucide="filter-x" class="w-4 h-4"></i>Limpar filtros</button>
+                    <div class="c2-filter-field"><label data-i18n="search">Buscar</label><div class="relative"><i data-lucide="search" class="c2-input-icon w-4 h-4"></i><input id="logs-search" type="text" class="modern-input c2-input-with-icon" data-i18n-placeholder="logs_search_placeholder" placeholder="Pesquisar ação, usuário, obra ou referência" oninput="window.setLogsSearchQuery(this.value)"></div></div>
+                    <button id="logs-clear-filter" onclick="window.resetLogsFilters()" class="c2-secondary-btn hidden"><i data-lucide="filter-x" class="w-4 h-4"></i><span data-i18n="clear_filters">Limpar filtros</span></button>
                 </div>
                 <div id="logs-filter-summary" class="c2-filter-summary mt-4"></div>
             </section>
             <section class="c2-panel p-0 overflow-hidden">
-                <div class="c2-list-head"><div><p class="c2-eyebrow">REGISTROS</p><h2>Histórico de ações</h2></div><div class="c2-list-head-icon"><i data-lucide="history" class="w-5 h-5"></i></div></div>
-                <div class="overflow-x-auto c2-table-scroll"><table class="w-full c2-table" id="logs-table"><thead><tr><th data-i18n="date">Data / Hora</th><th>Usuário</th><th data-i18n="logs_project">Obra / Referência</th><th>Ação / Operação</th></tr></thead><tbody id="logs-body"></tbody></table></div>
+                <div class="c2-list-head"><div><p class="c2-eyebrow" data-i18n="records">Registros</p><h2 data-i18n="action_history">Histórico de ações</h2></div><div class="c2-list-head-icon"><i data-lucide="history" class="w-5 h-5"></i></div></div>
+                <div class="overflow-x-auto c2-table-scroll"><table class="w-full c2-table" id="logs-table"><thead><tr><th data-i18n="date">Data / Hora</th><th data-i18n="user">Usuário</th><th data-i18n="logs_project">Obra / Referência</th><th data-i18n="action_operation">Ação / Operação</th></tr></thead><tbody id="logs-body"></tbody></table></div>
             </section>
         </div>
 
@@ -1261,12 +1271,21 @@
     const auth = getAuth(app);
     const db = getFirestore(app);
     const SUPER_ADMIN = "dante.frota@allcablingtech.com";
+    const LANGUAGE_STORAGE_KEY = 'd2-project-management.language';
+    const savedLanguage = (() => {
+        try {
+            const value = localStorage.getItem(LANGUAGE_STORAGE_KEY);
+            return value === 'en' || value === 'pt' ? value : 'pt';
+        } catch (_) {
+            return 'pt';
+        }
+    })();
 
     let state = { 
         user: null, 
         isSuperAdmin: false,
         userPerms: { tab_proj: true, tab_new: false, tab_rep: false, fin: false, costs: false, smart: true, hvac: false, global: false },
-        projects: [], team: [], logs: [], logsUserFilter: '', logsSearchQuery: '', company: 'Ambas', lang: 'pt', theme: 'dark', 
+        projects: [], team: [], logs: [], logsUserFilter: '', logsSearchQuery: '', company: 'Ambas', lang: savedLanguage, theme: 'dark',
         editingPayments: null, editingRecs: null, reportPendingPayments: null, reportProjectList: null, reportProjectListReturn: null, returnToReport: false, returnToReportAfterEdit: false, focusedProject: null, activeModule: null, archiveFilter: 'active',
         reportActiveKpi: 'receita', projectSellerFilter: 'all', projectSearchQuery: '', reportPeriodStart: '', reportPeriodEnd: '', reportSellerFilter: 'all', reportArchiveFilter: 'all', reportRangePreset: 'year', mobileNavOpen: false, currentView: 'projects'
     };
@@ -1299,7 +1318,7 @@
             form_new_title: "Registrar Obra", team_title: "Gestão de Equipe", btn_team: "Salvar e Autorizar Acesso",
             filter_both: "AMBAS", filter_active: "ATIVAS", filter_archived: "ARQUIVADAS", filter_all: "TODAS",
             project_filter_seller: "Filtro por Vendedor", project_filter_all_sellers: "Todos os vendedores", report_filter_seller: "Vendedor no relatório", report_filter_all_sellers: "Todos os vendedores", logs_empty: "Nenhum log registrado", logs_filter_user: "Filtrar por usuário", logs_all_users: "Todos os usuários", logs_clear_filter: "Limpar filtro", logs_results: "registros exibidos", margin_alert_low: "Margem abaixo de 45%", margin_current: "Margem Atual", completed_on: "Concluída em", category_commission: "Comissões", seller_margin_cover: "Margem da obra",
-            lbl_email: "E-mail Corporativo", lbl_pass: "Senha de Acesso", btn_login: "Acessar Sistema",
+            login_title: "Portal D2 Project Management", lbl_email: "E-mail Corporativo", lbl_pass: "Senha de Acesso", btn_login: "Acessar Sistema",
             f_prop: "Nº Proposta", f_inv: "Nº Invoice", f_unit: "Unidade Responsável", f_client: "Cliente", f_project_name: "Nome do Projeto / Referência", f_address: "Endereço da Obra", f_seller: "Vendedor",
             f_gross: "Valor Contrato Bruto", f_budget: "Orçamento Custo (Budget)", f_comm_perc: "% Comissão",
             f_pay_method: "Forma Pagt. Prevista", f_start: "Início", f_end: "Entrega", f_status: "Status",
@@ -1344,15 +1363,16 @@
             rec_summary_gross: "Recebido bruto", rec_summary_fees: "Taxas de cartão 3%", rec_summary_net: "Base líquida elegível", rec_summary_release: "Comissão liberada",
             rec_method_actual: "Forma real recebida", rec_method_locked: "Recebimento protegido. Para corrigir, exclua e crie uma nova entrada.", rec_method_admin_locked: "Recebimento protegido. Como Super Admin, use o botão Editar para corrigir este lançamento sem recriá-lo.", rec_method_admin_editing: "Modo de edição do Super Admin ativo. Revise os dados e clique em Salvar Alterações. A correção ficará registrada nos logs.", rec_edit_title: "Editar lançamento", rec_cancel_edit_title: "Cancelar edição", rec_method_card_note: "Cartão deduz 3% automaticamente da base de comissão.",
             rec_line_gross: "Bruto", rec_line_fee: "Taxa", rec_line_net: "Líquido base", rec_add_new: "Adicionar Novo Recebimento", rec_save_block: "Preencha data, valor e forma de pagamento em todas as novas entradas antes de salvar.",
-            payment_summary_card_fees: "Taxas cartão (cliente)", payment_summary_net_basis: "Base líquida recebida", payment_summary_received: "Recebido do cliente", pay_pending_badge: "Pagamento pendente", timeline_due_soon: "Prazo próximo", invoice_label: "Invoice", proposal_label: "Proposta", client_outstanding: "Cliente ainda deve", comm_remaining_projected: "Comissão futura estimada", comm_card_fee_reduction: "Desconto cartão", commission_released_settled: "Liberada quitada", commission_total_paid: "Comissão total quitada", commission_due_now: "Pendente agora", commission_paid_from_released: "Pago da liberada", commission_still_to_release: "Ainda a liberar", commission_waiting_receipts: "Aguardando recebimentos", commission_future_pending: "Comissão futura estimada", commission_released_paid_label: "Liberada paga", commission_overall_paid_label: "Pago do total projetado", commission_note_released_only: "A comissão do vendedor foi quitada apenas sobre o valor já recebido do cliente.", commission_note_future_release: "Ainda restam {commission} de comissão projetada, que serão liberados conforme o cliente pagar os {client} em aberto.", commission_note_due_now: "Existe {due} de comissão liberada pendente agora e ainda {future} de comissão projetada aguardando novos recebimentos.", commission_note_waiting_receipts: "Ainda não há comissão liberada. O cliente ainda deve {client} e isso pode liberar até {commission} de comissão projetada.", client_received_label: "Recebido", client_balance_short: "Saldo a receber", commission_paid_simple: "Comissão paga", commission_to_receive_label: "Comissão a receber", commission_to_receive_short: "Comissão restante", commission_partial_status: "Parcial", commission_review_status: "Revisar pagamento", commission_due_now_short: "Pendente agora", client_received_compact: "Recebido", client_balance_compact: "Falta receber", commission_paid_compact: "Paga", commission_remaining_compact: "A receber", commission_due_now_compact: "Pendente agora"
+            payment_summary_card_fees: "Taxas cartão (cliente)", payment_summary_net_basis: "Base líquida recebida", payment_summary_received: "Recebido do cliente", pay_pending_badge: "Pagamento pendente", timeline_due_soon: "Prazo próximo", invoice_label: "Invoice", proposal_label: "Proposta", client_outstanding: "Cliente ainda deve", comm_remaining_projected: "Comissão futura estimada", comm_card_fee_reduction: "Desconto cartão", commission_released_settled: "Liberada quitada", commission_total_paid: "Comissão total quitada", commission_due_now: "Pendente agora", commission_paid_from_released: "Pago da liberada", commission_still_to_release: "Ainda a liberar", commission_waiting_receipts: "Aguardando recebimentos", commission_future_pending: "Comissão futura estimada", commission_released_paid_label: "Liberada paga", commission_overall_paid_label: "Pago do total projetado", commission_note_released_only: "A comissão do vendedor foi quitada apenas sobre o valor já recebido do cliente.", commission_note_future_release: "Ainda restam {commission} de comissão projetada, que serão liberados conforme o cliente pagar os {client} em aberto.", commission_note_due_now: "Existe {due} de comissão liberada pendente agora e ainda {future} de comissão projetada aguardando novos recebimentos.", commission_note_waiting_receipts: "Ainda não há comissão liberada. O cliente ainda deve {client} e isso pode liberar até {commission} de comissão projetada.", client_received_label: "Recebido", client_balance_short: "Saldo a receber", commission_paid_simple: "Comissão paga", commission_to_receive_label: "Comissão a receber", commission_to_receive_short: "Comissão restante", commission_partial_status: "Parcial", commission_review_status: "Revisar pagamento", commission_due_now_short: "Pendente agora", client_received_compact: "Recebido", client_balance_compact: "Falta receber", commission_paid_compact: "Paga", commission_remaining_compact: "A receber", commission_due_now_compact: "Pendente agora",
+            nav_logs: "Logs", page_projects_eyebrow: "Portfólio operacional", page_projects_title: "Projetos", page_projects_subtitle: "Acompanhe status, contratos, margem e performance das obras em uma única visão.", unit_business: "Unidade de negócio", filters_realtime: "Filtros aplicados em tempo real", page_new_eyebrow: "Cadastro de projeto", page_new_subtitle: "Cadastre identificação, dados financeiros e cronograma com uma estrutura única e objetiva.", back_to_projects: "Voltar", section_identification: "Identificação", section_project_details: "Dados da obra", section_financial: "Financeiro", section_contract_commission: "Contrato e comissão", section_schedule: "Cronograma", section_project_dates: "Datas do projeto", optional: "Opcional", page_team_eyebrow: "Administração", page_team_title: "Equipe", page_team_subtitle: "Gerencie usuários, visibilidade e permissões do sistema.", section_user_registration: "Cadastro / edição", section_user: "Usuário", required_fields: "Campos obrigatórios", full_name_placeholder: "Digite o nome completo", team_smart_visibility: "Visualizar projetos e dados Smart Home", team_hvac_visibility: "Visualizar projetos e dados HVAC", team_global_visibility: "Ver outros vendedores", team_global_visibility_hint: "Acesso a projetos de outros responsáveis", team_tab_projects: "Projetos", team_tab_new: "Nova obra", team_tab_reports: "Relatórios", team_finance_entry: "Inserir recebimentos / pagamentos", team_finance_entry_hint: "Registrar movimentações financeiras", team_cost_access: "Acesso a custos e margem", team_cost_access_hint: "Visualizar despesas, orçamento e margem", registered_users: "Usuários cadastrados", active_team: "Equipe ativa", page_logs_eyebrow: "Auditoria", page_logs_title: "Logs de auditoria", page_logs_subtitle: "Acompanhe ações, alterações e referências registradas no sistema.", clear_history: "Limpar histórico", search: "Buscar", logs_search_placeholder: "Pesquisar ação, usuário, obra ou referência", clear_filters: "Limpar filtros", records: "Registros", action_history: "Histórico de ações", user: "Usuário", action_operation: "Ação / operação", financial_summary: "Resumo financeiro", payment_summary_hint: "Confira o saldo exato antes de salvar qualquer ajuste.", pending_commissions: "Comissões pendentes", report_payments: "Pagamentos do relatório", report_payments_hint: "Selecione as obras que deseja quitar para o vendedor.", report_lookup: "Consulta do relatório", indicator_source: "Fonte do indicador", close: "Fechar"
         },
         en: {
             admin_panel: "Corporate Management", nav_proj: "Projects", nav_new: "New Entry", nav_rep: "Reports", nav_users: "Team", project_search_label: "Quick search", project_search_placeholder: "Search by client, project, address, invoice, proposal, or value",
             form_new_title: "Register Project", team_title: "Team Management", btn_team: "Authorize Access",
             filter_both: "BOTH", filter_active: "ACTIVE", filter_archived: "ARCHIVED", filter_all: "ALL",
             project_filter_seller: "Seller Filter", project_filter_all_sellers: "All sellers", report_filter_seller: "Seller in report", report_filter_all_sellers: "All sellers", logs_empty: "No logs recorded", logs_filter_user: "Filter by user", logs_all_users: "All users", logs_clear_filter: "Clear filter", logs_results: "records shown", margin_alert_low: "Margin below 45%", margin_current: "Current Margin", completed_on: "Completed on", category_commission: "Commissions", seller_margin_cover: "Project margin",
-            lbl_email: "Corporate Email", lbl_pass: "Password", btn_login: "Access System",
-            f_prop: "Proposal No.", f_inv: "Invoice No.", f_unit: "Responsible Unit", f_client: "Client", f_seller: "Seller",
+            login_title: "D2 Project Management Portal", lbl_email: "Corporate Email", lbl_pass: "Password", btn_login: "Access System",
+            f_prop: "Proposal No.", f_inv: "Invoice No.", f_unit: "Responsible Unit", f_client: "Client", f_project_name: "Project name / reference", f_address: "Project address", f_seller: "Seller",
             f_gross: "Gross Contract Value", f_budget: "Cost Budget", f_comm_perc: "% Commission",
             f_pay_method: "Expected Pay Method", f_start: "Start Date", f_end: "Delivery", f_status: "Status",
             btn_save: "Save Record", btn_cancel: "Cancel",
@@ -1395,7 +1415,8 @@
             rec_summary_gross: "Gross received", rec_summary_fees: "Card fees 3%", rec_summary_net: "Eligible net basis", rec_summary_release: "Commission released",
             rec_method_actual: "Actual received method", rec_method_locked: "Protected receipt. To correct it, delete it and create a new entry.", rec_method_admin_locked: "Protected receipt. As Super Admin, use the Edit button to correct this entry without recreating it.", rec_method_admin_editing: "Super Admin edit mode is active. Review the data and click Save Changes. The correction will be recorded in the audit logs.", rec_edit_title: "Edit entry", rec_cancel_edit_title: "Cancel edit", rec_method_card_note: "Card payments automatically deduct 3% from the commission basis.",
             rec_line_gross: "Gross", rec_line_fee: "Fee", rec_line_net: "Net basis", rec_add_new: "Add New Receipt", rec_save_block: "Fill in date, amount, and payment method on all new or edited entries before saving.",
-            payment_summary_card_fees: "Client card fees", payment_summary_net_basis: "Net received basis", payment_summary_received: "Client received", pay_pending_badge: "Payment pending", timeline_due_soon: "Due soon", invoice_label: "Invoice", proposal_label: "Proposal", client_outstanding: "Client balance", comm_remaining_projected: "Estimated future commission", comm_card_fee_reduction: "Card discount", commission_released_settled: "Released portion settled", commission_total_paid: "Total commission settled", commission_due_now: "Due now", commission_paid_from_released: "Paid from released", commission_still_to_release: "Still to release", commission_waiting_receipts: "Waiting for receipts", commission_future_pending: "Estimated future commission", commission_released_paid_label: "Released paid", commission_overall_paid_label: "Paid from projected total", commission_note_released_only: "The seller commission has been fully paid only on the amount already received from the client.", commission_note_future_release: "There is still {commission} of projected commission to be released as the client pays the remaining {client}.", commission_note_due_now: "There is {due} of released commission due now and another {future} of projected commission waiting for new client receipts.", commission_note_waiting_receipts: "There is no released commission yet. The client still owes {client}, which may release up to {commission} of projected commission.", client_received_label: "Received", client_balance_short: "Balance due", commission_paid_simple: "Commission paid", commission_to_receive_label: "Commission to receive", commission_to_receive_short: "Commission remaining", commission_partial_status: "Partial", commission_review_status: "Review payment", commission_due_now_short: "Due now", client_received_compact: "Received", client_balance_compact: "To collect", commission_paid_compact: "Paid", commission_remaining_compact: "Remaining", commission_due_now_compact: "Due now"
+            payment_summary_card_fees: "Client card fees", payment_summary_net_basis: "Net received basis", payment_summary_received: "Client received", pay_pending_badge: "Payment pending", timeline_due_soon: "Due soon", invoice_label: "Invoice", proposal_label: "Proposal", client_outstanding: "Client balance", comm_remaining_projected: "Estimated future commission", comm_card_fee_reduction: "Card discount", commission_released_settled: "Released portion settled", commission_total_paid: "Total commission settled", commission_due_now: "Due now", commission_paid_from_released: "Paid from released", commission_still_to_release: "Still to release", commission_waiting_receipts: "Waiting for receipts", commission_future_pending: "Estimated future commission", commission_released_paid_label: "Released paid", commission_overall_paid_label: "Paid from projected total", commission_note_released_only: "The seller commission has been fully paid only on the amount already received from the client.", commission_note_future_release: "There is still {commission} of projected commission to be released as the client pays the remaining {client}.", commission_note_due_now: "There is {due} of released commission due now and another {future} of projected commission waiting for new client receipts.", commission_note_waiting_receipts: "There is no released commission yet. The client still owes {client}, which may release up to {commission} of projected commission.", client_received_label: "Received", client_balance_short: "Balance due", commission_paid_simple: "Commission paid", commission_to_receive_label: "Commission to receive", commission_to_receive_short: "Commission remaining", commission_partial_status: "Partial", commission_review_status: "Review payment", commission_due_now_short: "Due now", client_received_compact: "Received", client_balance_compact: "To collect", commission_paid_compact: "Paid", commission_remaining_compact: "Remaining", commission_due_now_compact: "Due now",
+            nav_logs: "Logs", page_projects_eyebrow: "Operational portfolio", page_projects_title: "Projects", page_projects_subtitle: "Track project status, contracts, margin, and performance in one view.", unit_business: "Business unit", filters_realtime: "Filters apply in real time", page_new_eyebrow: "Project registration", page_new_subtitle: "Register identification, financial data, and schedule in one clear structure.", back_to_projects: "Back", section_identification: "Identification", section_project_details: "Project details", section_financial: "Financial", section_contract_commission: "Contract and commission", section_schedule: "Schedule", section_project_dates: "Project dates", optional: "Optional", page_team_eyebrow: "Administration", page_team_title: "Team", page_team_subtitle: "Manage users, visibility, and system permissions.", section_user_registration: "Registration / editing", section_user: "User", required_fields: "Required fields", full_name_placeholder: "Enter full name", team_smart_visibility: "View Smart Home projects and data", team_hvac_visibility: "View HVAC projects and data", team_global_visibility: "View other sellers", team_global_visibility_hint: "Access projects assigned to other users", team_tab_projects: "Projects", team_tab_new: "New entry", team_tab_reports: "Reports", team_finance_entry: "Enter receipts / payments", team_finance_entry_hint: "Record financial transactions", team_cost_access: "Access costs and margin", team_cost_access_hint: "View expenses, budget, and margin", registered_users: "Registered users", active_team: "Active team", page_logs_eyebrow: "Audit", page_logs_title: "Audit logs", page_logs_subtitle: "Track actions, changes, and references recorded in the system.", clear_history: "Clear history", search: "Search", logs_search_placeholder: "Search action, user, project, or reference", clear_filters: "Clear filters", records: "Records", action_history: "Action history", user: "User", action_operation: "Action / operation", financial_summary: "Financial summary", payment_summary_hint: "Review the exact balance before saving any adjustment.", pending_commissions: "Pending commissions", report_payments: "Report payments", report_payments_hint: "Select the projects you want to settle for the seller.", report_lookup: "Report lookup", indicator_source: "Metric source", close: "Close"
         }
     };
     
@@ -1432,25 +1453,38 @@
         return { label: method || '-', pill: 'bg-white/5 text-slate-300 border-white/10', line: 'text-slate-300' };
     };
 
+    window.updateDashboardLanguageSwitcher = () => {
+        const switcher = document.getElementById('dashboard-language-switcher');
+        if (!switcher) return;
+        const visible = !!state.user && state.currentView === 'projects' && !state.focusedProject;
+        switcher.classList.toggle('hidden', !visible);
+        switcher.setAttribute('aria-hidden', String(!visible));
+    };
+
     window.setLang = (l) => { 
-        state.lang = l; 
-        document.querySelectorAll('.flag-btn').forEach(b => b.classList.toggle('active', b.id === 'l-' + l)); 
+        const language = l === 'en' ? 'en' : 'pt';
+        state.lang = language;
+        try { localStorage.setItem(LANGUAGE_STORAGE_KEY, language); } catch (_) {}
+        document.documentElement.lang = language === 'pt' ? 'pt-BR' : 'en';
+        document.querySelectorAll('.flag-btn').forEach(b => b.classList.toggle('active', b.id === 'l-' + language));
+        document.querySelectorAll('[data-dashboard-language]').forEach(b => b.classList.toggle('active', b.dataset.dashboardLanguage === language));
         document.querySelectorAll('[data-i18n]').forEach(el => {
             const key = el.getAttribute('data-i18n');
-            if (translations[l] && translations[l][key]) {
-                if (el.tagName === 'INPUT' && el.type === 'button') el.value = translations[l][key];
-                else el.innerText = translations[l][key];
+            if (translations[language] && translations[language][key]) {
+                if (el.tagName === 'INPUT' && el.type === 'button') el.value = translations[language][key];
+                else el.innerText = translations[language][key];
             }
         });
         document.querySelectorAll('[data-i18n-placeholder]').forEach(el => {
             const key = el.getAttribute('data-i18n-placeholder');
-            if (translations[l] && translations[l][key]) el.setAttribute('placeholder', translations[l][key]);
+            if (translations[language] && translations[language][key]) el.setAttribute('placeholder', translations[language][key]);
         });
-        window.renderProjectSellerFilter();
-        window.renderLogs();
+        window.updateDashboardLanguageSwitcher();
+        if (typeof window.renderProjectSellerFilter === 'function') window.renderProjectSellerFilter();
+        if (typeof window.renderLogs === 'function') window.renderLogs();
         if(state.projects.length > 0) {
-            window.renderProjects(); 
-            window.safeRenderReport(); 
+            if (typeof window.renderProjects === 'function') window.renderProjects();
+            if (typeof window.safeRenderReport === 'function') window.safeRenderReport();
         }
     };
 
@@ -3432,6 +3466,7 @@
         state.activeModule = null; 
         const project = state.projects.find(x => x.id === id);
         logAccess(state.user?.email, `Abriu a obra: ${getProjectDisplayName(project)}`, getProjectLogMeta(project));
+        window.updateDashboardLanguageSwitcher?.();
         window.renderProjects(); 
         window.scrollTo({ top: 0, behavior: 'smooth' }); 
     };
@@ -3459,6 +3494,7 @@
         }
         state.focusedProject = null; 
         state.activeModule = null;
+        window.updateDashboardLanguageSwitcher?.();
         window.renderProjects(); 
         window.scrollTo({ top: 0, behavior: 'smooth' }); 
     };
@@ -3805,6 +3841,7 @@
         if (v === 'logs') window.renderLogs();
         if (v === 'projects') { state.focusedProject = null; state.activeModule = null; window.renderProjects(); }
         if (v === 'reports') { state.returnToReport = false; state.reportActiveKpi = 'commissions_period'; window.safeRenderReport(); }
+        window.updateDashboardLanguageSwitcher?.();
         try { lucide.createIcons(); } catch {}
     };
     window.toggleMobileNav = () => {
