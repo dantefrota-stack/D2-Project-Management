@@ -812,6 +812,7 @@
 .v86-section-pad{padding:20px}.v86-section-title{display:flex;align-items:center;justify-content:space-between;gap:14px;margin-bottom:16px}.v86-section-title h2{font-size:13px;font-weight:850;color:#e9f1f8}.v86-section-title p{margin-top:3px;font-size:9px;color:var(--v86-muted)}
 .v86-icon{width:38px;height:38px;border-radius:11px;display:flex;align-items:center;justify-content:center;flex:none;border:1px solid var(--v86-line);background:rgba(255,255,255,.035);color:var(--v86-muted)}.v86-icon.green{color:var(--v86-green);background:rgba(69,216,156,.09);border-color:rgba(69,216,156,.16)}.v86-icon.cyan{color:var(--v86-cyan);background:rgba(70,200,232,.08);border-color:rgba(70,200,232,.16)}.v86-icon.amber{color:var(--v86-amber);background:rgba(243,188,61,.08);border-color:rgba(243,188,61,.16)}.v86-icon.red{color:var(--v86-red);background:rgba(255,110,110,.08);border-color:rgba(255,110,110,.16)}.v86-icon.purple{color:var(--v86-purple);background:rgba(155,140,255,.08);border-color:rgba(155,140,255,.16)}
 .v86-kpis{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:12px}.v86-kpi{border:1px solid var(--v86-line);border-radius:16px;background:rgba(255,255,255,.022);padding:15px;min-height:106px;display:flex;flex-direction:column;justify-content:space-between;min-width:0}.v86-label{display:block;color:var(--v86-muted);font-size:8px;line-height:1.35;font-weight:900;text-transform:uppercase;letter-spacing:.13em}.v86-value{display:block;margin-top:12px;color:#edf4fa;font-size:clamp(1rem,2vw,1.38rem);line-height:1.08;font-weight:900;letter-spacing:-.025em;font-variant-numeric:tabular-nums;overflow-wrap:anywhere}.v86-value.green{color:var(--v86-green)}.v86-value.cyan{color:var(--v86-cyan)}.v86-value.amber{color:var(--v86-amber)}.v86-value.red{color:var(--v86-red)}
+.v86-source-card,.v86-source-metric{cursor:pointer;transition:border-color .18s ease,background .18s ease,transform .18s ease}.v86-source-card:hover,.v86-source-metric:hover{border-color:rgba(69,216,156,.48);background:rgba(69,216,156,.06);transform:translateY(-1px)}.v86-source-card:focus-visible,.v86-source-metric:focus-visible{outline:2px solid var(--v86-green);outline-offset:3px}.v86-source-hint{display:block;margin-top:7px;color:var(--v86-muted);font-size:8px;font-weight:800;letter-spacing:.03em}
 .v86-metrics{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:12px}.v86-metric{border:1px solid var(--v86-line);border-radius:15px;background:rgba(255,255,255,.022);padding:14px;min-height:93px;min-width:0}.v86-metric .v86-value{font-size:clamp(.95rem,1.8vw,1.22rem);margin-top:9px}
 .v86-grid-2{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:16px}.v86-grid-overview{display:grid;grid-template-columns:minmax(0,1.15fr) minmax(320px,.85fr);gap:16px}.v86-stack{display:flex;flex-direction:column;gap:16px;min-width:0}
 .v86-progress{height:8px;border-radius:999px;background:rgba(148,163,184,.14);overflow:hidden}.v86-progress>span{height:100%;display:block;border-radius:999px;background:linear-gradient(90deg,#36ca8d,#54e1a7)}
@@ -949,6 +950,25 @@
         <h3 id="custom-modal-title" class="text-xl font-black text-white force-white-text mb-2">Atenção</h3>
         <p id="custom-modal-msg" class="text-sm text-slate-400 mb-8"></p>
         <div class="flex justify-center gap-3" id="custom-modal-buttons"></div>
+    </div>
+</div>
+
+<!-- Consulta da fonte dos indicadores da obra -->
+<div id="project-kpi-detail-modal" class="modal-overlay modal-overlay-scroll" style="z-index: 9998;">
+    <div class="modal-content modal-panel-scroll animate-fade-in max-w-4xl !p-0">
+        <div class="px-7 pt-7 pb-5 border-b border-white/10 bg-gradient-to-r from-slate-900 via-slate-900 to-black/90">
+            <div class="flex items-start justify-between gap-4">
+                <div>
+                    <p id="project-kpi-detail-eyebrow" class="text-[10px] font-black uppercase tracking-[0.28em] text-slate-500 mb-2">Fonte do indicador</p>
+                    <h3 id="project-kpi-detail-title" class="text-2xl font-black text-emerald-300">Detalhamento</h3>
+                    <p id="project-kpi-detail-subtitle" class="text-sm text-slate-400 mt-2"></p>
+                </div>
+                <button type="button" onclick="window.closeProjectKpiDetail()" class="shrink-0 inline-flex items-center justify-center w-11 h-11 rounded-2xl border border-white/10 bg-slate-900 text-slate-300 hover:text-white hover:border-white/20 transition-colors" aria-label="Fechar">
+                    <i data-lucide="x" class="w-5 h-5"></i>
+                </button>
+            </div>
+        </div>
+        <div id="project-kpi-detail-content" class="p-7"></div>
     </div>
 </div>
 
@@ -5576,6 +5596,121 @@ function getSellerCommissionPeriodReport(projects, startStr, endStr) {
         const message=due?`${formatCurr(f.dueNow)} ${state.lang==='pt'?'está liberado e deve ser pago ao vendedor.':'is released and due to the seller.'}`:(f.clientOutstanding>0.009?`${state.lang==='pt'?'A comissão liberada está quitada. Novos valores dependem dos próximos recebimentos do cliente.':'Released commission is settled. New amounts depend on future client receipts.'}`:`${state.lang==='pt'?'Projeto financeiramente conciliado. Cliente e vendedor sem saldo pendente.':'Project financially reconciled. No client or seller balance due.'}`);
         return `<div class="v86-page project-module-shell">${v86Header(p,window.t('comm_finances'))}<section class="v86-section v86-section-pad mb-4"><div class="v86-section-title"><div><h2>${state.lang==='pt'?'Comissões e Finanças':'Commissions & Finance'}</h2><p>${state.lang==='pt'?'Valores essenciais para recebimento e repasse.':'Essential receipt and payout values.'}</p></div><span class="v86-status ${due?'warning':'success'}">${due?(state.lang==='pt'?'Pagamento pendente':'Payment due'):(state.lang==='pt'?'Conciliado':'Settled')}</span></div><div class="v86-kpis"><div class="v86-kpi"><span>${state.lang==='pt'?'Comissão bruta do contrato':'Gross contract commission'}</span><strong>${formatCurr(f.commGrossContract)}</strong></div><div class="v86-kpi"><span>${state.lang==='pt'?'Comissão liberada':'Released commission'}</span><strong class="green">${formatCurr(f.commLiberada)}</strong></div><div class="v86-kpi"><span>${state.lang==='pt'?'Pago ao vendedor':'Paid to seller'}</span><strong class="amber">${formatCurr(f.totalPaid)}</strong></div><div class="v86-kpi ${due?'cursor-pointer':''}" ${due?`onclick="window.confirmCommissionPayment('${p.id}','due')"`:''}><span>${state.lang==='pt'?'Saldo de comissão a pagar':'Commission balance due'}</span><strong class="${due?'red':'green'}">${formatCurr(f.dueNow)}</strong></div></div><div class="v86-metrics mt-3"><div class="v86-metric"><span class="v86-label">${state.lang==='pt'?'Totalmente pago':'Fully paid'}</span><strong class="v86-value green">${formatCurr(Math.min(f.totalPaid,f.commLiberada))}</strong></div><div class="v86-metric"><span class="v86-label">${state.lang==='pt'?'Saldo cliente a receber':'Client balance'}</span><strong class="v86-value amber">${formatCurr(f.clientOutstanding)}</strong></div><div class="v86-metric"><span class="v86-label">${state.lang==='pt'?'Comissão futura':'Future commission'}</span><strong class="v86-value cyan">${formatCurr(f.futureCommissionAfterAdvance)}</strong></div><div class="v86-metric"><span class="v86-label">${state.lang==='pt'?'Desconto cartão':'Card discount'}</span><strong class="v86-value red">${formatCurr(f.commissionCardFeeReduction)}</strong></div><div class="v86-metric"><span class="v86-label">${state.lang==='pt'?'Empresa pagadora':'Paying company'}</span><strong class="v86-value">${escapeInlineHtml(getCompanyDisplayName(p.empresa))}</strong></div></div><div class="v86-note mt-4"><i data-lucide="info" class="w-4 h-4 text-cyan-300 shrink-0"></i><span>${message}</span></div></section><div class="v86-grid-2 mb-4"><section class="v86-section"><div class="v86-section-pad"><div class="v86-section-title"><div><h2>${state.lang==='pt'?'Recebimentos do Cliente':'Client Receipts'}</h2><p>${(p.recebimentos||[]).length} ${state.lang==='pt'?'lançamentos':'entries'}</p></div><div class="text-right"><span class="v86-label">${state.lang==='pt'?'Total recebido':'Total received'}</span><strong class="v86-value green">${formatCurr(f.totalRecebido)}</strong></div></div></div><div class="v86-table-wrap"><table class="v86-table"><thead><tr><th>${state.lang==='pt'?'Data':'Date'}</th><th>${state.lang==='pt'?'Forma':'Method'}</th><th class="money">${state.lang==='pt'?'Bruto':'Gross'}</th><th class="money">${state.lang==='pt'?'Taxa':'Fee'}</th><th class="money">${state.lang==='pt'?'Líquido':'Net'}</th><th>Status</th></tr></thead><tbody>${v86ReceiptRows(p)}</tbody></table></div>${state.userPerms.fin?`<div class="p-3 no-print"><button class="v86-btn w-full" onclick="window.openEditRecModal('${p.id}')"><i data-lucide="sliders-horizontal" class="w-4 h-4"></i>${state.lang==='pt'?'Gerenciar recebimentos':'Manage receipts'}</button></div>`:''}</section><section class="v86-section"><div class="v86-section-pad"><div class="v86-section-title"><div><h2>${state.lang==='pt'?'Pagamentos ao Vendedor':'Seller Payments'}</h2><p>${normalizePaymentEntries(p.pagamentosEfetuados||[]).length} ${state.lang==='pt'?'lançamentos':'entries'}</p></div><div class="text-right"><span class="v86-label">${state.lang==='pt'?'Total pago':'Total paid'}</span><strong class="v86-value amber">${formatCurr(f.totalPaid)}</strong></div></div></div><div class="v86-table-wrap"><table class="v86-table"><thead><tr><th>${state.lang==='pt'?'Data':'Date'}</th><th>${state.lang==='pt'?'Empresa pagadora':'Paying company'}</th><th class="money">${state.lang==='pt'?'Valor pago':'Paid amount'}</th><th>Status</th></tr></thead><tbody>${v86PaymentRows(p)}</tbody></table></div>${state.userPerms.fin?`<div class="p-3 no-print"><button class="v86-btn w-full" onclick="window.openEditPaymentModal('${p.id}')"><i data-lucide="sliders-horizontal" class="w-4 h-4"></i>${state.lang==='pt'?'Gerenciar pagamentos':'Manage payments'}</button></div>`:''}</section></div><section class="v86-section v86-section-pad"><div class="v86-section-title"><div><h2>${state.lang==='pt'?'Resumo rápido':'Quick summary'}</h2><p>${state.lang==='pt'?'Informações de referência do projeto.':'Project reference information.'}</p></div></div><div class="v86-metrics"><div class="v86-metric"><span class="v86-label">${state.lang==='pt'?'Situação':'Status'}</span><strong class="v86-value green">${v86StatusInfo(p).text}</strong></div><div class="v86-metric"><span class="v86-label">${state.lang==='pt'?'Finalização':'Completion'}</span><strong class="v86-value">${formatProjectDate(p.dataConclusao)||'—'}</strong></div><div class="v86-metric"><span class="v86-label">Invoice / Proposta</span><strong class="v86-value">${escapeInlineHtml(p.numeroInvoice||'—')} / ${escapeInlineHtml(p.numeroProposta||'—')}</strong></div><div class="v86-metric"><span class="v86-label">${state.lang==='pt'?'Vendedor':'Seller'}</span><strong class="v86-value">${escapeInlineHtml(getUserDisplayName(p.vendedor,'—'))}</strong></div><div class="v86-metric"><span class="v86-label">${state.lang==='pt'?'Comissão sobre contrato':'Contract commission'}</span><strong class="v86-value">${pct.toFixed(2).replace('.00','')}%</strong></div></div></section></div>`;
     }
+    function sourceDetailTable(headers, rows, emptyLabel) {
+        if (!rows.length) return `<div class="v86-empty">${escapeInlineHtml(emptyLabel)}</div>`;
+        return `<div class="v86-table-wrap"><table class="v86-table"><thead><tr>${headers.map(header => `<th class="${header.money ? 'money' : ''}">${escapeInlineHtml(header.label)}</th>`).join('')}</tr></thead><tbody>${rows.map(row => `<tr>${row.map((cell, index) => `<td class="${headers[index].money ? 'money' : ''}">${cell}</td>`).join('')}</tr>`).join('')}</tbody></table></div>`;
+    }
+
+    window.closeProjectKpiDetail = () => document.getElementById('project-kpi-detail-modal')?.classList.remove('active');
+
+    window.openProjectKpiDetail = (projectId, detailType) => {
+        const project = state.projects.find(item => item.id === projectId);
+        const content = document.getElementById('project-kpi-detail-content');
+        const title = document.getElementById('project-kpi-detail-title');
+        const subtitle = document.getElementById('project-kpi-detail-subtitle');
+        if (!project || !content || !title || !subtitle) return;
+        const isPt = state.lang === 'pt';
+        const fin = getFin(project);
+        const receipts = (Array.isArray(project.recebimentos) ? project.recebimentos : []).slice().sort((a, b) => String(b.data || '').localeCompare(String(a.data || '')));
+        const payments = normalizePaymentEntries(project.pagamentosEfetuados || []).slice().sort((a, b) => String(b.data || '').localeCompare(String(a.data || '')));
+        const expenses = (Array.isArray(project.despesas) ? project.despesas : []).slice().sort((a, b) => String(b.data || '').localeCompare(String(a.data || '')));
+        const labels = {
+            contract: isPt ? 'Valor do contrato' : 'Contract value',
+            released: isPt ? 'Comissão liberada' : 'Released commission',
+            received: isPt ? 'Total recebido' : 'Total received',
+            paid: isPt ? 'Pago ao vendedor' : 'Paid to seller',
+            entries: isPt ? 'Lançamentos de despesas' : 'Expense entries',
+            category: isPt ? 'Categoria líder' : 'Leading category',
+            largest: isPt ? 'Maior despesa' : 'Largest expense',
+            budget: isPt ? 'Orçamento da obra' : 'Project budget'
+        };
+        const expenseRows = (items) => items.map(expense => [
+            escapeInlineHtml(formatProjectDate(expense.data)),
+            escapeInlineHtml(expense.categoria || (isPt ? 'Sem categoria' : 'Uncategorized')),
+            escapeInlineHtml(expense.descricao || '—'),
+            formatCurr(expense.valor)
+        ]);
+        let table = '';
+        let total = '';
+        let description = '';
+        if (detailType === 'contract') {
+            total = formatCurr(project.valorTotal);
+            description = isPt ? 'Valor informado no cadastro da obra.' : 'Value entered in the project record.';
+            table = sourceDetailTable(
+                [{ label: 'Invoice / Proposta' }, { label: isPt ? 'Cliente' : 'Client' }, { label: isPt ? 'Vendedor' : 'Seller' }, { label: isPt ? 'Início' : 'Start' }, { label: isPt ? 'Conclusão' : 'Completion' }],
+                [[escapeInlineHtml(project.numeroInvoice || '—') + ' / ' + escapeInlineHtml(project.numeroProposta || '—'), escapeInlineHtml(getProjectPrimaryTitle(project)), escapeInlineHtml(getUserDisplayName(project.vendedor, '—')), escapeInlineHtml(formatProjectDate(project.dataInicio)), escapeInlineHtml(formatProjectDate(project.dataConclusao))]],
+                isPt ? 'Nenhuma referência disponível.' : 'No reference available.'
+            );
+        } else if (detailType === 'released' || detailType === 'received') {
+            total = detailType === 'released' ? formatCurr(fin.commLiberada) : formatCurr(fin.totalRecebido);
+            description = detailType === 'released'
+                ? (isPt ? 'Comissão calculada a partir dos recebimentos registrados abaixo.' : 'Commission calculated from the receipts listed below.')
+                : (isPt ? 'Recebimentos registrados para esta obra.' : 'Receipts recorded for this project.');
+            table = sourceDetailTable(
+                [{ label: isPt ? 'Data' : 'Date' }, { label: isPt ? 'Forma' : 'Method' }, { label: isPt ? 'Recebido' : 'Received', money: true }, ...(detailType === 'released' ? [{ label: isPt ? 'Comissão gerada' : 'Commission released', money: true }] : [])],
+                receipts.map(receipt => [escapeInlineHtml(formatProjectDate(receipt.data)), escapeInlineHtml(getReceiptEffectiveMethod(receipt, project) || '—'), formatCurr(receipt.valor), ...(detailType === 'released' ? [formatCurr(getReceiptCommissionValue(receipt, project))] : [])]),
+                isPt ? 'Nenhum recebimento registrado.' : 'No receipts recorded.'
+            );
+        } else if (detailType === 'paid') {
+            total = formatCurr(fin.totalPaid);
+            description = isPt ? 'Pagamentos de comissão registrados ao vendedor.' : 'Commission payments recorded for the seller.';
+            table = sourceDetailTable(
+                [{ label: isPt ? 'Data' : 'Date' }, { label: isPt ? 'Tipo' : 'Type' }, { label: isPt ? 'Valor pago' : 'Paid amount', money: true }],
+                payments.map(payment => [escapeInlineHtml(formatProjectDate(payment.data)), escapeInlineHtml(payment.isAdvance || payment.adiantado ? (isPt ? 'Adiantamento' : 'Advance') : (isPt ? 'Comissão' : 'Commission')), formatCurr(payment.valor)]),
+                isPt ? 'Nenhum pagamento ao vendedor registrado.' : 'No seller payments recorded.'
+            );
+        } else if (detailType === 'category') {
+            const categories = Object.entries(fin.gastosPorCategoria || {}).sort((a, b) => b[1] - a[1]);
+            const topCategory = categories[0]?.[0] || '';
+            const categoryExpenses = expenses.filter(expense => String(expense.categoria || '') === topCategory);
+            total = topCategory || '—';
+            description = isPt ? 'Despesas que compõem a categoria com maior valor acumulado.' : 'Expenses composing the category with the highest accumulated value.';
+            table = sourceDetailTable([{ label: isPt ? 'Data' : 'Date' }, { label: isPt ? 'Categoria' : 'Category' }, { label: isPt ? 'Descrição' : 'Description' }, { label: isPt ? 'Valor' : 'Amount', money: true }], expenseRows(categoryExpenses), isPt ? 'Nenhuma despesa nesta categoria.' : 'No expenses in this category.');
+        } else if (detailType === 'largest') {
+            const largestValue = expenses.reduce((max, expense) => Math.max(max, Number(expense.valor || 0)), 0);
+            const largestExpenses = expenses.filter(expense => Math.abs(Number(expense.valor || 0) - largestValue) < 0.009);
+            total = largestValue > 0 ? formatCurr(largestValue) : '—';
+            description = isPt ? 'Lançamento(s) com o maior valor individual de despesa.' : 'Expense entry or entries with the highest individual value.';
+            table = sourceDetailTable([{ label: isPt ? 'Data' : 'Date' }, { label: isPt ? 'Categoria' : 'Category' }, { label: isPt ? 'Descrição' : 'Description' }, { label: isPt ? 'Valor' : 'Amount', money: true }], expenseRows(largestExpenses), isPt ? 'Nenhuma despesa registrada.' : 'No expenses recorded.');
+        } else {
+            total = detailType === 'budget' ? (Number(project.orcamento || 0) > 0 ? formatCurr(project.orcamento) : (isPt ? 'Não definido' : 'Not set')) : String(expenses.length);
+            description = detailType === 'budget'
+                ? (isPt ? 'Orçamento informado no cadastro e despesas já registradas.' : 'Budget entered in the project record and expenses already recorded.')
+                : (isPt ? 'Todos os lançamentos de despesas registrados nesta obra.' : 'All expense entries recorded for this project.');
+            table = sourceDetailTable([{ label: isPt ? 'Data' : 'Date' }, { label: isPt ? 'Categoria' : 'Category' }, { label: isPt ? 'Descrição' : 'Description' }, { label: isPt ? 'Valor' : 'Amount', money: true }], expenseRows(expenses), isPt ? 'Nenhuma despesa registrada.' : 'No expenses recorded.');
+        }
+        title.textContent = labels[detailType] || (isPt ? 'Detalhamento' : 'Details');
+        subtitle.textContent = `${getProjectPrimaryTitle(project)} · ${description}`;
+        content.innerHTML = `<div class="v86-kpi mb-5"><span>${isPt ? 'Valor consultado' : 'Viewed value'}</span><strong class="v86-value green">${escapeInlineHtml(total)}</strong></div>${table}`;
+        document.getElementById('project-kpi-detail-modal')?.classList.add('active');
+        try { lucide.createIcons(); } catch {}
+    };
+
+    function decorateProjectOverviewKpis(project) {
+        const root = document.querySelector('#projects-grid .v86-grid-overview');
+        if (!root || root.dataset.sourceCardsDecorated === 'true') return;
+        const isPt = state.lang === 'pt';
+        const bind = (elements, detailTypes, className) => elements.forEach((element, index) => {
+            const detailType = detailTypes[index];
+            if (!detailType) return;
+            element.classList.add(className);
+            element.tabIndex = 0;
+            element.setAttribute('role', 'button');
+            element.setAttribute('aria-label', isPt ? 'Ver fonte do indicador' : 'View indicator source');
+            element.addEventListener('click', () => window.openProjectKpiDetail(project.id, detailType));
+            element.addEventListener('keydown', event => {
+                if (event.key === 'Enter' || event.key === ' ') { event.preventDefault(); window.openProjectKpiDetail(project.id, detailType); }
+            });
+            const hint = document.createElement('small');
+            hint.className = 'v86-source-hint';
+            hint.textContent = isPt ? 'Ver fonte →' : 'View source →';
+            element.appendChild(hint);
+        });
+        bind(root.querySelectorAll('.v86-stack:first-child > section:first-child .v86-kpi'), ['contract', 'released', 'received', 'paid'], 'v86-source-card');
+        bind(root.querySelectorAll('.v86-stack:nth-child(2) > section:first-child .v86-metric'), ['entries', 'category', 'largest', 'budget'], 'v86-source-metric');
+        root.dataset.sourceCardsDecorated = 'true';
+    }
+
     function v86RenderOverview(p,f){
         const prog=v86ProjectProgress(p); const expenseCount=(p.despesas||[]).length; const top=Object.entries(f.gastosPorCategoria||{}).sort((a,b)=>b[1]-a[1])[0]||['—',0]; const topCat=top[1]>0?top[0]:(state.lang==='pt'?'Sem despesas':'No expenses'); const max=expenseCount?Math.max(...(p.despesas||[]).map(e=>Number(e.valor)||0)):0;
         const marginLow=f.margemLucro<45; const budgetLabel=Number(f.orcamento)>0?formatCurr(f.orcamento):(state.lang==='pt'?'Não definido':'Not set');
@@ -5584,7 +5719,7 @@ function getSellerCommissionPeriodReport(projects, startStr, endStr) {
     window.renderProjects = () => {
         const grid=document.getElementById('projects-grid'), filters=document.getElementById('projects-filters'); if(!grid||!state.user)return;
         const canAll=state.userPerms.global; let filtered=state.projects.filter(p=>{const company=(p.empresa==='Smart Home'&&state.userPerms.smart)||(p.empresa==='HVAC'&&state.userPerms.hvac);const tab=state.company==='Ambas'||p.empresa===state.company;const user=canAll||p.vendedor===state.user.email;const seller=!state.isSuperAdmin||state.projectSellerFilter==='all'||p.vendedor===state.projectSellerFilter;const arc=state.archiveFilter==='all'?true:(state.archiveFilter==='archived'?!!p.archived:!p.archived);const q=String(state.projectSearchQuery||'').toLowerCase();const search=[p.cliente,p.nomeProjeto,p.endereco,p.numeroInvoice,p.numeroProposta,formatCurr(Number(p.valorTotal||0)),Number(p.valorTotal||0)].join(' ').toLowerCase();return company&&tab&&user&&seller&&arc&&(!q||search.includes(q));});
-        if(state.focusedProject){filters?.classList.add('hidden');filtered=state.projects.filter(p=>p.id===state.focusedProject);grid.className='w-full';const p=filtered[0];if(!p){grid.innerHTML='<div class="v86-empty">Projeto não encontrado.</div>';return;}const f=getFin(p);grid.innerHTML=state.activeModule==='costs'&&state.userPerms.costs?v86RenderCost(p,f):state.activeModule==='commissions'?v86RenderFinance(p,f):v86RenderOverview(p,f);if(state.activeModule==='costs'&&state.userPerms.costs)setTimeout(()=>renderCharts(p.id,f.orcamento,f.gastosPorCategoria,f.totalDespesas),80);try{lucide.createIcons()}catch{}return;}
+        if(state.focusedProject){filters?.classList.add('hidden');filtered=state.projects.filter(p=>p.id===state.focusedProject);grid.className='w-full';const p=filtered[0];if(!p){grid.innerHTML='<div class="v86-empty">Projeto não encontrado.</div>';return;}const f=getFin(p);grid.innerHTML=state.activeModule==='costs'&&state.userPerms.costs?v86RenderCost(p,f):state.activeModule==='commissions'?v86RenderFinance(p,f):v86RenderOverview(p,f);if(!state.activeModule)decorateProjectOverviewKpis(p);if(state.activeModule==='costs'&&state.userPerms.costs)setTimeout(()=>renderCharts(p.id,f.orcamento,f.gastosPorCategoria,f.totalDespesas),80);try{lucide.createIcons()}catch{}return;}
         filters?.classList.remove('hidden','flex');grid.className='v86-project-grid text-left';if(!filtered.length){grid.innerHTML=`<div class="v86-empty col-span-full">${window.t('no_active_works')}</div>`;return;}
         grid.innerHTML=filtered.map(p=>{const f=getFin(p),st=v86StatusInfo(p),margin=f.margemLucro;return `<article class="v86-project-card" onclick="window.openProjectDetails('${p.id}')"><div class="v86-project-card-top"><div class="v86-project-id"><div class="v86-icon ${p.empresa==='HVAC'?'cyan':'green'}"><i data-lucide="building-2" class="w-5 h-5"></i></div><div><h3 class="v86-project-name">${escapeInlineHtml(getProjectPrimaryTitle(p))}</h3><div class="v86-project-ref">${escapeInlineHtml(p.nomeProjeto||getCompanyDisplayName(p.empresa))}</div></div></div><div class="flex items-center gap-2"><span class="v86-status ${st.cls}">${st.text}</span>${v86ProjectActions(p)}</div></div><div class="v86-project-address"><i data-lucide="map-pin" class="w-3.5 h-3.5 shrink-0"></i><span>${escapeInlineHtml(p.endereco||'—')}</span></div><div class="v86-project-meta"><div><span class="v86-label">${state.lang==='pt'?'Vendedor':'Seller'}</span><strong>${escapeInlineHtml(getUserDisplayName(p.vendedor,'—'))}</strong></div><div><span class="v86-label">Invoice / Proposta</span><strong>${escapeInlineHtml(p.numeroInvoice||'—')} / ${escapeInlineHtml(p.numeroProposta||'—')}</strong></div></div><div class="v86-project-fin"><div><span class="v86-label">${state.lang==='pt'?'Valor contrato bruto':'Gross contract value'}</span><strong>${formatCurr(p.valorTotal)}</strong></div><div><span class="v86-label">${state.lang==='pt'?'Margem da obra':'Project margin'}</span><strong style="color:${margin<45?'var(--v86-red)':'var(--v86-green)'}">${margin.toFixed(1)}%</strong></div></div><div class="v86-project-footer"><div class="v86-project-dates"><span class="v86-project-date"><i data-lucide="calendar-days" class="w-3.5 h-3.5"></i>${state.lang==='pt'?'Atualização':'Updated'} ${v86ProjectDateLabel(p)}</span><span class="v86-project-date"><i data-lucide="calendar-plus" class="w-3.5 h-3.5"></i>${state.lang==='pt'?'Cadastro':'Created'} ${formatProjectCreatedAt(p)}</span></div><span>${p.archived?(state.lang==='pt'?'Arquivada':'Archived'):''}</span></div></article>`}).join('');try{lucide.createIcons()}catch{}
     };
