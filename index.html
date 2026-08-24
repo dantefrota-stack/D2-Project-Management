@@ -929,6 +929,8 @@
 .app-body-light #report-pending-payment-modal button:not(.bg-amber-400){color:#0f172a!important;border-color:#94a3b8!important;background:#ffffff!important}
 .report-client-receivable{border-color:rgba(255,110,110,.42)!important;background:rgba(255,110,110,.10)!important}
 .app-body-light .report-client-receivable{border-color:#fca5a5!important;background:#fff1f2!important}
+.v86-table .report-client-receivable-heading,.v86-table .report-client-receivable-value.is-due{color:#fca5a5!important}
+.app-body-light .v86-table .report-client-receivable-heading,.app-body-light .v86-table .report-client-receivable-value.is-due{color:#b91c1c!important}
 
 /* Consulta do relatório: usa a largura disponível e preserva uma leitura confortável em telas pequenas. */
 #report-project-list-modal .report-project-list-dialog{width:min(96vw,1280px)!important;max-width:1280px!important;max-height:min(88vh,920px)!important}
@@ -6390,7 +6392,7 @@ function getSellerCommissionPeriodReport(projects, startStr, endStr) {
         statusHeader.textContent = state.lang === 'pt' ? 'Status da comissão' : 'Commission status';
         headerRow?.children[3]?.after(statusHeader);
         const clientOutstandingHeader = document.createElement('th');
-        clientOutstandingHeader.className = 'money';
+        clientOutstandingHeader.className = 'money report-client-receivable-heading';
         clientOutstandingHeader.textContent = state.lang === 'pt' ? 'A receber' : 'Client outstanding';
         headerRow?.children[5]?.after(clientOutstandingHeader);
         if (headerRow?.lastElementChild) headerRow.lastElementChild.textContent = state.lang === 'pt' ? 'Comissão não paga' : 'Commission unpaid';
@@ -6416,7 +6418,7 @@ function getSellerCommissionPeriodReport(projects, startStr, endStr) {
                 const monthRows = orderedMonthEntries[monthIndex++]?.[1] || [];
                 const monthClientOutstanding = roundMoney(monthRows.reduce((sum, row) => sum + Math.max(0, Number(row.totalWorkValue || row.project?.valorTotal || 0) - Number(row.receivedToEnd || 0)), 0));
                 const receivableCell = tableRow.insertCell(2);
-                receivableCell.className = 'money text-red-300 font-black';
+                receivableCell.className = `money font-black report-client-receivable-value ${monthClientOutstanding > 0.009 ? 'is-due' : ''}`;
                 receivableCell.textContent = formatCurr(monthClientOutstanding);
                 return;
             }
@@ -6424,7 +6426,7 @@ function getSellerCommissionPeriodReport(projects, startStr, endStr) {
                 const firstCell = tableRow.cells[0];
                 if (firstCell) firstCell.colSpan = 5;
                 const receivableCell = tableRow.insertCell(2);
-                receivableCell.className = 'money font-black text-red-300';
+                receivableCell.className = `money font-black report-client-receivable-value ${totalClientOutstanding > 0.009 ? 'is-due' : ''}`;
                 receivableCell.textContent = formatCurr(totalClientOutstanding);
                 return;
             }
@@ -6456,7 +6458,7 @@ function getSellerCommissionPeriodReport(projects, startStr, endStr) {
             tableRow.cells[4]?.before(commissionCell);
             const clientOutstanding = roundMoney(Math.max(0, Number(row.totalWorkValue || row.project?.valorTotal || 0) - Number(row.receivedToEnd || 0)));
             const receivableCell = document.createElement('td');
-            receivableCell.className = `money font-black ${clientOutstanding > 0.009 ? 'text-red-300' : 'text-emerald-300'}`;
+            receivableCell.className = `money font-black report-client-receivable-value ${clientOutstanding > 0.009 ? 'is-due' : ''}`;
             receivableCell.textContent = formatCurr(clientOutstanding);
             tableRow.cells[5]?.after(receivableCell);
             makeReportRowNavigable(tableRow, row.project.id);
