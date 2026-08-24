@@ -810,6 +810,8 @@
 .app-body-light .v86-finished-stamp span{border-color:rgba(185,28,28,.58);color:rgba(185,28,28,.58);background:rgba(254,226,226,.20)}
 .v86-finished-mini-stamp{display:inline-flex;align-items:center;border:2px solid rgba(248,113,113,.78);border-radius:5px;padding:3px 6px;color:rgba(248,113,113,.92);background:rgba(127,29,29,.10);font-size:8px;font-weight:950;line-height:1;letter-spacing:.08em;text-transform:uppercase;transform:rotate(-4deg)}
 .app-body-light .v86-finished-mini-stamp{border-color:rgba(185,28,28,.75);color:rgba(185,28,28,.92);background:rgba(254,226,226,.55)}
+.report-status-indicator{display:inline-flex;align-items:center;justify-content:center;width:25px;height:25px;border:1px solid currentColor;border-radius:50%;font-size:12px;line-height:1;vertical-align:middle}
+.report-status-indicator svg{width:14px;height:14px;stroke-width:2.5}.report-status-indicator.execution{width:auto;height:auto;border:0;border-radius:0;background:transparent;font-size:17px}.report-status-indicator.waiting{color:#fbbf24;background:rgba(251,191,36,.10)}.report-status-indicator.pending{color:#fb7185;background:rgba(244,63,94,.10);animation:report-status-attention 1.55s ease-in-out infinite}.app-body-light .report-status-indicator.execution{background:transparent}.app-body-light .report-status-indicator.waiting{color:#a16207;background:#fef3c7}.app-body-light .report-status-indicator.pending{color:#be123c;background:#fff1f2}@keyframes report-status-attention{50%{box-shadow:0 0 0 4px rgba(244,63,94,.16)}}
 @media(max-width:600px){.v86-finished-stamp{inset:14% 2%}.v86-finished-stamp span{border-width:3px;font-size:clamp(2rem,12vw,3.8rem)}}
 .v86-head{display:flex;align-items:flex-start;justify-content:space-between;gap:22px;margin-bottom:22px;min-width:0}
 .v86-head-left{display:flex;align-items:flex-start;gap:14px;min-width:0}.v86-head-copy{min-width:0}
@@ -931,6 +933,8 @@
 .app-body-light .report-client-receivable{border-color:#fca5a5!important;background:#fff1f2!important}
 .v86-table .report-client-receivable-heading,.v86-table .report-client-receivable-value.is-due{color:#fca5a5!important}
 .app-body-light .v86-table .report-client-receivable-heading,.app-body-light .v86-table .report-client-receivable-value.is-due{color:#b91c1c!important}
+/* Mantém "A receber" em vermelho mesmo com as regras gerais da tabela no modo claro. */
+.app-body-light #report-output .v86-table th.report-client-receivable-heading,.app-body-light #report-output .v86-table td.report-client-receivable-value.is-due{color:#b91c1c!important}
 
 /* Consulta do relatório: usa a largura disponível e preserva uma leitura confortável em telas pequenas. */
 #report-project-list-modal .report-project-list-dialog{width:min(96vw,1280px)!important;max-width:1280px!important;max-height:min(88vh,920px)!important}
@@ -6383,6 +6387,23 @@ function getSellerCommissionPeriodReport(projects, startStr, endStr) {
         const orderedRows = orderedMonthEntries
             .flatMap(([, rows]) => rows.sort((a, b) => String(a.project.cliente || '').localeCompare(String(b.project.cliente || ''))));
         const totalClientOutstanding = roundMoney(orderedRows.reduce((sum, row) => sum + Math.max(0, Number(row.totalWorkValue || row.project?.valorTotal || 0) - Number(row.receivedToEnd || 0)), 0));
+        const getStatusIndicator = (project, checklist) => {
+            const isPt = state.lang === 'pt';
+            if (checklist.isPending) {
+                const details = checklist.issues.map(issue => issue.label).join(' · ');
+                const label = `${isPt ? 'Finalizada com pendência' : 'Completed with pending actions'}: ${details}`;
+                return `<span class="report-status-indicator pending" title="${escapeInlineHtml(label)}" aria-label="${escapeInlineHtml(label)}"><i data-lucide="triangle-alert"></i><span class="sr-only">${escapeInlineHtml(label)}</span></span>`;
+            }
+            if (project?.status === 'Em Execução') {
+                const label = isPt ? 'Em execução' : 'In progress';
+                return `<span class="report-status-indicator execution" role="img" title="${label}" aria-label="${label}">🛠️</span>`;
+            }
+            if (project?.status === 'Aguardando Início' || String(project?.status || '').includes('Aprovado')) {
+                const label = isPt ? 'Aguardando início' : 'Awaiting start';
+                return `<span class="report-status-indicator waiting" title="${label}" aria-label="${label}"><i data-lucide="clock-3"></i><span class="sr-only">${label}</span></span>`;
+            }
+            return '';
+        };
 
         const headerRow = table.querySelector('thead tr');
         const sellerHeader = document.createElement('th');
@@ -6438,12 +6459,6 @@ function getSellerCommissionPeriodReport(projects, startStr, endStr) {
                 : { text: state.lang === 'pt' ? 'Ativa' : 'Active', cls: 'success' };
             const commissionState = getReportCommissionStatus(row);
             const completionChecklist = getReportCompletionChecklist(row);
-            const projectStatus = completionChecklist.isPending
-                ? (state.lang === 'pt' ? 'Finalizada com pendência' : 'Completed with pending actions')
-                : tStatus(row.project.status || '—');
-            const closureIssueDetail = completionChecklist.isPending
-                ? completionChecklist.issues.map(issue => escapeInlineHtml(issue.label)).join(' · ')
-                : '';
             const sellerCell = document.createElement('td');
             sellerCell.className = 'wrap';
             sellerCell.textContent = getUserDisplayName(row.project.vendedor, '—');
@@ -6451,8 +6466,8 @@ function getSellerCommissionPeriodReport(projects, startStr, endStr) {
             const completedStamp = completionChecklist.isComplete
                 ? `<span class="v86-finished-mini-stamp">${state.lang === 'pt' ? 'Finalizado' : 'Finished'}</span>`
                 : '';
-            const statusDetail = completionChecklist.isComplete ? '' : `<small class="text-[9px] ${completionChecklist.isPending ? 'text-amber-300 font-bold' : 'text-slate-500'}">${escapeInlineHtml(projectStatus)}</small>`;
-            tableRow.cells[3].innerHTML = `<div class="flex flex-wrap items-center gap-1.5"><span class="v86-status ${projectState.cls}">${projectState.text}</span>${completedStamp}</div>${statusDetail}${closureIssueDetail ? `<small class="block text-[9px] font-bold text-red-300 mt-1">${closureIssueDetail}</small>` : ''}`;
+            const statusIndicator = getStatusIndicator(row.project, completionChecklist);
+            tableRow.cells[3].innerHTML = `<div class="flex flex-wrap items-center gap-1.5"><span class="v86-status ${projectState.cls}">${projectState.text}</span>${completedStamp}${statusIndicator}</div>`;
             const commissionCell = document.createElement('td');
             commissionCell.innerHTML = `<span class="v86-status ${commissionState.cls}">${commissionState.text}</span>`;
             tableRow.cells[4]?.before(commissionCell);
