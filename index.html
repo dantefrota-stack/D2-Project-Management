@@ -917,6 +917,18 @@
 .app-body-light #report-project-list-modal #report-project-list-title{color:#047857!important}
 .app-body-light #report-project-list-modal #report-project-list-subtitle,.app-body-light #report-project-list-modal .text-slate-500{color:#475569!important}
 .app-body-light #report-project-list-modal .bg-slate-900{background:#ffffff!important}
+.app-body-light #report-pending-payment-modal .bg-gradient-to-r,.app-body-light #report-pending-payment-modal .bg-slate-900{background:#ffffff!important}
+.app-body-light #report-pending-payment-modal .text-slate-100{color:#0f172a!important}
+.app-body-light #report-pending-payment-modal .text-slate-200{color:#1e293b!important}
+.app-body-light #report-pending-payment-modal .text-slate-300,.app-body-light #report-pending-payment-modal .text-slate-400,.app-body-light #report-pending-payment-modal .text-slate-500{color:#475569!important}
+.app-body-light #report-pending-payment-modal .text-amber-200{color:#92400e!important}
+.app-body-light #report-pending-payment-modal .text-amber-300{color:#b45309!important}
+.app-body-light #report-pending-payment-modal .border-white\/10{border-color:#cbd5e1!important}
+.app-body-light #report-pending-payment-modal [class*="bg-white"]{background:#f8fafc!important}
+.app-body-light #report-pending-payment-modal .border-amber-300\/20{border-color:#f59e0b!important;background:#fffbeb!important}
+.app-body-light #report-pending-payment-modal button:not(.bg-amber-400){color:#0f172a!important;border-color:#94a3b8!important;background:#ffffff!important}
+.report-client-receivable{border-color:rgba(255,110,110,.42)!important;background:rgba(255,110,110,.10)!important}
+.app-body-light .report-client-receivable{border-color:#fca5a5!important;background:#fff1f2!important}
 
 /* Consulta do relatório: usa a largura disponível e preserva uma leitura confortável em telas pequenas. */
 #report-project-list-modal .report-project-list-dialog{width:min(96vw,1280px)!important;max-width:1280px!important;max-height:min(88vh,920px)!important}
@@ -5869,6 +5881,12 @@ function getSellerCommissionPeriodReport(projects, startStr, endStr) {
         return {text: escapeInlineHtml(tStatus(p?.status||'—')), cls:''};
     }
     function v86ProjectDateLabel(p){ return formatProjectDate(p?.dataConclusao || p?.dataInicio || '') || '—'; }
+    function getLatestReceiptDate(project) {
+        return (project?.recebimentos || [])
+            .map(receipt => toDateOnly(receipt?.data))
+            .filter(Boolean)
+            .sort((a, b) => b - a)[0] || null;
+    }
     function isProjectFullyFinalized(p, f = getFin(p)) {
         return p?.status === 'Finalizado'
             && Number(f?.totalRecebido || 0) >= Number(p?.valorTotal || 0) - 0.009
@@ -6100,17 +6118,17 @@ function getSellerCommissionPeriodReport(projects, startStr, endStr) {
             referenceDetails.prepend(clientReference);
         }
         const financials = getFin(project);
-        const dueDate = toDateOnly(project.dataEntrega);
+        const lastReceiptDate = getLatestReceiptDate(project);
         const today = new Date();
         today.setHours(0, 0, 0, 0);
-        const isOverdue = Number(financials.clientOutstanding || 0) > 0.009 && dueDate && dueDate < today;
+        const isOverdue = Number(financials.clientOutstanding || 0) > 0.009 && lastReceiptDate && lastReceiptDate < today;
         if (isOverdue && !root.parentElement?.querySelector('[data-client-receipt-alert]')) {
-            const overdueDays = Math.floor((today - dueDate) / 86400000);
+            const overdueDays = Math.floor((today - lastReceiptDate) / 86400000);
             const alert = document.createElement('button');
             alert.type = 'button';
             alert.dataset.clientReceiptAlert = 'true';
             alert.className = 'v86-closure-alert mb-4 flex w-full items-center gap-3 rounded-xl border border-red-300/50 bg-red-500/[.12] px-4 py-3 text-left text-sm font-bold text-red-200 animate-pulse';
-            alert.innerHTML = `<i data-lucide="triangle-alert" class="w-4 h-4 shrink-0"></i><span>${isPt ? `Recebimento em atraso: ${formatCurr(financials.clientOutstanding)} pendente há ${overdueDays} dia${overdueDays === 1 ? '' : 's'}. Clique para registrar.` : `Overdue client receipt: ${formatCurr(financials.clientOutstanding)} pending for ${overdueDays} day${overdueDays === 1 ? '' : 's'}. Click to record.`}</span>`;
+            alert.innerHTML = `<i data-lucide="triangle-alert" class="w-4 h-4 shrink-0"></i><span>${isPt ? `Recebimento em atraso: ${formatCurr(financials.clientOutstanding)} pendente. Último recebimento há ${overdueDays} dia${overdueDays === 1 ? '' : 's'}. Clique para registrar.` : `Overdue client receipt: ${formatCurr(financials.clientOutstanding)} pending. Last receipt ${overdueDays} day${overdueDays === 1 ? '' : 's'} ago. Click to record.`}</span>`;
             alert.addEventListener('click', () => window.openKpiFinancialEditor(project.id, 'receipts'));
             root.before(alert);
         }
@@ -6123,13 +6141,13 @@ function getSellerCommissionPeriodReport(projects, startStr, endStr) {
         const commissionDue = roundMoney(getPaymentDraftSummary(p.id, p.pagamentosEfetuados || [])?.remainingToPay || 0);
         const canPayCommission = commissionDue > 0.009 && canManageProjectEntries(p, 'fin');
         const pendingClientReceipt = Number(f.clientOutstanding || 0) > 0.009;
-        const projectDueDate = toDateOnly(p.dataEntrega);
+        const lastReceiptDate = getLatestReceiptDate(p);
         const today = new Date();
         today.setHours(0, 0, 0, 0);
-        const clientReceiptOverdue = pendingClientReceipt && projectDueDate && projectDueDate < today;
-        const overdueDays = clientReceiptOverdue ? Math.floor((today - projectDueDate) / 86400000) : 0;
+        const clientReceiptOverdue = pendingClientReceipt && lastReceiptDate && lastReceiptDate < today;
+        const overdueDays = clientReceiptOverdue ? Math.floor((today - lastReceiptDate) / 86400000) : 0;
         const commissionCard = pendingClientReceipt
-            ? `<button type="button" onclick="window.openKpiFinancialEditor('${p.id}','receipts')" class="v86-kpi v86-payment-action balance-due-pulse text-left hover:bg-red-500/10 transition-colors"><span>${clientReceiptOverdue ? (state.lang==='pt'?'Recebimento em atraso':'Overdue client receipt') : (state.lang==='pt'?'Recebimento pendente':'Client receipt pending')}</span><strong class="red">${formatCurr(f.clientOutstanding)}</strong><small class="mt-2 block text-[10px] font-black uppercase tracking-widest text-red-300">${clientReceiptOverdue ? (state.lang==='pt' ? `${overdueDays} dia${overdueDays === 1 ? '' : 's'} em atraso · Clique para registrar` : `${overdueDays} day${overdueDays === 1 ? '' : 's'} overdue · Click to record`) : (state.lang==='pt'?'Clique para registrar':'Click to record')}</small></button>`
+            ? `<button type="button" onclick="window.openKpiFinancialEditor('${p.id}','receipts')" class="v86-kpi v86-payment-action balance-due-pulse text-left hover:bg-red-500/10 transition-colors"><span>${clientReceiptOverdue ? (state.lang==='pt'?'Recebimento em atraso':'Overdue client receipt') : (state.lang==='pt'?'Recebimento pendente':'Client receipt pending')}</span><strong class="red">${formatCurr(f.clientOutstanding)}</strong><small class="mt-2 block text-[10px] font-black uppercase tracking-widest text-red-300">${clientReceiptOverdue ? (state.lang==='pt' ? `Último recebimento há ${overdueDays} dia${overdueDays === 1 ? '' : 's'} · Clique para registrar` : `Last receipt ${overdueDays} day${overdueDays === 1 ? '' : 's'} ago · Click to record`) : (state.lang==='pt'?'Clique para registrar':'Click to record')}</small></button>`
             : canPayCommission
             ? `<button type="button" onclick="window.confirmCommissionPayment('${p.id}','due')" class="v86-kpi v86-payment-action balance-due-pulse text-left hover:bg-amber-500/10 transition-colors"><span>${state.lang==='pt'?'Comissão pendente':'Commission pending'}</span><strong class="amber">${formatCurr(commissionDue)}</strong><small class="mt-2 block text-[10px] font-black uppercase tracking-widest text-amber-300">${state.lang==='pt'?'Clique para pagar':'Click to pay'}</small></button>`
             : `<div class="v86-kpi"><span>${state.lang==='pt'?'Pago ao vendedor':'Paid to seller'}</span><strong class="amber">${formatCurr(f.totalPaid)}</strong></div>`;
@@ -6141,6 +6159,29 @@ function getSellerCommissionPeriodReport(projects, startStr, endStr) {
         if(state.focusedProject){filters?.classList.add('hidden');filtered=state.projects.filter(p=>p.id===state.focusedProject);grid.className='w-full';const p=filtered[0];if(!p){grid.innerHTML='<div class="v86-empty">Projeto não encontrado.</div>';return;}const f=getFin(p);const canManageCosts=canManageProjectEntries(p,'costs');grid.innerHTML=state.activeModule==='costs'&&canManageCosts?v86RenderCost(p,f):state.activeModule==='commissions'?v86RenderFinance(p,f):v86RenderOverview(p,f);if(!state.activeModule)decorateProjectOverviewKpis(p);if(state.activeModule==='costs'&&canManageCosts)setTimeout(()=>renderCharts(p.id,f.orcamento,f.gastosPorCategoria,f.totalDespesas),80);try{lucide.createIcons()}catch{}return;}
         filters?.classList.remove('hidden','flex');grid.className='v86-project-grid text-left';if(!filtered.length){grid.innerHTML=`<div class="v86-empty col-span-full">${window.t('no_active_works')}</div>`;return;}
         grid.innerHTML=filtered.map(p=>{const f=getFin(p),st=v86StatusInfo(p),margin=f.margemLucro;return `<article class="v86-project-card" onclick="window.openProjectDetails('${p.id}')"><div class="v86-project-card-top"><div class="v86-project-id"><div class="v86-icon ${p.empresa==='HVAC'?'cyan':'green'}"><i data-lucide="building-2" class="w-5 h-5"></i></div><div><h3 class="v86-project-name">${escapeInlineHtml(getProjectPrimaryTitle(p))}</h3><div class="v86-project-ref">${escapeInlineHtml(p.nomeProjeto||getCompanyDisplayName(p.empresa))}</div></div></div><div class="flex items-center gap-2"><span class="v86-status ${st.cls}">${st.text}</span>${v86ProjectActions(p)}</div></div><div class="v86-project-address"><i data-lucide="map-pin" class="w-3.5 h-3.5 shrink-0"></i><span>${escapeInlineHtml(p.endereco||'—')}</span></div><div class="v86-project-meta"><div><span class="v86-label">${state.lang==='pt'?'Vendedor':'Seller'}</span><strong>${escapeInlineHtml(getUserDisplayName(p.vendedor,'—'))}</strong></div><div><span class="v86-label">Invoice / Proposta</span><strong>${escapeInlineHtml(p.numeroInvoice||'—')} / ${escapeInlineHtml(p.numeroProposta||'—')}</strong></div></div><div class="v86-project-fin"><div><span class="v86-label">${state.lang==='pt'?'Valor contrato bruto':'Gross contract value'}</span><strong>${formatCurr(p.valorTotal)}</strong></div><div><span class="v86-label">${state.lang==='pt'?'Margem da obra':'Project margin'}</span><strong style="color:${margin<45?'var(--v86-red)':'var(--v86-green)'}">${margin.toFixed(1)}%</strong></div></div><div class="v86-project-footer"><div class="v86-project-dates"><span class="v86-project-date"><i data-lucide="calendar-days" class="w-3.5 h-3.5"></i>${state.lang==='pt'?'Atualização':'Updated'} ${v86ProjectDateLabel(p)}</span><span class="v86-project-date"><i data-lucide="calendar-plus" class="w-3.5 h-3.5"></i>${state.lang==='pt'?'Cadastro':'Created'} ${formatProjectCreatedAt(p)}</span></div><span>${p.archived?(state.lang==='pt'?'Arquivada':'Archived'):''}</span></div></article>`}).join('');try{lucide.createIcons()}catch{}
+    };
+    const renderProjectsWithMargin = window.renderProjects;
+    window.renderProjects = () => {
+        renderProjectsWithMargin();
+        if (state.focusedProject) return;
+        const canAll = state.userPerms.global;
+        const visibleProjects = state.projects.filter(project => {
+            const companyAllowed = (project.empresa === 'Smart Home' && state.userPerms.smart) || (project.empresa === 'HVAC' && state.userPerms.hvac);
+            const companyMatches = state.company === 'Ambas' || project.empresa === state.company;
+            const sellerAllowed = canAll || project.vendedor === state.user.email;
+            const sellerMatches = !state.isSuperAdmin || state.projectSellerFilter === 'all' || project.vendedor === state.projectSellerFilter;
+            const archiveMatches = state.archiveFilter === 'all' ? true : (state.archiveFilter === 'archived' ? !!project.archived : !project.archived);
+            const query = String(state.projectSearchQuery || '').toLowerCase();
+            const searchable = [project.cliente, project.nomeProjeto, project.endereco, project.numeroInvoice, project.numeroProposta, formatCurr(Number(project.valorTotal || 0)), Number(project.valorTotal || 0)].join(' ').toLowerCase();
+            return companyAllowed && companyMatches && sellerAllowed && sellerMatches && archiveMatches && (!query || searchable.includes(query));
+        });
+        document.querySelectorAll('#projects-grid .v86-project-card').forEach((card, index) => {
+            const project = visibleProjects[index];
+            const receivable = project ? getFin(project).clientOutstanding : null;
+            const metric = card.querySelector('.v86-project-fin > div:last-child');
+            if (!metric || receivable === null) return;
+            metric.innerHTML = `<span class="v86-label">${state.lang === 'pt' ? 'A receber' : 'Client outstanding'}</span><strong style="color:${receivable > 0.009 ? 'var(--v86-red)' : 'var(--v86-green)'}">${formatCurr(receivable)}</strong>`;
+        });
     };
     window.renderReport = () => {
         const out=document.getElementById('report-output'); if(!out||!state.user)return; ensureReportPeriod();
@@ -6321,6 +6362,7 @@ function getSellerCommissionPeriodReport(projects, startStr, endStr) {
             if (key === 'status') return `${project.archived ? '1' : '0'} ${project.status || ''}`;
             if (key === 'commission') return Number(row.pendingEnd || 0) > 0.009 ? 1 : (Number(row.overpaidEnd || 0) > 0.009 ? 2 : 0);
             if (key === 'workValue') return Number(row.totalWorkValue || project.valorTotal || 0);
+            if (key === 'clientOutstanding') return Math.max(0, Number(row.totalWorkValue || project.valorTotal || 0) - Number(row.receivedToEnd || 0));
             if (key === 'paidPeriod') return Number(row.paidPeriod || 0);
             if (key === 'pendingEnd') return Number(row.pendingEnd || 0);
             return getProjectPrimaryTitle(project);
@@ -6334,9 +6376,11 @@ function getSellerCommissionPeriodReport(projects, startStr, endStr) {
                 : String(aValue).localeCompare(String(bValue), state.lang === 'pt' ? 'pt-BR' : 'en-US', { numeric: true, sensitivity: 'base' });
             return (reportSort.direction === 'desc' ? -1 : 1) * (result || String(a.project.cliente || '').localeCompare(String(b.project.cliente || '')));
         };
-        const orderedRows = [...monthMap.entries()]
-            .sort((a, b) => a[0].localeCompare(b[0]))
+        const orderedMonthEntries = [...monthMap.entries()]
+            .sort((a, b) => a[0].localeCompare(b[0]));
+        const orderedRows = orderedMonthEntries
             .flatMap(([, rows]) => rows.sort((a, b) => String(a.project.cliente || '').localeCompare(String(b.project.cliente || ''))));
+        const totalClientOutstanding = roundMoney(orderedRows.reduce((sum, row) => sum + Math.max(0, Number(row.totalWorkValue || row.project?.valorTotal || 0) - Number(row.receivedToEnd || 0)), 0));
 
         const headerRow = table.querySelector('thead tr');
         const sellerHeader = document.createElement('th');
@@ -6345,8 +6389,12 @@ function getSellerCommissionPeriodReport(projects, startStr, endStr) {
         const statusHeader = document.createElement('th');
         statusHeader.textContent = state.lang === 'pt' ? 'Status da comissão' : 'Commission status';
         headerRow?.children[3]?.after(statusHeader);
+        const clientOutstandingHeader = document.createElement('th');
+        clientOutstandingHeader.className = 'money';
+        clientOutstandingHeader.textContent = state.lang === 'pt' ? 'A receber' : 'Client outstanding';
+        headerRow?.children[5]?.after(clientOutstandingHeader);
         if (headerRow?.lastElementChild) headerRow.lastElementChild.textContent = state.lang === 'pt' ? 'Comissão não paga' : 'Commission unpaid';
-        const sortKeys = ['invoice', 'client', 'seller', 'status', 'commission', 'workValue', 'paidPeriod', 'pendingEnd'];
+        const sortKeys = ['invoice', 'client', 'seller', 'status', 'commission', 'workValue', 'clientOutstanding', 'paidPeriod', 'pendingEnd'];
         [...(headerRow?.cells || [])].forEach((header, index) => {
             const key = sortKeys[index];
             if (!key) return;
@@ -6360,15 +6408,24 @@ function getSellerCommissionPeriodReport(projects, startStr, endStr) {
 
         const reportRowByElement = new Map();
         let rowIndex = 0;
+        let monthIndex = 0;
         table.querySelectorAll('tbody tr').forEach(tableRow => {
             if (tableRow.classList.contains('v86-month-head')) {
                 const firstCell = tableRow.cells[0];
                 if (firstCell) firstCell.colSpan = 5;
+                const monthRows = orderedMonthEntries[monthIndex++]?.[1] || [];
+                const monthClientOutstanding = roundMoney(monthRows.reduce((sum, row) => sum + Math.max(0, Number(row.totalWorkValue || row.project?.valorTotal || 0) - Number(row.receivedToEnd || 0)), 0));
+                const receivableCell = tableRow.insertCell(2);
+                receivableCell.className = 'money text-red-300 font-black';
+                receivableCell.textContent = formatCurr(monthClientOutstanding);
                 return;
             }
             if (tableRow.classList.contains('v86-report-total')) {
                 const firstCell = tableRow.cells[0];
                 if (firstCell) firstCell.colSpan = 5;
+                const receivableCell = tableRow.insertCell(2);
+                receivableCell.className = 'money font-black text-red-300';
+                receivableCell.textContent = formatCurr(totalClientOutstanding);
                 return;
             }
             const row = orderedRows[rowIndex++];
@@ -6397,6 +6454,11 @@ function getSellerCommissionPeriodReport(projects, startStr, endStr) {
             const commissionCell = document.createElement('td');
             commissionCell.innerHTML = `<span class="v86-status ${commissionState.cls}">${commissionState.text}</span>`;
             tableRow.cells[4]?.before(commissionCell);
+            const clientOutstanding = roundMoney(Math.max(0, Number(row.totalWorkValue || row.project?.valorTotal || 0) - Number(row.receivedToEnd || 0)));
+            const receivableCell = document.createElement('td');
+            receivableCell.className = `money font-black ${clientOutstanding > 0.009 ? 'text-red-300' : 'text-emerald-300'}`;
+            receivableCell.textContent = formatCurr(clientOutstanding);
+            tableRow.cells[5]?.after(receivableCell);
             makeReportRowNavigable(tableRow, row.project.id);
         });
         if (reportSort.key !== 'default') {
@@ -6409,6 +6471,14 @@ function getSellerCommissionPeriodReport(projects, startStr, endStr) {
                 }
                 monthHeader.after(...groupRows.sort((a, b) => compareReportRows(reportRowByElement.get(a), reportRowByElement.get(b))));
             });
+        }
+        const summaryKpis = table.closest('.v86-page')?.querySelector('.v86-kpis');
+        if (summaryKpis && !summaryKpis.querySelector('[data-report-client-receivable]')) {
+            const receivableKpi = document.createElement('div');
+            receivableKpi.className = 'v86-kpi report-client-receivable';
+            receivableKpi.dataset.reportClientReceivable = 'true';
+            receivableKpi.innerHTML = `<span>${state.lang === 'pt' ? 'A receber no fim do período' : 'Client outstanding at period end'}</span><strong class="red">${formatCurr(totalClientOutstanding)}</strong>`;
+            summaryKpis.appendChild(receivableKpi);
         }
         table.dataset.statusDecorated = 'true';
         table.closest('.v86-section')?.classList.add('report-print-detail-section');
