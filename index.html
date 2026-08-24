@@ -1822,6 +1822,12 @@
             if(p.smart) state.company = 'Smart Home';
             else if(p.hvac) state.company = 'HVAC';
         }
+
+        // A tela administrativa nunca deve permanecer aberta para membros da equipe.
+        if (!state.isSuperAdmin && ['users', 'logs'].includes(state.currentView)) {
+            const fallbackView = p.tab_proj ? 'projects' : (p.tab_rep ? 'reports' : 'new');
+            window.showView(fallbackView);
+        }
         
         if(p.tab_proj) window.showView('projects');
         else if(p.tab_rep) window.showView('reports');
@@ -3718,6 +3724,11 @@
     };
 
     window.editTeamMember = (id, name, email, password, permObj) => {
+        if (!state.isSuperAdmin) {
+            window.showModal(window.t('modal_access_denied'), window.t('modal_access_denied_msg'), 'error');
+            return;
+        }
+
         document.getElementById('t-id').value = id; 
         document.getElementById('t-name').value = name || ''; 
         document.getElementById('t-email').value = email; 
@@ -3736,6 +3747,11 @@
     };
 
     window.deleteTeam = (id) => {
+        if (!state.isSuperAdmin) {
+            window.showModal(window.t('modal_access_denied'), window.t('modal_access_denied_msg'), 'error');
+            return;
+        }
+
         window.showModal(window.t('modal_del_team_title'), window.t('modal_del_team_msg'), 'confirm', async () => {
             try {
                 await deleteDoc(doc(db, 'artifacts', appId, 'public', 'data', 'user_credentials', id));
@@ -6053,6 +6069,14 @@ function getSellerCommissionPeriodReport(projects, startStr, endStr) {
 
     const baseShowView = window.showView;
     window.showView = (view) => {
+        if (['users', 'logs'].includes(view) && !state.isSuperAdmin) {
+            const p = state.userPerms;
+            const fallbackView = p.tab_proj ? 'projects' : (p.tab_rep ? 'reports' : 'new');
+            baseShowView(fallbackView);
+            window.showModal(window.t('modal_access_denied'), window.t('modal_access_denied_msg'), 'error');
+            return;
+        }
+
         if (view === 'projects' && state.returnToReportAfterEdit && state.currentView === 'new') {
             const returnListKind = state.reportProjectListReturn;
             state.returnToReportAfterEdit = false;
