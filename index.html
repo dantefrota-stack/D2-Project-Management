@@ -856,6 +856,7 @@
 #report-output .report-summary-card:hover{border-color:rgba(69,216,156,.42);background:rgba(69,216,156,.07);transform:translateY(-1px)}
 #report-output .report-summary-card:focus-visible{outline:2px solid var(--v86-green);outline-offset:3px}
 .report-summary-drilldowns{display:grid;grid-template-columns:repeat(7,minmax(0,1fr));gap:10px}.report-summary-drilldowns .v86-kpi{min-height:92px;padding:12px}.report-summary-drilldowns .v86-kpi .v86-value{margin-top:7px}.report-summary-drilldowns .v86-kpi small{margin-top:6px;color:var(--v86-muted);font-size:8px;font-weight:800}
+.report-monthly-chart-card{grid-column:span 3;display:block!important;min-height:106px!important;padding:13px 16px!important}.report-monthly-chart-head{display:flex;align-items:flex-start;justify-content:space-between;gap:14px;margin-bottom:7px}.report-monthly-chart-head strong{display:block;font-size:11px;font-weight:900;color:var(--v86-text)}.report-monthly-chart-head span{display:block;margin-top:3px;color:var(--v86-muted);font-size:9px;line-height:1.35}.report-monthly-chart-total{text-align:right;white-space:nowrap}.report-monthly-chart-total b{display:block;color:var(--v86-green);font-size:15px;font-weight:900;font-variant-numeric:tabular-nums}.report-monthly-chart-total small{display:block;margin-top:2px;color:var(--v86-muted);font-size:8px;font-weight:800;text-transform:uppercase;letter-spacing:.08em}.report-monthly-chart-wrap{position:relative;height:136px}.app-body-light .report-monthly-chart-head strong{color:#0f172a}.app-body-light .report-monthly-chart-head span,.app-body-light .report-monthly-chart-total small{color:#475569}@media(max-width:900px){.report-monthly-chart-card{grid-column:span 2}}@media(max-width:410px){.report-monthly-chart-card{grid-column:span 1}.report-monthly-chart-head{align-items:center}.report-monthly-chart-wrap{height:154px}}
 #report-output .v86-table thead th{padding:14px 16px;vertical-align:middle}#report-output .report-sort-button{display:flex;flex-direction:column;align-items:flex-start;gap:4px;width:100%;min-height:29px;padding:0;border:0;background:transparent;color:inherit;font-family:inherit;font-size:10px;line-height:1.2;text-align:left;letter-spacing:.075em;white-space:normal;cursor:pointer}#report-output .v86-table th.money .report-sort-button{align-items:flex-end;text-align:right}#report-output .report-sort-button:hover{color:var(--v86-green)}#report-output .report-sort-button:focus-visible{outline:2px solid var(--v86-green);outline-offset:3px;border-radius:4px}#report-output .report-sort-button .report-sort-indicator{font-size:12px;line-height:1;color:var(--v86-muted)}#report-output .report-sort-button.active .report-sort-indicator{color:var(--v86-green)}@media(max-width:700px){#report-output .v86-table thead th{padding:12px 14px}#report-output .report-sort-button{font-size:9px}}
 .app-body-light #report-output .report-completion-alert{background:#fff7ed!important;border-color:#f59e0b!important}.app-body-light #report-output .report-completion-alert .text-amber-200,.app-body-light #report-output .report-completion-alert .text-amber-300{color:#92400e!important}.app-body-light #report-output .report-completion-alert .text-slate-300{color:#334155!important}
 @media(max-width:1250px){.report-summary-drilldowns{grid-template-columns:repeat(4,minmax(0,1fr))}}
@@ -3454,6 +3455,26 @@
     window.openReportProjectList = (kind = 'projects') => {
         const definition = getReportProjectListDefinition(kind, getReportProjectListRows());
         state.reportProjectList = { kind, title: definition.title, rows: definition.rows };
+        window.renderReportProjectList();
+        document.getElementById('report-project-list-modal')?.classList.add('active');
+    };
+
+    window.openReportMonthProjects = (monthKey, company = null) => {
+        const report = getCurrentReportData();
+        const rows = report.projectRows.filter(row => {
+            const date = toDateOnly(row.project?.dataInicio);
+            const matchesMonth = date && `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, '0')}` === monthKey;
+            return matchesMonth && (!company || row.project?.empresa === company);
+        });
+        const [year, month] = String(monthKey).split('-').map(Number);
+        const date = new Date(year, Math.max(0, month - 1), 1);
+        const monthLabel = new Intl.DateTimeFormat(state.lang === 'pt' ? 'pt-BR' : 'en-US', { month: 'long', year: 'numeric' }).format(date);
+        const companyLabel = company === 'Smart Home' ? 'D2 Smart Home' : company === 'HVAC' ? 'D2 HVAC Solutions' : '';
+        state.reportProjectList = {
+            kind: 'month',
+            title: state.lang === 'pt' ? `Obras de ${monthLabel}${companyLabel ? ` · ${companyLabel}` : ''}` : `Projects in ${monthLabel}${companyLabel ? ` · ${companyLabel}` : ''}`,
+            rows
+        };
         window.renderReportProjectList();
         document.getElementById('report-project-list-modal')?.classList.add('active');
     };
@@ -6404,6 +6425,24 @@ function getSellerCommissionPeriodReport(projects, startStr, endStr) {
         const orderedRows = orderedMonthEntries
             .flatMap(([, rows]) => rows.sort((a, b) => String(a.project.cliente || '').localeCompare(String(b.project.cliente || ''))));
         const totalClientOutstanding = roundMoney(orderedRows.reduce((sum, row) => sum + Math.max(0, Number(row.totalWorkValue || row.project?.valorTotal || 0) - Number(row.receivedToEnd || 0)), 0));
+        const monthlyProjectData = orderedMonthEntries.map(([key, rows]) => {
+            const [year, month] = key.split('-').map(Number);
+            const date = new Date(year, Math.max(0, month - 1), 1);
+            return {
+                key,
+                label: new Intl.DateTimeFormat(state.lang === 'pt' ? 'pt-BR' : 'en-US', { month: 'short', year: '2-digit' }).format(date).replace('.', ''),
+                projects: rows.length,
+                revenue: roundMoney(rows.reduce((sum, row) => sum + Number(row.totalWorkValue || row.project?.valorTotal || 0), 0))
+            };
+        });
+        const chartCompanies = state.company === 'Ambas'
+            ? ['Smart Home', 'HVAC'].filter(company => orderedRows.some(row => row.project?.empresa === company))
+            : [state.company];
+        const monthlyCompanyChartData = chartCompanies.map(company => ({
+            company,
+            label: company === 'Smart Home' ? 'D2 Smart Home' : 'D2 HVAC Solutions',
+            values: monthlyProjectData.map(month => orderedMonthEntries.find(([key]) => key === month.key)?.[1].filter(row => row.project?.empresa === company) || [])
+        }));
         const getStatusIndicator = (project, checklist) => {
             const isPt = state.lang === 'pt';
             if (checklist.isPending) {
@@ -6513,6 +6552,67 @@ function getSellerCommissionPeriodReport(projects, startStr, endStr) {
             receivableKpi.dataset.reportClientReceivable = 'true';
             receivableKpi.innerHTML = `<span>${state.lang === 'pt' ? 'A receber no fim do período' : 'Client outstanding at period end'}</span><strong class="red">${formatCurr(totalClientOutstanding)}</strong>`;
             summaryKpis.appendChild(receivableKpi);
+        }
+        if (summaryKpis && !summaryKpis.querySelector('[data-report-monthly-chart]') && monthlyProjectData.length) {
+            const chartCard = document.createElement('section');
+            const totalRevenue = roundMoney(monthlyProjectData.reduce((sum, item) => sum + item.revenue, 0));
+            chartCard.className = 'v86-kpi report-monthly-chart-card no-print';
+            chartCard.dataset.reportMonthlyChart = 'true';
+            const chartHint = chartCompanies.length > 1
+                ? (state.lang === 'pt' ? 'Clique em uma barra para ver as obras da empresa. Passe o cursor para consultar o faturamento.' : 'Click a bar to view that company’s projects. Hover to view revenue.')
+                : (state.lang === 'pt' ? 'Clique em um mês para ver as obras. Passe o cursor para consultar o faturamento.' : 'Click a month to view projects. Hover to view revenue.');
+            chartCard.innerHTML = `<div class="report-monthly-chart-head"><div><strong>${state.lang === 'pt' ? 'Obras por mês' : 'Projects by month'}</strong><span>${chartHint}</span></div><div class="report-monthly-chart-total"><b>${formatCurr(totalRevenue)}</b><small>${state.lang === 'pt' ? 'Faturamento do período' : 'Period revenue'}</small></div></div><div class="report-monthly-chart-wrap"><canvas id="report-monthly-projects-chart"></canvas></div>`;
+            summaryKpis.appendChild(chartCard);
+            requestAnimationFrame(() => {
+                const canvas = chartCard.querySelector('#report-monthly-projects-chart');
+                if (!canvas || typeof Chart === 'undefined') return;
+                const chartKey = 'report-monthly-projects';
+                if (window.d2Charts[chartKey]) window.d2Charts[chartKey].destroy();
+                window.d2Charts[chartKey] = new Chart(canvas, {
+                    type: 'bar',
+                    data: {
+                        labels: monthlyProjectData.map(item => item.label),
+                        datasets: monthlyCompanyChartData.map((companyData, index) => ({
+                            label: companyData.label,
+                            data: companyData.values.map(rows => rows.length),
+                            backgroundColor: index === 0 ? '#46c8e8' : '#45d89c',
+                            hoverBackgroundColor: index === 0 ? '#38b5d3' : '#30c48a',
+                            borderRadius: 7,
+                            borderSkipped: false,
+                            maxBarThickness: 34
+                        }))
+                    },
+                    options: {
+                        responsive: true,
+                        maintainAspectRatio: false,
+                        interaction: { mode: 'index', intersect: true },
+                        onHover: (_event, elements, chart) => { chart.canvas.style.cursor = elements.length ? 'pointer' : 'default'; },
+                        onClick: (_event, elements) => {
+                            const index = elements[0]?.index;
+                            const companyData = monthlyCompanyChartData[elements[0]?.datasetIndex];
+                            if (Number.isInteger(index) && companyData) window.openReportMonthProjects(monthlyProjectData[index].key, companyData.company);
+                        },
+                        plugins: {
+                            legend: { display: monthlyCompanyChartData.length > 1, labels: { boxWidth: 9, boxHeight: 9, usePointStyle: true, pointStyle: 'rectRounded', color: '#64748b', font: { size: 10, weight: '700' } } },
+                            tooltip: {
+                                displayColors: false,
+                                callbacks: {
+                                    label: context => `${context.parsed.y} ${state.lang === 'pt' ? (context.parsed.y === 1 ? 'obra' : 'obras') : (context.parsed.y === 1 ? 'project' : 'projects')}`,
+                                    afterLabel: context => {
+                                        const companyData = monthlyCompanyChartData[context.datasetIndex];
+                                        const revenue = roundMoney(companyData.values[context.dataIndex].reduce((sum, row) => sum + Number(row.totalWorkValue || row.project?.valorTotal || 0), 0));
+                                        return `${state.lang === 'pt' ? 'Faturamento' : 'Revenue'}: ${formatCurr(revenue)}`;
+                                    }
+                                }
+                            }
+                        },
+                        scales: {
+                            x: { grid: { display: false }, ticks: { color: '#64748b', font: { size: 10, weight: '700' } } },
+                            y: { beginAtZero: true, ticks: { precision: 0, color: '#64748b', font: { size: 10, weight: '700' }, stepSize: 1 }, grid: { color: 'rgba(148,163,184,.18)' } }
+                        }
+                    }
+                });
+            });
         }
         table.dataset.statusDecorated = 'true';
         table.closest('.v86-section')?.classList.add('report-print-detail-section');
