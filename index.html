@@ -852,6 +852,7 @@
 #report-output .report-summary-card:hover{border-color:rgba(69,216,156,.42);background:rgba(69,216,156,.07);transform:translateY(-1px)}
 #report-output .report-summary-card:focus-visible{outline:2px solid var(--v86-green);outline-offset:3px}
 .report-summary-drilldowns{display:grid;grid-template-columns:repeat(7,minmax(0,1fr));gap:10px}.report-summary-drilldowns .v86-kpi{min-height:92px;padding:12px}.report-summary-drilldowns .v86-kpi .v86-value{margin-top:7px}.report-summary-drilldowns .v86-kpi small{margin-top:6px;color:var(--v86-muted);font-size:8px;font-weight:800}
+.report-sort-button{display:inline-flex;align-items:center;gap:5px;width:100%;padding:0;border:0;background:transparent;color:inherit;font:inherit;text-align:inherit;cursor:pointer}.report-sort-button:hover{color:var(--v86-green)}.report-sort-button:focus-visible{outline:2px solid var(--v86-green);outline-offset:3px;border-radius:4px}.report-sort-button .report-sort-indicator{font-size:11px;line-height:1;color:var(--v86-muted)}.report-sort-button.active .report-sort-indicator{color:var(--v86-green)}
 .app-body-light #report-output .report-completion-alert{background:#fff7ed!important;border-color:#f59e0b!important}.app-body-light #report-output .report-completion-alert .text-amber-200,.app-body-light #report-output .report-completion-alert .text-amber-300{color:#92400e!important}.app-body-light #report-output .report-completion-alert .text-slate-300{color:#334155!important}
 @media(max-width:1250px){.report-summary-drilldowns{grid-template-columns:repeat(4,minmax(0,1fr))}}
 @media(max-width:700px){.report-summary-drilldowns{grid-template-columns:repeat(2,minmax(0,1fr))}}
@@ -873,6 +874,14 @@
 .app-body-light .c2-topbar{background:rgba(255,255,255,.96)!important;border-bottom-color:#cbd5e1!important;box-shadow:0 10px 28px -22px rgba(15,23,42,.28)!important}
 .app-body-light .c2-panel,.app-body-light .v86-panel,.app-body-light .clean-project-dashboard,.app-body-light .clean-finance-dashboard{background:#ffffff!important;border-color:#cbd5e1!important;box-shadow:0 18px 42px -30px rgba(15,23,42,.32)!important;color:#0f172a!important}
 .app-body-light .modal-content{background:#ffffff!important;border-color:#cbd5e1!important;box-shadow:0 26px 64px -34px rgba(15,23,42,.38)!important;color:#0f172a!important}
+.app-body-light #custom-modal-title{color:#0f172a!important}
+.app-body-light #custom-modal-msg{color:#334155!important;font-weight:600!important}
+.app-body-light #custom-modal-buttons button{border:1px solid #94a3b8!important;box-shadow:none!important}
+.app-body-light #custom-modal-buttons .bg-slate-800,.app-body-light #custom-modal-buttons .bg-slate-700{background:#0f172a!important;color:#ffffff!important;border-color:#0f172a!important}
+.app-body-light #custom-modal-buttons .bg-cyan-600{background:#0369a1!important;color:#ffffff!important;border-color:#0369a1!important}
+.v86-closure-alert{font-weight:800!important}
+.app-body-light .v86-closure-alert{background:#fff1f2!important;border-color:#e11d48!important;color:#9f1239!important;box-shadow:0 10px 24px -20px rgba(159,18,57,.72)!important}
+.app-body-light .v86-closure-alert span,.app-body-light .v86-closure-alert svg{color:#9f1239!important}
 .app-body-light .v86-page{color:#0f172a}
 .app-body-light .v86-section{background:#ffffff;border-color:#cbd5e1;box-shadow:0 14px 34px -28px rgba(15,23,42,.32)}
 .app-body-light .v86-section-title h2,.app-body-light .v86-value,.app-body-light .v86-table td,.app-body-light .v86-project-name,.app-body-light .v86-ring strong,.app-body-light .v86-legend-row,.app-body-light .v86-action-card,.app-body-light .c2-data-value,.app-body-light .c2-metric-card strong,.app-body-light .c2-mini-stat strong,.app-body-light .c2-note-row,.app-body-light .c2-action-tile,.app-body-light .c2-project-update{color:#0f172a!important}
@@ -1292,7 +1301,7 @@
         userPerms: { tab_proj: true, tab_new: false, tab_rep: false, fin: false, costs: false, smart: true, hvac: false, global: false },
         projects: [], team: [], logs: [], logsUserFilter: '', logsSearchQuery: '', company: 'Ambas', lang: savedLanguage, theme: 'dark',
         editingPayments: null, editingRecs: null, reportPendingPayments: null, reportProjectList: null, reportProjectListReturn: null, returnToReport: false, returnToReportAfterEdit: false, focusedProject: null, activeModule: null, archiveFilter: 'active',
-        reportActiveKpi: 'receita', projectSellerFilter: 'all', projectSearchQuery: '', reportPeriodStart: '', reportPeriodEnd: '', reportSellerFilter: 'all', reportArchiveFilter: 'all', reportRangePreset: 'year', mobileNavOpen: false, currentView: 'projects'
+        reportActiveKpi: 'receita', projectSellerFilter: 'all', projectSearchQuery: '', reportPeriodStart: '', reportPeriodEnd: '', reportSellerFilter: 'all', reportArchiveFilter: 'all', reportTableSort: { key: 'default', direction: 'asc' }, reportRangePreset: 'year', mobileNavOpen: false, currentView: 'projects'
     };
 
     window.d2Charts = {};
@@ -5892,7 +5901,7 @@ function getSellerCommissionPeriodReport(projects, startStr, endStr) {
         const closureNotice = closureAwaitingSync
             ? `<div class="mb-4 flex items-center gap-3 rounded-xl border border-amber-300/40 bg-amber-300/[.10] px-4 py-3 text-sm font-bold text-amber-200 animate-pulse"><i data-lucide="refresh-cw" class="w-4 h-4 shrink-0"></i>${state.lang==='pt'?'Conciliação de encerramento em andamento: a obra será arquivada automaticamente.':'Closure reconciliation in progress: the project will be archived automatically.'}</div>`
             : (closureIssues.length
-                ? `<div class="mb-4 flex items-center gap-3 rounded-xl border border-red-300/50 bg-red-500/[.12] px-4 py-3 text-sm font-bold text-red-200 animate-pulse"><i data-lucide="triangle-alert" class="w-4 h-4 shrink-0"></i><span>${state.lang==='pt'?'Pendência de encerramento:':'Closure pending action:'} ${escapeInlineHtml(closureIssues.join(' · '))}</span></div>`
+                ? `<div class="v86-closure-alert mb-4 flex items-center gap-3 rounded-xl border border-red-300/50 bg-red-500/[.12] px-4 py-3 text-sm font-bold text-red-200 animate-pulse"><i data-lucide="triangle-alert" class="w-4 h-4 shrink-0"></i><span>${state.lang==='pt'?'Pendência de encerramento:':'Closure pending action:'} ${escapeInlineHtml(closureIssues.join(' · '))}</span></div>`
                 : '');
         const finishAction = canFinishProject(p)
             ? `<button onclick="window.finishProject('${p.id}')" class="v86-btn primary"><i data-lucide="circle-check-big" class="w-4 h-4"></i>${state.lang==='pt'?'Finalizar':'Finish'}</button>`
@@ -6188,6 +6197,15 @@ function getSellerCommissionPeriodReport(projects, startStr, endStr) {
         });
     }
 
+    window.setReportTableSort = (key) => {
+        const current = state.reportTableSort || { key: 'default', direction: 'asc' };
+        state.reportTableSort = {
+            key,
+            direction: current.key === key && current.direction === 'asc' ? 'desc' : 'asc'
+        };
+        window.safeRenderReport();
+    };
+
     function decorateRenderedReportStatus() {
         const out = document.getElementById('report-output');
         const table = out?.querySelector('.v86-table');
@@ -6264,6 +6282,28 @@ function getSellerCommissionPeriodReport(projects, startStr, endStr) {
             if (!monthMap.has(key)) monthMap.set(key, []);
             monthMap.get(key).push(row);
         });
+        const reportSort = state.reportTableSort || { key: 'default', direction: 'asc' };
+        const getSortValue = (row, key) => {
+            const project = row.project || {};
+            if (key === 'invoice') return `${project.numeroInvoice || ''} ${project.numeroProposta || ''}`;
+            if (key === 'client') return getProjectPrimaryTitle(project);
+            if (key === 'seller') return getUserDisplayName(project.vendedor, '');
+            if (key === 'status') return `${project.archived ? '1' : '0'} ${project.status || ''}`;
+            if (key === 'commission') return Number(row.pendingEnd || 0) > 0.009 ? 1 : (Number(row.overpaidEnd || 0) > 0.009 ? 2 : 0);
+            if (key === 'workValue') return Number(row.totalWorkValue || project.valorTotal || 0);
+            if (key === 'paidPeriod') return Number(row.paidPeriod || 0);
+            if (key === 'pendingEnd') return Number(row.pendingEnd || 0);
+            return getProjectPrimaryTitle(project);
+        };
+        const compareReportRows = (a, b) => {
+            if (reportSort.key === 'default') return String(a.project.cliente || '').localeCompare(String(b.project.cliente || ''));
+            const aValue = getSortValue(a, reportSort.key);
+            const bValue = getSortValue(b, reportSort.key);
+            const result = typeof aValue === 'number' && typeof bValue === 'number'
+                ? aValue - bValue
+                : String(aValue).localeCompare(String(bValue), state.lang === 'pt' ? 'pt-BR' : 'en-US', { numeric: true, sensitivity: 'base' });
+            return (reportSort.direction === 'desc' ? -1 : 1) * (result || String(a.project.cliente || '').localeCompare(String(b.project.cliente || '')));
+        };
         const orderedRows = [...monthMap.entries()]
             .sort((a, b) => a[0].localeCompare(b[0]))
             .flatMap(([, rows]) => rows.sort((a, b) => String(a.project.cliente || '').localeCompare(String(b.project.cliente || ''))));
@@ -6276,7 +6316,19 @@ function getSellerCommissionPeriodReport(projects, startStr, endStr) {
         statusHeader.textContent = state.lang === 'pt' ? 'Status da comissão' : 'Commission status';
         headerRow?.children[3]?.after(statusHeader);
         if (headerRow?.lastElementChild) headerRow.lastElementChild.textContent = state.lang === 'pt' ? 'Comissão não paga' : 'Commission unpaid';
+        const sortKeys = ['invoice', 'client', 'seller', 'status', 'commission', 'workValue', 'paidPeriod', 'pendingEnd'];
+        [...(headerRow?.cells || [])].forEach((header, index) => {
+            const key = sortKeys[index];
+            if (!key) return;
+            const label = header.textContent.trim();
+            const isActive = reportSort.key === key;
+            const indicator = isActive ? (reportSort.direction === 'asc' ? '↑' : '↓') : '↕';
+            header.title = state.lang === 'pt' ? `Ordenar por ${label}` : `Sort by ${label}`;
+            header.innerHTML = `<button type="button" class="report-sort-button ${isActive ? 'active' : ''}" data-report-sort-key="${key}"><span>${escapeInlineHtml(label)}</span><span class="report-sort-indicator" aria-hidden="true">${indicator}</span></button>`;
+            header.querySelector('button')?.addEventListener('click', () => window.setReportTableSort(key));
+        });
 
+        const reportRowByElement = new Map();
         let rowIndex = 0;
         table.querySelectorAll('tbody tr').forEach(tableRow => {
             if (tableRow.classList.contains('v86-month-head')) {
@@ -6291,6 +6343,7 @@ function getSellerCommissionPeriodReport(projects, startStr, endStr) {
             }
             const row = orderedRows[rowIndex++];
             if (!row) return;
+            reportRowByElement.set(tableRow, row);
             const projectState = row.archived
                 ? { text: state.lang === 'pt' ? 'Arquivada' : 'Archived', cls: 'info' }
                 : { text: state.lang === 'pt' ? 'Ativa' : 'Active', cls: 'success' };
@@ -6312,6 +6365,17 @@ function getSellerCommissionPeriodReport(projects, startStr, endStr) {
             tableRow.cells[4]?.before(commissionCell);
             makeReportRowNavigable(tableRow, row.project.id);
         });
+        if (reportSort.key !== 'default') {
+            table.querySelectorAll('tbody .v86-month-head').forEach(monthHeader => {
+                const groupRows = [];
+                let nextRow = monthHeader.nextElementSibling;
+                while (nextRow && !nextRow.classList.contains('v86-month-head') && !nextRow.classList.contains('v86-report-total')) {
+                    if (reportRowByElement.has(nextRow)) groupRows.push(nextRow);
+                    nextRow = nextRow.nextElementSibling;
+                }
+                monthHeader.after(...groupRows.sort((a, b) => compareReportRows(reportRowByElement.get(a), reportRowByElement.get(b))));
+            });
+        }
         table.dataset.statusDecorated = 'true';
         table.closest('.v86-section')?.classList.add('report-print-detail-section');
 
