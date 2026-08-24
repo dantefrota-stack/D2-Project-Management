@@ -804,7 +804,11 @@
 .c2-topbar-inner{max-width:1600px!important}
 .c2-panel,.v86-panel{background:linear-gradient(145deg,rgba(14,29,44,.96),rgba(9,20,31,.98))!important;border:1px solid var(--v86-line)!important;box-shadow:0 26px 72px -48px rgba(0,0,0,.95)!important}
 .modal-content{background:linear-gradient(145deg,#101d2c,#09141f)!important;border:1px solid var(--v86-line2)!important;color:var(--v86-text)!important;box-shadow:0 38px 100px -45px #000!important}
-.v86-page{width:100%;text-align:left;animation:fadeIn .22s ease both;min-width:0}
+.v86-page{width:100%;text-align:left;animation:fadeIn .22s ease both;min-width:0;position:relative}
+.v86-finished-stamp{position:absolute;inset:17% 8%;z-index:4;display:flex;align-items:center;justify-content:center;pointer-events:none;overflow:hidden}
+.v86-finished-stamp span{display:inline-block;border:5px solid rgba(248,113,113,.7);border-radius:12px;padding:.24em .52em;color:rgba(248,113,113,.7);font-size:clamp(2.35rem,6vw,5.8rem);font-weight:950;line-height:1;letter-spacing:.14em;text-transform:uppercase;transform:rotate(-14deg);background:rgba(127,29,29,.08);box-shadow:inset 0 0 0 3px rgba(248,113,113,.15)}
+.app-body-light .v86-finished-stamp span{border-color:rgba(185,28,28,.58);color:rgba(185,28,28,.58);background:rgba(254,226,226,.20)}
+@media(max-width:600px){.v86-finished-stamp{inset:14% 2%}.v86-finished-stamp span{border-width:3px;font-size:clamp(2rem,12vw,3.8rem)}}
 .v86-head{display:flex;align-items:flex-start;justify-content:space-between;gap:22px;margin-bottom:22px;min-width:0}
 .v86-head-left{display:flex;align-items:flex-start;gap:14px;min-width:0}.v86-head-copy{min-width:0}
 .v86-back,.v86-btn{display:inline-flex;align-items:center;justify-content:center;gap:9px;min-height:42px;padding:10px 14px;border:1px solid var(--v86-line2);border-radius:12px;background:rgba(255,255,255,.035);color:#dbe6ef;font-size:10px;font-weight:850;transition:.18s;white-space:nowrap}
@@ -820,7 +824,7 @@
 .v86-icon{width:38px;height:38px;border-radius:11px;display:flex;align-items:center;justify-content:center;flex:none;border:1px solid var(--v86-line);background:rgba(255,255,255,.035);color:var(--v86-muted)}.v86-icon.green{color:var(--v86-green);background:rgba(69,216,156,.09);border-color:rgba(69,216,156,.16)}.v86-icon.cyan{color:var(--v86-cyan);background:rgba(70,200,232,.08);border-color:rgba(70,200,232,.16)}.v86-icon.amber{color:var(--v86-amber);background:rgba(243,188,61,.08);border-color:rgba(243,188,61,.16)}.v86-icon.red{color:var(--v86-red);background:rgba(255,110,110,.08);border-color:rgba(255,110,110,.16)}.v86-icon.purple{color:var(--v86-purple);background:rgba(155,140,255,.08);border-color:rgba(155,140,255,.16)}
 .v86-kpis{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:12px}.v86-kpi{border:1px solid var(--v86-line);border-radius:16px;background:rgba(255,255,255,.022);padding:15px;min-height:106px;display:flex;flex-direction:column;justify-content:space-between;min-width:0}.v86-label{display:block;color:var(--v86-muted);font-size:8px;line-height:1.35;font-weight:900;text-transform:uppercase;letter-spacing:.13em}.v86-value{display:block;margin-top:12px;color:#edf4fa;font-size:clamp(1rem,2vw,1.38rem);line-height:1.08;font-weight:900;letter-spacing:-.025em;font-variant-numeric:tabular-nums;overflow-wrap:anywhere}.v86-value.green{color:var(--v86-green)}.v86-value.cyan{color:var(--v86-cyan)}.v86-value.amber{color:var(--v86-amber)}.v86-value.red{color:var(--v86-red)}
 .v86-source-card,.v86-source-metric{cursor:pointer;transition:border-color .18s ease,background .18s ease,transform .18s ease}.v86-source-card:hover,.v86-source-metric:hover{border-color:rgba(69,216,156,.48);background:rgba(69,216,156,.06);transform:translateY(-1px)}.v86-source-card:focus-visible,.v86-source-metric:focus-visible{outline:2px solid var(--v86-green);outline-offset:3px}.v86-source-hint{display:block;margin-top:7px;color:var(--v86-muted);font-size:8px;font-weight:800;letter-spacing:.03em}
-.v86-metrics{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:12px}.v86-metric{border:1px solid var(--v86-line);border-radius:15px;background:rgba(255,255,255,.022);padding:14px;min-height:93px;min-width:0}.v86-metric .v86-value{font-size:clamp(.95rem,1.8vw,1.22rem);margin-top:9px}
+.v86-metrics{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:12px}.v86-metric,.v86-metrics>div:not(.v86-metric){border:1px solid var(--v86-line);border-radius:15px;background:rgba(255,255,255,.022);padding:14px;min-height:93px;min-width:0}.v86-metric .v86-value,.v86-metrics>div:not(.v86-metric) .v86-value{font-size:clamp(.95rem,1.8vw,1.22rem);margin-top:9px}
 .v86-grid-2{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:16px}.v86-grid-overview{display:grid;grid-template-columns:minmax(0,1.15fr) minmax(320px,.85fr);gap:16px}.v86-stack{display:flex;flex-direction:column;gap:16px;min-width:0}
 .v86-progress{height:8px;border-radius:999px;background:rgba(148,163,184,.14);overflow:hidden}.v86-progress>span{height:100%;display:block;border-radius:999px;background:linear-gradient(90deg,#36ca8d,#54e1a7)}
 .v86-ring{--pct:0;--ring:var(--v86-green);width:132px;aspect-ratio:1;border-radius:50%;display:grid;place-items:center;background:conic-gradient(var(--ring) calc(var(--pct)*1%),rgba(148,163,184,.14) 0);position:relative;flex:none}.v86-ring:after{content:"";position:absolute;inset:16px;border-radius:50%;background:#0c1926;border:1px solid var(--v86-line)}.v86-ring>div{position:relative;z-index:1;text-align:center}.v86-ring strong{display:block;font-size:22px;font-weight:900}.v86-ring span{display:block;margin-top:2px;color:var(--v86-muted);font-size:8px;text-transform:uppercase;letter-spacing:.11em;font-weight:850}
@@ -1988,6 +1992,152 @@
         );
     }
 
+    function canFinishProject(project) {
+        if (!canManageProjectEntries(project, 'fin')) return false;
+        if (project.archived || project.status === 'Finalizado') return false;
+        const contractValue = Number(project.valorTotal || 0);
+        return contractValue > 0 && getFin(project).totalRecebido >= contractValue - 0.009;
+    }
+
+    function getAutomaticCompletionPayload(project, receipts = project?.recebimentos || [], payments = project?.pagamentosEfetuados || []) {
+        if (!project || project.archived) return null;
+        const reconciledProject = { ...project, recebimentos: receipts, pagamentosEfetuados: payments };
+        const financials = getFin(reconciledProject);
+        const contractValue = Number(project.valorTotal || 0);
+        const isFullySettled = contractValue > 0
+            && Number(financials.totalRecebido || 0) >= contractValue - 0.009
+            && Number(financials.dueNow || 0) <= 0.009;
+        if (!isFullySettled) return null;
+        return {
+            status: 'Finalizado',
+            dataConclusao: project.dataConclusao || new Date().toISOString().split('T')[0],
+            archived: true,
+            commercialStatus: 'realized_or_completed',
+            archivedReason: state.lang === 'pt' ? 'Finalizada e arquivada automaticamente' : 'Finished and archived automatically',
+            updatedAt: serverTimestamp()
+        };
+    }
+
+    function logAutomaticCompletion(project) {
+        logAccess(
+            state.user?.email,
+            `Finalizou e arquivou automaticamente a obra quitada: ${getProjectDisplayName(project)}`,
+            { ...getProjectLogMeta(project), completionType: 'automatic_financial_completion' }
+        );
+    }
+
+    function notifyAutomaticCompletion(project) {
+        setTimeout(() => window.showModal(
+            state.lang === 'pt' ? 'Obra finalizada' : 'Project finished',
+            state.lang === 'pt'
+                ? `${getProjectDisplayName(project)} foi finalizada e arquivada automaticamente.`
+                : `${getProjectDisplayName(project)} was finished and archived automatically.`,
+            'info'
+        ), 180);
+    }
+
+    const automaticClosureInFlight = new Set();
+    async function reconcileCompletedProjectClosure(project) {
+        if (!state.isSuperAdmin || !project || project.status !== 'Finalizado' || project.archived || automaticClosureInFlight.has(project.id)) return;
+        const completionPayload = getAutomaticCompletionPayload(project);
+        if (!completionPayload) return;
+        automaticClosureInFlight.add(project.id);
+        try {
+            await updateDoc(doc(db, 'artifacts', appId, 'public', 'data', 'projects', project.id), completionPayload);
+            logAutomaticCompletion(project);
+        } catch (error) {
+            console.error('Erro ao reconciliar encerramento automático:', error);
+        } finally {
+            automaticClosureInFlight.delete(project.id);
+        }
+    }
+
+    function showFinishProjectDecision(project) {
+        const summary = getPaymentDraftSummary(project.id, project.pagamentosEfetuados || []);
+        const commissionDue = roundMoney(summary?.remainingToPay || 0);
+        const title = state.lang === 'pt' ? 'Finalizar obra' : 'Finish project';
+        const message = commissionDue > 0.009
+            ? (state.lang === 'pt'
+                ? `Há ${formatCurr(commissionDue)} de comissão liberada pendente. Você pode pagar agora e finalizar, ou finalizar mantendo a pendência visível no relatório.`
+                : `There is ${formatCurr(commissionDue)} in released commission pending. You can pay it now and finish, or finish while keeping the pending item visible in reports.`)
+            : (state.lang === 'pt'
+                ? 'Todos os valores de comissão liberada estão quitados. Confirme a finalização da obra.'
+                : 'All released commission amounts are settled. Confirm finishing the project.');
+        document.getElementById('custom-modal-title').innerText = title;
+        document.getElementById('custom-modal-msg').innerText = message;
+        document.getElementById('custom-modal-icon').innerHTML = '<i data-lucide="circle-check-big" class="w-12 h-12 text-emerald-400"></i>';
+        document.getElementById('custom-modal-buttons').innerHTML = `
+            <button onclick="window.closeCustomModal()" class="px-4 py-3 bg-slate-700 text-white force-white-text rounded-xl font-bold hover:bg-slate-600 transition-colors text-xs uppercase tracking-widest">${window.t('cancel')}</button>
+            <button onclick="window.completeProjectFromDecision('${project.id}', false)" class="px-4 py-3 bg-amber-500 text-slate-950 font-black rounded-xl hover:bg-amber-400 transition-colors text-xs uppercase tracking-widest">${state.lang === 'pt' ? 'Finalizar com pendência' : 'Finish with pending item'}</button>
+            ${commissionDue > 0.009 ? `<button onclick="window.completeProjectFromDecision('${project.id}', true)" class="px-4 py-3 bg-emerald-500 text-slate-950 font-black rounded-xl hover:bg-emerald-400 transition-colors text-xs uppercase tracking-widest">${state.lang === 'pt' ? `Pagar ${formatCurr(commissionDue)} e finalizar` : `Pay ${formatCurr(commissionDue)} and finish`}</button>` : ''}
+        `;
+        document.getElementById('custom-modal').classList.add('active');
+        try { lucide.createIcons(); } catch {}
+    }
+
+    window.finishProject = (projectId) => {
+        const project = state.projects.find(item => item.id === projectId);
+        if (!project) return;
+        if (!canManageProjectEntries(project, 'fin')) { denyProjectEntryManagement(); return; }
+        if (!canFinishProject(project)) {
+            window.showModal(
+                window.t('attention'),
+                state.lang === 'pt'
+                    ? 'A obra só pode ser finalizada após o total recebido atingir o valor integral do contrato.'
+                    : 'The project can only be finished after total receipts reach the full contract value.',
+                'error'
+            );
+            return;
+        }
+        showFinishProjectDecision(project);
+    };
+
+    window.completeProjectFromDecision = async (projectId, settleCommission) => {
+        const project = state.projects.find(item => item.id === projectId);
+        if (!project || !canFinishProject(project)) return;
+        if (!canManageProjectEntries(project, 'fin')) { denyProjectEntryManagement(); return; }
+        const summary = getPaymentDraftSummary(project.id, project.pagamentosEfetuados || []);
+        const commissionDue = roundMoney(summary?.remainingToPay || 0);
+        if (settleCommission && commissionDue <= 0.009) settleCommission = false;
+        window.closeCustomModal();
+        try {
+            const payload = {
+                status: 'Finalizado',
+                dataConclusao: new Date().toISOString().split('T')[0],
+                updatedAt: serverTimestamp()
+            };
+            if (settleCommission) {
+                const payment = {
+                    id: crypto.randomUUID(),
+                    data: new Date().toISOString().split('T')[0],
+                    valor: commissionDue,
+                    tipo: 'comissao',
+                    isAdvance: false,
+                    adiantado: false,
+                    commissionEligibleAtPayment: roundMoney(summary.commLiberada || 0),
+                    clientOutstandingAtPayment: roundMoney(summary.clientOutstanding || 0),
+                    adicionadoPor: state.user?.email || '',
+                    criadoEm: new Date().toISOString(),
+                    origem: 'project_finish_settlement'
+                };
+                const synced = buildSyncedCommissionExpensePayload(project, [...normalizePaymentEntries(project.pagamentosEfetuados || []), payment]);
+                payload.pagamentosEfetuados = synced.normalizedPayments;
+                payload.despesas = synced.syncedExpenses;
+            }
+            const completionPayload = getAutomaticCompletionPayload(project, project.recebimentos || [], payload.pagamentosEfetuados || project.pagamentosEfetuados || []);
+            if (completionPayload) Object.assign(payload, completionPayload);
+            await updateDoc(doc(db, 'artifacts', appId, 'public', 'data', 'projects', projectId), payload);
+            if (settleCommission) {
+                logAccess(state.user.email, `Quitou comissão de ${formatCurr(commissionDue)} ao finalizar a obra: ${getProjectDisplayName(project)}`, { ...getProjectLogMeta(project), paymentType: 'project_finish_settlement', amount: commissionDue });
+            }
+            logAccess(state.user.email, `Finalizou a obra: ${getProjectDisplayName(project)}`, getProjectLogMeta(project));
+            if (completionPayload) { logAutomaticCompletion(project); notifyAutomaticCompletion(project); }
+        } catch (error) {
+            console.error('Erro ao finalizar obra:', error);
+            window.showModal(window.t('error'), state.lang === 'pt' ? 'Falha ao finalizar a obra.' : 'Unable to finish project.', 'error');
+        }
+    };
+
     // --- CUSTOS ---
     window.addExpense = async (projectId) => {
         const p = state.projects.find(x => x.id === projectId);
@@ -2988,14 +3138,17 @@
         const { normalizedPayments, syncedExpenses } = buildSyncedCommissionExpensePayload(project, state.editingPayments.payments);
         const advanceTotal = roundMoney(normalizedPayments.filter(pay => isAdvanceCommissionPayment(pay)).reduce((sum, pay) => sum + Number(pay?.valor || 0), 0));
         try {
+            const completionPayload = getAutomaticCompletionPayload(project, project.recebimentos || [], normalizedPayments);
             await updateDoc(doc(db, 'artifacts', appId, 'public', 'data', 'projects', state.editingPayments.projectId), {
                 pagamentosEfetuados: normalizedPayments,
-                despesas: syncedExpenses
+                despesas: syncedExpenses,
+                ...(completionPayload || {})
             });
             const logMessage = advanceTotal > 0.009
                 ? `Salvou pagamentos do vendedor com adiantamento de ${formatCurr(advanceTotal)}: ${getProjectDisplayName(project)}`
                 : `Salvou pagamentos do vendedor: ${getProjectDisplayName(project)}`;
             logAccess(state.user?.email, logMessage, { ...getProjectLogMeta(project), paymentType: advanceTotal > 0.009 ? 'commission_advance' : 'commission_payment', advanceAmount: advanceTotal });
+            if (completionPayload) { logAutomaticCompletion(project); notifyAutomaticCompletion(project); }
             window.closeEditPaymentModal();
         } catch (e) {
             window.showModal(window.t('error'), 'Erro ao salvar pagamentos: ' + e.message, 'error');
@@ -3050,9 +3203,11 @@
                 const currentPayments = usesDraft ? normalizePaymentEntries(state.editingPayments.payments || []) : normalizePaymentEntries(project?.pagamentosEfetuados || []);
                 const updatedPayments = [...currentPayments, payment];
                 const { normalizedPayments, syncedExpenses } = buildSyncedCommissionExpensePayload(project, updatedPayments);
+                const completionPayload = getAutomaticCompletionPayload(project, project.recebimentos || [], normalizedPayments);
                 await updateDoc(doc(db, 'artifacts', appId, 'public', 'data', 'projects', projectId), {
                     pagamentosEfetuados: normalizedPayments,
-                    despesas: syncedExpenses
+                    despesas: syncedExpenses,
+                    ...(completionPayload || {})
                 });
                 logAccess(state.user?.email,
                     shouldAdvance
@@ -3060,8 +3215,15 @@
                         : `Registrou pagamento de comissão de ${formatCurr(amount)} para ${sellerName}: ${getProjectDisplayName(project)}`,
                     { ...getProjectLogMeta(project), paymentType: shouldAdvance ? 'commission_advance' : 'commission_payment', amount, sellerName, payingCompany: companyName }
                 );
+                if (completionPayload) logAutomaticCompletion(project);
                 window.closeEditPaymentModal();
-                setTimeout(() => window.showModal(state.lang === 'pt' ? 'Pagamento registrado' : 'Payment recorded', shouldAdvance ? (state.lang === 'pt' ? `${formatCurr(amount)} foi registrado como adiantamento de comissão.` : `${formatCurr(amount)} was recorded as a commission advance.`) : (state.lang === 'pt' ? `${formatCurr(amount)} foi registrado como pagamento de comissão.` : `${formatCurr(amount)} was recorded as a commission payment.`), 'info'), 180);
+                setTimeout(() => window.showModal(
+                    completionPayload ? (state.lang === 'pt' ? 'Obra finalizada' : 'Project finished') : (state.lang === 'pt' ? 'Pagamento registrado' : 'Payment recorded'),
+                    completionPayload
+                        ? (state.lang === 'pt' ? `${getProjectDisplayName(project)} foi finalizada e arquivada automaticamente.` : `${getProjectDisplayName(project)} was finished and archived automatically.`)
+                        : (shouldAdvance ? (state.lang === 'pt' ? `${formatCurr(amount)} foi registrado como adiantamento de comissão.` : `${formatCurr(amount)} was recorded as a commission advance.`) : (state.lang === 'pt' ? `${formatCurr(amount)} foi registrado como pagamento de comissão.` : `${formatCurr(amount)} was recorded as a commission payment.`)),
+                    'info'
+                ), 180);
             } catch (error) {
                 console.error('Erro ao registrar comissão:', error);
                 setTimeout(() => window.showModal(window.t('error'), (state.lang === 'pt' ? 'Não foi possível registrar o pagamento: ' : 'Unable to record payment: ') + (error?.message || error), 'error'), 180);
@@ -3192,7 +3354,8 @@
                         };
                         const updatedPayments = [...normalizePaymentEntries(project.pagamentosEfetuados || []), payment];
                         const payload = buildSyncedCommissionExpensePayload(project, updatedPayments);
-                        plans.push({ project, amount, payload });
+                        const completionPayload = getAutomaticCompletionPayload(project, project.recebimentos || [], payload.normalizedPayments);
+                        plans.push({ project, amount, payload: { ...payload, ...(completionPayload || {}) }, completionPayload });
                     }
                     if (!plans.length) {
                         window.closeReportPendingPayments();
@@ -3204,12 +3367,14 @@
                         plans.slice(index, index + 450).forEach(plan => {
                             batch.update(doc(db, 'artifacts', appId, 'public', 'data', 'projects', plan.project.id), {
                                 pagamentosEfetuados: plan.payload.normalizedPayments,
-                                despesas: plan.payload.syncedExpenses
+                                despesas: plan.payload.syncedExpenses,
+                                ...(plan.completionPayload || {})
                             });
                         });
                         await batch.commit();
                     }
                     plans.forEach(plan => logAccess(state.user?.email, `Registrou pagamento em lote de comissão de ${formatCurr(plan.amount)} para ${sellerName}: ${getProjectDisplayName(plan.project)}`, { ...getProjectLogMeta(plan.project), paymentType: 'report_batch_commission_payment', amount: plan.amount, sellerName }));
+                    plans.filter(plan => plan.completionPayload).forEach(plan => logAutomaticCompletion(plan.project));
                     const appliedTotal = roundMoney(plans.reduce((sum, plan) => sum + plan.amount, 0));
                     window.closeReportPendingPayments();
                     window.safeRenderReport();
@@ -3314,7 +3479,17 @@
         if (!canManageProjectEntries(p, 'fin')) { denyProjectEntryManagement(); return; }
         state.editingRecs = {
             projectId,
-            recs: (p.recebimentos || []).map(r => ({ ...r, metodo: getReceiptEffectiveMethod(r, p), _isNew: false, _isEditing: false }))
+            recs: (p.recebimentos || []).map(r => ({
+                ...r,
+                metodo: getReceiptEffectiveMethod(r, p),
+                _isNew: false,
+                _isEditing: false,
+                _original: {
+                    data: r.data || '',
+                    valor: roundMoney(r.valor || 0),
+                    metodo: getReceiptEffectiveMethod(r, p)
+                }
+            }))
         };
         logAccess(state.user?.email, `Abriu recebimentos do cliente: ${getProjectDisplayName(p)}`, getProjectLogMeta(p));
         window.renderRecEditList();
@@ -3337,29 +3512,24 @@
             const badge = getReceiptMethodBadge(method);
             const fee = getReceiptFee(r, project);
             const net = getReceiptNet(r, project);
-            const editingExisting = !r._isNew && !!r._isEditing;
-            const locked = !r._isNew && !editingExisting;
-            const inputClass = locked ? 'opacity-60 cursor-not-allowed pointer-events-none select-none' : '';
-            const noteText = editingExisting
-                ? window.t('rec_method_admin_editing')
-                : locked
-                    ? (canManageFin ? window.t('rec_method_admin_locked') : window.t('rec_method_locked'))
-                    : (isCardMethod(method) ? window.t('rec_method_card_note') : (isPT ? 'Recebimento sem desconto de cartão na base de comissão.' : 'Receipt with no card fee deduction on commission basis.'));
+            const noteText = isCardMethod(method)
+                ? window.t('rec_method_card_note')
+                : (isPT ? 'Recebimento sem desconto de cartão na base de comissão.' : 'Receipt with no card fee deduction on commission basis.');
             return `
-                <div class="rounded-[24px] border ${locked ? 'border-white/10 bg-white/5' : 'border-emerald-500/20 bg-emerald-500/5'} p-4 shadow-inner">
+                <div class="rounded-[24px] border border-white/10 bg-white/5 p-4 shadow-inner">
                     <div class="flex flex-col xl:flex-row xl:items-start xl:justify-between gap-4">
                         <div class="grid grid-cols-1 md:grid-cols-[1fr_160px_180px] gap-4 flex-1">
-                            <label class="block ${inputClass}">
+                            <label class="block">
                                 <span class="text-[10px] font-black uppercase tracking-widest text-slate-500 mb-2 block">${isPT ? 'Data do recebimento' : 'Receipt date'}</span>
-                                <input type="date" value="${r.data || ''}" ${locked ? 'disabled' : ''} onchange="window.updateRecField(${i}, 'data', this.value)" class="modern-input relative text-sm w-full ${locked ? '!bg-black/20 !border-white/5' : ''}">
+                                <input type="date" value="${r.data || ''}" onchange="window.updateRecField(${i}, 'data', this.value)" class="modern-input relative text-sm w-full">
                             </label>
-                            <label class="block ${inputClass}">
+                            <label class="block">
                                 <span class="text-[10px] font-black uppercase tracking-widest text-slate-500 mb-2 block">${isPT ? 'Valor bruto' : 'Gross amount'}</span>
-                                <input type="number" step="0.01" value="${(r.valor ?? 0)}" ${locked ? 'disabled' : ''} onchange="window.updateRecField(${i}, 'valor', this.value)" class="modern-input text-sm w-full ${locked ? '!bg-black/20 !border-white/5' : ''}">
+                                <input type="number" step="0.01" value="${(r.valor ?? 0)}" onchange="window.updateRecField(${i}, 'valor', this.value)" class="modern-input text-sm w-full">
                             </label>
-                            <label class="block ${inputClass}">
+                            <label class="block">
                                 <span class="text-[10px] font-black uppercase tracking-widest text-slate-500 mb-2 block">${window.t('rec_method_actual')}</span>
-                                <select onchange="window.updateRecField(${i}, 'metodo', this.value)" ${locked ? 'disabled' : ''} class="modern-input text-sm w-full !pr-8 ${locked ? '!bg-black/20 !border-white/5' : ''}">
+                                <select onchange="window.updateRecField(${i}, 'metodo', this.value)" class="modern-input text-sm w-full !pr-8">
                                     <option value="Zelle" ${method==='Zelle'?'selected':''}>Zelle</option>
                                     <option value="Wire Transfer" ${method==='Wire Transfer'?'selected':''}>Wire Transfer</option>
                                     <option value="ACH" ${method==='ACH'?'selected':''}>ACH</option>
@@ -3369,12 +3539,10 @@
                                 </select>
                             </label>
                         </div>
-                        <div class="xl:w-[240px] rounded-2xl border border-white/10 bg-black/20 p-4">
+                        <div class="xl:w-[190px] rounded-2xl border border-white/10 bg-black/20 p-4">
                             <div class="flex items-center justify-between gap-3 mb-3">
                                 <span class="inline-flex items-center rounded-xl border px-3 py-1 text-[10px] font-black uppercase tracking-widest ${badge.pill}">${badge.label}</span>
                                 <div class="flex items-center gap-2">
-                                    ${canManageFin && locked ? `<button type="button" title="${window.t('rec_edit_title')}" aria-label="${window.t('rec_edit_title')}" onclick="window.enableRecEdit(${i})" class="p-3 bg-cyan-500/15 text-cyan-300 border border-cyan-500/20 rounded-xl hover:bg-cyan-500/25 transition-colors flex items-center justify-center"><i data-lucide="pencil" class="w-5 h-5"></i></button>` : ''}
-                                    ${canManageFin && editingExisting ? `<button type="button" title="${window.t('rec_cancel_edit_title')}" aria-label="${window.t('rec_cancel_edit_title')}" onclick="window.cancelRecEdit(${i})" class="p-3 bg-slate-500/15 text-slate-300 border border-white/10 rounded-xl hover:bg-slate-500/25 transition-colors flex items-center justify-center"><i data-lucide="x" class="w-5 h-5"></i></button>` : ''}
                                     ${canManageFin ? `<button type="button" title="${isPT ? 'Excluir lançamento' : 'Delete entry'}" aria-label="${isPT ? 'Excluir lançamento' : 'Delete entry'}" onclick="window.removeRecFromEdit(${i})" class="p-3 bg-red-500/20 text-red-400 rounded-xl hover:bg-red-500/30 transition-colors flex items-center justify-center"><i data-lucide="trash-2" class="w-5 h-5"></i></button>` : ''}
                                 </div>
                             </div>
@@ -3385,7 +3553,7 @@
                             </div>
                         </div>
                     </div>
-                    <div class="mt-4 rounded-2xl border ${editingExisting ? 'border-cyan-500/30 bg-cyan-500/10' : locked ? 'border-white/10 bg-black/20' : 'border-emerald-500/20 bg-emerald-500/10'} px-4 py-3 text-sm ${editingExisting ? 'text-cyan-100' : locked ? 'text-slate-400' : 'text-emerald-200'}">${noteText}</div>
+                    <div class="mt-4 rounded-2xl border border-white/10 bg-black/20 px-4 py-3 text-sm text-slate-400">${noteText}</div>
                 </div>
             `;
         }).join('');
@@ -3430,7 +3598,7 @@
             ? `<div class="rounded-2xl border border-dashed border-white/10 bg-black/20 px-5 py-8 text-center"><p class="text-sm font-black uppercase tracking-widest text-slate-400 mb-2">${window.t('no_receipts')}</p><p class="text-sm text-slate-500">${isPT ? 'Adicione a primeira parcela e escolha a forma real recebida.' : 'Add the first installment and choose the actual received method.'}</p></div>`
             : '';
 
-        container.innerHTML = emptyState + receiptsHtml + `<button onclick="window.addNewRecToEdit()" class="w-full p-4 mt-2 border-2 border-dashed border-emerald-500/30 rounded-2xl text-emerald-400 font-black uppercase tracking-widest hover:bg-emerald-500/10 transition-all">+ ${window.t('rec_add_new')}</button>`;
+        container.innerHTML = emptyState + receiptsHtml + `<button type="button" onclick="window.addNewRecToEdit()" class="mt-3 inline-flex items-center gap-2 px-4 py-3 border border-dashed border-emerald-500/40 rounded-xl text-emerald-400 font-black text-xs uppercase tracking-widest hover:bg-emerald-500/10 transition-all"><i data-lucide="plus" class="w-4 h-4"></i>${window.t('rec_add_new')}</button>`;
         try { lucide.createIcons(); } catch {}
     };
     window.enableRecEdit = (index) => {
@@ -3468,7 +3636,7 @@
         if (!canManageProjectEntries(project, 'fin')) { denyProjectEntryManagement(); return; }
         const receipt = state.editingRecs.recs[index];
         if (!receipt) return;
-        const canEdit = receipt._isNew || receipt._isEditing;
+        const canEdit = true;
         if (!canEdit) return;
         if (field === 'data') receipt.data = value;
         if (field === 'valor') receipt.valor = roundMoney(value || 0);
@@ -3495,7 +3663,7 @@
         const project = state.projects.find(x => x.id === state.editingRecs.projectId);
         if (!project) return;
         if (!canManageProjectEntries(project, 'fin')) { denyProjectEntryManagement(); return; }
-        const invalidEntry = state.editingRecs.recs.some(r => (r._isNew || r._isEditing) && (!r.data || Number(r.valor || 0) <= 0 || !getReceiptEffectiveMethod(r, project)));
+        const invalidEntry = state.editingRecs.recs.some(r => !r.data || Number(r.valor || 0) <= 0 || !getReceiptEffectiveMethod(r, project));
         if (invalidEntry) {
             window.showModal(window.t('attention'), window.t('rec_save_block'), 'error');
             return;
@@ -3522,7 +3690,11 @@
         });
         const payload = state.editingRecs.recs.map(r => ({ data: r.data || '', valor: roundMoney(r.valor || 0), metodo: getReceiptEffectiveMethod(r, project) }));
         try {
-            await updateDoc(doc(db, 'artifacts', appId, 'public', 'data', 'projects', state.editingRecs.projectId), { recebimentos: payload });
+            const completionPayload = getAutomaticCompletionPayload(project, payload, project.pagamentosEfetuados || []);
+            await updateDoc(doc(db, 'artifacts', appId, 'public', 'data', 'projects', state.editingRecs.projectId), {
+                recebimentos: payload,
+                ...(completionPayload || {})
+            });
             if (editedEntries.length) {
                 await Promise.all(editedEntries.map(change => logAccess(
                     state.user?.email,
@@ -3531,6 +3703,7 @@
                 )));
             }
             await logAccess(state.user?.email, `Salvou recebimentos do cliente: ${getProjectDisplayName(project)}`, getProjectLogMeta(project));
+            if (completionPayload) { logAutomaticCompletion(project); notifyAutomaticCompletion(project); }
             window.closeEditRecModal();
         } catch (e) {
             window.showModal(window.t('error'), 'Erro ao salvar: ' + e.message, 'error');
@@ -5685,13 +5858,46 @@ function getSellerCommissionPeriodReport(projects, startStr, endStr) {
         return {text: escapeInlineHtml(tStatus(p?.status||'—')), cls:''};
     }
     function v86ProjectDateLabel(p){ return formatProjectDate(p?.dataConclusao || p?.dataInicio || '') || '—'; }
+    function isProjectFullyFinalized(p, f = getFin(p)) {
+        return p?.status === 'Finalizado'
+            && Number(f?.totalRecebido || 0) >= Number(p?.valorTotal || 0) - 0.009
+            && Number(f?.dueNow || 0) <= 0.009
+            && p?.archived === true;
+    }
+    function v86FinishedStamp(p, f) {
+        if (!isProjectFullyFinalized(p, f)) return '';
+        return `<div class="v86-finished-stamp" aria-hidden="true"><span>${state.lang === 'pt' ? 'Finalizada' : 'Finished'}</span></div>`;
+    }
     function v86ProjectActions(p){
         const archiveIcon=p.archived?'package-open':'archive';
         return `<div class="v86-actions" onclick="event.stopPropagation()"><button title="${p.archived?'Reativar':'Arquivar'}" onclick="window.toggleArchive('${p.id}',${!!p.archived})"><i data-lucide="${archiveIcon}" class="w-4 h-4"></i></button><button title="Editar" onclick="window.editP('${p.id}')"><i data-lucide="edit-3" class="w-4 h-4"></i></button>${state.isSuperAdmin?`<button title="Excluir" onclick="window.deleteP('${p.id}')"><i data-lucide="trash-2" class="w-4 h-4 text-red-400"></i></button>`:''}</div>`;
     }
     function v86Header(p, moduleTitle=''){
-        const st=v86StatusInfo(p); const completed=p.status==='Finalizado'&&p.dataConclusao?formatProjectDate(p.dataConclusao):'';
-        return `<div class="v86-head no-print"><div class="v86-head-left"><button class="v86-back" onclick="${state.activeModule?'window.closeProjectModule()':'window.closeProjectDetails()'}"><i data-lucide="arrow-left" class="w-5 h-5"></i></button><div class="v86-head-copy"><div class="flex flex-wrap items-center gap-3"><h1 class="v86-title">${escapeInlineHtml(getProjectPrimaryTitle(p))}</h1><span class="v86-status ${st.cls}"><i data-lucide="${st.cls==='success'?'check-circle-2':st.cls==='warning'?'clock-3':'circle-dot'}" class="w-3.5 h-3.5"></i>${st.text}${completed?` · ${completed}`:''}</span></div>${moduleTitle?`<div class="v86-subtitle">${escapeInlineHtml(moduleTitle)}</div>`:''}${p.nomeProjeto?`<div class="v86-meta-line"><i data-lucide="bookmark" class="w-3.5 h-3.5 shrink-0"></i><span>${escapeInlineHtml(p.nomeProjeto)}</span></div>`:''}${p.endereco?`<div class="v86-meta-line"><i data-lucide="map-pin" class="w-3.5 h-3.5 shrink-0"></i><span>${escapeInlineHtml(p.endereco)}</span></div>`:''}</div></div><div class="flex flex-wrap justify-end gap-2">${canPrintProjectSheet()?`<button onclick="window.printReport()" class="v86-btn"><i data-lucide="printer" class="w-4 h-4"></i>${window.t('print_ficha')}</button>`:''}${state.userPerms.tab_proj||state.isSuperAdmin?`<button onclick="window.toggleArchive('${p.id}',${!!p.archived})" class="v86-btn"><i data-lucide="${p.archived?'package-open':'archive'}" class="w-4 h-4"></i>${state.lang==='pt'?(p.archived?'Reativar':'Arquivar'):(p.archived?'Restore':'Archive')}</button>`:''}${state.isSuperAdmin?`<button onclick="window.editP('${p.id}')" class="v86-btn"><i data-lucide="edit-3" class="w-4 h-4"></i>${state.lang==='pt'?'Editar':'Edit'}</button>`:''}</div></div>`;
+        const st = v86StatusInfo(p);
+        const completed = p.status === 'Finalizado' && p.dataConclusao ? formatProjectDate(p.dataConclusao) : '';
+        const financials = getFin(p);
+        const closureAwaitingSync = p.status === 'Finalizado' && !p.archived
+            && Number(financials.totalRecebido || 0) >= Number(p.valorTotal || 0) - 0.009
+            && Number(financials.dueNow || 0) <= 0.009;
+        const closureIssues = [];
+        if (p.status === 'Finalizado' && Number(financials.clientOutstanding || 0) > 0.009) {
+            closureIssues.push(state.lang === 'pt' ? `Recebimento pendente: ${formatCurr(financials.clientOutstanding)}` : `Client receipt pending: ${formatCurr(financials.clientOutstanding)}`);
+        }
+        if (p.status === 'Finalizado' && Number(financials.dueNow || 0) > 0.009) {
+            closureIssues.push(state.lang === 'pt' ? `Comissão pendente: ${formatCurr(financials.dueNow)}` : `Commission pending: ${formatCurr(financials.dueNow)}`);
+        }
+        if (p.status === 'Finalizado' && !p.archived) {
+            closureIssues.push(state.lang === 'pt' ? 'Arquivamento pendente' : 'Archiving pending');
+        }
+        const closureNotice = closureAwaitingSync
+            ? `<div class="mb-4 flex items-center gap-3 rounded-xl border border-amber-300/40 bg-amber-300/[.10] px-4 py-3 text-sm font-bold text-amber-200 animate-pulse"><i data-lucide="refresh-cw" class="w-4 h-4 shrink-0"></i>${state.lang==='pt'?'Conciliação de encerramento em andamento: a obra será arquivada automaticamente.':'Closure reconciliation in progress: the project will be archived automatically.'}</div>`
+            : (closureIssues.length
+                ? `<div class="mb-4 flex items-center gap-3 rounded-xl border border-red-300/50 bg-red-500/[.12] px-4 py-3 text-sm font-bold text-red-200 animate-pulse"><i data-lucide="triangle-alert" class="w-4 h-4 shrink-0"></i><span>${state.lang==='pt'?'Pendência de encerramento:':'Closure pending action:'} ${escapeInlineHtml(closureIssues.join(' · '))}</span></div>`
+                : '');
+        const finishAction = canFinishProject(p)
+            ? `<button onclick="window.finishProject('${p.id}')" class="v86-btn primary"><i data-lucide="circle-check-big" class="w-4 h-4"></i>${state.lang==='pt'?'Finalizar':'Finish'}</button>`
+            : '';
+        return `${closureNotice}<div class="v86-head no-print"><div class="v86-head-left"><button class="v86-back" onclick="${state.activeModule?'window.closeProjectModule()':'window.closeProjectDetails()'}"><i data-lucide="arrow-left" class="w-5 h-5"></i></button><div class="v86-head-copy"><div class="flex flex-wrap items-center gap-3"><h1 class="v86-title">${escapeInlineHtml(getProjectPrimaryTitle(p))}</h1><span class="v86-status ${st.cls}"><i data-lucide="${st.cls==='success'?'check-circle-2':st.cls==='warning'?'clock-3':'circle-dot'}" class="w-3.5 h-3.5"></i>${st.text}${completed?` · ${completed}`:''}</span></div>${moduleTitle?`<div class="v86-subtitle">${escapeInlineHtml(moduleTitle)}</div>`:''}${p.nomeProjeto?`<div class="v86-meta-line"><i data-lucide="bookmark" class="w-3.5 h-3.5 shrink-0"></i><span>${escapeInlineHtml(p.nomeProjeto)}</span></div>`:''}${p.endereco?`<div class="v86-meta-line"><i data-lucide="map-pin" class="w-3.5 h-3.5 shrink-0"></i><span>${escapeInlineHtml(p.endereco)}</span></div>`:''}</div></div><div class="flex flex-wrap justify-end gap-2">${finishAction}${canPrintProjectSheet()?`<button onclick="window.printReport()" class="v86-btn"><i data-lucide="printer" class="w-4 h-4"></i>${window.t('print_ficha')}</button>`:''}${state.userPerms.tab_proj||state.isSuperAdmin?`<button onclick="window.toggleArchive('${p.id}',${!!p.archived})" class="v86-btn"><i data-lucide="${p.archived?'package-open':'archive'}" class="w-4 h-4"></i>${state.lang==='pt'?(p.archived?'Reativar':'Arquivar'):(p.archived?'Restore':'Archive')}</button>`:''}${state.isSuperAdmin?`<button onclick="window.editP('${p.id}')" class="v86-btn"><i data-lucide="edit-3" class="w-4 h-4"></i>${state.lang==='pt'?'Editar':'Edit'}</button>`:''}</div></div>`;
     }
     function v86ReceiptRows(p){
         const rows=(p.recebimentos||[]).slice().sort((a,b)=>String(a.data||'').localeCompare(String(b.data||''))).map(r=>{const method=getReceiptEffectiveMethod(r,p);const fee=getReceiptFee(r,p);const net=getReceiptNet(r,p);return `<tr><td>${r.data?new Date(r.data+'T12:00:00').toLocaleDateString(state.lang==='pt'?'pt-BR':'en-US'):'—'}</td><td><span class="v86-status info">${escapeInlineHtml(method||'—')}</span></td><td class="money">${formatCurr(r.valor)}</td><td class="money ${fee>0?'text-red-300':''}">${formatCurr(fee)}</td><td class="money text-emerald-300">${formatCurr(net)}</td><td><span class="v86-status success">${state.lang==='pt'?'Recebido':'Received'}</span></td></tr>`}).join('');
@@ -5872,7 +6078,7 @@ function getSellerCommissionPeriodReport(projects, startStr, endStr) {
             hint.textContent = isPt ? 'Ver fonte →' : 'View source →';
             element.appendChild(hint);
         });
-        bind(root.querySelectorAll('.v86-stack:first-child > section:first-child .v86-kpi'), ['contract', 'released', 'received', 'paid'], 'v86-source-card');
+        bind(root.querySelectorAll('.v86-stack:first-child > section:first-child .v86-kpi:not(.v86-payment-action)'), ['contract', 'released', 'received', 'paid'], 'v86-source-card');
         bind(root.querySelectorAll('.v86-stack:nth-child(2) > section:first-child .v86-metric'), ['entries', 'category', 'largest', 'budget'], 'v86-source-metric');
         root.dataset.sourceCardsDecorated = 'true';
     }
@@ -5880,7 +6086,15 @@ function getSellerCommissionPeriodReport(projects, startStr, endStr) {
     function v86RenderOverview(p,f){
         const prog=v86ProjectProgress(p); const expenseCount=(p.despesas||[]).length; const top=Object.entries(f.gastosPorCategoria||{}).sort((a,b)=>b[1]-a[1])[0]||['—',0]; const topCat=top[1]>0?top[0]:(state.lang==='pt'?'Sem despesas':'No expenses'); const max=expenseCount?Math.max(...(p.despesas||[]).map(e=>Number(e.valor)||0)):0;
         const marginLow=f.margemLucro<45; const budgetLabel=Number(f.orcamento)>0?formatCurr(f.orcamento):(state.lang==='pt'?'Não definido':'Not set');
-        return `<div class="v86-page">${v86Header(p,state.lang==='pt'?'Visão geral do projeto':'Project Overview')}<div class="v86-grid-overview"><div class="v86-stack"><section class="v86-section v86-section-pad"><div class="v86-section-title"><div><h2>${state.lang==='pt'?'Status da obra':'Project status'}</h2><p>${state.lang==='pt'?'Resumo operacional e financeiro':'Operational and financial summary'}</p></div><span class="v86-status ${v86StatusInfo(p).cls}">${v86StatusInfo(p).text}</span></div><div class="grid grid-cols-2 gap-3"><div class="v86-kpi"><span>${state.lang==='pt'?'Valor contrato bruto':'Gross contract value'}</span><strong>${formatCurr(p.valorTotal)}</strong></div><div class="v86-kpi"><span>${state.lang==='pt'?'Comissão liberada':'Released commission'}</span><strong class="green">${formatCurr(f.commLiberada)}</strong></div><div class="v86-kpi"><span>${state.lang==='pt'?'Total recebido':'Total received'}</span><strong class="cyan">${formatCurr(f.totalRecebido)}</strong></div><div class="v86-kpi"><span>${state.lang==='pt'?'Pago ao vendedor':'Paid to seller'}</span><strong class="amber">${formatCurr(f.totalPaid)}</strong></div></div></section><section class="v86-section v86-section-pad"><div class="v86-section-title"><div><h2>${state.lang==='pt'?'Progresso do Projeto':'Project Progress'}</h2><p>${state.lang==='pt'?'Cronograma registrado na obra':'Project schedule'}</p></div><span class="v86-status ${prog>=100?'success':''}">${prog}%</span></div><div class="v86-progress"><span style="width:${prog}%"></span></div><div class="grid grid-cols-3 gap-3 mt-4"><div><span class="v86-label">${state.lang==='pt'?'Início':'Start'}</span><strong class="v86-value text-sm">${formatProjectDate(p.dataInicio)||'—'}</strong></div><div class="text-center"><span class="v86-label">${state.lang==='pt'?'Prazo':'Due'}</span><strong class="v86-value text-sm">${formatProjectDate(p.dataEntrega)||'—'}</strong></div><div class="text-right"><span class="v86-label">${state.lang==='pt'?'Conclusão':'Completion'}</span><strong class="v86-value text-sm">${formatProjectDate(p.dataConclusao)||'—'}</strong></div></div></section><section class="v86-section v86-section-pad"><div class="v86-section-title"><div><h2>${state.lang==='pt'?'Desempenho financeiro':'Financial Performance'}</h2><p>${state.lang==='pt'?'Margem, lucro e despesas':'Margin, profit and expenses'}</p></div></div><div class="flex flex-col md:flex-row items-center gap-6"><div class="v86-ring" style="--pct:${Math.max(0,Math.min(100,f.margemLucro))};--ring:${marginLow?'var(--v86-red)':'var(--v86-amber)'}"><div><strong>${f.margemLucro.toFixed(1)}%</strong><span>${state.lang==='pt'?'Margem':'Margin'}</span></div></div><div class="grid grid-cols-2 gap-4 flex-1 w-full"><div><span class="v86-label">${window.t('real_profit')}</span><strong class="v86-value cyan">${formatCurr(f.lucroBruto)}</strong></div><div><span class="v86-label">${window.t('total_expenses')}</span><strong class="v86-value red">${formatCurr(f.totalDespesas)}</strong></div><div><span class="v86-label">${window.t('avg_expense')}</span><strong class="v86-value">${expenseCount?formatCurr(f.totalDespesas/expenseCount):'—'}</strong></div><div><span class="v86-label">${window.t('planned_profit')}</span><strong class="v86-value">${Number(f.orcamento)>0?formatCurr(Number(p.valorTotal)-Number(f.orcamento)):'—'}</strong></div></div></div></section></div><div class="v86-stack"><section class="v86-section v86-section-pad"><div class="v86-section-title"><div><h2>${state.lang==='pt'?'Resumo rápido':'Quick Summary'}</h2><p>${state.lang==='pt'?'Indicadores que merecem atenção':'Indicators at a glance'}</p></div><div class="v86-icon cyan"><i data-lucide="gauge" class="w-5 h-5"></i></div></div><div class="v86-metrics" style="grid-template-columns:repeat(2,minmax(0,1fr))"><div class="v86-metric"><span class="v86-label">${window.t('expense_entries')}</span><strong class="v86-value">${expenseCount}</strong></div><div class="v86-metric"><span class="v86-label">${window.t('top_category')}</span><strong class="v86-value cyan">${escapeInlineHtml(topCat)}</strong></div><div class="v86-metric"><span class="v86-label">${window.t('largest_expense')}</span><strong class="v86-value">${max?formatCurr(max):'—'}</strong></div><div class="v86-metric"><span class="v86-label">${state.lang==='pt'?'Orçamento':'Budget'}</span><strong class="v86-value">${budgetLabel}</strong></div></div></section><section class="v86-section v86-section-pad"><div class="v86-section-title"><div><h2>${state.lang==='pt'?'Referência da obra':'Project Reference'}</h2></div></div><div class="space-y-4"><div><span class="v86-label">${state.lang==='pt'?'Vendedor':'Seller'}</span><strong class="v86-value text-sm">${escapeInlineHtml(getUserDisplayName(p.vendedor,'—'))}</strong></div><div><span class="v86-label">Invoice / Proposta</span><strong class="v86-value text-sm">${escapeInlineHtml(p.numeroInvoice||'—')} / ${escapeInlineHtml(p.numeroProposta||'—')}</strong></div><div><span class="v86-label">${state.lang==='pt'?'Empresa pagadora':'Paying company'}</span><strong class="v86-value text-sm">${escapeInlineHtml(getCompanyDisplayName(p.empresa))}</strong></div><div><span class="v86-label">${state.lang==='pt'?'Comissão':'Commission'}</span><strong class="v86-value text-sm">${Number(p.percComissao||0)}%</strong></div></div></section><section class="v86-section v86-section-pad no-print"><div class="v86-section-title"><div><h2>${state.lang==='pt'?'Ações rápidas':'Quick Actions'}</h2></div></div><div class="v86-quick-actions"><button class="v86-action-card" onclick="window.openProjectModule('commissions')"><div class="v86-icon green"><i data-lucide="wallet-cards" class="w-5 h-5"></i></div><span><strong>${window.t('comm_finances')}</strong><small>${state.lang==='pt'?'Recebimentos e pagamentos':'Receipts and payments'}</small></span></button>${state.userPerms.costs?`<button class="v86-action-card" onclick="window.openProjectModule('costs')"><div class="v86-icon cyan"><i data-lucide="calculator" class="w-5 h-5"></i></div><span><strong>${window.t('cost_management')}</strong><small>${state.lang==='pt'?'Budget, despesas e margem':'Budget, expenses and margin'}</small></span></button>`:''}</div></section></div></div></div>`;
+        const commissionDue = roundMoney(getPaymentDraftSummary(p.id, p.pagamentosEfetuados || [])?.remainingToPay || 0);
+        const canPayCommission = commissionDue > 0.009 && canManageProjectEntries(p, 'fin');
+        const pendingClientReceipt = p.status === 'Finalizado' && Number(f.clientOutstanding || 0) > 0.009;
+        const commissionCard = pendingClientReceipt
+            ? `<button type="button" onclick="window.openKpiFinancialEditor('${p.id}','receipts')" class="v86-kpi v86-payment-action balance-due-pulse text-left hover:bg-red-500/10 transition-colors"><span>${state.lang==='pt'?'Recebimento pendente':'Client receipt pending'}</span><strong class="red">${formatCurr(f.clientOutstanding)}</strong><small class="mt-2 block text-[10px] font-black uppercase tracking-widest text-red-300">${state.lang==='pt'?'Clique para registrar':'Click to record'}</small></button>`
+            : canPayCommission
+            ? `<button type="button" onclick="window.confirmCommissionPayment('${p.id}','due')" class="v86-kpi v86-payment-action balance-due-pulse text-left hover:bg-amber-500/10 transition-colors"><span>${state.lang==='pt'?'Comissão pendente':'Commission pending'}</span><strong class="amber">${formatCurr(commissionDue)}</strong><small class="mt-2 block text-[10px] font-black uppercase tracking-widest text-amber-300">${state.lang==='pt'?'Clique para pagar':'Click to pay'}</small></button>`
+            : `<div class="v86-kpi"><span>${state.lang==='pt'?'Pago ao vendedor':'Paid to seller'}</span><strong class="amber">${formatCurr(f.totalPaid)}</strong></div>`;
+        return `<div class="v86-page">${v86FinishedStamp(p,f)}${v86Header(p,state.lang==='pt'?'Visão geral do projeto':'Project Overview')}<div class="v86-grid-overview"><div class="v86-stack"><section class="v86-section v86-section-pad"><div class="v86-section-title"><div><h2>${state.lang==='pt'?'Status da obra':'Project status'}</h2><p>${state.lang==='pt'?'Resumo operacional e financeiro':'Operational and financial summary'}</p></div><span class="v86-status ${v86StatusInfo(p).cls}">${v86StatusInfo(p).text}</span></div><div class="grid grid-cols-2 gap-3"><div class="v86-kpi"><span>${state.lang==='pt'?'Valor contrato bruto':'Gross contract value'}</span><strong>${formatCurr(p.valorTotal)}</strong></div><div class="v86-kpi"><span>${state.lang==='pt'?'Comissão liberada':'Released commission'}</span><strong class="green">${formatCurr(f.commLiberada)}</strong></div><div class="v86-kpi"><span>${state.lang==='pt'?'Total recebido':'Total received'}</span><strong class="cyan">${formatCurr(f.totalRecebido)}</strong></div>${commissionCard}</div></section><section class="v86-section v86-section-pad"><div class="v86-section-title"><div><h2>${state.lang==='pt'?'Progresso do Projeto':'Project Progress'}</h2><p>${state.lang==='pt'?'Cronograma registrado na obra':'Project schedule'}</p></div><span class="v86-status ${prog>=100?'success':''}">${prog}%</span></div><div class="v86-progress"><span style="width:${prog}%"></span></div><div class="grid grid-cols-3 gap-3 mt-4"><div><span class="v86-label">${state.lang==='pt'?'Início':'Start'}</span><strong class="v86-value text-sm">${formatProjectDate(p.dataInicio)||'—'}</strong></div><div class="text-center"><span class="v86-label">${state.lang==='pt'?'Prazo':'Due'}</span><strong class="v86-value text-sm">${formatProjectDate(p.dataEntrega)||'—'}</strong></div><div class="text-right"><span class="v86-label">${state.lang==='pt'?'Conclusão':'Completion'}</span><strong class="v86-value text-sm">${formatProjectDate(p.dataConclusao)||'—'}</strong></div></div></section><section class="v86-section v86-section-pad"><div class="v86-section-title"><div><h2>${state.lang==='pt'?'Desempenho financeiro':'Financial Performance'}</h2><p>${state.lang==='pt'?'Margem, lucro e despesas':'Margin, profit and expenses'}</p></div></div><div class="flex flex-col md:flex-row items-center gap-6"><div class="v86-ring" style="--pct:${Math.max(0,Math.min(100,f.margemLucro))};--ring:${marginLow?'var(--v86-red)':'var(--v86-amber)'}"><div><strong>${f.margemLucro.toFixed(1)}%</strong><span>${state.lang==='pt'?'Margem':'Margin'}</span></div></div><div class="grid grid-cols-2 gap-4 flex-1 w-full"><div><span class="v86-label">${window.t('real_profit')}</span><strong class="v86-value cyan">${formatCurr(f.lucroBruto)}</strong></div><div><span class="v86-label">${window.t('total_expenses')}</span><strong class="v86-value red">${formatCurr(f.totalDespesas)}</strong></div><div><span class="v86-label">${window.t('avg_expense')}</span><strong class="v86-value">${expenseCount?formatCurr(f.totalDespesas/expenseCount):'—'}</strong></div><div><span class="v86-label">${window.t('planned_profit')}</span><strong class="v86-value">${Number(f.orcamento)>0?formatCurr(Number(p.valorTotal)-Number(f.orcamento)):'—'}</strong></div></div></div></section></div><div class="v86-stack"><section class="v86-section v86-section-pad"><div class="v86-section-title"><div><h2>${state.lang==='pt'?'Resumo rápido':'Quick Summary'}</h2><p>${state.lang==='pt'?'Indicadores que merecem atenção':'Indicators at a glance'}</p></div><div class="v86-icon cyan"><i data-lucide="gauge" class="w-5 h-5"></i></div></div><div class="v86-metrics" style="grid-template-columns:repeat(2,minmax(0,1fr))"><div class="v86-metric"><span class="v86-label">${window.t('expense_entries')}</span><strong class="v86-value">${expenseCount}</strong></div><div class="v86-metric"><span class="v86-label">${window.t('top_category')}</span><strong class="v86-value cyan">${escapeInlineHtml(topCat)}</strong></div><div class="v86-metric"><span class="v86-label">${window.t('largest_expense')}</span><strong class="v86-value">${max?formatCurr(max):'—'}</strong></div><div><span class="v86-label">${state.lang==='pt'?'Orçamento':'Budget'}</span><strong class="v86-value">${budgetLabel}</strong></div></div></section><section class="v86-section v86-section-pad"><div class="v86-section-title"><div><h2>${state.lang==='pt'?'Referência da obra':'Project Reference'}</h2></div></div><div class="space-y-4"><div><span class="v86-label">${state.lang==='pt'?'Vendedor':'Seller'}</span><strong class="v86-value text-sm">${escapeInlineHtml(getUserDisplayName(p.vendedor,'—'))}</strong></div><div><span class="v86-label">Invoice / Proposta</span><strong class="v86-value text-sm">${escapeInlineHtml(p.numeroInvoice||'—')} / ${escapeInlineHtml(p.numeroProposta||'—')}</strong></div><div><span class="v86-label">${state.lang==='pt'?'Empresa pagadora':'Paying company'}</span><strong class="v86-value text-sm">${escapeInlineHtml(getCompanyDisplayName(p.empresa))}</strong></div><div><span class="v86-label">${state.lang==='pt'?'Comissão':'Commission'}</span><strong class="v86-value text-sm">${Number(p.percComissao||0)}%</strong></div></div></section><section class="v86-section v86-section-pad no-print"><div class="v86-section-title"><div><h2>${state.lang==='pt'?'Ações rápidas':'Quick Actions'}</h2></div></div><div class="v86-quick-actions"><button class="v86-action-card" onclick="window.openProjectModule('commissions')"><div class="v86-icon green"><i data-lucide="wallet-cards" class="w-5 h-5"></i></div><span><strong>${window.t('comm_finances')}</strong><small>${state.lang==='pt'?'Recebimentos e pagamentos':'Receipts and payments'}</small></span></button>${state.userPerms.costs?`<button class="v86-action-card" onclick="window.openProjectModule('costs')"><div class="v86-icon cyan"><i data-lucide="calculator" class="w-5 h-5"></i></div><span><strong>${window.t('cost_management')}</strong><small>${state.lang==='pt'?'Budget, expenses and margin':'Budget, expenses and margin'}</small></span></button>`:''}</div></section></div></div></div>`;
     }
     window.renderProjects = () => {
         const grid=document.getElementById('projects-grid'), filters=document.getElementById('projects-filters'); if(!grid||!state.user)return;
@@ -6085,11 +6299,14 @@ function getSellerCommissionPeriodReport(projects, startStr, endStr) {
             const projectStatus = completionChecklist.isPending
                 ? (state.lang === 'pt' ? 'Finalizada com pendência' : 'Completed with pending actions')
                 : tStatus(row.project.status || '—');
+            const closureIssueDetail = completionChecklist.isPending
+                ? completionChecklist.issues.map(issue => escapeInlineHtml(issue.label)).join(' · ')
+                : '';
             const sellerCell = document.createElement('td');
             sellerCell.className = 'wrap';
             sellerCell.textContent = getUserDisplayName(row.project.vendedor, '—');
             tableRow.cells[1]?.after(sellerCell);
-            tableRow.cells[3].innerHTML = `<div class="flex flex-col items-start gap-1"><span class="v86-status ${projectState.cls}">${projectState.text}</span><small class="text-[9px] ${completionChecklist.isPending ? 'text-amber-300 font-bold' : 'text-slate-500'}">${escapeInlineHtml(projectStatus)}</small></div>`;
+            tableRow.cells[3].innerHTML = `<div class="flex flex-col items-start gap-1"><span class="v86-status ${projectState.cls}">${projectState.text}</span><small class="text-[9px] ${completionChecklist.isPending ? 'text-amber-300 font-bold' : 'text-slate-500'}">${escapeInlineHtml(projectStatus)}</small>${closureIssueDetail ? `<small class="text-[9px] font-bold text-red-300">${closureIssueDetail}</small>` : ''}</div>`;
             const commissionCell = document.createElement('td');
             commissionCell.innerHTML = `<span class="v86-status ${commissionState.cls}">${commissionState.text}</span>`;
             tableRow.cells[4]?.before(commissionCell);
@@ -6198,6 +6415,7 @@ function getSellerCommissionPeriodReport(projects, startStr, endStr) {
         const projectsRef = collection(db, 'artifacts', appId, 'public', 'data', 'projects');
         onSnapshot(projectsRef, snap => {
             state.projects = snap.docs.map(d => ({ id: d.id, ...d.data() }));
+            state.projects.forEach(project => { void reconcileCompletedProjectClosure(project); });
             window.renderProjectSellerFilter();
             window.renderProjects(); window.safeRenderReport();
         }, err => console.error(err));
