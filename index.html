@@ -3932,10 +3932,24 @@
         const sellerName = state.reportSellerFilter === 'all'
             ? (isPt ? 'Todos os vendedores' : 'All sellers')
             : getUserDisplayName(state.reportSellerFilter, state.reportSellerFilter);
+        const generatedDate = new Date();
+        const monthAbbreviations = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+        const compactDate = `${monthAbbreviations[generatedDate.getMonth()]}-${String(generatedDate.getDate()).padStart(2, '0')}-${String(generatedDate.getFullYear()).slice(-2)}`;
+        const companyFileLabel = state.company === 'Smart Home'
+            ? 'D2Smart'
+            : state.company === 'HVAC'
+                ? 'D2HVAC'
+                : 'D2Group';
+        const sellerFileLabel = state.reportSellerFilter === 'all'
+            ? 'Todos'
+            : String(sellerName || 'Vendedor').normalize('NFD').replace(/[\u0300-\u036f]/g, '').trim().slice(0, 3);
+        const suggestedPrintTitle = `${companyFileLabel}_Rel_${sellerFileLabel}_${compactDate}`
+            .replace(/[^a-zA-Z0-9_-]/g, '')
+            .replace(/_+/g, '_');
         const period = `${formatProjectDate(state.reportPeriodStart)} → ${formatProjectDate(state.reportPeriodEnd)}`;
         const generatedAt = new Intl.DateTimeFormat(isPt ? 'pt-BR' : 'en-US', {
             dateStyle: 'medium', timeStyle: 'short'
-        }).format(new Date());
+        }).format(generatedDate);
         const existingHost = document.getElementById('report-print-host');
         if (existingHost) return;
 
@@ -3948,10 +3962,13 @@
         host.innerHTML = `${header}${reportPage.outerHTML}${footer}`;
         document.body.appendChild(host);
         document.body.classList.add('report-print-document', 'report-print-active');
+        const originalDocumentTitle = document.title;
+        document.title = suggestedPrintTitle;
 
         const cleanup = () => {
             host.remove();
             document.body.classList.remove('report-print-document', 'report-print-active');
+            document.title = originalDocumentTitle;
         };
         window.addEventListener('afterprint', cleanup, { once: true });
 
