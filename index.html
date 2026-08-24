@@ -4193,7 +4193,7 @@
     window.handleLogout = () => signOut(auth).then(() => location.reload()).catch(console.error);
 
     // Navigation bridge. Contractors remains an independently deployed application.
-    const CONTRACTORS_APP_URL = 'https://d2-hvac-w9.web.app/';
+    const CONTRACTORS_APP_URL = 'https://d2group.github.io/Contractors/';
     window.openContractorsApp = () => {
         const destination = new URL(CONTRACTORS_APP_URL);
         const returnTo = new URL(window.location.href);
