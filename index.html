@@ -808,6 +808,8 @@
 .v86-finished-stamp{position:absolute;inset:17% 8%;z-index:4;display:flex;align-items:center;justify-content:center;pointer-events:none;overflow:hidden}
 .v86-finished-stamp span{display:inline-block;border:5px solid rgba(248,113,113,.7);border-radius:12px;padding:.24em .52em;color:rgba(248,113,113,.7);font-size:clamp(2.35rem,6vw,5.8rem);font-weight:950;line-height:1;letter-spacing:.14em;text-transform:uppercase;transform:rotate(-14deg);background:rgba(127,29,29,.08);box-shadow:inset 0 0 0 3px rgba(248,113,113,.15)}
 .app-body-light .v86-finished-stamp span{border-color:rgba(185,28,28,.58);color:rgba(185,28,28,.58);background:rgba(254,226,226,.20)}
+.v86-finished-mini-stamp{display:inline-flex;align-items:center;border:2px solid rgba(248,113,113,.78);border-radius:5px;padding:3px 6px;color:rgba(248,113,113,.92);background:rgba(127,29,29,.10);font-size:8px;font-weight:950;line-height:1;letter-spacing:.08em;text-transform:uppercase;transform:rotate(-4deg)}
+.app-body-light .v86-finished-mini-stamp{border-color:rgba(185,28,28,.75);color:rgba(185,28,28,.92);background:rgba(254,226,226,.55)}
 @media(max-width:600px){.v86-finished-stamp{inset:14% 2%}.v86-finished-stamp span{border-width:3px;font-size:clamp(2rem,12vw,3.8rem)}}
 .v86-head{display:flex;align-items:flex-start;justify-content:space-between;gap:22px;margin-bottom:22px;min-width:0}
 .v86-head-left{display:flex;align-items:flex-start;gap:14px;min-width:0}.v86-head-copy{min-width:0}
@@ -6089,6 +6091,14 @@ function getSellerCommissionPeriodReport(projects, startStr, endStr) {
         });
         bind(root.querySelectorAll('.v86-stack:first-child > section:first-child .v86-kpi:not(.v86-payment-action)'), ['contract', 'released', 'received', 'paid'], 'v86-source-card');
         bind(root.querySelectorAll('.v86-stack:nth-child(2) > section:first-child .v86-metric'), ['entries', 'category', 'largest', 'budget'], 'v86-source-metric');
+        const referenceTitle = [...root.querySelectorAll('.v86-section-title h2')].find(title => ['Referência da obra', 'Project Reference'].includes(title.textContent.trim()));
+        const referenceDetails = referenceTitle?.closest('.v86-section')?.querySelector('.space-y-4');
+        if (referenceDetails && !referenceDetails.querySelector('[data-project-client-reference]')) {
+            const clientReference = document.createElement('div');
+            clientReference.dataset.projectClientReference = 'true';
+            clientReference.innerHTML = `<span class="v86-label">${isPt ? 'Cliente' : 'Client'}</span><strong class="v86-value text-sm">${escapeInlineHtml(getProjectPrimaryTitle(project))}</strong>${project.nomeProjeto ? `<small class="mt-1 block text-xs text-slate-400">${escapeInlineHtml(project.nomeProjeto)}</small>` : ''}`;
+            referenceDetails.prepend(clientReference);
+        }
         root.dataset.sourceCardsDecorated = 'true';
     }
 
@@ -6359,7 +6369,11 @@ function getSellerCommissionPeriodReport(projects, startStr, endStr) {
             sellerCell.className = 'wrap';
             sellerCell.textContent = getUserDisplayName(row.project.vendedor, '—');
             tableRow.cells[1]?.after(sellerCell);
-            tableRow.cells[3].innerHTML = `<div class="flex flex-col items-start gap-1"><span class="v86-status ${projectState.cls}">${projectState.text}</span><small class="text-[9px] ${completionChecklist.isPending ? 'text-amber-300 font-bold' : 'text-slate-500'}">${escapeInlineHtml(projectStatus)}</small>${closureIssueDetail ? `<small class="text-[9px] font-bold text-red-300">${closureIssueDetail}</small>` : ''}</div>`;
+            const completedStamp = completionChecklist.isComplete
+                ? `<span class="v86-finished-mini-stamp">${state.lang === 'pt' ? 'Finalizado' : 'Finished'}</span>`
+                : '';
+            const statusDetail = completionChecklist.isComplete ? '' : `<small class="text-[9px] ${completionChecklist.isPending ? 'text-amber-300 font-bold' : 'text-slate-500'}">${escapeInlineHtml(projectStatus)}</small>`;
+            tableRow.cells[3].innerHTML = `<div class="flex flex-wrap items-center gap-1.5"><span class="v86-status ${projectState.cls}">${projectState.text}</span>${completedStamp}</div>${statusDetail}${closureIssueDetail ? `<small class="block text-[9px] font-bold text-red-300 mt-1">${closureIssueDetail}</small>` : ''}`;
             const commissionCell = document.createElement('td');
             commissionCell.innerHTML = `<span class="v86-status ${commissionState.cls}">${commissionState.text}</span>`;
             tableRow.cells[4]?.before(commissionCell);
