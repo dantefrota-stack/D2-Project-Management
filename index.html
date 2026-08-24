@@ -6099,6 +6099,21 @@ function getSellerCommissionPeriodReport(projects, startStr, endStr) {
             clientReference.innerHTML = `<span class="v86-label">${isPt ? 'Cliente' : 'Client'}</span><strong class="v86-value text-sm">${escapeInlineHtml(getProjectPrimaryTitle(project))}</strong>${project.nomeProjeto ? `<small class="mt-1 block text-xs text-slate-400">${escapeInlineHtml(project.nomeProjeto)}</small>` : ''}`;
             referenceDetails.prepend(clientReference);
         }
+        const financials = getFin(project);
+        const dueDate = toDateOnly(project.dataEntrega);
+        const today = new Date();
+        today.setHours(0, 0, 0, 0);
+        const isOverdue = Number(financials.clientOutstanding || 0) > 0.009 && dueDate && dueDate < today;
+        if (isOverdue && !root.parentElement?.querySelector('[data-client-receipt-alert]')) {
+            const overdueDays = Math.floor((today - dueDate) / 86400000);
+            const alert = document.createElement('button');
+            alert.type = 'button';
+            alert.dataset.clientReceiptAlert = 'true';
+            alert.className = 'v86-closure-alert mb-4 flex w-full items-center gap-3 rounded-xl border border-red-300/50 bg-red-500/[.12] px-4 py-3 text-left text-sm font-bold text-red-200 animate-pulse';
+            alert.innerHTML = `<i data-lucide="triangle-alert" class="w-4 h-4 shrink-0"></i><span>${isPt ? `Recebimento em atraso: ${formatCurr(financials.clientOutstanding)} pendente há ${overdueDays} dia${overdueDays === 1 ? '' : 's'}. Clique para registrar.` : `Overdue client receipt: ${formatCurr(financials.clientOutstanding)} pending for ${overdueDays} day${overdueDays === 1 ? '' : 's'}. Click to record.`}</span>`;
+            alert.addEventListener('click', () => window.openKpiFinancialEditor(project.id, 'receipts'));
+            root.before(alert);
+        }
         root.dataset.sourceCardsDecorated = 'true';
     }
 
@@ -6107,9 +6122,14 @@ function getSellerCommissionPeriodReport(projects, startStr, endStr) {
         const marginLow=f.margemLucro<45; const budgetLabel=Number(f.orcamento)>0?formatCurr(f.orcamento):(state.lang==='pt'?'Não definido':'Not set');
         const commissionDue = roundMoney(getPaymentDraftSummary(p.id, p.pagamentosEfetuados || [])?.remainingToPay || 0);
         const canPayCommission = commissionDue > 0.009 && canManageProjectEntries(p, 'fin');
-        const pendingClientReceipt = p.status === 'Finalizado' && Number(f.clientOutstanding || 0) > 0.009;
+        const pendingClientReceipt = Number(f.clientOutstanding || 0) > 0.009;
+        const projectDueDate = toDateOnly(p.dataEntrega);
+        const today = new Date();
+        today.setHours(0, 0, 0, 0);
+        const clientReceiptOverdue = pendingClientReceipt && projectDueDate && projectDueDate < today;
+        const overdueDays = clientReceiptOverdue ? Math.floor((today - projectDueDate) / 86400000) : 0;
         const commissionCard = pendingClientReceipt
-            ? `<button type="button" onclick="window.openKpiFinancialEditor('${p.id}','receipts')" class="v86-kpi v86-payment-action balance-due-pulse text-left hover:bg-red-500/10 transition-colors"><span>${state.lang==='pt'?'Recebimento pendente':'Client receipt pending'}</span><strong class="red">${formatCurr(f.clientOutstanding)}</strong><small class="mt-2 block text-[10px] font-black uppercase tracking-widest text-red-300">${state.lang==='pt'?'Clique para registrar':'Click to record'}</small></button>`
+            ? `<button type="button" onclick="window.openKpiFinancialEditor('${p.id}','receipts')" class="v86-kpi v86-payment-action balance-due-pulse text-left hover:bg-red-500/10 transition-colors"><span>${clientReceiptOverdue ? (state.lang==='pt'?'Recebimento em atraso':'Overdue client receipt') : (state.lang==='pt'?'Recebimento pendente':'Client receipt pending')}</span><strong class="red">${formatCurr(f.clientOutstanding)}</strong><small class="mt-2 block text-[10px] font-black uppercase tracking-widest text-red-300">${clientReceiptOverdue ? (state.lang==='pt' ? `${overdueDays} dia${overdueDays === 1 ? '' : 's'} em atraso · Clique para registrar` : `${overdueDays} day${overdueDays === 1 ? '' : 's'} overdue · Click to record`) : (state.lang==='pt'?'Clique para registrar':'Click to record')}</small></button>`
             : canPayCommission
             ? `<button type="button" onclick="window.confirmCommissionPayment('${p.id}','due')" class="v86-kpi v86-payment-action balance-due-pulse text-left hover:bg-amber-500/10 transition-colors"><span>${state.lang==='pt'?'Comissão pendente':'Commission pending'}</span><strong class="amber">${formatCurr(commissionDue)}</strong><small class="mt-2 block text-[10px] font-black uppercase tracking-widest text-amber-300">${state.lang==='pt'?'Clique para pagar':'Click to pay'}</small></button>`
             : `<div class="v86-kpi"><span>${state.lang==='pt'?'Pago ao vendedor':'Paid to seller'}</span><strong class="amber">${formatCurr(f.totalPaid)}</strong></div>`;
