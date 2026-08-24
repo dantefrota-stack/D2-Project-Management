@@ -1116,6 +1116,7 @@
                 <button onclick="window.showView('projects')" class="tab-btn tab-active hidden" id="tab-projects"><i data-lucide="layout-grid" class="w-4 h-4"></i><span data-i18n="nav_proj">Projetos</span></button>
                 <button onclick="window.cancelEdit(); window.showView('new')" class="tab-btn editor-only hidden" id="tab-new"><i data-lucide="circle-plus" class="w-4 h-4"></i><span data-i18n="nav_new">Nova Obra</span></button>
                 <button onclick="window.showView('reports')" class="tab-btn hidden" id="tab-reports"><i data-lucide="file-bar-chart" class="w-4 h-4"></i><span data-i18n="nav_rep">Relatórios</span></button>
+                <button onclick="window.openContractorsApp()" class="tab-btn hidden" id="tab-contractors"><i data-lucide="hard-hat" class="w-4 h-4"></i><span>Contractors</span></button>
                 <button onclick="window.showView('users')" class="tab-btn hidden" id="tab-users"><i data-lucide="users" class="w-4 h-4"></i><span data-i18n="nav_users">Equipe</span></button>
                 <button onclick="window.showView('logs')" class="tab-btn hidden" id="tab-logs"><i data-lucide="history" class="w-4 h-4"></i><span data-i18n="nav_logs">Logs</span></button>
             </nav>
@@ -1830,10 +1831,12 @@
         const tabProj = document.getElementById('tab-projects');
         const tabNew = document.getElementById('tab-new');
         const tabRep = document.getElementById('tab-reports');
+        const tabContractors = document.getElementById('tab-contractors');
         
         if(p.tab_proj) tabProj.classList.remove('hidden'); else tabProj.classList.add('hidden');
         if(p.tab_new) tabNew.classList.remove('hidden'); else tabNew.classList.add('hidden');
         if(p.tab_rep) tabRep.classList.remove('hidden'); else tabRep.classList.add('hidden');
+        if (tabContractors) tabContractors.classList.toggle('hidden', !(state.isSuperAdmin || p.smart || p.hvac));
 
         const renderCompanyPills = (containerId) => {
             const c = document.getElementById(containerId);
@@ -4188,6 +4191,19 @@
     };
 
     window.handleLogout = () => signOut(auth).then(() => location.reload()).catch(console.error);
+
+    // Navigation bridge. Contractors remains an independently deployed application.
+    const CONTRACTORS_APP_URL = 'https://d2-hvac-w9.web.app/';
+    window.openContractorsApp = () => {
+        const destination = new URL(CONTRACTORS_APP_URL);
+        const returnTo = new URL(window.location.href);
+        returnTo.search = '';
+        returnTo.hash = '';
+        destination.searchParams.set('returnTo', returnTo.toString());
+        if (state.company === 'HVAC') destination.searchParams.set('company', 'hvac');
+        if (state.company === 'Smart Home') destination.searchParams.set('company', 'smart');
+        window.location.assign(destination.toString());
+    };
 
     function getFin(p) {
         const percComissao = Number(p?.percComissao || 0) / 100;
