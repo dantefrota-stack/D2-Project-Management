@@ -71,7 +71,7 @@ function parseMultipart(req) {
 }
 
 exports.contractorDocuments = onRequest({
-  region: 'us-central1',
+  region: 'us-east1',
   cors: true,
   invoker: 'public',
   timeoutSeconds: 60,
