@@ -4,7 +4,7 @@ const admin = require('firebase-admin');
 const Busboy = require('busboy');
 const crypto = require('crypto');
 
-admin.initializeApp();
+admin.initializeApp({ storageBucket: 'd2-project-management.firebasestorage.app' });
 
 const db = admin.firestore();
 const bucket = admin.storage().bucket();
