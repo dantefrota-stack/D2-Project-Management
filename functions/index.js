@@ -37,13 +37,19 @@ async function findRequest(token) {
   return { ref: snapshot.docs[0].ref, id: snapshot.docs[0].id, ...snapshot.docs[0].data() };
 }
 
-function publicRequest(request) {
-  return {
+function cleanText(value, maxLength = 180) {
+  return String(value || '').trim().replace(/[\u0000-\u001f\u007f]/g, '').slice(0, maxLength);
+}
+
+async function publicRequest(request) {
+  const result = {
     contractorName: request.contractorName,
     company: request.company,
     projectName: request.projectName,
     dueDate: request.dueDate || '',
     note: request.note || '',
+    requestType: request.requestType || 'documents',
+    registrationStatus: request.registrationStatus || '',
     documents: (request.documents || []).map(document => ({
       id: document.id,
       label: document.label,
@@ -51,6 +57,49 @@ function publicRequest(request) {
       originalName: document.originalName || ''
     }))
   };
+  if (result.requestType === 'registration' && request.contractorId) {
+    const snapshot = await db.doc(`artifacts/d2-Project-Management/public/data/contractors/${request.contractorId}`).get();
+    const contractor = snapshot.data() || {};
+    result.registration = {
+      businessName: contractor.registrationStatus === 'submitted' ? contractor.businessName || '' : '',
+      contactName: contractor.contactName || '',
+      email: contractor.email || request.contractorEmail || '',
+      phone: contractor.phone || '',
+      ein: contractor.ein || '',
+      address: contractor.address || '',
+      services: contractor.services || ''
+    };
+  }
+  return result;
+}
+
+async function registerContractor(request, body) {
+  if (request.requestType !== 'registration' || !request.contractorId) throw new Error('Convite de cadastro inválido.');
+  const businessName = cleanText(body.businessName, 160);
+  const contactName = cleanText(body.contactName, 120);
+  const email = cleanText(body.email, 180).toLowerCase();
+  const phone = cleanText(body.phone, 60);
+  const address = cleanText(body.address, 240);
+  const ein = cleanText(body.ein, 40);
+  const services = cleanText(body.services, 500);
+  if (!businessName || !contactName || !email || !phone || !address || !email.includes('@')) throw new Error('Preencha empresa, contato, e-mail, telefone e endereço.');
+  const now = admin.firestore.FieldValue.serverTimestamp();
+  const contractorRef = db.doc(`artifacts/d2-Project-Management/public/data/contractors/${request.contractorId}`);
+  const batch = db.batch();
+  batch.set(contractorRef, {
+    businessName, contactName, email, phone, address, ein, services,
+    companies: [request.company], company: request.company,
+    registrationStatus: 'submitted', registrationSubmittedAt: now,
+    updatedAt: now, updatedBy: 'contractor_public_portal'
+  }, { merge: true });
+  batch.update(request.ref, {
+    contractorName: businessName, contractorEmail: email,
+    registrationStatus: 'submitted', registrationSubmittedAt: now,
+    updatedAt: now
+  });
+  await batch.commit();
+  logger.info('Contractor registration submitted', { requestId: request.id, contractorId: request.contractorId });
+  return { ok: true, registrationStatus: 'submitted' };
 }
 
 function parseMultipart(req) {
@@ -81,9 +130,18 @@ exports.contractorDocuments = onRequest({
     if (req.method === 'GET') {
       const request = await findRequest(req.query.token);
       if (!request || request.status !== 'open' || isExpired(request)) return res.status(404).json({ error: 'Solicitação não disponível.' });
-      return res.status(200).json(publicRequest(request));
+      return res.status(200).json(await publicRequest(request));
     }
     if (req.method !== 'POST') return res.status(405).json({ error: 'Método não permitido.' });
+    if (req.is('application/json') && req.body?.action === 'register') {
+      const request = await findRequest(req.body.token);
+      if (!request || request.status !== 'open' || isExpired(request)) return res.status(404).json({ error: 'Convite não disponível.' });
+      try {
+        return res.status(200).json(await registerContractor(request, req.body));
+      } catch (error) {
+        return res.status(400).json({ error: error.message || 'Não foi possível salvar o cadastro.' });
+      }
+    }
     const { fields, file } = await parseMultipart(req);
     if (fields.action !== 'upload') return res.status(400).json({ error: 'Ação inválida.' });
     const request = await findRequest(fields.token);
@@ -98,7 +156,9 @@ exports.contractorDocuments = onRequest({
     const nextDocuments = (request.documents || []).map(document => document.id === documentId ? { ...document, status: 'submitted', storagePath, originalName: safeFileName(file.filename), contentType: file.mimeType, size: file.size, submittedAt: uploadedAt } : document);
     await request.ref.update({ documents: nextDocuments, updatedAt: admin.firestore.FieldValue.serverTimestamp() });
     const contractorRef = db.doc(`artifacts/d2-Project-Management/public/data/contractors/${request.contractorId}`);
-    await contractorRef.set({ documents: admin.firestore.FieldValue.arrayUnion({ requestId: request.id, documentId, name: safeFileName(file.filename), label: requestedDocument.label, type: file.mimeType, size: file.size, company: request.company, projectId: request.projectId, projectName: request.projectName, storagePath, receivedAt: uploadedAt, status: 'submitted' }), updatedAt: admin.firestore.FieldValue.serverTimestamp() }, { merge: true });
+    const contractorUpdate = { documents: admin.firestore.FieldValue.arrayUnion({ requestId: request.id, documentId, name: safeFileName(file.filename), label: requestedDocument.label, type: file.mimeType, size: file.size, company: request.company, projectId: request.projectId, projectName: request.projectName, storagePath, receivedAt: uploadedAt, status: 'submitted' }), updatedAt: admin.firestore.FieldValue.serverTimestamp() };
+    if (documentId === 'w9') contractorUpdate.w9Status = 'received';
+    await contractorRef.set(contractorUpdate, { merge: true });
     logger.info('Contractor document uploaded', { requestId: request.id, contractorId: request.contractorId, documentId });
     return res.status(200).json({ ok: true, documentId, status: 'submitted' });
   } catch (error) {
