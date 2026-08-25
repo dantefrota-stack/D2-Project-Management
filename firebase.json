@@ -1,4 +1,14 @@
 {
+  "functions": [
+    {
+      "source": "functions",
+      "codebase": "default",
+      "runtime": "nodejs20"
+    }
+  ],
+  "storage": {
+    "rules": "storage.rules"
+  },
   "hosting": {
     "site": "d2-project-management",
     "public": ".",
@@ -10,6 +20,8 @@
       ".firebase/**",
       ".vscode/**",
       ".idea/**",
+      "functions/**",
+      "storage.rules",
       "**/node_modules/**",
       "**/.env",
       "**/.env.*",
@@ -17,6 +29,15 @@
       "**/*.pem",
       "**/*.log",
       "**/*.local"
+    ],
+    "rewrites": [
+      {
+        "source": "/api/contractor-documents",
+        "function": {
+          "functionId": "contractorDocuments",
+          "region": "us-central1"
+        }
+      }
     ]
   }
 }

@@ -947,6 +947,17 @@
 </head>
 <body class="auth-body">
 
+<!-- Portal público: ativado por link individual de solicitação de documentos. -->
+<section id="public-document-request" class="hidden fixed inset-0 z-[3000] overflow-y-auto bg-slate-950 text-left">
+    <div class="min-h-full bg-[radial-gradient(circle_at_top_right,_rgba(34,211,238,.17),transparent_32%),radial-gradient(circle_at_bottom_left,_rgba(69,216,156,.14),transparent_36%)] px-4 py-8 sm:px-6">
+        <div class="mx-auto max-w-3xl">
+            <div class="mb-6 flex items-center justify-between"><img id="public-request-logo" src="logo-D2-Group-preto.png" alt="D2 Group" class="h-12 rounded-xl bg-white p-2"><span class="rounded-full border border-cyan-300/30 bg-cyan-400/10 px-3 py-1 text-[10px] font-black uppercase tracking-[0.18em] text-cyan-200">Portal seguro de documentos</span></div>
+            <main class="rounded-[32px] border border-white/10 bg-slate-900/90 p-6 shadow-2xl sm:p-10"><div id="public-request-content"></div></main>
+            <p class="mx-auto mt-5 max-w-2xl text-center text-xs leading-5 text-slate-500">D2 Project Management · Este portal não oferece acesso a projetos, pagamentos ou dados internos.</p>
+        </div>
+    </div>
+</section>
+
 <!-- Login Screen -->
 <div id="auth-screen" class="fixed inset-0 z-[2000] flex items-center justify-center p-6">
     <div class="auth-card">
@@ -1116,7 +1127,7 @@
                 <button onclick="window.showView('projects')" class="tab-btn tab-active hidden" id="tab-projects"><i data-lucide="layout-grid" class="w-4 h-4"></i><span data-i18n="nav_proj">Projetos</span></button>
                 <button onclick="window.cancelEdit(); window.showView('new')" class="tab-btn editor-only hidden" id="tab-new"><i data-lucide="circle-plus" class="w-4 h-4"></i><span data-i18n="nav_new">Nova Obra</span></button>
                 <button onclick="window.showView('reports')" class="tab-btn hidden" id="tab-reports"><i data-lucide="file-bar-chart" class="w-4 h-4"></i><span data-i18n="nav_rep">Relatórios</span></button>
-                <button onclick="window.openContractorsApp()" class="tab-btn hidden" id="tab-contractors"><i data-lucide="hard-hat" class="w-4 h-4"></i><span>Contractors</span></button>
+                <button onclick="window.showView('contractors')" class="tab-btn hidden" id="tab-contractors"><i data-lucide="hard-hat" class="w-4 h-4"></i><span>Contractors</span></button>
                 <button onclick="window.showView('users')" class="tab-btn hidden" id="tab-users"><i data-lucide="users" class="w-4 h-4"></i><span data-i18n="nav_users">Equipe</span></button>
                 <button onclick="window.showView('logs')" class="tab-btn hidden" id="tab-logs"><i data-lucide="history" class="w-4 h-4"></i><span data-i18n="nav_logs">Logs</span></button>
             </nav>
@@ -1176,6 +1187,11 @@
                 </div>
             </section>
             <div id="projects-grid" class="c2-project-grid text-left"></div>
+        </div>
+        <div id="view-contractors" class="w-full hidden c2-view animate-fade-in text-left">
+            <div class="c2-page-heading no-print"><div><p class="c2-eyebrow">Conformidade e pagamentos</p><h1>Contractors</h1><p class="c2-page-subtitle">Empresas terceirizadas, documentos e pagamentos no mesmo sistema.</p></div><div class="flex flex-wrap gap-3"><button type="button" onclick="window.openContractorReports()" class="c2-secondary-btn"><i data-lucide="file-bar-chart" class="w-4 h-4"></i>Relatórios</button><button type="button" onclick="window.openContractorEditor()" class="c2-primary-btn"><i data-lucide="plus" class="w-4 h-4"></i>Novo contractor</button></div></div>
+            <section class="c2-filter-panel no-print"><div class="c2-filter-grid"><div class="c2-filter-field c2-search-field"><label>Busca rápida</label><div class="relative"><i data-lucide="search" class="c2-input-icon w-4 h-4"></i><input id="contractor-search" oninput="window.setContractorSearch(this.value)" class="modern-input c2-input-with-icon" placeholder="Empresa, contato, e-mail ou EIN"></div></div><div class="c2-filter-field"><label>Unidade de negócio</label><select id="contractor-company-filter" onchange="window.setContractorCompanyFilter(this.value)" class="modern-input"><option value="Ambas">Todas</option><option value="HVAC">D2 HVAC Solutions</option><option value="Smart Home">D2 Smart Home</option></select></div></div><div class="c2-filter-footer"><div class="c2-segmented"><button id="contractor-filter-active" onclick="window.setContractorArchiveFilter('active')" class="filter-pill active">Ativos</button><button id="contractor-filter-archived" onclick="window.setContractorArchiveFilter('archived')" class="filter-pill">Arquivados</button><button id="contractor-filter-all" onclick="window.setContractorArchiveFilter('all')" class="filter-pill">Todos</button></div></div></section>
+            <div id="contractor-summary" class="grid grid-cols-1 sm:grid-cols-3 gap-4 mb-6"></div><div id="contractors-list" class="grid grid-cols-1 xl:grid-cols-2 gap-5"></div>
         </div>
         <!-- Nova Obra · CONCEITO 2 -->
         <div id="view-new" class="hidden c2-view c2-form-page text-left animate-fade-in">
@@ -1247,7 +1263,7 @@
                             <div class="c2-form-field relative"><label data-i18n="team_pass">Senha</label><input type="password" id="t-pass" required class="modern-input !pr-12"><button type="button" onclick="window.togglePassword('t-pass', 'eye-team-btn')" class="password-toggle" id="eye-team-btn" style="top:72%"><i data-lucide="eye" class="w-4 h-4"></i></button></div>
                         </div>
                         <div class="c2-permission-group"><p class="c2-eyebrow" data-i18n="team_scope">Visibilidade e Escopo</p><div class="grid grid-cols-1 gap-2 mt-3"><label class="perm-box"><input type="checkbox" id="p_smart" class="perm-checkbox"><span><strong>D2 Smart Home</strong><small data-i18n="team_smart_visibility">Visualizar projetos e dados Smart Home</small></span></label><label class="perm-box"><input type="checkbox" id="p_hvac" class="perm-checkbox"><span><strong>D2 HVAC</strong><small data-i18n="team_hvac_visibility">Visualizar projetos e dados HVAC</small></span></label><label class="perm-box"><input type="checkbox" id="p_global" class="perm-checkbox"><span><strong data-i18n="team_global_visibility">Ver outros vendedores</strong><small data-i18n="team_global_visibility_hint">Acesso a projetos de outros responsáveis</small></span></label></div></div>
-                        <div class="c2-permission-group"><p class="c2-eyebrow" data-i18n="team_tabs">Acesso às Abas</p><div class="grid grid-cols-1 sm:grid-cols-3 gap-2 mt-3"><label class="perm-box"><input type="checkbox" id="p_tab_proj" class="perm-checkbox" checked><span><strong data-i18n="team_tab_projects">Projetos</strong></span></label><label class="perm-box"><input type="checkbox" id="p_tab_new" class="perm-checkbox"><span><strong data-i18n="team_tab_new">Nova obra</strong></span></label><label class="perm-box"><input type="checkbox" id="p_tab_rep" class="perm-checkbox"><span><strong data-i18n="team_tab_reports">Relatórios</strong></span></label></div></div>
+                        <div class="c2-permission-group"><p class="c2-eyebrow" data-i18n="team_tabs">Acesso às Abas</p><div class="grid grid-cols-1 sm:grid-cols-2 gap-2 mt-3"><label class="perm-box"><input type="checkbox" id="p_tab_proj" class="perm-checkbox" checked><span><strong data-i18n="team_tab_projects">Projetos</strong></span></label><label class="perm-box"><input type="checkbox" id="p_tab_new" class="perm-checkbox"><span><strong data-i18n="team_tab_new">Nova obra</strong></span></label><label class="perm-box"><input type="checkbox" id="p_tab_rep" class="perm-checkbox"><span><strong data-i18n="team_tab_reports">Relatórios</strong></span></label><label class="perm-box"><input type="checkbox" id="p_contractors" class="perm-checkbox"><span><strong>Contractors</strong><small>Gerenciar fornecedores, documentos e pagamentos</small></span></label></div></div>
                         <div class="c2-permission-group"><p class="c2-eyebrow" data-i18n="team_perms">Permissões Financeiras</p><div class="grid grid-cols-1 gap-2 mt-3"><label class="perm-box"><input type="checkbox" id="p_fin" class="perm-checkbox"><span><strong data-i18n="team_finance_entry">Inserir recebimentos / pagamentos</strong><small data-i18n="team_finance_entry_hint">Registrar movimentações financeiras</small></span></label><label class="perm-box"><input type="checkbox" id="p_costs" class="perm-checkbox"><span><strong data-i18n="team_cost_access">Acesso a custos e margem</strong><small data-i18n="team_cost_access_hint">Visualizar despesas, orçamento e margem</small></span></label></div></div>
                         <div class="flex justify-end gap-3 pt-4 border-t border-white/10"><button type="button" onclick="document.getElementById('team-form').reset(); document.getElementById('t-id').value=''" class="c2-secondary-btn" data-i18n="cancel">Cancelar</button><button type="submit" id="btn-save-team" class="c2-primary-btn" data-i18n="btn_team"><i data-lucide="save" class="w-4 h-4"></i>Salvar usuário</button></div>
                     </form>
@@ -1286,12 +1302,23 @@
             <div id="report-output"></div>
         </div>
     </main>
+    <div id="contractor-editor-modal" class="modal-overlay modal-overlay-scroll">
+        <div class="modal-content modal-panel-scroll animate-fade-in max-w-3xl text-left">
+            <div class="flex items-start justify-between gap-4 mb-6"><div><p class="c2-eyebrow">Base de fornecedores</p><h2 id="contractor-editor-title" class="text-2xl font-black text-emerald-300">Novo contractor</h2></div><button type="button" onclick="window.closeContractorEditor()" class="c2-icon-btn"><i data-lucide="x" class="w-5 h-5"></i></button></div>
+            <form id="contractor-form" class="space-y-5"><input id="contractor-id" type="hidden"><div class="grid grid-cols-1 md:grid-cols-2 gap-5"><div class="c2-form-field md:col-span-2"><label>Nome da empresa *</label><input id="contractor-business-name" required class="modern-input" placeholder="Nome legal ou comercial"></div><div class="c2-form-field"><label>Contato</label><input id="contractor-contact-name" class="modern-input" placeholder="Nome completo"></div><div class="c2-form-field"><label>E-mail</label><input id="contractor-email" type="email" class="modern-input" placeholder="contato@empresa.com"></div><div class="c2-form-field"><label>Telefone</label><input id="contractor-phone" class="modern-input"></div><div class="c2-form-field"><label>EIN / Tax ID</label><input id="contractor-ein" class="modern-input"></div><div class="c2-form-field md:col-span-2"><label>Endereço</label><input id="contractor-address" class="modern-input"></div><div class="c2-form-field md:col-span-2"><label>Empresas atendidas *</label><div class="grid grid-cols-1 sm:grid-cols-2 gap-3 mt-2"><label class="perm-box"><input id="contractor-company-hvac" type="checkbox" class="perm-checkbox"><span><strong>D2 HVAC Solutions</strong><small>Obras, documentos e pagamentos de HVAC</small></span></label><label class="perm-box"><input id="contractor-company-smart" type="checkbox" class="perm-checkbox"><span><strong>D2 Smart Home</strong><small>Obras, documentos e pagamentos de Smart Home</small></span></label></div><small class="mt-2 block text-slate-500">O cadastro é único; cada pagamento e solicitação de documento permanece separado pela empresa escolhida.</small></div><div class="c2-form-field"><label>Status de W-9</label><select id="contractor-w9-status" class="modern-input"><option value="pending">Pendente</option><option value="received">Recebido</option><option value="not_required">Não necessário</option></select></div><div class="c2-form-field md:col-span-2"><label>Observações</label><textarea id="contractor-notes" class="modern-input min-h-[96px]" placeholder="Notas operacionais ou documentos requeridos"></textarea></div></div><div class="flex justify-end gap-3 pt-5 border-t border-white/10"><button type="button" onclick="window.closeContractorEditor()" class="c2-secondary-btn">Cancelar</button><button type="submit" class="c2-primary-btn"><i data-lucide="save" class="w-4 h-4"></i>Salvar contractor</button></div></form>
+        </div>
+    </div>
+    <div id="contractor-payment-modal" class="modal-overlay modal-overlay-scroll"><div class="modal-content modal-panel-scroll animate-fade-in max-w-xl text-left"><div class="flex items-start justify-between gap-4 mb-6"><div><p class="c2-eyebrow">Financeiro</p><h2 id="contractor-payment-title" class="text-2xl font-black text-emerald-300">Registrar pagamento</h2><p class="mt-1 text-sm text-slate-400">Cada pagamento fica vinculado a uma obra e entra automaticamente em Mão-de-obra.</p></div><button type="button" onclick="window.closeContractorPayment()" class="c2-icon-btn"><i data-lucide="x" class="w-5 h-5"></i></button></div><form id="contractor-payment-form" class="space-y-5"><input id="contractor-payment-id" type="hidden"><input id="contractor-payment-contractor-id" type="hidden"><div class="c2-form-field"><label>Obra / serviço executado *</label><select id="contractor-payment-project-id" required class="modern-input"><option value="">Selecione uma obra</option></select><small class="mt-2 block text-slate-500">Somente obras da mesma empresa deste contractor são exibidas.</small></div><div class="c2-form-field"><label>Valor *</label><div class="relative"><span class="c2-currency-prefix">$</span><input id="contractor-payment-amount" type="number" min="0.01" step="0.01" required class="modern-input c2-input-money"></div></div><div class="grid grid-cols-1 sm:grid-cols-2 gap-5"><div class="c2-form-field"><label>Data</label><input id="contractor-payment-date" type="date" required class="modern-input"></div><div class="c2-form-field"><label>Método</label><select id="contractor-payment-method" class="modern-input"><option>ACH</option><option>Check</option><option>Wire Transfer</option><option>Zelle</option><option>Cash</option><option>Card</option></select></div></div><div class="c2-form-field"><label>Referência / descrição</label><input id="contractor-payment-note" class="modern-input" placeholder="Invoice, serviço ou referência"></div><div class="flex justify-end gap-3 pt-5 border-t border-white/10"><button type="button" onclick="window.closeContractorPayment()" class="c2-secondary-btn">Cancelar</button><button type="submit" class="c2-primary-btn">Salvar pagamento</button></div></form></div></div>
+    <div id="contractor-detail-modal" class="modal-overlay modal-overlay-scroll"><div class="modal-content modal-panel-scroll animate-fade-in max-w-5xl text-left"><div id="contractor-detail-content"></div></div></div>
+    <div id="contractor-report-modal" class="modal-overlay modal-overlay-scroll"><div class="modal-content modal-panel-scroll animate-fade-in max-w-6xl text-left"><div id="contractor-report-content"></div></div></div>
+    <div id="contractor-request-modal" class="modal-overlay modal-overlay-scroll"><div class="modal-content modal-panel-scroll animate-fade-in max-w-3xl text-left"><div class="flex items-start justify-between gap-4 mb-6"><div><p class="c2-eyebrow">Compliance por obra</p><h2 class="text-2xl font-black text-emerald-300">Solicitar documentos</h2><p class="mt-2 text-sm text-slate-400">Um link único reúne todos os documentos exigidos para a empresa e obra selecionadas.</p></div><button type="button" onclick="window.closeContractorDocumentRequest()" class="c2-icon-btn"><i data-lucide="x" class="w-5 h-5"></i></button></div><form id="contractor-request-form" class="space-y-5"><input id="contractor-request-contractor-id" type="hidden"><div class="grid grid-cols-1 sm:grid-cols-2 gap-5"><div class="c2-form-field"><label>Empresa solicitante *</label><select id="contractor-request-company" required class="modern-input" onchange="window.refreshContractorRequestProjects()"></select></div><div class="c2-form-field"><label>Obra vinculada *</label><select id="contractor-request-project-id" required class="modern-input"></select></div><div class="c2-form-field"><label>Prazo para envio</label><input id="contractor-request-due-date" type="date" class="modern-input"></div><div class="c2-form-field"><label>Observações</label><input id="contractor-request-note" class="modern-input" placeholder="Ex.: necessário antes do início da obra"></div></div><section class="rounded-2xl border border-white/10 bg-black/10 p-5"><div class="flex items-center justify-between gap-3"><div><p class="c2-eyebrow">Checklist solicitado</p><h3 class="mt-1 font-black text-slate-100">Documentos necessários</h3></div><span class="c2-tag cyan">Selecione todos que se aplicam</span></div><div id="contractor-request-documents" class="mt-5 grid grid-cols-1 sm:grid-cols-2 gap-3"></div><div class="c2-form-field mt-4"><label>Documento adicional</label><input id="contractor-request-custom-document" class="modern-input" placeholder="Ex.: Background check, licença específica"></div></section><div class="flex justify-end gap-3 pt-5 border-t border-white/10"><button type="button" onclick="window.closeContractorDocumentRequest()" class="c2-secondary-btn">Cancelar</button><button type="submit" class="c2-primary-btn"><i data-lucide="link" class="w-4 h-4"></i>Criar e copiar link</button></div></form></div></div>
 </div>
 
 <script type="module">
     import { initializeApp, deleteApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
     import { getAuth, signInWithEmailAndPassword, createUserWithEmailAndPassword, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
-    import { getFirestore, collection, doc, updateDoc, addDoc, deleteDoc, onSnapshot, serverTimestamp, arrayUnion, getDocs, writeBatch } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
+    import { getFirestore, collection, doc, updateDoc, addDoc, deleteDoc, onSnapshot, serverTimestamp, arrayUnion, getDocs, writeBatch, runTransaction } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
+    import { getStorage, ref as storageRef, getDownloadURL } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-storage.js";
 
     const firebaseConfig = {
         apiKey: "AIzaSyDrLfIOuBwZblwKPuxBRK3R4fQpjQQbnDE",
@@ -1306,6 +1333,7 @@
     const app = initializeApp(firebaseConfig);
     const auth = getAuth(app);
     const db = getFirestore(app);
+    const storage = getStorage(app);
     const SUPER_ADMIN = "dante.frota@allcablingtech.com";
     const LANGUAGE_STORAGE_KEY = 'd2-project-management.language';
     const savedLanguage = (() => {
@@ -1320,10 +1348,10 @@
     let state = { 
         user: null, 
         isSuperAdmin: false,
-        userPerms: { tab_proj: true, tab_new: false, tab_rep: false, fin: false, costs: false, smart: true, hvac: false, global: false },
-        projects: [], team: [], logs: [], logsUserFilter: '', logsSearchQuery: '', company: 'Ambas', lang: savedLanguage, theme: 'dark',
+        userPerms: { tab_proj: true, tab_new: false, tab_rep: false, fin: false, costs: false, contractors: false, smart: true, hvac: false, global: false },
+        projects: [], contractors: [], contractorPayments: [], contractorDocumentRequests: [], team: [], logs: [], logsUserFilter: '', logsSearchQuery: '', company: 'Ambas', lang: savedLanguage, theme: 'dark',
         editingPayments: null, editingRecs: null, reportPendingPayments: null, reportProjectList: null, reportProjectListReturn: null, returnToReport: false, returnToReportAfterEdit: false, focusedProject: null, activeModule: null, archiveFilter: 'active',
-        reportActiveKpi: 'receita', projectSellerFilter: 'all', projectSearchQuery: '', reportPeriodStart: '', reportPeriodEnd: '', reportSellerFilter: 'all', reportArchiveFilter: 'all', reportTableSort: { key: 'default', direction: 'asc' }, reportRangePreset: 'year', mobileNavOpen: false, currentView: 'projects'
+        reportActiveKpi: 'receita', projectSellerFilter: 'all', projectSearchQuery: '', contractorSearchQuery: '', contractorCompanyFilter: 'Ambas', contractorArchiveFilter: 'active', reportPeriodStart: '', reportPeriodEnd: '', reportSellerFilter: 'all', reportArchiveFilter: 'all', reportTableSort: { key: 'default', direction: 'asc' }, reportRangePreset: 'year', mobileNavOpen: false, currentView: 'projects'
     };
 
     window.d2Charts = {};
@@ -1806,7 +1834,47 @@
         }
     }
 
+    function decodeRequestPreview(value) {
+        try { const base64 = String(value || '').replaceAll('-', '+').replaceAll('_', '/'); const padded = base64 + '='.repeat((4 - base64.length % 4) % 4); return JSON.parse(decodeURIComponent(Array.from(atob(padded)).map(char => `%${char.charCodeAt(0).toString(16).padStart(2, '0')}`).join(''))); } catch { return null; }
+    }
+    function mountPublicDocumentRequest() {
+        const params = new URLSearchParams(window.location.search); const token = params.get('contractorRequest'); if (!token) return false;
+        let request = null; try { request = JSON.parse(localStorage.getItem(`d2-contractor-request-${token}`) || 'null'); } catch {} request = request || decodeRequestPreview(params.get('preview'));
+        const root = document.getElementById('public-document-request'); const content = document.getElementById('public-request-content'); if (!root || !content) return false; root.classList.remove('hidden');
+        if (!request) { content.innerHTML = `<div class="py-12 text-center"><i data-lucide="shield-alert" class="mx-auto mb-4 h-12 w-12 text-amber-300"></i><h1 class="text-2xl font-black text-white">Solicitação não disponível</h1><p class="mx-auto mt-3 max-w-md text-sm leading-6 text-slate-400">Este link precisa ser validado pelo portal seguro de documentos. Solicite um novo link à equipe D2.</p></div>`; try { lucide.createIcons(); } catch {}; return true; }
+        const isHvac = request.company === 'HVAC'; document.getElementById('public-request-logo').src = isHvac ? 'logo-D2-HVAC-Solutions-preto.png' : 'logo-D2-SmartHome-preto.png'; document.getElementById('public-request-logo').alt = requestCompanyLabel(request.company);
+        const documents = Array.isArray(request.documents) ? request.documents : []; content.innerHTML = `<div class="flex flex-col gap-5 border-b border-white/10 pb-6 sm:flex-row sm:items-start sm:justify-between"><div><p class="text-[10px] font-black uppercase tracking-[0.24em] ${isHvac ? 'text-cyan-300' : 'text-emerald-300'}">${requestCompanyLabel(request.company)}</p><h1 class="mt-2 text-3xl font-black text-white">Envio de documentos</h1><p class="mt-3 text-sm leading-6 text-slate-400">Olá, ${escapeInlineHtml(request.contractorName || 'Contractor')}. Envie os documentos solicitados para a obra abaixo.</p></div><span class="rounded-xl border border-white/10 bg-black/20 px-4 py-3 text-xs text-slate-300">Prazo: <strong class="text-white">${escapeInlineHtml(request.dueDate || 'Não definido')}</strong></span></div><section class="mt-6 rounded-2xl border border-white/10 bg-black/20 p-5"><p class="text-[10px] font-black uppercase tracking-[0.2em] text-slate-500">Obra</p><h2 class="mt-2 text-lg font-black text-white">${escapeInlineHtml(request.projectName || 'Obra vinculada')}</h2>${request.note ? `<p class="mt-2 text-sm text-slate-400">${escapeInlineHtml(request.note)}</p>` : ''}</section><section class="mt-6"><div class="flex items-center justify-between gap-4"><div><p class="text-[10px] font-black uppercase tracking-[0.2em] text-slate-500">Checklist</p><h2 class="mt-1 text-lg font-black text-white">Documentos solicitados</h2></div><span class="text-xs text-slate-500">${documents.length} item(ns)</span></div><div class="mt-4 space-y-3">${documents.map(document => `<div class="flex items-center gap-3 rounded-xl border border-white/10 bg-slate-950/50 p-4"><i data-lucide="circle" class="h-5 w-5 ${isHvac ? 'text-cyan-300' : 'text-emerald-300'}"></i><span class="font-bold text-slate-200">${escapeInlineHtml(document.label || 'Documento')}</span><span class="ml-auto text-xs text-amber-300">Pendente</span></div>`).join('')}</div></section><section class="mt-6 rounded-2xl border border-dashed ${isHvac ? 'border-cyan-300/40 bg-cyan-400/5' : 'border-emerald-300/40 bg-emerald-400/5'} p-6 text-center"><i data-lucide="upload-cloud" class="mx-auto h-10 w-10 ${isHvac ? 'text-cyan-300' : 'text-emerald-300'}"></i><h2 class="mt-3 text-lg font-black text-white">Arraste os arquivos aqui</h2><p class="mt-2 text-sm text-slate-400">ou selecione arquivos do seu dispositivo.</p><input id="public-request-files" type="file" multiple class="hidden" accept=".pdf,.jpg,.jpeg,.png,.doc,.docx"><button type="button" id="public-request-select" class="mt-5 ${isHvac ? 'bg-cyan-400' : 'bg-emerald-400'} rounded-xl px-5 py-3 text-sm font-black text-slate-950">Selecionar arquivos</button><div id="public-request-file-list" class="mt-4 space-y-2 text-left"></div></section><div class="mt-5 rounded-xl border border-amber-300/20 bg-amber-300/10 p-4 text-sm leading-6 text-amber-100"><strong>Prévia de segurança:</strong> o envio real será habilitado após a ativação do Storage protegido. Nenhum arquivo é enviado neste ambiente de aprovação.</div><button type="button" id="public-request-submit" class="mt-6 w-full rounded-xl ${isHvac ? 'bg-cyan-400' : 'bg-emerald-400'} px-5 py-4 font-black text-slate-950">Enviar documentos</button><a href="https://www.irs.gov/pub/irs-pdf/fw9.pdf" target="_blank" rel="noopener" class="mt-4 flex justify-center text-sm font-bold ${isHvac ? 'text-cyan-300' : 'text-emerald-300'} underline">Baixar Form W-9 oficial (IRS)</a>`;
+        const fileInput = document.getElementById('public-request-files'); const dropZone = fileInput.closest('section'); const fileList = document.getElementById('public-request-file-list'); const renderFiles = files => { fileList.innerHTML = Array.from(files || []).map(file => `<div class="rounded-lg border border-white/10 bg-black/20 px-3 py-2 text-xs text-slate-300">${escapeInlineHtml(file.name)} <span class="text-slate-500">• ${(file.size / 1024 / 1024).toFixed(2)} MB</span></div>`).join(''); };
+        document.getElementById('public-request-select').onclick = () => fileInput.click(); fileInput.onchange = () => renderFiles(fileInput.files); ['dragenter', 'dragover'].forEach(type => dropZone.addEventListener(type, event => { event.preventDefault(); dropZone.classList.add('ring-2', isHvac ? 'ring-cyan-300' : 'ring-emerald-300'); })); ['dragleave', 'drop'].forEach(type => dropZone.addEventListener(type, event => { event.preventDefault(); dropZone.classList.remove('ring-2', 'ring-cyan-300', 'ring-emerald-300'); })); dropZone.addEventListener('drop', event => { fileInput.files = event.dataTransfer.files; renderFiles(fileInput.files); }); document.getElementById('public-request-submit').onclick = () => { const count = fileInput.files.length; fileList.insertAdjacentHTML('beforeend', `<div class="rounded-lg border border-amber-300/25 bg-amber-300/10 px-3 py-3 text-xs text-amber-100">${count ? `${count} arquivo(s) selecionado(s). ` : ''}O envio está desativado nesta prévia até o endpoint seguro ser publicado.</div>`); };
+        try { lucide.createIcons(); } catch {}; return true;
+    }
+
+    async function mountSecurePublicDocumentRequest() {
+        const params = new URLSearchParams(window.location.search); const token = params.get('contractorRequest'); if (!token) return false;
+        let request = null;
+        try {
+            const response = await fetch(`/api/contractor-documents?token=${encodeURIComponent(token)}`, { headers: { Accept: 'application/json' } });
+            if (response.ok) request = { ...await response.json(), token, live: true };
+        } catch (_) {}
+        if (!request) return mountPublicDocumentRequest();
+        try { localStorage.setItem(`d2-contractor-request-${token}`, JSON.stringify(request)); } catch (_) {}
+        mountPublicDocumentRequest();
+        const warning = Array.from(document.querySelectorAll('#public-request-content div')).find(element => element.textContent.includes('Prévia de segurança:'));
+        if (warning) warning.innerHTML = '<strong>Envio protegido:</strong> os arquivos são enviados ao cofre privado da D2 e ficam disponíveis somente para a equipe autorizada.';
+        const fileInput = document.getElementById('public-request-files'); const fileList = document.getElementById('public-request-file-list'); const submit = document.getElementById('public-request-submit'); const uploadZone = fileInput?.closest('section'); if (!fileInput || !fileList || !submit) return true;
+        const renderMappings = () => { const files = Array.from(fileInput.files || []); fileList.innerHTML = files.map((file, index) => `<div class="rounded-lg border border-white/10 bg-black/20 px-3 py-3 text-xs text-slate-300"><strong>${escapeInlineHtml(file.name)}</strong><span class="text-slate-500"> · ${(file.size / 1024 / 1024).toFixed(2)} MB</span><label class="mt-2 block text-[10px] font-black uppercase tracking-wider text-slate-500">Documento correspondente</label><select data-upload-index="${index}" class="modern-input mt-1 !py-2 !text-xs">${request.documents.filter(document => document.status !== 'submitted').map(document => `<option value="${document.id}">${escapeInlineHtml(document.label)}</option>`).join('')}</select></div>`).join(''); };
+        fileInput.onchange = renderMappings; uploadZone?.addEventListener('drop', () => setTimeout(renderMappings, 0)); const liveSubmit = submit.cloneNode(true); submit.replaceWith(liveSubmit);
+        liveSubmit.onclick = async () => { const files = Array.from(fileInput.files || []); const selects = Array.from(fileList.querySelectorAll('select[data-upload-index]')); if (!files.length) { fileList.innerHTML = '<div class="rounded-lg border border-amber-300/25 bg-amber-300/10 px-3 py-3 text-xs text-amber-100">Selecione ao menos um arquivo.</div>'; return; } const documentIds = selects.map(select => select.value); if (new Set(documentIds).size !== documentIds.length) { fileList.insertAdjacentHTML('beforeend', '<div class="rounded-lg border border-amber-300/25 bg-amber-300/10 px-3 py-3 text-xs text-amber-100">Escolha um documento diferente para cada arquivo.</div>'); return; }
+            liveSubmit.disabled = true; liveSubmit.textContent = 'Enviando documentos…'; const results = [];
+            for (let index = 0; index < files.length; index += 1) { const body = new FormData(); body.append('action', 'upload'); body.append('token', token); body.append('documentId', documentIds[index]); body.append('file', files[index]); const response = await fetch('/api/contractor-documents', { method: 'POST', body }); const payload = await response.json().catch(() => ({})); if (!response.ok) { results.push(payload.error || 'Falha no envio.'); break; } results.push('ok'); }
+            if (results.every(result => result === 'ok')) { fileList.innerHTML = `<div class="rounded-lg border border-emerald-300/25 bg-emerald-300/10 px-3 py-3 text-sm text-emerald-100">${files.length} documento(s) enviado(s) com sucesso. A equipe D2 foi atualizada.</div>`; liveSubmit.textContent = 'Documentos enviados'; } else { fileList.insertAdjacentHTML('beforeend', `<div class="rounded-lg border border-red-300/25 bg-red-300/10 px-3 py-3 text-xs text-red-100">${escapeInlineHtml(results.find(result => result !== 'ok') || 'Falha no envio.')}</div>`); liveSubmit.disabled = false; liveSubmit.textContent = 'Enviar documentos'; }
+        };
+        return true;
+    }
+
     document.addEventListener('DOMContentLoaded', () => {
+        mountSecurePublicDocumentRequest();
+        initializeContractorPaymentForm();
         applyThemeConfig();
     });
 
@@ -1836,7 +1904,7 @@
         if(p.tab_proj) tabProj.classList.remove('hidden'); else tabProj.classList.add('hidden');
         if(p.tab_new) tabNew.classList.remove('hidden'); else tabNew.classList.add('hidden');
         if(p.tab_rep) tabRep.classList.remove('hidden'); else tabRep.classList.add('hidden');
-        if (tabContractors) tabContractors.classList.toggle('hidden', !(state.isSuperAdmin || p.smart || p.hvac));
+        if (tabContractors) tabContractors.classList.toggle('hidden', !(state.isSuperAdmin || p.contractors));
 
         const renderCompanyPills = (containerId) => {
             const c = document.getElementById(containerId);
@@ -2179,19 +2247,32 @@
         const desc = document.getElementById(`exp-desc-${projectId}`)?.value;
         const cat = document.getElementById(`exp-cat-${projectId}`)?.value;
         const val = document.getElementById(`exp-val-${projectId}`)?.value;
+        const contractorId = document.getElementById(`exp-contractor-${projectId}`)?.value || '';
+        const contractor = contractorId ? state.contractors.find(item => item.id === contractorId) : null;
         if (!date || !desc || !cat || !val) { window.showModal(window.t('attention'), window.t('error'), 'alert'); return; }
+        if (contractor && (!contractorCompanies(contractor).includes(p.empresa) || cat !== 'Mão-de-obra')) { window.showModal('Dados inconsistentes', 'Um contractor só pode ser registrado como Mão-de-obra na mesma empresa da obra.', 'error'); return; }
         
         const newExpense = { id: crypto.randomUUID(), data: date, descricao: desc, categoria: cat, valor: parseFloat(val), adicionadoPor: state.user.email, criadoEm: new Date().toISOString() };
 
         try {
-            await updateDoc(doc(db, 'artifacts', appId, 'public', 'data', 'projects', projectId), { despesas: arrayUnion(newExpense) });
-            logAccess(state.user.email, `Registrou despesa de $${val} (${cat})`, getProjectLogMeta(p));
+            if (contractor) {
+                const paymentRef = doc(contractorPaymentsRef());
+                newExpense.contractorId = contractor.id; newExpense.contractorName = contractor.businessName; newExpense.contractorPaymentId = paymentRef.id; newExpense.autoType = 'contractor_payment';
+                const payment = { contractorId: contractor.id, contractorName: contractor.businessName, company: p.empresa, projectId, projectName: getProjectDisplayName(p), projectExpenseId: newExpense.id, amount: Number(newExpense.valor), date, method: 'Project cost entry', note: desc.trim(), source: 'project_expense', createdAt: serverTimestamp(), createdBy: state.user.email };
+                await runTransaction(db, async transaction => { transaction.set(paymentRef, payment); transaction.update(projectDocumentRef(projectId), { despesas: arrayUnion(newExpense), updatedAt: serverTimestamp() }); });
+                logAccess(state.user.email, `Registrou mão-de-obra e pagamento de contractor: ${contractor.businessName} (${formatCurr(newExpense.valor)})`, { ...getProjectLogMeta(p), contractorId: contractor.id, contractorName: contractor.businessName, contractorPaymentId: paymentRef.id, projectExpenseId: newExpense.id });
+            } else {
+                await updateDoc(projectDocumentRef(projectId), { despesas: arrayUnion(newExpense) });
+                logAccess(state.user.email, `Registrou despesa de $${val} (${cat})`, getProjectLogMeta(p));
+            }
         } catch (e) { console.error("Erro ao adicionar despesa:", e); }
     };
 
     window.deleteExpense = (projectId, expenseId, expenseDesc, expenseVal) => {
         const existingProject = state.projects.find(x => x.id === projectId);
         if (!canManageProjectEntries(existingProject, 'costs')) { denyProjectEntryManagement(); return; }
+        const linkedExpense = (existingProject?.despesas || []).find(expense => expense.id === expenseId);
+        if (linkedExpense?.autoType === 'contractor_payment') { window.showModal('Lançamento vinculado', 'Este custo está vinculado ao histórico de pagamento do contractor. A edição e a exclusão serão disponibilizadas em uma ação financeira única para evitar divergência entre a obra e o contractor.', 'info'); return; }
         
         window.showModal(window.t('modal_del_exp_title'), `${window.t('modal_del_exp_msg')} ${expenseDesc}?`, 'confirm', async () => {
             const p = state.projects.find(x => x.id === projectId);
@@ -2209,7 +2290,7 @@
         const project = state.projects.find(x => x.id === projectId);
         if (!canManageProjectEntries(project, 'costs')) { denyProjectEntryManagement(); return; }
         const expense = (project.despesas || []).find(item => item.id === expenseId);
-        if (!expense || expense.autoType === 'commission_payment') return;
+        if (!expense || expense.autoType === 'commission_payment' || expense.autoType === 'contractor_payment') return;
         const date = prompt(state.lang === 'pt' ? 'Data (AAAA-MM-DD)' : 'Date (YYYY-MM-DD)', expense.data || '');
         if (date === null) return;
         const description = prompt(state.lang === 'pt' ? 'Descrição' : 'Description', expense.descricao || '');
@@ -3802,12 +3883,28 @@
         window.scrollTo({ top: 0, behavior: 'smooth' }); 
     };
 
+    function decorateContractorExpenseControl(project) {
+        if (!project || state.activeModule !== 'costs') return;
+        const form = document.querySelector('.v86-expense-form');
+        if (!form || form.querySelector('[data-contractor-expense-control]')) return;
+        const contractors = state.contractors.filter(contractor => !contractor.archived && contractorCompanies(contractor).includes(project.empresa));
+        const field = document.createElement('div');
+        field.dataset.contractorExpenseControl = 'true';
+        field.innerHTML = `<span class="v86-label mb-2">${state.lang === 'pt' ? 'Contractor (opcional)' : 'Contractor (optional)'}</span><select id="exp-contractor-${project.id}" class="modern-input"><option value="">${state.lang === 'pt' ? 'Despesa geral' : 'General expense'}</option>${contractors.map(contractor => `<option value="${contractor.id}">${escapeInlineHtml(contractor.businessName)}</option>`).join('')}</select><small class="mt-2 block text-[10px] text-slate-500">${state.lang === 'pt' ? 'Ao selecionar, o lançamento entra também no histórico do contractor como Mão-de-obra.' : 'When selected, this entry is also recorded in the contractor history as Labor.'}</small>`;
+        form.insertBefore(field, form.querySelector('button'));
+        field.querySelector('select')?.addEventListener('change', event => {
+            const category = document.getElementById(`exp-cat-${project.id}`);
+            if (event.target.value && category) category.value = 'Mão-de-obra';
+        });
+    }
+
     window.openProjectModule = (moduleName) => {
         state.activeModule = moduleName;
         const project = state.projects.find(x => x.id === state.focusedProject);
         const moduleLabel = moduleName === 'commissions' ? 'Comissões e Finanças' : (moduleName === 'costs' ? 'Gestão de Custos' : moduleName);
         logAccess(state.user?.email, `Acessou módulo ${moduleLabel} na obra: ${getProjectDisplayName(project)}`, getProjectLogMeta(project));
         window.renderProjects();
+        if (moduleName === 'costs') setTimeout(() => { decorateContractorExpenseControl(project); decorateProjectCostSourceLinks(project); }, 0);
         window.scrollTo({ top: 0, behavior: 'smooth' });
     };
 
@@ -4056,6 +4153,7 @@
         document.getElementById('p_tab_rep').checked = permObj.tab_rep;
         document.getElementById('p_fin').checked = permObj.fin;
         document.getElementById('p_costs').checked = permObj.costs;
+        document.getElementById('p_contractors').checked = permObj.contractors === true;
 
         window.scrollTo({ top: 0, behavior: 'smooth' });
     };
@@ -4148,6 +4246,232 @@
         window.showView('new');
     };
 
+    const contractorsRef = () => collection(db, 'artifacts', appId, 'public', 'data', 'contractors');
+    const contractorPaymentsRef = () => collection(db, 'artifacts', appId, 'public', 'data', 'contractor_payments');
+    const contractorDocumentRequestsRef = () => collection(db, 'artifacts', appId, 'public', 'data', 'contractor_document_requests');
+    const contractorCanAccess = () => !!(state.isSuperAdmin || state.userPerms?.contractors);
+    const contractorCompanies = (item) => { const companies = Array.isArray(item?.companies) && item.companies.length ? item.companies : [item?.company || item].filter(value => value === 'HVAC' || value === 'Smart Home'); return [...new Set(companies)]; };
+    const contractorCompanyAllowed = (item) => contractorCompanies(item).some(company => state.isSuperAdmin || (company === 'HVAC' ? state.userPerms?.hvac : state.userPerms?.smart));
+    const contractorCompanyLabel = (item) => contractorCompanies(item).map(company => company === 'HVAC' ? 'D2 HVAC Solutions' : 'D2 Smart Home').join(' + ') || 'Empresa não definida';
+    const contractorStatus = (value) => ({ received: ['W-9 recebido', 'green'], not_required: ['Não necessário', 'cyan'], pending: ['Documentos pendentes', 'amber'] }[value] || ['Documentos pendentes', 'amber']);
+    const getContractorPayments = (id) => state.contractorPayments.filter(item => item.contractorId === id);
+    const getContractorPaidTotal = (id) => getContractorPayments(id).reduce((sum, item) => sum + Number(item.amount || 0), 0);
+    const getContractorProjects = (contractor) => state.projects.filter(project => !project.archived && contractorCompanies(contractor).includes(project.empresa));
+    const projectDocumentRef = (projectId) => doc(db, 'artifacts', appId, 'public', 'data', 'projects', projectId);
+    const contractorPaymentDescription = (contractor, note) => `Contractor: ${contractor.businessName}${note ? ` — ${note}` : ''}`;
+    const contractorRequestChecklist = [
+        ['w9', 'Form W-9'], ['liability_insurance', 'Liability Insurance'], ['workers_comp', 'Workers’ Compensation'], ['drivers_license', 'Driver’s License'], ['certificate_of_insurance', 'Certificate of Insurance'], ['professional_license', 'Professional License']
+    ];
+    const requestCompanyLabel = (company) => company === 'HVAC' ? 'D2 HVAC Solutions' : 'D2 Smart Home';
+    const encodeRequestPreview = (data) => btoa(unescape(encodeURIComponent(JSON.stringify(data)))).replaceAll('+', '-').replaceAll('/', '_').replaceAll('=', '');
+    const getDocumentRequestsForContractor = (contractorId) => state.contractorDocumentRequests.filter(request => request.contractorId === contractorId).sort((a, b) => String(b.createdAtClient || '').localeCompare(String(a.createdAtClient || '')));
+
+    window.refreshContractorRequestProjects = () => {
+        const contractor = state.contractors.find(item => item.id === document.getElementById('contractor-request-contractor-id')?.value); const company = document.getElementById('contractor-request-company')?.value; const select = document.getElementById('contractor-request-project-id');
+        if (!contractor || !select) return; const projects = getContractorProjects(contractor).filter(project => project.empresa === company);
+        select.innerHTML = `<option value="">Selecione uma obra</option>${projects.map(project => `<option value="${project.id}">${escapeInlineHtml(getProjectDisplayName(project))}${project.numeroInvoice ? ` • Invoice ${escapeInlineHtml(project.numeroInvoice)}` : ''}</option>`).join('')}`; select.disabled = !projects.length;
+    };
+    window.openContractorDocumentRequest = (contractorId, preselectedCompany = '') => {
+        const contractor = state.contractors.find(item => item.id === contractorId); if (!contractor || !contractorCanAccess()) return;
+        document.getElementById('contractor-request-form').reset(); document.getElementById('contractor-request-contractor-id').value = contractorId;
+        const companySelect = document.getElementById('contractor-request-company'); companySelect.innerHTML = contractorCompanies(contractor).map(company => `<option value="${company}">${requestCompanyLabel(company)}</option>`).join(''); companySelect.value = contractorCompanies(contractor).includes(preselectedCompany) ? preselectedCompany : contractorCompanies(contractor)[0];
+        document.getElementById('contractor-request-due-date').value = new Date(Date.now() + 14 * 86400000).toISOString().slice(0, 10);
+        document.getElementById('contractor-request-documents').innerHTML = contractorRequestChecklist.map(([id, label], index) => `<label class="perm-box"><input class="perm-checkbox contractor-request-document" type="checkbox" value="${id}" data-label="${label}" ${index < 3 ? 'checked' : ''}><span><strong>${label}</strong><small>Solicitar e acompanhar status</small></span></label>`).join('');
+        window.refreshContractorRequestProjects(); document.getElementById('contractor-request-modal').classList.add('active'); try { lucide.createIcons(); } catch {};
+    };
+    window.closeContractorDocumentRequest = () => document.getElementById('contractor-request-modal')?.classList.remove('active');
+
+    window.setContractorSearch = (value = '') => { state.contractorSearchQuery = String(value).trim().toLowerCase(); window.renderContractors(); };
+    window.setContractorCompanyFilter = (value = 'Ambas') => { state.contractorCompanyFilter = value; window.renderContractors(); };
+    window.setContractorArchiveFilter = (value = 'active') => { state.contractorArchiveFilter = value; window.renderContractors(); };
+    window.renderContractors = () => {
+        const list = document.getElementById('contractors-list'); const summary = document.getElementById('contractor-summary');
+        if (!list || !summary || !contractorCanAccess()) return;
+        const q = state.contractorSearchQuery; const viewCompany = state.contractorCompanyFilter;
+        const allowed = state.contractors.filter(item => contractorCompanyAllowed(item.company)).filter(item => {
+            const archived = !!item.archived; const archiveMatch = state.contractorArchiveFilter === 'all' || (state.contractorArchiveFilter === 'archived' ? archived : !archived);
+            const companyMatch = viewCompany === 'Ambas' || item.company === viewCompany;
+            const search = `${item.businessName || ''} ${item.contactName || ''} ${item.email || ''} ${item.ein || ''}`.toLowerCase();
+            return archiveMatch && companyMatch && (!q || search.includes(q));
+        });
+        const active = state.contractors.filter(item => !item.archived && contractorCompanyAllowed(item.company));
+        const pending = active.filter(item => item.w9Status !== 'received' && item.w9Status !== 'not_required');
+        const paid = state.contractorPayments.filter(item => { const contractor = state.contractors.find(c => c.id === item.contractorId); return contractor && contractorCompanyAllowed(contractor.company); }).reduce((sum, item) => sum + Number(item.amount || 0), 0);
+        summary.innerHTML = [[active.length, 'Contractors ativos', 'users'], [pending.length, 'Documentos pendentes', 'file-warning'], [formatCurr(paid), 'Pagamentos registrados', 'badge-dollar-sign']].map(([value, label, icon]) => `<div class="c2-panel p-5"><div class="flex items-center justify-between gap-4"><div><p class="c2-eyebrow">${label}</p><strong class="block mt-2 text-2xl font-black text-slate-100">${value}</strong></div><i data-lucide="${icon}" class="w-6 h-6 text-emerald-300"></i></div></div>`).join('');
+        ['active', 'archived', 'all'].forEach(key => document.getElementById(`contractor-filter-${key}`)?.classList.toggle('active', state.contractorArchiveFilter === key));
+        const filter = document.getElementById('contractor-company-filter'); if (filter) filter.value = state.contractorCompanyFilter;
+        if (!allowed.length) { list.innerHTML = `<div class="c2-panel col-span-full p-12 text-center"><i data-lucide="hard-hat" class="w-9 h-9 mx-auto text-slate-500 mb-3"></i><p class="font-bold text-slate-300">Nenhum contractor encontrado</p><p class="text-sm text-slate-500 mt-1">Cadastre empresas terceirizadas para acompanhar documentos e pagamentos.</p></div>`; try { lucide.createIcons(); } catch {} return; }
+        list.innerHTML = allowed.map(item => { const [status, color] = contractorStatus(item.w9Status); const total = getContractorPaidTotal(item.id); const docs = Array.isArray(item.documents) ? item.documents.length : 0; const company = item.company === 'HVAC' ? 'D2 HVAC Solutions' : 'D2 Smart Home'; return `<article class="c2-panel p-6"><div class="flex items-start justify-between gap-4"><div class="min-w-0"><p class="c2-eyebrow">${company}</p><h2 class="mt-1 text-xl font-black text-slate-100 truncate">${escapeInlineHtml(item.businessName || 'Sem nome')}</h2><p class="text-sm text-slate-400 mt-1">${escapeInlineHtml(item.contactName || item.email || 'Contato não informado')}</p></div><span class="c2-tag ${color}">${status}</span></div><div class="grid grid-cols-2 gap-3 my-5"><div class="rounded-xl border border-white/10 bg-black/10 p-3"><p class="c2-eyebrow">Documentos</p><strong class="block mt-1 text-lg text-slate-100">${docs}</strong></div><div class="rounded-xl border border-white/10 bg-black/10 p-3"><p class="c2-eyebrow">Pagamentos</p><strong class="block mt-1 text-lg text-emerald-300">${formatCurr(total)}</strong></div></div><div class="flex flex-wrap gap-2"><button onclick="window.openContractorDetail('${item.id}')" class="c2-secondary-btn !px-3 !py-2 text-xs"><i data-lucide="folder-open" class="w-4 h-4"></i>Ficha</button><button onclick="window.openContractorPayment('${item.id}')" class="c2-primary-btn !px-3 !py-2 text-xs"><i data-lucide="badge-dollar-sign" class="w-4 h-4"></i>Pagar</button><button onclick="window.openContractorEditor('${item.id}')" class="c2-secondary-btn !px-3 !py-2 text-xs"><i data-lucide="pencil" class="w-4 h-4"></i>Editar</button><button onclick="window.toggleContractorArchive('${item.id}')" class="c2-secondary-btn !px-3 !py-2 text-xs">${item.archived ? 'Reativar' : 'Arquivar'}</button></div></article>`; }).join(''); try { lucide.createIcons(); } catch {};
+    };
+
+    window.openContractorEditor = (id = '') => { if (!contractorCanAccess()) return; const item = state.contractors.find(row => row.id === id) || {}; const companies = contractorCompanies(item); document.getElementById('contractor-form').reset(); document.getElementById('contractor-id').value = id; document.getElementById('contractor-editor-title').textContent = id ? 'Editar contractor' : 'Novo contractor'; [['contractor-business-name', 'businessName'], ['contractor-contact-name', 'contactName'], ['contractor-email', 'email'], ['contractor-phone', 'phone'], ['contractor-ein', 'ein'], ['contractor-address', 'address'], ['contractor-w9-status', 'w9Status'], ['contractor-notes', 'notes']].forEach(([element, key]) => { const field = document.getElementById(element); if (field) field.value = item[key] || (key === 'w9Status' ? 'pending' : ''); }); document.getElementById('contractor-company-hvac').checked = companies.includes('HVAC') || (!id && state.company === 'HVAC'); document.getElementById('contractor-company-smart').checked = companies.includes('Smart Home') || (!id && state.company === 'Smart Home'); if (!id && state.company === 'Ambas') document.getElementById('contractor-company-hvac').checked = true; document.getElementById('contractor-editor-modal').classList.add('active'); try { lucide.createIcons(); } catch {} };
+    window.closeContractorEditor = () => document.getElementById('contractor-editor-modal')?.classList.remove('active');
+    window.openContractorPayment = (id) => { const contractor = state.contractors.find(row => row.id === id); if (!contractorCanAccess() || !contractor) return; document.getElementById('contractor-payment-form').reset(); document.getElementById('contractor-payment-contractor-id').value = id; const select = document.getElementById('contractor-payment-project-id'); const projects = getContractorProjects(contractor); select.innerHTML = `<option value="">Selecione uma obra</option>${projects.map(project => `<option value="${project.id}">${escapeInlineHtml(getProjectDisplayName(project))}${project.numeroInvoice ? ` • Invoice ${escapeInlineHtml(project.numeroInvoice)}` : ''}</option>`).join('')}`; select.disabled = projects.length === 0; document.getElementById('contractor-payment-date').value = new Date().toISOString().slice(0, 10); document.getElementById('contractor-payment-modal').classList.add('active'); try { lucide.createIcons(); } catch {} };
+    window.closeContractorPayment = () => document.getElementById('contractor-payment-modal')?.classList.remove('active');
+    window.toggleContractorArchive = (id) => { const item = state.contractors.find(row => row.id === id); if (!item || !contractorCanAccess()) return; const action = item.archived ? 'reativar' : 'arquivar'; window.showModal('Confirmar ação', `Deseja ${action} ${item.businessName}?`, 'confirm', async () => { await updateDoc(doc(contractorsRef(), id), { archived: !item.archived, updatedAt: serverTimestamp(), updatedBy: state.user.email }); logAccess(state.user.email, `${item.archived ? 'Reativou' : 'Arquivou'} contractor: ${item.businessName}`, { contractorId: id, contractorName: item.businessName }); }); };
+    window.closeContractorDetail = () => document.getElementById('contractor-detail-modal')?.classList.remove('active');
+    window.deleteContractor = (id) => { const item = state.contractors.find(row => row.id === id); if (!item || !state.isSuperAdmin) { window.showModal(window.t('modal_access_denied'), window.t('modal_access_denied_msg'), 'error'); return; } const payments = getContractorPayments(id); window.showModal('Excluir contractor', `Excluir permanentemente ${item.businessName}? ${payments.length ? 'Os pagamentos já registrados permanecerão no histórico financeiro, identificados pelo contractor.' : ''}`, 'confirm', async () => { try { await deleteDoc(doc(contractorsRef(), id)); logAccess(state.user.email, `Excluiu contractor: ${item.businessName}`, { contractorId: id, contractorName: item.businessName, contractorCompany: item.company }); window.closeContractorDetail(); } catch (error) { window.showModal('Erro', `Não foi possível excluir: ${error.message || error}`, 'error'); } }); };
+    window.closeContractorReports = () => document.getElementById('contractor-report-modal')?.classList.remove('active');
+    window.openContractorReports = () => {
+        if (!contractorCanAccess()) return; const year = new Date().getFullYear(); const eligible = state.contractors.filter(item => !item.archived && contractorCompanyAllowed(item.company));
+        const rows = eligible.map(item => ({ ...item, total: getContractorPayments(item.id).filter(payment => String(payment.date || '').startsWith(String(year))).reduce((sum, payment) => sum + Number(payment.amount || 0), 0) })).sort((a, b) => b.total - a.total);
+        const missingW9 = rows.filter(item => item.w9Status !== 'received'); const overThreshold = rows.filter(item => item.total >= 600); const totalPaid = rows.reduce((sum, item) => sum + item.total, 0);
+        const renderRow = (item) => { const [status, color] = contractorStatus(item.w9Status); return `<tr><td><strong>${escapeInlineHtml(item.businessName || '—')}</strong><small class="block text-slate-500 mt-1">${escapeInlineHtml(item.company === 'HVAC' ? 'D2 HVAC Solutions' : 'D2 Smart Home')}</small></td><td>${escapeInlineHtml(item.contactName || item.email || '—')}</td><td><span class="c2-tag ${color}">${status}</span></td><td class="text-right font-black ${item.total >= 600 ? 'text-amber-300' : 'text-emerald-300'}">${formatCurr(item.total)}</td></tr>`; };
+        document.getElementById('contractor-report-content').innerHTML = `<div class="flex items-start justify-between gap-4 pb-6 border-b border-white/10"><div><p class="c2-eyebrow">Compliance e 1099</p><h2 class="mt-1 text-2xl font-black text-slate-100">Relatório de Contractors • ${year}</h2><p class="mt-2 text-sm text-slate-400">Controle interno para revisão de W-9 e preparação de informações de pagamentos. Não substitui a preparação ou o envio fiscal.</p></div><button type="button" onclick="window.closeContractorReports()" class="c2-icon-btn"><i data-lucide="x" class="w-5 h-5"></i></button></div><div class="grid grid-cols-1 sm:grid-cols-3 gap-4 my-6"><div class="rounded-2xl border border-white/10 bg-black/10 p-5"><p class="c2-eyebrow">Total pago em ${year}</p><strong class="block mt-2 text-2xl text-emerald-300">${formatCurr(totalPaid)}</strong></div><div class="rounded-2xl border border-white/10 bg-black/10 p-5"><p class="c2-eyebrow">Revisar W-9</p><strong class="block mt-2 text-2xl text-amber-300">${missingW9.length}</strong></div><div class="rounded-2xl border border-white/10 bg-black/10 p-5"><p class="c2-eyebrow">Pagamentos ≥ $600</p><strong class="block mt-2 text-2xl text-slate-100">${overThreshold.length}</strong></div></div><div class="flex flex-wrap gap-3 mb-6"><a href="https://www.irs.gov/pub/irs-pdf/fw9.pdf" target="_blank" rel="noopener" class="c2-primary-btn"><i data-lucide="download" class="w-4 h-4"></i>Baixar Form W-9 oficial (IRS)</a><a href="https://www.irs.gov/forms-pubs/about-form-1099-nec" target="_blank" rel="noopener" class="c2-secondary-btn"><i data-lucide="external-link" class="w-4 h-4"></i>Orientação oficial 1099-NEC</a><button onclick="window.print()" class="c2-secondary-btn"><i data-lucide="printer" class="w-4 h-4"></i>Imprimir relatório</button></div><section class="c2-panel p-0 overflow-hidden"><div class="c2-list-head"><div><p class="c2-eyebrow">Revisão anual</p><h3>W-9 e pagamentos por contractor</h3></div><div class="c2-list-head-icon"><i data-lucide="file-check-2" class="w-5 h-5"></i></div></div><div class="overflow-x-auto c2-table-scroll"><table class="w-full c2-table"><thead><tr><th>Contractor / empresa</th><th>Contato</th><th>W-9</th><th class="text-right">Pagamentos ${year}</th></tr></thead><tbody>${rows.length ? rows.map(renderRow).join('') : '<tr><td colspan="4" class="py-10 text-center text-slate-500">Nenhum dado para o período.</td></tr>'}</tbody></table></div></section>`;
+        document.getElementById('contractor-report-modal').classList.add('active'); try { lucide.createIcons(); } catch {};
+    };
+    window.openContractorDetail = (id) => {
+        const item = state.contractors.find(row => row.id === id); if (!item || !contractorCanAccess()) return;
+        const docs = Array.isArray(item.documents) ? item.documents : []; const payments = getContractorPayments(id).sort((a, b) => String(b.date || '').localeCompare(String(a.date || '')));
+        const [status, color] = contractorStatus(item.w9Status); const company = item.company === 'HVAC' ? 'D2 HVAC Solutions' : 'D2 Smart Home';
+        const documentRows = docs.length ? docs.map(file => `<div class="flex items-center justify-between gap-3 rounded-xl border border-white/10 bg-black/10 p-4"><div class="min-w-0 flex items-center gap-3"><i data-lucide="file-text" class="w-5 h-5 text-emerald-300 shrink-0"></i><div><strong class="block text-sm text-slate-100 truncate">${escapeInlineHtml(file.name || 'Documento')}</strong><small class="text-slate-500">${escapeInlineHtml(file.type || 'Arquivo')} • ${escapeInlineHtml(file.receivedAt || 'Recebido')}</small></div></div>${file.url ? `<a href="${escapeInlineHtml(file.url)}" target="_blank" rel="noopener" class="c2-secondary-btn !px-3 !py-2 text-xs">Visualizar</a>` : '<span class="text-xs text-slate-500">Aguardando arquivo</span>'}</div>`).join('') : `<div class="rounded-xl border border-dashed border-white/15 p-6 text-center text-sm text-slate-500">Nenhum documento recebido ainda.</div>`;
+        const paymentRows = payments.length ? payments.map(payment => `<div class="flex items-center justify-between gap-3 rounded-xl border border-white/10 bg-black/10 p-4"><div><strong class="block text-sm text-slate-100">${escapeInlineHtml(payment.note || payment.method || 'Pagamento')}</strong><small class="text-slate-500">${escapeInlineHtml(payment.date || 'Sem data')} • ${escapeInlineHtml(payment.method || 'Método não informado')}${payment.projectName ? ` • Obra: ${escapeInlineHtml(payment.projectName)}` : ''}</small></div><strong class="text-emerald-300">${formatCurr(payment.amount)}</strong></div>`).join('') : `<div class="rounded-xl border border-dashed border-white/15 p-6 text-center text-sm text-slate-500">Nenhum pagamento registrado.</div>`;
+        document.getElementById('contractor-detail-content').innerHTML = `<div class="flex items-start justify-between gap-4 pb-6 border-b border-white/10"><div><p class="c2-eyebrow">${company}</p><h2 class="mt-1 text-2xl font-black text-slate-100">${escapeInlineHtml(item.businessName)}</h2><p class="mt-2 text-sm text-slate-400">${escapeInlineHtml(item.contactName || item.email || 'Contato não informado')}</p></div><button type="button" onclick="window.closeContractorDetail()" class="c2-icon-btn"><i data-lucide="x" class="w-5 h-5"></i></button></div><div class="grid grid-cols-1 sm:grid-cols-3 gap-4 my-6"><div class="rounded-2xl border border-white/10 bg-black/10 p-4"><p class="c2-eyebrow">Conformidade</p><strong class="block mt-2 text-sm text-${color === 'green' ? 'emerald-300' : color === 'amber' ? 'amber-300' : 'cyan-300'}">${status}</strong></div><div class="rounded-2xl border border-white/10 bg-black/10 p-4"><p class="c2-eyebrow">Documentos</p><strong class="block mt-2 text-xl text-slate-100">${docs.length}</strong></div><div class="rounded-2xl border border-white/10 bg-black/10 p-4"><p class="c2-eyebrow">Total pago</p><strong class="block mt-2 text-xl text-emerald-300">${formatCurr(getContractorPaidTotal(id))}</strong></div></div><div class="flex flex-wrap gap-3 pb-6"><button onclick="window.copyContractorDocumentRequest('${id}')" class="c2-primary-btn"><i data-lucide="send" class="w-4 h-4"></i>Gerar solicitação de documentos</button><button onclick="window.openContractorPayment('${id}')" class="c2-secondary-btn"><i data-lucide="badge-dollar-sign" class="w-4 h-4"></i>Registrar pagamento</button><button onclick="window.openContractorEditor('${id}');window.closeContractorDetail()" class="c2-secondary-btn"><i data-lucide="pencil" class="w-4 h-4"></i>Editar</button>${state.isSuperAdmin ? `<button onclick="window.deleteContractor('${id}')" class="c2-secondary-btn text-red-300"><i data-lucide="trash-2" class="w-4 h-4"></i>Excluir</button>` : ''}</div><div class="grid grid-cols-1 lg:grid-cols-2 gap-6"><section><div class="flex items-center justify-between mb-3"><div><p class="c2-eyebrow">Compliance</p><h3 class="font-black text-slate-100">Documentos recebidos</h3></div></div><div class="space-y-3">${documentRows}</div></section><section><div class="flex items-center justify-between mb-3"><div><p class="c2-eyebrow">Financeiro</p><h3 class="font-black text-slate-100">Histórico de pagamentos</h3></div></div><div class="space-y-3">${paymentRows}</div></section></div>`;
+        document.getElementById('contractor-detail-modal').classList.add('active'); try { lucide.createIcons(); } catch {};
+    };
+    window.copyContractorDocumentRequest = async (id) => { const item = state.contractors.find(row => row.id === id); if (!item) return; const token = item.documentRequestToken || crypto.randomUUID(); const company = item.company === 'HVAC' ? 'D2 HVAC Solutions' : 'D2 Smart Home'; const link = `${window.location.origin}${window.location.pathname}?contractorRequest=${encodeURIComponent(token)}`; try { if (!item.documentRequestToken) await updateDoc(doc(contractorsRef(), id), { documentRequestToken: token, documentRequestCreatedAt: serverTimestamp(), documentRequestCreatedBy: state.user.email }); await navigator.clipboard.writeText(link); logAccess(state.user.email, `Gerou solicitação de documentos para contractor: ${item.businessName}`, { contractorId: id, contractorName: item.businessName, contractorCompany: item.company }); window.showModal('Link de solicitação copiado', `Link exclusivo de ${company} copiado. O portal externo mostrará somente ${item.businessName}. A ativação do upload depende da regra segura de Storage antes do deploy.`, 'info'); } catch (error) { window.showModal('Solicitação de documentos', `Não foi possível gerar o link: ${error.message || error}`, 'error'); } };
+
+    document.getElementById('contractor-request-form')?.addEventListener('submit', async (event) => {
+        event.preventDefault(); if (!contractorCanAccess()) return;
+        const contractor = state.contractors.find(item => item.id === document.getElementById('contractor-request-contractor-id').value); const company = document.getElementById('contractor-request-company').value; const project = state.projects.find(item => item.id === document.getElementById('contractor-request-project-id').value); const selected = Array.from(document.querySelectorAll('.contractor-request-document:checked')).map(input => ({ id: input.value, label: input.dataset.label, status: 'pending' })); const custom = document.getElementById('contractor-request-custom-document').value.trim(); if (custom) selected.push({ id: `custom_${crypto.randomUUID()}`, label: custom, status: 'pending', custom: true });
+        if (!contractor || !project || !selected.length || !contractorCompanies(contractor).includes(company) || project.empresa !== company) { window.showModal('Dados incompletos', 'Selecione a obra, a empresa correta e pelo menos um documento.', 'error'); return; }
+        const requestRef = doc(contractorDocumentRequestsRef()); const token = crypto.randomUUID(); const dueDate = document.getElementById('contractor-request-due-date').value; const note = document.getElementById('contractor-request-note').value.trim(); const request = { token, contractorId: contractor.id, contractorName: contractor.businessName, contractorEmail: contractor.email || '', company, projectId: project.id, projectName: getProjectDisplayName(project), dueDate, note, documents: selected, status: 'open', createdAt: serverTimestamp(), createdAtClient: new Date().toISOString(), createdBy: state.user.email };
+        const preview = encodeRequestPreview({ contractorName: contractor.businessName, company, projectName: request.projectName, dueDate, documents: selected, note }); const link = `${window.location.origin}${window.location.pathname}?contractorRequest=${encodeURIComponent(token)}&preview=${encodeURIComponent(preview)}`;
+        try { await addDoc(contractorDocumentRequestsRef(), request); try { localStorage.setItem(`d2-contractor-request-${token}`, JSON.stringify({ contractorName: contractor.businessName, company, projectName: request.projectName, dueDate, documents: selected, note })); } catch {} await navigator.clipboard.writeText(link); logAccess(state.user.email, `Criou solicitação de documentos para contractor: ${contractor.businessName}`, { ...getProjectLogMeta(project), contractorId: contractor.id, contractorName: contractor.businessName, contractorRequestId: requestRef.id, contractorCompany: company, documentsRequested: selected.map(item => item.label) }); window.closeContractorDocumentRequest(); window.showModal('Link de documentos copiado', `Checklist de ${requestCompanyLabel(company)} para a obra ${request.projectName} copiado. A página pública já pode ser revisada; o envio real será ativado com o endpoint seguro de Storage.`, 'info'); } catch (error) { window.showModal('Erro', `Não foi possível criar a solicitação: ${error.message || error}`, 'error'); }
+    });
+
+    document.getElementById('contractor-form')?.addEventListener('submit', async (event) => { event.preventDefault(); if (!contractorCanAccess()) return; const id = document.getElementById('contractor-id').value; const companies = ['HVAC', 'Smart Home'].filter(company => document.getElementById(`contractor-company-${company === 'HVAC' ? 'hvac' : 'smart'}`).checked); if (!companies.length) { window.showModal('Empresa obrigatória', 'Selecione ao menos uma empresa atendida pelo contractor.', 'error'); return; } const data = { businessName: document.getElementById('contractor-business-name').value.trim(), contactName: document.getElementById('contractor-contact-name').value.trim(), email: document.getElementById('contractor-email').value.trim(), phone: document.getElementById('contractor-phone').value.trim(), ein: document.getElementById('contractor-ein').value.trim(), address: document.getElementById('contractor-address').value.trim(), companies, company: companies[0], w9Status: document.getElementById('contractor-w9-status').value, notes: document.getElementById('contractor-notes').value.trim(), updatedAt: serverTimestamp(), updatedBy: state.user.email }; try { if (id) { await updateDoc(doc(contractorsRef(), id), data); logAccess(state.user.email, `Atualizou contractor: ${data.businessName}`, { contractorId: id, contractorName: data.businessName, contractorCompanies: companies }); } else { const ref = await addDoc(contractorsRef(), { ...data, archived: false, documents: [], documentRequests: {}, createdAt: serverTimestamp(), createdBy: state.user.email }); logAccess(state.user.email, `Cadastrou contractor: ${data.businessName}`, { contractorId: ref.id, contractorName: data.businessName, contractorCompanies: companies }); } window.closeContractorEditor(); } catch (error) { window.showModal('Erro', `Não foi possível salvar o contractor: ${error.message || error}`, 'error'); } });
+    document.getElementById('contractor-payment-form')?.addEventListener('submit', async (event) => { event.preventDefault(); if (!contractorCanAccess()) return; const contractorId = document.getElementById('contractor-payment-contractor-id').value; const contractor = state.contractors.find(row => row.id === contractorId); const projectId = document.getElementById('contractor-payment-project-id').value; const project = state.projects.find(row => row.id === projectId); const amount = roundMoney(document.getElementById('contractor-payment-amount').value); const date = document.getElementById('contractor-payment-date').value; const method = document.getElementById('contractor-payment-method').value; const note = document.getElementById('contractor-payment-note').value.trim(); if (!contractor || !project || !(amount > 0) || !date || !contractorCompanies(contractor).includes(project.empresa)) { window.showModal('Dados incompletos', 'Selecione uma obra da mesma empresa do contractor e informe os dados do pagamento.', 'error'); return; } if (!canManageProjectEntries(project, 'costs')) { denyProjectEntryManagement(); return; } const paymentRef = doc(contractorPaymentsRef()); const expenseId = crypto.randomUUID(); const description = contractorPaymentDescription(contractor, note); const expense = { id: expenseId, data: date, descricao: description, categoria: 'Mão-de-obra', valor: amount, contractorId, contractorName: contractor.businessName, contractorPaymentId: paymentRef.id, autoType: 'contractor_payment', adicionadoPor: state.user.email, criadoEm: new Date().toISOString() }; const payment = { contractorId, contractorName: contractor.businessName, company: project.empresa, projectId, projectName: getProjectDisplayName(project), projectExpenseId: expenseId, amount, date, method, note, source: 'contractor_payment', createdAt: serverTimestamp(), createdBy: state.user.email }; try { await runTransaction(db, async transaction => { transaction.set(paymentRef, payment); transaction.update(projectDocumentRef(projectId), { despesas: arrayUnion(expense), updatedAt: serverTimestamp() }); }); logAccess(state.user.email, `Registrou pagamento de contractor e custo de mão-de-obra: ${contractor.businessName} (${formatCurr(amount)})`, { ...getProjectLogMeta(project), contractorId, contractorName: contractor.businessName, contractorPaymentAmount: amount, contractorPaymentId: paymentRef.id, projectExpenseId: expenseId }); window.closeContractorPayment(); } catch (error) { console.error('Erro ao registrar pagamento de contractor:', error); window.showModal('Erro', `Não foi possível registrar o pagamento e o custo da obra: ${error.message || error}`, 'error'); } });
+
+    window.renderContractors = () => {
+        const list = document.getElementById('contractors-list'); const summary = document.getElementById('contractor-summary');
+        if (!list || !summary || !contractorCanAccess()) return;
+        const q = state.contractorSearchQuery; const viewCompany = state.contractorCompanyFilter;
+        const allowed = state.contractors.filter(item => contractorCompanyAllowed(item)).filter(item => {
+            const archived = !!item.archived; const archiveMatch = state.contractorArchiveFilter === 'all' || (state.contractorArchiveFilter === 'archived' ? archived : !archived);
+            const companyMatch = viewCompany === 'Ambas' || contractorCompanies(item).includes(viewCompany);
+            const search = `${item.businessName || ''} ${item.contactName || ''} ${item.email || ''} ${item.ein || ''}`.toLowerCase();
+            return archiveMatch && companyMatch && (!q || search.includes(q));
+        });
+        const active = state.contractors.filter(item => !item.archived && contractorCompanyAllowed(item));
+        const pending = active.filter(item => item.w9Status !== 'received' && item.w9Status !== 'not_required');
+        const paid = state.contractorPayments.filter(payment => state.isSuperAdmin || (payment.company === 'HVAC' ? state.userPerms?.hvac : state.userPerms?.smart)).reduce((sum, payment) => sum + Number(payment.amount || 0), 0);
+        summary.innerHTML = [[active.length, 'Contractors ativos', 'users'], [pending.length, 'Documentos pendentes', 'file-warning'], [formatCurr(paid), 'Pagamentos registrados', 'badge-dollar-sign']].map(([value, label, icon]) => `<div class="c2-panel p-5"><div class="flex items-center justify-between gap-4"><div><p class="c2-eyebrow">${label}</p><strong class="block mt-2 text-2xl font-black text-slate-100">${value}</strong></div><i data-lucide="${icon}" class="w-6 h-6 text-emerald-300"></i></div></div>`).join('');
+        ['active', 'archived', 'all'].forEach(key => document.getElementById(`contractor-filter-${key}`)?.classList.toggle('active', state.contractorArchiveFilter === key));
+        const filter = document.getElementById('contractor-company-filter'); if (filter) filter.value = state.contractorCompanyFilter;
+        if (!allowed.length) { list.innerHTML = `<div class="c2-panel col-span-full p-12 text-center"><i data-lucide="hard-hat" class="w-9 h-9 mx-auto text-slate-500 mb-3"></i><p class="font-bold text-slate-300">Nenhum contractor encontrado</p><p class="text-sm text-slate-500 mt-1">Cadastre empresas terceirizadas para acompanhar documentos e pagamentos.</p></div>`; try { lucide.createIcons(); } catch {} return; }
+        list.innerHTML = allowed.map(item => { const [status, color] = contractorStatus(item.w9Status); const total = getContractorPayments(item.id).filter(payment => state.isSuperAdmin || (payment.company === 'HVAC' ? state.userPerms?.hvac : state.userPerms?.smart)).reduce((sum, payment) => sum + Number(payment.amount || 0), 0); const docs = Array.isArray(item.documents) ? item.documents.length : 0; return `<article class="c2-panel p-6"><div class="flex items-start justify-between gap-4"><div class="min-w-0"><p class="c2-eyebrow">${escapeInlineHtml(contractorCompanyLabel(item))}</p><h2 class="mt-1 text-xl font-black text-slate-100 truncate">${escapeInlineHtml(item.businessName || 'Sem nome')}</h2><p class="text-sm text-slate-400 mt-1">${escapeInlineHtml(item.contactName || item.email || 'Contato não informado')}</p></div><span class="c2-tag ${color}">${status}</span></div><div class="grid grid-cols-2 gap-3 my-5"><div class="rounded-xl border border-white/10 bg-black/10 p-3"><p class="c2-eyebrow">Documentos</p><strong class="block mt-1 text-lg text-slate-100">${docs}</strong></div><div class="rounded-xl border border-white/10 bg-black/10 p-3"><p class="c2-eyebrow">Pagamentos</p><strong class="block mt-1 text-lg text-emerald-300">${formatCurr(total)}</strong></div></div><div class="flex flex-wrap gap-2"><button onclick="window.openContractorDetail('${item.id}')" class="c2-secondary-btn !px-3 !py-2 text-xs"><i data-lucide="folder-open" class="w-4 h-4"></i>Ficha</button><button onclick="window.openContractorPayment('${item.id}')" class="c2-primary-btn !px-3 !py-2 text-xs"><i data-lucide="badge-dollar-sign" class="w-4 h-4"></i>Pagar</button><button onclick="window.openContractorEditor('${item.id}')" class="c2-secondary-btn !px-3 !py-2 text-xs"><i data-lucide="pencil" class="w-4 h-4"></i>Editar</button><button onclick="window.toggleContractorArchive('${item.id}')" class="c2-secondary-btn !px-3 !py-2 text-xs">${item.archived ? 'Reativar' : 'Arquivar'}</button></div></article>`; }).join(''); try { lucide.createIcons(); } catch {};
+    };
+
+    const baseOpenContractorDetail = window.openContractorDetail;
+    window.openContractorDetail = (id) => {
+        baseOpenContractorDetail(id);
+        const contractor = state.contractors.find(item => item.id === id); const content = document.getElementById('contractor-detail-content');
+        if (!contractor || !content) return;
+        const eyebrow = content.querySelector('.c2-eyebrow'); if (eyebrow) eyebrow.textContent = contractorCompanyLabel(contractor);
+        const actionRow = content.querySelector('.flex.flex-wrap.gap-3.pb-6');
+        if (actionRow && !content.querySelector('[data-company-request-links]')) {
+            const requestLinks = document.createElement('div'); requestLinks.dataset.companyRequestLinks = 'true'; requestLinks.className = 'rounded-2xl border border-cyan-500/20 bg-cyan-500/5 p-4 mb-6';
+            requestLinks.innerHTML = `<p class="c2-eyebrow mb-3">Solicitações de documentos por empresa</p><div class="flex flex-wrap gap-2">${contractorCompanies(contractor).map(company => `<button onclick="window.openContractorDocumentRequest('${id}','${company}')" class="c2-secondary-btn !px-3 !py-2 text-xs"><i data-lucide="clipboard-list" class="w-4 h-4"></i>Checklist ${company === 'HVAC' ? 'D2 HVAC' : 'D2 Smart'}</button>`).join('')}</div><p class="mt-3 text-xs text-slate-500">Cada solicitação é vinculada à empresa, obra e checklist definidos pela equipe.</p>`;
+            actionRow.insertAdjacentElement('afterend', requestLinks);
+        }
+        try { lucide.createIcons(); } catch {};
+    };
+
+    window.copyContractorDocumentRequest = (id, requestedCompany = '') => window.openContractorDocumentRequest(id, requestedCompany);
+    window.copyExistingContractorRequest = async (requestId) => {
+        const request = state.contractorDocumentRequests.find(item => item.id === requestId); if (!request) return;
+        const preview = encodeRequestPreview({ contractorName: request.contractorName, company: request.company, projectName: request.projectName, dueDate: request.dueDate, documents: request.documents, note: request.note }); const link = `${window.location.origin}${window.location.pathname}?contractorRequest=${encodeURIComponent(request.token)}&preview=${encodeURIComponent(preview)}`;
+        try { await navigator.clipboard.writeText(link); window.showModal('Link copiado', `Link do checklist para ${requestCompanyLabel(request.company)} e obra ${request.projectName} copiado.`, 'info'); } catch (error) { window.showModal('Erro', `Não foi possível copiar o link: ${error.message || error}`, 'error'); }
+    };
+    const contractorDetailWithCompanyRequestLinks = window.openContractorDetail;
+    window.openContractorDetail = (id) => {
+        contractorDetailWithCompanyRequestLinks(id);
+        const content = document.getElementById('contractor-detail-content'); if (!content || content.querySelector('[data-request-history]')) return;
+        const requests = getDocumentRequestsForContractor(id); const section = document.createElement('section'); section.dataset.requestHistory = 'true'; section.className = 'mt-6 rounded-2xl border border-white/10 bg-black/10 p-5';
+        section.innerHTML = `<div class="flex flex-wrap items-start justify-between gap-3"><div><p class="c2-eyebrow">Solicitações por obra</p><h3 class="mt-1 font-black text-slate-100">Checklists enviados</h3></div><span class="c2-tag cyan">${requests.length} solicitação(ões)</span></div><div class="mt-4 space-y-3">${requests.length ? requests.map(request => `<div class="rounded-xl border border-white/10 bg-slate-950/40 p-4"><div class="flex flex-wrap items-start justify-between gap-3"><div><strong class="block text-sm text-slate-100">${escapeInlineHtml(request.projectName || 'Obra')}</strong><small class="mt-1 block text-slate-500">${requestCompanyLabel(request.company)} · prazo: ${escapeInlineHtml(request.dueDate || 'não definido')}</small><small class="mt-2 block text-slate-400">${(request.documents || []).map(document => escapeInlineHtml(document.label)).join(' · ')}</small></div><button onclick="window.copyExistingContractorRequest('${request.id}')" class="c2-secondary-btn !px-3 !py-2 text-xs"><i data-lucide="copy" class="w-4 h-4"></i>Copiar link</button></div></div>`).join('') : '<div class="rounded-xl border border-dashed border-white/15 p-5 text-center text-sm text-slate-500">Nenhuma solicitação criada para este contractor.</div>'}</div>`;
+        content.appendChild(section); try { lucide.createIcons(); } catch {};
+    };
+
+    window.openContractorReports = () => {
+        if (!contractorCanAccess()) return;
+        const year = new Date().getFullYear(); const canSeeCompany = company => state.isSuperAdmin || (company === 'HVAC' ? state.userPerms?.hvac : state.userPerms?.smart);
+        const payments = state.contractorPayments.filter(payment => String(payment.date || '').startsWith(String(year)) && canSeeCompany(payment.company));
+        const rows = state.contractors.filter(item => !item.archived && contractorCompanyAllowed(item)).map(contractor => {
+            const contractorPayments = payments.filter(payment => payment.contractorId === contractor.id); const hvac = contractorPayments.filter(payment => payment.company === 'HVAC').reduce((sum, payment) => sum + Number(payment.amount || 0), 0); const smart = contractorPayments.filter(payment => payment.company === 'Smart Home').reduce((sum, payment) => sum + Number(payment.amount || 0), 0);
+            return { contractor, hvac, smart, total: hvac + smart, projects: new Set(contractorPayments.map(payment => payment.projectId).filter(Boolean)).size };
+        }).sort((a, b) => b.total - a.total);
+        const totalHvac = payments.filter(payment => payment.company === 'HVAC').reduce((sum, payment) => sum + Number(payment.amount || 0), 0); const totalSmart = payments.filter(payment => payment.company === 'Smart Home').reduce((sum, payment) => sum + Number(payment.amount || 0), 0); const needsW9 = rows.filter(row => row.contractor.w9Status !== 'received' && row.total > 0).length;
+        const logo = state.company === 'HVAC' ? 'logo-D2-HVAC-Solutions-preto.png' : state.company === 'Smart Home' ? 'logo-D2-SmartHome-preto.png' : 'logo-D2-Group-preto.png';
+        const tableRows = rows.length ? rows.map(row => `<tr><td><strong>${escapeInlineHtml(row.contractor.businessName || '—')}</strong><small class="block text-slate-500 mt-1">${escapeInlineHtml(contractorCompanyLabel(row.contractor))} · ${row.projects} obra(s)</small></td><td><span class="c2-tag ${row.contractor.w9Status === 'received' ? 'green' : 'amber'}">${row.contractor.w9Status === 'received' ? 'W-9 recebido' : 'Revisar W-9'}</span></td><td class="text-right">${formatCurr(row.hvac)}</td><td class="text-right">${formatCurr(row.smart)}</td><td class="text-right font-black text-emerald-300">${formatCurr(row.total)}</td></tr>`).join('') : '<tr><td colspan="5" class="py-10 text-center text-slate-500">Nenhum pagamento no período.</td></tr>';
+        document.getElementById('contractor-report-content').innerHTML = `<div class="flex items-start justify-between gap-4 pb-6 border-b border-white/10"><div class="flex items-center gap-4"><img src="${logo}" alt="D2 Group" class="h-12 w-auto object-contain"><div><p class="c2-eyebrow">Compliance e 1099</p><h2 class="mt-1 text-2xl font-black text-slate-100">Relatório de Contractors • ${year}</h2><p class="mt-2 text-sm text-slate-400">Pagamentos separados por empresa e vinculados às respectivas obras.</p></div></div><button type="button" onclick="window.closeContractorReports()" class="c2-icon-btn"><i data-lucide="x" class="w-5 h-5"></i></button></div><div class="grid grid-cols-1 sm:grid-cols-3 gap-4 my-6"><div class="rounded-2xl border border-cyan-500/20 bg-cyan-500/5 p-5"><p class="c2-eyebrow">D2 HVAC Solutions</p><strong class="block mt-2 text-2xl text-cyan-300">${formatCurr(totalHvac)}</strong></div><div class="rounded-2xl border border-emerald-500/20 bg-emerald-500/5 p-5"><p class="c2-eyebrow">D2 Smart Home</p><strong class="block mt-2 text-2xl text-emerald-300">${formatCurr(totalSmart)}</strong></div><div class="rounded-2xl border border-amber-500/20 bg-amber-500/5 p-5"><p class="c2-eyebrow">W-9 a revisar</p><strong class="block mt-2 text-2xl text-amber-300">${needsW9}</strong></div></div><div class="flex flex-wrap gap-3 mb-6"><a href="https://www.irs.gov/pub/irs-pdf/fw9.pdf" target="_blank" rel="noopener" class="c2-primary-btn"><i data-lucide="download" class="w-4 h-4"></i>Baixar Form W-9 oficial (IRS)</a><a href="https://www.irs.gov/forms-pubs/about-form-1099-nec" target="_blank" rel="noopener" class="c2-secondary-btn"><i data-lucide="external-link" class="w-4 h-4"></i>Orientação oficial 1099-NEC</a><button onclick="window.print()" class="c2-secondary-btn"><i data-lucide="printer" class="w-4 h-4"></i>Imprimir relatório</button></div><section class="c2-panel p-0 overflow-hidden"><div class="c2-list-head"><div><p class="c2-eyebrow">Revisão anual</p><h3>W-9, obras e pagamentos por empresa</h3></div><div class="c2-list-head-icon"><i data-lucide="file-check-2" class="w-5 h-5"></i></div></div><div class="overflow-x-auto c2-table-scroll"><table class="w-full c2-table"><thead><tr><th>Contractor / obras</th><th>W-9</th><th class="text-right">D2 HVAC</th><th class="text-right">D2 Smart</th><th class="text-right">Total ${year}</th></tr></thead><tbody>${tableRows}</tbody></table></div></section>`;
+        document.getElementById('contractor-report-modal').classList.add('active'); try { lucide.createIcons(); } catch {};
+    };
+
+    function populateContractorPaymentProjects(contractor, selectedProjectId = '') {
+        const select = document.getElementById('contractor-payment-project-id'); const projects = getContractorProjects(contractor); if (!select) return;
+        select.innerHTML = `<option value="">Selecione uma obra</option>${projects.map(project => `<option value="${project.id}">${escapeInlineHtml(getProjectDisplayName(project))}${project.numeroInvoice ? ` • Invoice ${escapeInlineHtml(project.numeroInvoice)}` : ''}</option>`).join('')}`; select.value = selectedProjectId; select.disabled = !projects.length;
+    }
+    const baseOpenNewContractorPayment = window.openContractorPayment;
+    window.openContractorPayment = (contractorId) => { baseOpenNewContractorPayment(contractorId); document.getElementById('contractor-payment-id').value = ''; document.getElementById('contractor-payment-title').textContent = 'Registrar pagamento'; };
+    window.editContractorPayment = (paymentId) => {
+        const payment = state.contractorPayments.find(item => item.id === paymentId); const contractor = state.contractors.find(item => item.id === payment?.contractorId); if (!payment || !contractor || !contractorCanAccess()) return;
+        document.getElementById('contractor-payment-form').reset(); document.getElementById('contractor-payment-id').value = payment.id; document.getElementById('contractor-payment-contractor-id').value = contractor.id; populateContractorPaymentProjects(contractor, payment.projectId); document.getElementById('contractor-payment-amount').value = payment.amount || ''; document.getElementById('contractor-payment-date').value = payment.date || ''; document.getElementById('contractor-payment-method').value = payment.method || 'ACH'; document.getElementById('contractor-payment-note').value = payment.note || ''; document.getElementById('contractor-payment-title').textContent = 'Editar pagamento'; document.getElementById('contractor-payment-modal').classList.add('active'); try { lucide.createIcons(); } catch {};
+    };
+    window.deleteContractorPayment = (paymentId) => {
+        const payment = state.contractorPayments.find(item => item.id === paymentId); const contractor = state.contractors.find(item => item.id === payment?.contractorId); const project = state.projects.find(item => item.id === payment?.projectId); if (!payment || !contractor || !project || !contractorCanAccess()) return;
+        if (!canManageProjectEntries(project, 'costs')) { denyProjectEntryManagement(); return; }
+        window.showModal('Excluir pagamento vinculado', `Excluir ${formatCurr(payment.amount)} pago a ${contractor.businessName}? O custo de Mão-de-obra será removido da obra ${getProjectDisplayName(project)} na mesma operação.`, 'confirm', async () => {
+            try { await runTransaction(db, async transaction => { const projectSnapshot = await transaction.get(projectDocumentRef(project.id)); const expenses = Array.isArray(projectSnapshot.data()?.despesas) ? projectSnapshot.data().despesas : []; transaction.delete(doc(contractorPaymentsRef(), payment.id)); transaction.update(projectDocumentRef(project.id), { despesas: expenses.filter(expense => expense.contractorPaymentId !== payment.id && expense.id !== payment.projectExpenseId), updatedAt: serverTimestamp() }); }); logAccess(state.user.email, `Excluiu pagamento de contractor e custo vinculado: ${contractor.businessName} (${formatCurr(payment.amount)})`, { ...getProjectLogMeta(project), contractorId: contractor.id, contractorName: contractor.businessName, contractorPaymentId: payment.id, projectExpenseId: payment.projectExpenseId }); window.openContractorDetail(contractor.id); } catch (error) { window.showModal('Erro', `Não foi possível excluir o pagamento vinculado: ${error.message || error}`, 'error'); } });
+    };
+    window.openProjectExpenseCategorySource = (projectId, category) => {
+        const project = state.projects.find(item => item.id === projectId); const content = document.getElementById('project-kpi-detail-content'); const title = document.getElementById('project-kpi-detail-title'); const subtitle = document.getElementById('project-kpi-detail-subtitle'); if (!project || !content || !title || !subtitle) return;
+        const expenses = (project.despesas || []).filter(expense => expense.categoria === category).sort((a, b) => String(b.data || '').localeCompare(String(a.data || ''))); title.textContent = category; subtitle.textContent = `${getProjectDisplayName(project)} · ${expenses.length} lançamento(s)`;
+        content.innerHTML = `<div class="v86-table-wrap"><table class="v86-table"><thead><tr><th>Data</th><th>Descrição</th><th>Fonte</th><th class="money">Valor</th></tr></thead><tbody>${expenses.length ? expenses.map(expense => `<tr class="${expense.contractorPaymentId ? 'cursor-pointer hover:bg-cyan-500/10' : ''}" ${expense.contractorPaymentId ? `onclick="window.editContractorPayment('${expense.contractorPaymentId}')"` : ''}><td>${escapeInlineHtml(expense.data || '—')}</td><td class="wrap font-bold">${escapeInlineHtml(expense.descricao || '—')}</td><td>${expense.contractorPaymentId ? '<span class="v86-status info">Contractor · abrir pagamento</span>' : '<span class="text-slate-500">Despesa da obra</span>'}</td><td class="money text-amber-300">${formatCurr(expense.valor)}</td></tr>`).join('') : '<tr><td colspan="4" class="v86-empty">Nenhum lançamento.</td></tr>'}</tbody></table></div>`; document.getElementById('project-kpi-detail-modal').classList.add('active'); try { lucide.createIcons(); } catch {};
+    };
+    function decorateProjectCostSourceLinks(project) {
+        const root = document.getElementById('projects-grid'); if (!root || !project || state.activeModule !== 'costs') return;
+        const detailHeading = Array.from(root.querySelectorAll('h2')).find(item => item.textContent.includes('Detalhamento por categoria')); const detailRows = detailHeading?.closest('section')?.querySelectorAll('tbody tr') || [];
+        detailRows.forEach(row => { const category = row.cells?.[0]?.textContent?.trim(); if (!category || row.dataset.sourceRow) return; row.dataset.sourceRow = 'true'; row.classList.add('cursor-pointer', 'hover:bg-cyan-500/10', 'transition-colors'); row.tabIndex = 0; row.setAttribute('role', 'button'); row.setAttribute('aria-label', `Ver lançamentos de ${category}`); const open = () => window.openProjectExpenseCategorySource(project.id, category); row.addEventListener('click', open); row.addEventListener('keydown', event => { if (event.key === 'Enter' || event.key === ' ') { event.preventDefault(); open(); } }); });
+        const historyHeading = Array.from(root.querySelectorAll('h2')).find(item => item.textContent.includes('Histórico Completo de Gastos') || item.textContent.includes('Expense History')); const historyRows = historyHeading?.closest('section')?.querySelectorAll('tbody tr') || []; const expenses = (project.despesas || []).slice().sort((a, b) => String(b.data || '').localeCompare(String(a.data || '')));
+        historyRows.forEach((row, index) => { const expense = expenses[index]; if (!expense?.contractorPaymentId || row.dataset.contractorPaymentRow) return; row.dataset.contractorPaymentRow = 'true'; const actionCell = row.lastElementChild; if (!actionCell) return; actionCell.innerHTML = `<button class="v86-table-action" title="Gerenciar pagamento vinculado" onclick="window.editContractorPayment('${expense.contractorPaymentId}')"><i data-lucide="wallet-cards" class="w-4 h-4 text-cyan-300"></i></button>`; row.classList.add('hover:bg-cyan-500/5'); });
+        try { lucide.createIcons(); } catch {};
+    }
+    function decorateContractorPaymentHistory(contractorId) {
+        const content = document.getElementById('contractor-detail-content'); if (!content) return; const heading = Array.from(content.querySelectorAll('h3')).find(item => item.textContent.includes('Histórico de pagamentos')); const container = heading?.parentElement?.parentElement?.querySelector('.space-y-3'); const payments = getContractorPayments(contractorId).sort((a, b) => String(b.date || '').localeCompare(String(a.date || ''))); if (!container || !payments.length) return;
+        Array.from(container.children).forEach((row, index) => { const payment = payments[index]; if (!payment || row.dataset.paymentActions) return; row.dataset.paymentActions = 'true'; const actions = document.createElement('div'); actions.className = 'mt-3 flex flex-wrap gap-2'; actions.innerHTML = `<button onclick="window.editContractorPayment('${payment.id}')" class="c2-secondary-btn !px-3 !py-2 text-xs"><i data-lucide="pencil" class="w-4 h-4"></i>Editar</button><button onclick="window.deleteContractorPayment('${payment.id}')" class="c2-secondary-btn !px-3 !py-2 text-xs text-red-300"><i data-lucide="trash-2" class="w-4 h-4"></i>Excluir</button>`; row.appendChild(actions); }); try { lucide.createIcons(); } catch {};
+    }
+    const contractorDetailWithRequestHistory = window.openContractorDetail;
+    window.openContractorDetail = (id) => { contractorDetailWithRequestHistory(id); const content = document.getElementById('contractor-detail-content'); const legacyButton = Array.from(content?.querySelectorAll('button') || []).find(button => button.textContent.includes('Gerar solicitação de documentos')); legacyButton?.remove(); decorateContractorPaymentHistory(id); const cards = Array.from(content?.querySelectorAll('div[class*="sm:grid-cols-3"] > div') || []).slice(0, 3); const targets = [content?.querySelector('[data-request-history]'), Array.from(content?.querySelectorAll('h3') || []).find(item => item.textContent.includes('Documentos recebidos'))?.closest('section'), Array.from(content?.querySelectorAll('h3') || []).find(item => item.textContent.includes('Histórico de pagamentos'))?.closest('section')]; cards.forEach((card, index) => { if (!targets[index] || card.dataset.sourceCard) return; card.dataset.sourceCard = 'true'; card.classList.add('cursor-pointer', 'hover:bg-cyan-500/10', 'transition-colors'); card.tabIndex = 0; card.setAttribute('role', 'button'); card.setAttribute('aria-label', 'Ver fonte do indicador'); const open = () => targets[index].scrollIntoView({ behavior: 'smooth', block: 'center' }); card.addEventListener('click', open); card.addEventListener('keydown', event => { if (event.key === 'Enter' || event.key === ' ') { event.preventDefault(); open(); } }); }); };
+
+    window.openStoredContractorDocument = async (storagePath) => {
+        try { const url = await getDownloadURL(storageRef(storage, storagePath)); window.open(url, '_blank', 'noopener'); } catch (error) { window.showModal('Documento indisponível', `Não foi possível abrir o documento: ${error.message || error}`, 'error'); }
+    };
+    const contractorDetailWithPaymentActions = window.openContractorDetail;
+    window.openContractorDetail = (id) => { contractorDetailWithPaymentActions(id); const contractor = state.contractors.find(item => item.id === id); const content = document.getElementById('contractor-detail-content'); const pending = Array.from(content?.querySelectorAll('span') || []).filter(item => item.textContent.trim() === 'Aguardando arquivo'); const files = (contractor?.documents || []).filter(file => file.storagePath); pending.forEach((placeholder, index) => { const file = files[index]; if (!file) return; const button = document.createElement('button'); button.type = 'button'; button.className = 'c2-secondary-btn !px-3 !py-2 text-xs'; button.innerHTML = '<i data-lucide="external-link" class="w-4 h-4"></i>Visualizar'; button.onclick = () => window.openStoredContractorDocument(file.storagePath); placeholder.replaceWith(button); }); try { lucide.createIcons(); } catch {}; };
+
+    function initializeContractorPaymentForm() {
+        const originalForm = document.getElementById('contractor-payment-form'); if (!originalForm || originalForm.dataset.managedPaymentForm === 'true') return;
+        const form = originalForm.cloneNode(true); form.dataset.managedPaymentForm = 'true'; originalForm.replaceWith(form);
+        form.addEventListener('submit', async event => {
+            event.preventDefault(); if (!contractorCanAccess()) return;
+            const paymentId = document.getElementById('contractor-payment-id').value; const contractorId = document.getElementById('contractor-payment-contractor-id').value; const contractor = state.contractors.find(item => item.id === contractorId); const projectId = document.getElementById('contractor-payment-project-id').value; const project = state.projects.find(item => item.id === projectId); const amount = roundMoney(document.getElementById('contractor-payment-amount').value); const date = document.getElementById('contractor-payment-date').value; const method = document.getElementById('contractor-payment-method').value; const note = document.getElementById('contractor-payment-note').value.trim();
+            if (!contractor || !project || !(amount > 0) || !date || !contractorCompanies(contractor).includes(project.empresa)) { window.showModal('Dados incompletos', 'Selecione uma obra da mesma empresa do contractor e informe os dados do pagamento.', 'error'); return; }
+            if (!canManageProjectEntries(project, 'costs')) { denyProjectEntryManagement(); return; }
+            try {
+                if (!paymentId) {
+                    const paymentRef = doc(contractorPaymentsRef()); const expenseId = crypto.randomUUID(); const expense = { id: expenseId, data: date, descricao: contractorPaymentDescription(contractor, note), categoria: 'Mão-de-obra', valor: amount, contractorId, contractorName: contractor.businessName, contractorPaymentId: paymentRef.id, autoType: 'contractor_payment', adicionadoPor: state.user.email, criadoEm: new Date().toISOString() }; const payment = { contractorId, contractorName: contractor.businessName, company: project.empresa, projectId, projectName: getProjectDisplayName(project), projectExpenseId: expenseId, amount, date, method, note, source: 'contractor_payment', createdAt: serverTimestamp(), createdBy: state.user.email };
+                    await runTransaction(db, async transaction => { transaction.set(paymentRef, payment); transaction.update(projectDocumentRef(projectId), { despesas: arrayUnion(expense), updatedAt: serverTimestamp() }); }); logAccess(state.user.email, `Registrou pagamento de contractor e custo de mão-de-obra: ${contractor.businessName} (${formatCurr(amount)})`, { ...getProjectLogMeta(project), contractorId, contractorName: contractor.businessName, contractorPaymentId: paymentRef.id, projectExpenseId: expenseId });
+                } else {
+                    const existingPayment = state.contractorPayments.find(item => item.id === paymentId); const oldProject = state.projects.find(item => item.id === existingPayment?.projectId); if (!existingPayment || !oldProject) throw new Error('Pagamento ou obra original não encontrados.'); if (!canManageProjectEntries(oldProject, 'costs')) { denyProjectEntryManagement(); return; }
+                    const expenseId = existingPayment.projectExpenseId || crypto.randomUUID(); const updatedExpense = { id: expenseId, data: date, descricao: contractorPaymentDescription(contractor, note), categoria: 'Mão-de-obra', valor: amount, contractorId, contractorName: contractor.businessName, contractorPaymentId: paymentId, autoType: 'contractor_payment', adicionadoPor: existingPayment.createdBy || state.user.email, criadoEm: existingPayment.createdAtClient || new Date().toISOString(), atualizadoPor: state.user.email, atualizadoEm: new Date().toISOString() }; const updatedPayment = { contractorId, contractorName: contractor.businessName, company: project.empresa, projectId, projectName: getProjectDisplayName(project), projectExpenseId: expenseId, amount, date, method, note, updatedAt: serverTimestamp(), updatedBy: state.user.email };
+                    await runTransaction(db, async transaction => { const oldSnapshot = await transaction.get(projectDocumentRef(oldProject.id)); const oldExpenses = Array.isArray(oldSnapshot.data()?.despesas) ? oldSnapshot.data().despesas : []; if (oldProject.id === project.id) { const replaced = oldExpenses.some(expense => expense.id === expenseId || expense.contractorPaymentId === paymentId) ? oldExpenses.map(expense => expense.id === expenseId || expense.contractorPaymentId === paymentId ? updatedExpense : expense) : [...oldExpenses, updatedExpense]; transaction.update(projectDocumentRef(project.id), { despesas: replaced, updatedAt: serverTimestamp() }); } else { const nextSnapshot = await transaction.get(projectDocumentRef(project.id)); const nextExpenses = Array.isArray(nextSnapshot.data()?.despesas) ? nextSnapshot.data().despesas : []; transaction.update(projectDocumentRef(oldProject.id), { despesas: oldExpenses.filter(expense => expense.id !== expenseId && expense.contractorPaymentId !== paymentId), updatedAt: serverTimestamp() }); transaction.update(projectDocumentRef(project.id), { despesas: [...nextExpenses.filter(expense => expense.id !== expenseId && expense.contractorPaymentId !== paymentId), updatedExpense], updatedAt: serverTimestamp() }); } transaction.update(doc(contractorPaymentsRef(), paymentId), updatedPayment); }); logAccess(state.user.email, `Editou pagamento de contractor e custo vinculado: ${contractor.businessName} (${formatCurr(amount)})`, { ...getProjectLogMeta(project), contractorId, contractorName: contractor.businessName, contractorPaymentId: paymentId, projectExpenseId: expenseId });
+                }
+                window.closeContractorPayment();
+            } catch (error) { console.error('Erro ao salvar pagamento vinculado:', error); window.showModal('Erro', `Não foi possível salvar o pagamento vinculado: ${error.message || error}`, 'error'); }
+        });
+    }
+
     window.cancelEdit = () => { 
         const form = document.getElementById('project-form'); if (form) form.reset(); 
         document.getElementById('edit-id').value = ''; 
@@ -4159,7 +4483,7 @@
     };
 
     window.showView = (v) => {
-        ['projects', 'new', 'reports', 'users', 'logs'].forEach(id => {
+        ['projects', 'new', 'reports', 'contractors', 'users', 'logs'].forEach(id => {
             const el = document.getElementById('view-' + id); const tab = document.getElementById('tab-' + id);
             if (el) el.classList.add('hidden'); if (tab) tab.classList.remove('tab-active');
         });
@@ -4171,6 +4495,7 @@
         if (v === 'logs') window.renderLogs();
         if (v === 'projects') { state.focusedProject = null; state.activeModule = null; window.renderProjects(); }
         if (v === 'reports') { state.returnToReport = false; state.reportActiveKpi = 'commissions_period'; window.safeRenderReport(); }
+        if (v === 'contractors') window.renderContractors();
         window.updateDashboardLanguageSwitcher?.();
         try { lucide.createIcons(); } catch {}
     };
@@ -6695,6 +7020,12 @@ function getSellerCommissionPeriodReport(projects, startStr, endStr) {
             window.showModal(window.t('modal_access_denied'), window.t('modal_access_denied_msg'), 'error');
             return;
         }
+        if (view === 'contractors' && !contractorCanAccess()) {
+            const p = state.userPerms;
+            baseShowView(p.tab_proj ? 'projects' : (p.tab_rep ? 'reports' : 'new'));
+            window.showModal(window.t('modal_access_denied'), window.t('modal_access_denied_msg'), 'error');
+            return;
+        }
 
         if (view === 'projects' && state.returnToReportAfterEdit && state.currentView === 'new') {
             const returnListKind = state.reportProjectListReturn;
@@ -6738,6 +7069,19 @@ function getSellerCommissionPeriodReport(projects, startStr, endStr) {
             window.renderProjects(); window.safeRenderReport();
         }, err => console.error(err));
 
+        onSnapshot(contractorsRef(), snap => {
+            state.contractors = snap.docs.map(d => ({ id: d.id, ...d.data() }));
+            if (state.currentView === 'contractors') window.renderContractors();
+        }, err => console.error('Erro ao carregar contractors:', err));
+        onSnapshot(contractorPaymentsRef(), snap => {
+            state.contractorPayments = snap.docs.map(d => ({ id: d.id, ...d.data() }));
+            if (state.currentView === 'contractors') window.renderContractors();
+        }, err => console.error('Erro ao carregar pagamentos de contractors:', err));
+        onSnapshot(contractorDocumentRequestsRef(), snap => {
+            state.contractorDocumentRequests = snap.docs.map(d => ({ id: d.id, ...d.data() }));
+            if (state.currentView === 'contractors') window.renderContractors();
+        }, err => console.error('Erro ao carregar solicitações de documentos:', err));
+
         if (state.isSuperAdmin) {
             onSnapshot(auditLogsRef(), snap => {
                 state.logs = snap.docs.map(d => ({ id: d.id, ...d.data() }));
@@ -6756,7 +7100,7 @@ function getSellerCommissionPeriodReport(projects, startStr, endStr) {
             
             if (state.isSuperAdmin) {
                 // SUPER ADMIN tem passe livre para tudo
-                state.userPerms = { tab_proj: true, tab_new: true, tab_rep: true, fin: true, costs: true, smart: true, hvac: true, global: true };
+                state.userPerms = { tab_proj: true, tab_new: true, tab_rep: true, fin: true, costs: true, contractors: true, smart: true, hvac: true, global: true };
             } else {
                 const myProfile = team.find(u => u.email.toLowerCase() === auth.currentUser.email.toLowerCase());
                 if (!myProfile) { window.showModal(window.t('modal_access_denied'), window.t('error'), 'error'); signOut(auth); return; }
@@ -6768,6 +7112,7 @@ function getSellerCommissionPeriodReport(projects, startStr, endStr) {
                     tab_rep: myProfile.p_tab_rep === true,
                     fin: myProfile.p_fin === true,
                     costs: myProfile.p_costs === true || myProfile.viewCosts === true, 
+                    contractors: myProfile.p_contractors === true,
                     smart: myProfile.p_smart !== false, 
                     hvac: myProfile.p_hvac !== false,   
                     global: myProfile.p_global === true || myProfile.viewAll === true 
@@ -6786,7 +7131,7 @@ function getSellerCommissionPeriodReport(projects, startStr, endStr) {
                     const p = {
                         smart: u.p_smart !== false, hvac: u.p_hvac !== false, global: u.p_global === true || u.viewAll === true,
                         tab_proj: u.p_tab_proj !== false, tab_new: u.p_tab_new === true, tab_rep: u.p_tab_rep === true,
-                        fin: u.p_fin === true, costs: u.p_costs === true || u.viewCosts === true
+                        fin: u.p_fin === true, costs: u.p_costs === true || u.viewCosts === true, contractors: u.p_contractors === true
                     };
                     const tagObj = encodeURIComponent(JSON.stringify(p));
 
@@ -6889,7 +7234,8 @@ function getSellerCommissionPeriodReport(projects, startStr, endStr) {
                 p_tab_new: document.getElementById('p_tab_new').checked,
                 p_tab_rep: document.getElementById('p_tab_rep').checked,
                 p_fin: document.getElementById('p_fin').checked,
-                p_costs: document.getElementById('p_costs').checked
+                p_costs: document.getElementById('p_costs').checked,
+                p_contractors: document.getElementById('p_contractors').checked
             };
 
             try {
