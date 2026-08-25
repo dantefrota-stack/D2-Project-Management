@@ -1253,28 +1253,26 @@
                     <h1 data-i18n="page_team_title">Equipe</h1>
                     <p class="c2-page-subtitle" data-i18n="page_team_subtitle">Gerencie usuários, visibilidade e permissões do sistema.</p>
                 </div>
+                <button type="button" onclick="window.openNewTeamMember()" class="c2-primary-btn"><i data-lucide="user-plus" class="w-4 h-4"></i><span>Adicionar usuário</span></button>
             </div>
-            <div class="c2-team-layout">
-                <section class="c2-panel p-6 sm:p-8 text-left">
-                    <div class="c2-section-heading"><div><p class="c2-eyebrow" data-i18n="section_user_registration">Cadastro / edição</p><h2 id="team-editor-title" data-i18n="section_user">Usuário</h2></div><span class="c2-status-soft" data-i18n="required_fields">Campos obrigatórios</span></div>
+            <section class="c2-panel p-0 overflow-hidden text-left">
+                <div class="c2-list-head"><div><p class="c2-eyebrow" data-i18n="registered_users">Usuários cadastrados</p><h2 data-i18n="active_team">Equipe ativa</h2><p class="mt-2 text-sm text-slate-500">Clique em um membro para visualizar e editar seus acessos.</p></div><div class="c2-list-head-icon"><i data-lucide="users" class="w-5 h-5"></i></div></div>
+                <div id="users-list" class="c2-users-list"></div>
+            </section>
+            <div id="team-editor-modal" class="modal-overlay modal-overlay-scroll">
+                <div class="modal-content modal-panel-scroll animate-fade-in max-w-3xl text-left">
+                    <div class="flex items-start justify-between gap-4"><div><p class="c2-eyebrow" data-i18n="section_user_registration">Cadastro / edição</p><h2 id="team-editor-title" class="mt-1 text-2xl font-black text-slate-100" data-i18n="section_user">Usuário</h2><p class="mt-2 text-sm text-slate-500">Defina a visibilidade, as abas e as permissões financeiras deste acesso.</p></div><button type="button" onclick="window.closeTeamEditor()" class="c2-icon-btn" aria-label="Fechar"><i data-lucide="x" class="w-5 h-5"></i></button></div>
                     <div id="team-form-feedback" role="status" aria-live="polite" class="hidden mt-5 rounded-xl border border-emerald-400/30 bg-emerald-500/10 p-4 text-sm font-bold text-emerald-200"></div>
                     <form id="team-form" class="space-y-6 mt-6">
                         <input type="hidden" id="t-id">
                         <div class="c2-form-field"><label data-i18n="team_name">Nome completo</label><input type="text" id="t-name" required class="modern-input" data-i18n-placeholder="full_name_placeholder" placeholder="Digite o nome completo"></div>
-                        <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                            <div class="c2-form-field"><label data-i18n="team_email">E-mail</label><input type="email" id="t-email" required class="modern-input" placeholder="usuario@email.com"></div>
-                            <div class="c2-form-field relative"><label data-i18n="team_pass">Senha temporária</label><input type="password" id="t-pass" minlength="8" required class="modern-input !pr-12" autocomplete="new-password"><button type="button" onclick="window.togglePassword('t-pass', 'eye-team-btn')" class="password-toggle" id="eye-team-btn" style="top:58%"><i data-lucide="eye" class="w-4 h-4"></i></button><small class="mt-2 block text-slate-500">Ao editar, deixe vazio para preservar a senha atual do Firebase.</small></div>
-                        </div>
+                        <div class="grid grid-cols-1 sm:grid-cols-2 gap-4"><div class="c2-form-field"><label data-i18n="team_email">E-mail</label><input type="email" id="t-email" required class="modern-input" placeholder="usuario@email.com"></div><div class="c2-form-field relative"><label data-i18n="team_pass">Senha temporária</label><input type="password" id="t-pass" minlength="8" required class="modern-input !pr-12" autocomplete="new-password"><button type="button" onclick="window.togglePassword('t-pass', 'eye-team-btn')" class="password-toggle" id="eye-team-btn" style="top:58%"><i data-lucide="eye" class="w-4 h-4"></i></button><small class="mt-2 block text-slate-500">Ao editar, deixe vazio para preservar a senha atual do Firebase.</small></div></div>
                         <div class="c2-permission-group"><p class="c2-eyebrow" data-i18n="team_scope">Visibilidade e Escopo</p><div class="grid grid-cols-1 gap-2 mt-3"><label class="perm-box"><input type="checkbox" id="p_smart" class="perm-checkbox"><span><strong>D2 Smart Home</strong><small data-i18n="team_smart_visibility">Visualizar projetos e dados Smart Home</small></span></label><label class="perm-box"><input type="checkbox" id="p_hvac" class="perm-checkbox"><span><strong>D2 HVAC</strong><small data-i18n="team_hvac_visibility">Visualizar projetos e dados HVAC</small></span></label><label class="perm-box"><input type="checkbox" id="p_global" class="perm-checkbox"><span><strong data-i18n="team_global_visibility">Ver outros vendedores</strong><small data-i18n="team_global_visibility_hint">Acesso a projetos de outros responsáveis</small></span></label></div></div>
                         <div class="c2-permission-group"><p class="c2-eyebrow" data-i18n="team_tabs">Acesso às Abas</p><div class="grid grid-cols-1 sm:grid-cols-2 gap-2 mt-3"><label class="perm-box"><input type="checkbox" id="p_tab_proj" class="perm-checkbox" checked><span><strong data-i18n="team_tab_projects">Projetos</strong></span></label><label class="perm-box"><input type="checkbox" id="p_tab_new" class="perm-checkbox"><span><strong data-i18n="team_tab_new">Nova obra</strong></span></label><label class="perm-box"><input type="checkbox" id="p_tab_rep" class="perm-checkbox"><span><strong data-i18n="team_tab_reports">Relatórios</strong></span></label><label class="perm-box"><input type="checkbox" id="p_contractors" class="perm-checkbox"><span><strong>Contractors</strong><small>Gerenciar fornecedores, documentos e pagamentos</small></span></label></div></div>
                         <div class="c2-permission-group"><p class="c2-eyebrow" data-i18n="team_perms">Permissões Financeiras</p><div class="grid grid-cols-1 gap-2 mt-3"><label class="perm-box"><input type="checkbox" id="p_fin" class="perm-checkbox"><span><strong data-i18n="team_finance_entry">Inserir recebimentos / pagamentos</strong><small data-i18n="team_finance_entry_hint">Registrar movimentações financeiras</small></span></label><label class="perm-box"><input type="checkbox" id="p_costs" class="perm-checkbox"><span><strong data-i18n="team_cost_access">Acesso a custos e margem</strong><small data-i18n="team_cost_access_hint">Visualizar despesas, orçamento e margem</small></span></label></div></div>
-                        <div class="flex justify-end gap-3 pt-4 border-t border-white/10"><button type="button" onclick="window.resetTeamForm()" class="c2-secondary-btn" data-i18n="cancel">Cancelar</button><button type="submit" id="btn-save-team" class="c2-primary-btn" data-i18n="btn_team"><i data-lucide="save" class="w-4 h-4"></i>Salvar usuário</button></div>
+                        <div class="flex justify-end gap-3 pt-4 border-t border-white/10"><button type="button" onclick="window.closeTeamEditor()" class="c2-secondary-btn" data-i18n="cancel">Cancelar</button><button type="submit" id="btn-save-team" class="c2-primary-btn" data-i18n="btn_team"><i data-lucide="save" class="w-4 h-4"></i>Salvar usuário</button></div>
                     </form>
-                </section>
-                <section class="c2-panel p-0 overflow-hidden text-left">
-                    <div class="c2-list-head"><div><p class="c2-eyebrow" data-i18n="registered_users">Usuários cadastrados</p><h2 data-i18n="active_team">Equipe ativa</h2></div><div class="c2-list-head-icon"><i data-lucide="users" class="w-5 h-5"></i></div></div>
-                    <div id="users-list" class="c2-users-list"></div>
-                </section>
+                </div>
             </div>
         </div>
 
@@ -4236,15 +4234,17 @@
         document.getElementById('p_contractors').checked = permObj.contractors === true;
         const title = document.getElementById('team-editor-title'); if (title) { title.textContent = state.lang === 'pt' ? `Editando ${name || email}` : `Editing ${name || email}`; title.removeAttribute('data-i18n'); }
         const feedback = document.getElementById('team-form-feedback'); if (feedback) { feedback.classList.add('hidden'); feedback.textContent = ''; }
-
-        window.scrollTo({ top: 0, behavior: 'smooth' });
+        document.getElementById('team-editor-modal')?.classList.add('active'); try { lucide.createIcons(); } catch {}
     };
     window.resetTeamForm = () => {
         const form = document.getElementById('team-form'); form?.reset(); document.getElementById('t-id').value = '';
         const password = document.getElementById('t-pass'); password.required = true; password.placeholder = state.lang === 'pt' ? 'Mínimo de 8 caracteres' : 'At least 8 characters';
         document.getElementById('p_smart').checked = true; document.getElementById('p_hvac').checked = true; document.getElementById('p_tab_proj').checked = true;
         const title = document.getElementById('team-editor-title'); if (title) { title.textContent = state.lang === 'pt' ? 'Usuário' : 'User'; title.setAttribute('data-i18n', 'section_user'); }
+        const feedback = document.getElementById('team-form-feedback'); if (feedback) { feedback.classList.add('hidden'); feedback.textContent = ''; }
     };
+    window.openNewTeamMember = () => { if (!state.isSuperAdmin) { window.showModal(window.t('modal_access_denied'), window.t('modal_access_denied_msg'), 'error'); return; } window.resetTeamForm(); const title = document.getElementById('team-editor-title'); if (title) { title.textContent = state.lang === 'pt' ? 'Adicionar usuário' : 'Add user'; title.removeAttribute('data-i18n'); } document.getElementById('team-editor-modal')?.classList.add('active'); try { lucide.createIcons(); } catch {} };
+    window.closeTeamEditor = () => { document.getElementById('team-editor-modal')?.classList.remove('active'); window.resetTeamForm(); };
 
     window.deleteTeam = (id) => {
         if (!state.isSuperAdmin) {
@@ -7396,7 +7396,7 @@ function getSellerCommissionPeriodReport(projects, startStr, endStr) {
                     const scopeText = [p.smart ? 'Smart Home' : '', p.hvac ? 'HVAC' : '', p.global ? 'Global' : ''].filter(Boolean).join(' • ') || '—';
                     const permissionText = [p.fin ? 'Finanças' : '', p.costs ? 'Custos' : '', p.tab_rep ? 'Relatórios' : ''].filter(Boolean).join(' • ') || 'Projetos';
                     const updatedNow = state.recentlyUpdatedTeamId === u.id;
-                    return `<div class="c2-user-row ${updatedNow ? 'ring-2 ring-emerald-400/60 bg-emerald-500/5' : ''}" data-team-member-id="${escapeInlineHtml(u.id)}"><div class="c2-user-identity"><div class="c2-user-initials">${escapeInlineHtml(initials)}</div><div class="min-w-0"><div class="c2-user-name">${sellerName}</div><div class="c2-user-email">${sellerEmail}</div>${updatedNow ? `<span class="c2-tag green mt-2">${state.lang === 'pt' ? 'Atualizado agora' : 'Updated now'}</span>` : ''}</div></div><div><span class="c2-tag ${roleStr==='Admin'?'green':''}">${roleStr}</span><div class="c2-user-perms mt-2">${escapeInlineHtml(scopeText)}</div></div><div class="c2-user-perms"><strong class="text-slate-300">Acessos</strong><br>${escapeInlineHtml(permissionText)}</div><div class="c2-row-actions"><button onclick="window.editTeamMember('${u.id}', decodeURIComponent('${encodedName}'), decodeURIComponent('${encodedEmail}'), JSON.parse(decodeURIComponent('${tagObj}')))" title="Editar"><i data-lucide="edit-3" class="w-4 h-4"></i></button><button onclick="window.deleteTeam('${u.id}')" title="Excluir" class="${u.email.toLowerCase() === SUPER_ADMIN.toLowerCase() ? 'hidden' : ''}"><i data-lucide="trash-2" class="w-4 h-4 text-red-400"></i></button></div></div>`;
+                    return `<div class="c2-user-row cursor-pointer transition-colors ${updatedNow ? 'ring-2 ring-emerald-400/60 bg-emerald-500/5' : ''}" data-team-member-id="${escapeInlineHtml(u.id)}" role="button" tabindex="0" aria-label="${state.lang === 'pt' ? 'Editar' : 'Edit'} ${sellerName}" onclick="window.editTeamMember('${u.id}', decodeURIComponent('${encodedName}'), decodeURIComponent('${encodedEmail}'), JSON.parse(decodeURIComponent('${tagObj}')))" onkeydown="if((event.key==='Enter'||event.key===' ')&&event.target===this){event.preventDefault();this.click()}"><div class="c2-user-identity"><div class="c2-user-initials">${escapeInlineHtml(initials)}</div><div class="min-w-0"><div class="c2-user-name">${sellerName}</div><div class="c2-user-email">${sellerEmail}</div>${updatedNow ? `<span class="c2-tag green mt-2">${state.lang === 'pt' ? 'Atualizado agora' : 'Updated now'}</span>` : ''}</div></div><div><span class="c2-tag ${roleStr==='Admin'?'green':''}">${roleStr}</span><div class="c2-user-perms mt-2">${escapeInlineHtml(scopeText)}</div></div><div class="c2-user-perms"><strong class="text-slate-300">Acessos</strong><br>${escapeInlineHtml(permissionText)}</div><div class="c2-row-actions"><button onclick="event.stopPropagation();window.editTeamMember('${u.id}', decodeURIComponent('${encodedName}'), decodeURIComponent('${encodedEmail}'), JSON.parse(decodeURIComponent('${tagObj}')))" title="Editar"><i data-lucide="edit-3" class="w-4 h-4"></i></button><button onclick="event.stopPropagation();window.deleteTeam('${u.id}')" title="Excluir" class="${u.email.toLowerCase() === SUPER_ADMIN.toLowerCase() ? 'hidden' : ''}"><i data-lucide="trash-2" class="w-4 h-4 text-red-400"></i></button></div></div>`;
                 }).join('');
                 try { lucide.createIcons(); } catch {}
             }
@@ -7490,6 +7490,7 @@ function getSellerCommissionPeriodReport(projects, startStr, endStr) {
                 const successMessage = state.lang === 'pt' ? `${name} foi ${id ? 'atualizado' : 'cadastrado'} com sucesso. As permissões já estão ativas.` : `${name} was successfully ${id ? 'updated' : 'created'}. The permissions are now active.`;
                 if (feedback) { feedback.textContent = successMessage; feedback.classList.remove('hidden'); }
                 const title = document.getElementById('team-editor-title'); if (title) { title.textContent = state.lang === 'pt' ? 'Usuário' : 'User'; title.setAttribute('data-i18n', 'section_user'); }
+                document.getElementById('team-editor-modal')?.classList.remove('active');
                 window.showModal(state.lang === 'pt' ? 'Acesso atualizado' : 'Access updated', successMessage, 'info');
                 setTimeout(() => { if (state.recentlyUpdatedTeamId === (savedUser?.id || id)) { state.recentlyUpdatedTeamId = ''; if (state.currentView === 'users') renderTeamAdmin(); } }, 6000);
             } catch (err) { window.showModal('Erro', 'Erro ao salvar usuário: ' + err.message, 'error'); }
