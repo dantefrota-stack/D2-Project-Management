@@ -15,6 +15,7 @@ const auth = getAuth();
 const APP_ROOT = 'artifacts/d2-Project-Management/public/data';
 const REQUESTS = `${APP_ROOT}/contractor_document_requests`;
 const CONTRACTORS = `${APP_ROOT}/contractors`;
+const CONTRACTOR_PAYMENTS = `${APP_ROOT}/contractor_payments`;
 const PROJECTS = `${APP_ROOT}/projects`;
 const USERS = `${APP_ROOT}/user_credentials`;
 const ACCESS = `${APP_ROOT}/access_control`;
@@ -301,9 +302,12 @@ async function createSecureRequest(context, body) {
   const requestRef = requestCollection().doc();
   const common = {tokenHash: tokenHash(rawToken), company, projectId: project?.id || '', projectName: cleanText(body.projectName || project?.nomeProjeto || project?.cliente || '', 240), dueDate, expiresAt, note: cleanText(body.note, 500), documents, status: 'open', createdAt: FieldValue.serverTimestamp(), createdAtClient: new Date().toISOString(), createdBy: context.email};
   if (body.requestType === 'registration') {
-    const contractorRef = db.collection(CONTRACTORS).doc(); const recipient = cleanText(body.recipient, 180); const placeholderName = recipient ? `Pending registration - ${recipient}` : 'Pending registration'; const batch = db.batch();
-    batch.set(contractorRef, {businessName: placeholderName, contactName: '', email: recipient.includes('@') ? recipient.toLowerCase() : '', phone: '', ein: '', address: '', services: '', companies: [company], company, w9Status: 'pending', registrationStatus: 'pending', archived: false, documents: [], createdAt: FieldValue.serverTimestamp(), createdBy: context.email, updatedAt: FieldValue.serverTimestamp(), updatedBy: context.email});
-    batch.set(requestRef, {...common, requestType: 'registration', registrationStatus: 'pending', contractorId: contractorRef.id, contractorName: placeholderName, contractorEmail: recipient.includes('@') ? recipient.toLowerCase() : ''});
+    const contractorRef = db.collection(CONTRACTORS).doc(); const recipient = cleanText(body.recipient, 180); const recipientEmail = cleanText(body.recipientEmail || (recipient.includes('@') ? recipient : ''), 180).toLowerCase();
+    if (!recipient) throw Object.assign(new Error('The invited person or company name is required.'), {status: 400});
+    if (recipientEmail && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(recipientEmail)) throw Object.assign(new Error('A valid guest email is required.'), {status: 400});
+    const placeholderName = `Pending registration - ${recipient}`; const batch = db.batch();
+    batch.set(contractorRef, {businessName: placeholderName, contactName: '', email: recipientEmail, phone: '', ein: '', address: '', services: '', companies: [company], company, w9Status: 'pending', registrationStatus: 'pending', archived: false, documents: [], createdAt: FieldValue.serverTimestamp(), createdBy: context.email, updatedAt: FieldValue.serverTimestamp(), updatedBy: context.email});
+    batch.set(requestRef, {...common, requestType: 'registration', registrationStatus: 'pending', contractorId: contractorRef.id, contractorName: placeholderName, contractorEmail: recipientEmail});
     await batch.commit(); await auditLog(context, `Created contractor registration invitation: ${company}`, {contractorId: contractorRef.id, contractorRequestId: requestRef.id, company});
     return {ok: true, token: rawToken, requestId: requestRef.id, contractorId: contractorRef.id};
   }
@@ -356,6 +360,37 @@ exports.adminApi = onRequest({region: 'us-east1', cors: CORS_ORIGINS, invoker: '
       await auditLog(context, `Deleted user: ${snapshot.data().name || email}`, {managedUserUid: userRecord.uid, managedUserEmail: email}); return res.json({ok: true, team: await listSanitizedTeam()});
     }
     if (action === 'createContractorRequest') return res.json(await createSecureRequest(context, req.body));
+    if (action === 'deleteContractor') {
+      requireSuperAdmin(context); const contractorId = cleanText(req.body.contractorId, 160); const contractorRef = db.doc(`${CONTRACTORS}/${contractorId}`); const contractorSnapshot = await contractorRef.get();
+      if (!contractorSnapshot.exists) throw Object.assign(new Error('Contractor not found.'), {status: 404});
+      const [payments, requests] = await Promise.all([db.collection(CONTRACTOR_PAYMENTS).where('contractorId', '==', contractorId).limit(1).get(), requestCollection().where('contractorId', '==', contractorId).get()]);
+      const documents = Array.isArray(contractorSnapshot.data().documents) ? contractorSnapshot.data().documents : [];
+      if (!payments.empty) throw Object.assign(new Error('This contractor has linked payments. Delete each payment from the contractor record before permanently deleting the contractor, or archive the contractor.'), {status: 409});
+      if (documents.length || requests.docs.some(item => (item.data().documents || []).some(document => document.storagePath || ['submitted', 'approved', 'rejected'].includes(document.status)))) throw Object.assign(new Error('This contractor has document history. Archive the contractor to preserve compliance records.'), {status: 409});
+      const batch = db.batch(); requests.docs.forEach(item => batch.delete(item.ref)); batch.delete(contractorRef); await batch.commit();
+      await auditLog(context, `Deleted contractor without activity: ${contractorSnapshot.data().businessName || contractorId}`, {contractorId, contractorName: contractorSnapshot.data().businessName || '', deletedPendingRequestIds: requests.docs.map(item => item.id)});
+      return res.json({ok: true, deletedPendingRequests: requests.size});
+    }
+    if (action === 'deleteOrphanedContractorPayment') {
+      requireSuperAdmin(context); const paymentId = cleanText(req.body.paymentId, 160); const paymentRef = db.doc(`${CONTRACTOR_PAYMENTS}/${paymentId}`); const paymentSnapshot = await paymentRef.get();
+      if (!paymentSnapshot.exists) throw Object.assign(new Error('Payment not found.'), {status: 404}); const payment = paymentSnapshot.data(); const contractorId = cleanText(payment.contractorId, 160);
+      if (contractorId && (await db.doc(`${CONTRACTORS}/${contractorId}`).get()).exists) throw Object.assign(new Error('This payment is not orphaned. Delete it from the contractor payment history.'), {status: 409});
+      const projectId = cleanText(payment.projectId, 160); let projectName = cleanText(payment.projectName, 240);
+      if (projectId) {
+        const projectRef = db.doc(`${PROJECTS}/${projectId}`);
+        await db.runTransaction(async transaction => {
+          const projectSnapshot = await transaction.get(projectRef);
+          if (projectSnapshot.exists) {
+            projectName = cleanText(projectSnapshot.data().nomeProjeto || projectSnapshot.data().cliente || projectName, 240);
+            const expenses = Array.isArray(projectSnapshot.data().despesas) ? projectSnapshot.data().despesas : [];
+            transaction.update(projectRef, {despesas: expenses.filter(expense => expense.contractorPaymentId !== paymentId && expense.id !== payment.projectExpenseId), updatedAt: FieldValue.serverTimestamp()});
+          }
+          transaction.delete(paymentRef);
+        });
+      } else await paymentRef.delete();
+      await auditLog(context, `Deleted orphaned contractor payment: ${payment.contractorName || contractorId || paymentId}`, {contractorId, contractorName: payment.contractorName || '', contractorPaymentId: paymentId, projectId, projectName, projectExpenseId: payment.projectExpenseId || '', amount: Number(payment.amount || 0)});
+      return res.json({ok: true});
+    }
     if (action === 'renewContractorRequest') {
       const requestId = cleanText(req.body.requestId, 160); const ref = db.doc(`${REQUESTS}/${requestId}`); const snapshot = await ref.get();
       if (!snapshot.exists) throw Object.assign(new Error('Request not found.'), {status: 404}); requireContractorCompany(context, snapshot.data().company); const rawToken = crypto.randomBytes(32).toString('base64url');
