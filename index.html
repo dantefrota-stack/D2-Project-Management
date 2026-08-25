@@ -812,6 +812,7 @@
 .app-body-light .v86-finished-mini-stamp{border-color:rgba(185,28,28,.75);color:rgba(185,28,28,.92);background:rgba(254,226,226,.55)}
 .report-status-indicator{display:inline-flex;align-items:center;justify-content:center;width:25px;height:25px;border:1px solid currentColor;border-radius:50%;font-size:12px;line-height:1;vertical-align:middle}
 .report-status-indicator svg{width:14px;height:14px;stroke-width:2.5}.report-status-indicator.execution{width:auto;height:auto;border:0;border-radius:0;background:transparent;font-size:17px}.report-status-indicator.waiting{color:#fbbf24;background:rgba(251,191,36,.10)}.report-status-indicator.pending{color:#fb7185;background:rgba(244,63,94,.10);animation:report-status-attention 1.55s ease-in-out infinite}.app-body-light .report-status-indicator.execution{background:transparent}.app-body-light .report-status-indicator.waiting{color:#a16207;background:#fef3c7}.app-body-light .report-status-indicator.pending{color:#be123c;background:#fff1f2}@keyframes report-status-attention{50%{box-shadow:0 0 0 4px rgba(244,63,94,.16)}}
+.report-status-indicator.conflict{color:#fb7185;background:rgba(244,63,94,.12);animation:report-status-attention 1.55s ease-in-out infinite}.app-body-light .report-status-indicator.conflict{color:#be123c;background:#fff1f2}
 @media(max-width:600px){.v86-finished-stamp{inset:14% 2%}.v86-finished-stamp span{border-width:3px;font-size:clamp(2rem,12vw,3.8rem)}}
 .v86-head{display:flex;align-items:flex-start;justify-content:space-between;gap:22px;margin-bottom:22px;min-width:0}
 .v86-head-left{display:flex;align-items:flex-start;gap:14px;min-width:0}.v86-head-copy{min-width:0}
@@ -859,7 +860,7 @@
 .report-summary-drilldowns{display:grid;grid-template-columns:repeat(7,minmax(0,1fr));gap:10px}.report-summary-drilldowns .v86-kpi{min-height:92px;padding:12px}.report-summary-drilldowns .v86-kpi .v86-value{margin-top:7px}.report-summary-drilldowns .v86-kpi small{margin-top:6px;color:var(--v86-muted);font-size:8px;font-weight:800}
 .report-monthly-chart-card{grid-column:span 3;display:block!important;min-height:106px!important;padding:13px 16px!important}.report-monthly-chart-head{display:flex;align-items:flex-start;justify-content:space-between;gap:14px;margin-bottom:7px}.report-monthly-chart-head strong{display:block;font-size:11px;font-weight:900;color:var(--v86-text)}.report-monthly-chart-head span{display:block;margin-top:3px;color:var(--v86-muted);font-size:9px;line-height:1.35}.report-monthly-chart-total{text-align:right;white-space:nowrap}.report-monthly-chart-total b{display:block;color:var(--v86-green);font-size:15px;font-weight:900;font-variant-numeric:tabular-nums}.report-monthly-chart-total small{display:block;margin-top:2px;color:var(--v86-muted);font-size:8px;font-weight:800;text-transform:uppercase;letter-spacing:.08em}.report-monthly-chart-wrap{position:relative;height:136px}.app-body-light .report-monthly-chart-head strong{color:#0f172a}.app-body-light .report-monthly-chart-head span,.app-body-light .report-monthly-chart-total small{color:#475569}@media(max-width:900px){.report-monthly-chart-card{grid-column:span 2}}@media(max-width:410px){.report-monthly-chart-card{grid-column:span 1}.report-monthly-chart-head{align-items:center}.report-monthly-chart-wrap{height:154px}}
 #report-output .v86-table thead th{padding:14px 16px;vertical-align:middle}#report-output .report-sort-button{display:flex;flex-direction:column;align-items:flex-start;gap:4px;width:100%;min-height:29px;padding:0;border:0;background:transparent;color:inherit;font-family:inherit;font-size:10px;line-height:1.2;text-align:left;letter-spacing:.075em;white-space:normal;cursor:pointer}#report-output .v86-table th.money .report-sort-button{align-items:flex-end;text-align:right}#report-output .report-sort-button:hover{color:var(--v86-green)}#report-output .report-sort-button:focus-visible{outline:2px solid var(--v86-green);outline-offset:3px;border-radius:4px}#report-output .report-sort-button .report-sort-indicator{font-size:12px;line-height:1;color:var(--v86-muted)}#report-output .report-sort-button.active .report-sort-indicator{color:var(--v86-green)}@media(max-width:700px){#report-output .v86-table thead th{padding:12px 14px}#report-output .report-sort-button{font-size:9px}}
-.app-body-light #report-output .report-completion-alert{background:#fff7ed!important;border-color:#f59e0b!important}.app-body-light #report-output .report-completion-alert .text-amber-200,.app-body-light #report-output .report-completion-alert .text-amber-300{color:#92400e!important}.app-body-light #report-output .report-completion-alert .text-slate-300{color:#334155!important}
+.app-body-light #report-output .report-completion-warning{background:#fff7ed!important;border-color:#f59e0b!important}.app-body-light #report-output .report-completion-warning .text-amber-200,.app-body-light #report-output .report-completion-warning .text-amber-300{color:#92400e!important}.app-body-light #report-output .report-completion-warning .text-slate-300{color:#334155!important}.app-body-light #report-output .report-lifecycle-alert{background:#fff1f2!important;border-color:#fb7185!important}.app-body-light #report-output .report-lifecycle-alert .text-rose-200,.app-body-light #report-output .report-lifecycle-alert .text-rose-300{color:#9f1239!important}.app-body-light #report-output .report-lifecycle-alert .text-slate-300{color:#334155!important}
 @media(max-width:1250px){.report-summary-drilldowns{grid-template-columns:repeat(4,minmax(0,1fr))}}
 @media(max-width:700px){.report-summary-drilldowns{grid-template-columns:repeat(2,minmax(0,1fr))}}
 
@@ -882,6 +883,7 @@
 .app-body-light .modal-content{background:#ffffff!important;border-color:#cbd5e1!important;box-shadow:0 26px 64px -34px rgba(15,23,42,.38)!important;color:#0f172a!important}
 .app-body-light #custom-modal-title{color:#0f172a!important}
 .app-body-light #custom-modal-msg{color:#334155!important;font-weight:600!important}
+.finish-decision-active .modal-content{max-width:540px!important}.finish-decision-active #custom-modal-msg{text-align:left;line-height:1.55;margin-bottom:18px}.finish-date-field{display:block;text-align:left}.finish-date-field span{display:block;margin-bottom:7px;font-size:10px;font-weight:900;letter-spacing:.14em;text-transform:uppercase;color:#94a3b8}.finish-date-field input{width:100%;border:1px solid rgba(148,163,184,.28);border-radius:12px;background:#07111f;color:#f8fafc;padding:11px 13px;font-weight:800;color-scheme:dark}.app-body-light .finish-date-field span{color:#475569}.app-body-light .finish-date-field input{background:#fff;color:#0f172a;border-color:#cbd5e1;color-scheme:light}
 .app-body-light #custom-modal-buttons button{border:1px solid #94a3b8!important;box-shadow:none!important}
 .app-body-light #custom-modal-buttons .bg-slate-800,.app-body-light #custom-modal-buttons .bg-slate-700{background:#0f172a!important;color:#ffffff!important;border-color:#0f172a!important}
 .app-body-light #custom-modal-buttons .bg-cyan-600{background:#0369a1!important;color:#ffffff!important;border-color:#0369a1!important}
@@ -1667,7 +1669,7 @@
 
     window.closeCustomModal = () => {
         window._tempOnConfirm = null;
-        document.getElementById('custom-modal').classList.remove('active');
+        document.getElementById('custom-modal').classList.remove('active', 'finish-decision-active');
     };
 
     function showLoginError(msg) {
@@ -2184,13 +2186,36 @@
                     );
                     return;
                 } else {
+                    const fin = getFin(project);
+                    const pendingItems = [];
+                    if (Number(fin.clientOutstanding || 0) > 0.009) pendingItems.push(`${state.lang === 'pt' ? 'recebimento do cliente' : 'client receipt'}: ${formatCurr(fin.clientOutstanding)}`);
+                    if (Number(fin.dueNow || 0) > 0.009) pendingItems.push(`${state.lang === 'pt' ? 'comissão não paga' : 'commission unpaid'}: ${formatCurr(fin.dueNow)}`);
+                    if (pendingItems.length) {
+                        window.showModal(
+                            state.lang === 'pt' ? 'Pendências impedem o arquivamento' : 'Pending items prevent archiving',
+                            state.lang === 'pt' ? `A obra está finalizada, mas ainda não pode ser arquivada. Pendências: ${pendingItems.join(' · ')}.` : `The project is completed but cannot be archived yet. Pending items: ${pendingItems.join(' · ')}.`,
+                            'error'
+                        );
+                        return;
+                    }
                     payload.commercialStatus = 'realized_or_completed';
                     payload.archivedReason = state.lang === 'pt' ? 'Finalizada e arquivada' : 'Finished and archived';
                 }
             }
 
             if (currentArchivedStatus) {
-                payload.commercialStatus = '';
+                if (project?.status === 'Finalizado') {
+                    const ok = confirm(state.lang === 'pt'
+                        ? 'Reabrir esta obra removerá o carimbo e a data de conclusão e mudará o status para EM EXECUÇÃO. Os lançamentos financeiros serão preservados. Deseja continuar?'
+                        : 'Reopening this project will remove its completion stamp and date and change status to IN PROGRESS. Financial entries will be preserved. Continue?');
+                    if (!ok) return;
+                    payload.status = 'Em Execução';
+                    payload.dataConclusao = '';
+                } else if (project?.commercialStatus === 'cancelled_no_movement') {
+                    payload.status = 'Aguardando Início';
+                    payload.dataConclusao = '';
+                }
+                payload.commercialStatus = 'active';
                 payload.archivedReason = '';
             }
 
@@ -2223,9 +2248,33 @@
 
     function canFinishProject(project) {
         if (!canManageProjectEntries(project, 'fin')) return false;
-        if (project.status === 'Finalizado') return false;
+        if (project.status === 'Finalizado' && project.dataConclusao) return false;
+        if (project.commercialStatus === 'cancelled_no_movement') return false;
         const contractValue = Number(project.valorTotal || 0);
         return contractValue > 0 && getFin(project).totalRecebido >= contractValue - 0.009;
+    }
+
+    function getProjectLifecycleState(project, financials = null) {
+        const fin = financials || getFin(project || {});
+        const isCanceled = project?.commercialStatus === 'cancelled_no_movement';
+        const isFinalized = project?.status === 'Finalizado';
+        const hasCompletionDate = Boolean(project?.dataConclusao);
+        const isArchived = Boolean(project?.archived);
+        const clientOutstanding = roundMoney(Math.max(0, Number(fin?.clientOutstanding || 0)));
+        const commissionDue = roundMoney(Math.max(0, Number(fin?.dueNow || 0)));
+        const hasLifecycleConflict = !isCanceled && (
+            (isArchived && (!isFinalized || clientOutstanding > 0.009 || commissionDue > 0.009))
+            || (isFinalized && !hasCompletionDate)
+        );
+        return {
+            isCanceled,
+            isFinalized,
+            hasCompletionDate,
+            isArchived,
+            hasLifecycleConflict,
+            clientOutstanding,
+            commissionDue
+        };
     }
 
     function getAutomaticCompletionPayload(project, receipts = project?.recebimentos || [], payments = project?.pagamentosEfetuados || []) {
@@ -2284,23 +2333,33 @@
     function showFinishProjectDecision(project) {
         const summary = getPaymentDraftSummary(project.id, project.pagamentosEfetuados || []);
         const commissionDue = roundMoney(summary?.remainingToPay || 0);
-        const title = state.lang === 'pt' ? 'Finalizar obra' : 'Finish project';
+        const lifecycle = getProjectLifecycleState(project);
+        const needsRepair = lifecycle.hasLifecycleConflict;
+        const title = needsRepair
+            ? (state.lang === 'pt' ? 'Regularizar e finalizar obra' : 'Reconcile and finish project')
+            : (state.lang === 'pt' ? 'Finalizar obra' : 'Finish project');
         const message = commissionDue > 0.009
             ? (state.lang === 'pt'
-                ? `Há ${formatCurr(commissionDue)} de comissão liberada pendente. Você pode pagar agora e finalizar, ou finalizar mantendo a pendência visível no relatório.`
-                : `There is ${formatCurr(commissionDue)} in released commission pending. You can pay it now and finish, or finish while keeping the pending item visible in reports.`)
+                ? `${needsRepair ? 'Inconsistência histórica identificada. ' : ''}Pendência: comissão liberada de ${formatCurr(commissionDue)} ainda não paga. A primeira opção registra a conclusão, mas mantém a obra ativa e a pendência visível; a segunda registra o pagamento e arquiva a obra corretamente.`
+                : `${needsRepair ? 'Historical inconsistency identified. ' : ''}Pending item: ${formatCurr(commissionDue)} in released commission remains unpaid. The first option records completion but keeps the project active with the pending item visible; the second records payment and archives the project correctly.`)
             : (state.lang === 'pt'
-                ? 'Todos os valores de comissão liberada estão quitados. Confirme a finalização da obra.'
-                : 'All released commission amounts are settled. Confirm finishing the project.');
+                ? `${needsRepair ? 'Inconsistência histórica identificada: a obra foi arquivada sem status e data de finalização. ' : ''}O contrato está integralmente recebido e não há comissão liberada pendente. A confirmação registrará a conclusão e manterá o arquivamento correto.`
+                : `${needsRepair ? 'Historical inconsistency identified: the project was archived without completion status and date. ' : ''}The contract is fully received and there is no released commission pending. Confirmation will record completion and preserve the correct archived state.`);
+        const today = new Date().toISOString().split('T')[0];
         document.getElementById('custom-modal-title').innerText = title;
         document.getElementById('custom-modal-msg').innerText = message;
         document.getElementById('custom-modal-icon').innerHTML = '<i data-lucide="circle-check-big" class="w-12 h-12 text-emerald-400"></i>';
         document.getElementById('custom-modal-buttons').innerHTML = `
-            <button onclick="window.closeCustomModal()" class="px-4 py-3 bg-slate-700 text-white force-white-text rounded-xl font-bold hover:bg-slate-600 transition-colors text-xs uppercase tracking-widest">${window.t('cancel')}</button>
-            <button onclick="window.completeProjectFromDecision('${project.id}', false)" class="px-4 py-3 bg-amber-500 text-slate-950 font-black rounded-xl hover:bg-amber-400 transition-colors text-xs uppercase tracking-widest">${state.lang === 'pt' ? 'Finalizar com pendência' : 'Finish with pending item'}</button>
-            ${commissionDue > 0.009 ? `<button onclick="window.completeProjectFromDecision('${project.id}', true)" class="px-4 py-3 bg-emerald-500 text-slate-950 font-black rounded-xl hover:bg-emerald-400 transition-colors text-xs uppercase tracking-widest">${state.lang === 'pt' ? `Pagar ${formatCurr(commissionDue)} e finalizar` : `Pay ${formatCurr(commissionDue)} and finish`}</button>` : ''}
+            <div class="w-full space-y-4">
+                <label class="finish-date-field"><span>${state.lang === 'pt' ? 'Data real de conclusão' : 'Actual completion date'}</span><input id="finish-project-date" type="date" value="${project.dataConclusao || today}" max="${today}" required></label>
+                <div class="flex flex-col sm:flex-row justify-center gap-3">
+                    <button onclick="window.closeCustomModal()" class="px-4 py-3 bg-slate-700 text-white force-white-text rounded-xl font-bold hover:bg-slate-600 transition-colors text-xs uppercase tracking-widest">${window.t('cancel')}</button>
+                    <button onclick="window.completeProjectFromDecision('${project.id}', false)" class="px-4 py-3 ${commissionDue > 0.009 ? 'bg-amber-500 hover:bg-amber-400' : 'bg-emerald-500 hover:bg-emerald-400'} text-slate-950 font-black rounded-xl transition-colors text-xs uppercase tracking-widest">${commissionDue > 0.009 ? (state.lang === 'pt' ? `Finalizar · comissão pendente ${formatCurr(commissionDue)}` : `Finish · commission due ${formatCurr(commissionDue)}`) : (needsRepair ? (state.lang === 'pt' ? 'Regularizar e finalizar' : 'Reconcile and finish') : (state.lang === 'pt' ? 'Finalizar obra' : 'Finish project'))}</button>
+                    ${commissionDue > 0.009 ? `<button onclick="window.completeProjectFromDecision('${project.id}', true)" class="px-4 py-3 bg-emerald-500 text-slate-950 font-black rounded-xl hover:bg-emerald-400 transition-colors text-xs uppercase tracking-widest">${state.lang === 'pt' ? `Pagar ${formatCurr(commissionDue)} e finalizar` : `Pay ${formatCurr(commissionDue)} and finish`}</button>` : ''}
+                </div>
+            </div>
         `;
-        document.getElementById('custom-modal').classList.add('active');
+        document.getElementById('custom-modal').classList.add('active', 'finish-decision-active');
         try { lucide.createIcons(); } catch {}
     }
 
@@ -2328,17 +2387,30 @@
         const summary = getPaymentDraftSummary(project.id, project.pagamentosEfetuados || []);
         const commissionDue = roundMoney(summary?.remainingToPay || 0);
         if (settleCommission && commissionDue <= 0.009) settleCommission = false;
+        const completionDate = document.getElementById('finish-project-date')?.value || '';
+        const today = new Date().toISOString().split('T')[0];
+        const projectStartDate = String(project.dataInicio || '');
+        if (!/^\d{4}-\d{2}-\d{2}$/.test(completionDate) || completionDate > today || (/^\d{4}-\d{2}-\d{2}$/.test(projectStartDate) && completionDate < projectStartDate)) {
+            window.showModal(
+                state.lang === 'pt' ? 'Data de conclusão inválida' : 'Invalid completion date',
+                state.lang === 'pt' ? 'Informe uma data de conclusão entre o início da obra e a data atual.' : 'Enter a completion date between the project start date and today.',
+                'error'
+            );
+            return;
+        }
         window.closeCustomModal();
         try {
+            const archiveOnCompletion = settleCommission || commissionDue <= 0.009;
             const payload = {
                 status: 'Finalizado',
-                dataConclusao: new Date().toISOString().split('T')[0],
+                dataConclusao: completionDate,
+                archived: archiveOnCompletion,
+                commercialStatus: archiveOnCompletion ? 'realized_or_completed' : 'active',
+                archivedReason: archiveOnCompletion
+                    ? (project.archived ? (state.lang === 'pt' ? 'Finalizada e arquivada após regularização' : 'Finished and archived after reconciliation') : (state.lang === 'pt' ? 'Finalizada e arquivada' : 'Finished and archived'))
+                    : '',
                 updatedAt: serverTimestamp()
             };
-            if (project.archived) {
-                payload.commercialStatus = 'realized_or_completed';
-                payload.archivedReason = state.lang === 'pt' ? 'Finalizada e arquivada após regularização' : 'Finished and archived after reconciliation';
-            }
             if (settleCommission) {
                 const payment = {
                     id: crypto.randomUUID(),
@@ -2357,14 +2429,11 @@
                 payload.pagamentosEfetuados = synced.normalizedPayments;
                 payload.despesas = synced.syncedExpenses;
             }
-            const completionPayload = getAutomaticCompletionPayload(project, project.recebimentos || [], payload.pagamentosEfetuados || project.pagamentosEfetuados || []);
-            if (completionPayload) Object.assign(payload, completionPayload);
             await updateDoc(doc(db, 'artifacts', appId, 'public', 'data', 'projects', projectId), payload);
             if (settleCommission) {
                 logAccess(state.user.email, `Quitou comissão de ${formatCurr(commissionDue)} ao finalizar a obra: ${getProjectDisplayName(project)}`, { ...getProjectLogMeta(project), paymentType: 'project_finish_settlement', amount: commissionDue });
             }
             logAccess(state.user.email, `Finalizou a obra: ${getProjectDisplayName(project)}`, getProjectLogMeta(project));
-            if (completionPayload) { logAutomaticCompletion(project); notifyAutomaticCompletion(project); }
         } catch (error) {
             console.error('Erro ao finalizar obra:', error);
             window.showModal(window.t('error'), state.lang === 'pt' ? 'Falha ao finalizar a obra.' : 'Unable to finish project.', 'error');
@@ -3689,8 +3758,9 @@
             completed: { title: isPt ? 'Obras finalizadas' : 'Completed projects', rows: rows.filter(row => row.project?.status === 'Finalizado') },
             completionPending: { title: isPt ? 'Finalizadas com pendência' : 'Completed with pending actions', rows: rows.filter(row => getReportCompletionChecklist(row).isPending) },
             completionReady: { title: isPt ? 'Encerradas corretamente' : 'Properly closed projects', rows: rows.filter(row => getReportCompletionChecklist(row).isComplete) },
-            inProgress: { title: isPt ? 'Obras em execução' : 'Projects in progress', rows: rows.filter(row => row.project?.status === 'Em Execução') },
-            waiting: { title: isPt ? 'Obras aguardando início' : 'Projects awaiting start', rows: rows.filter(row => row.project?.status === 'Aguardando Início' || row.project?.status === '✅ Aprovado') }
+            lifecycleConflict: { title: isPt ? 'Obras com status inconsistente' : 'Projects with inconsistent status', rows: rows.filter(row => getReportCompletionChecklist(row).hasLifecycleConflict) },
+            inProgress: { title: isPt ? 'Obras em execução' : 'Projects in progress', rows: rows.filter(row => !row.project?.archived && row.project?.commercialStatus !== 'cancelled_no_movement' && row.project?.status === 'Em Execução') },
+            waiting: { title: isPt ? 'Obras aguardando início' : 'Projects awaiting start', rows: rows.filter(row => !row.project?.archived && row.project?.commercialStatus !== 'cancelled_no_movement' && (row.project?.status === 'Aguardando Início' || row.project?.status === '✅ Aprovado')) }
         };
         return definitions[kind] || definitions.projects;
     }
@@ -4216,17 +4286,20 @@
             ? (isPt ? 'Todos os vendedores' : 'All sellers')
             : getUserDisplayName(state.reportSellerFilter, state.reportSellerFilter);
         const generatedDate = new Date();
-        const monthAbbreviations = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+        const monthAbbreviations = isPt
+            ? ['Jan', 'Fev', 'Mar', 'Abr', 'Mai', 'Jun', 'Jul', 'Ago', 'Set', 'Out', 'Nov', 'Dez']
+            : ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
         const compactDate = `${monthAbbreviations[generatedDate.getMonth()]}-${String(generatedDate.getDate()).padStart(2, '0')}-${String(generatedDate.getFullYear()).slice(-2)}`;
         const companyFileLabel = state.company === 'Smart Home'
             ? 'D2Smart'
             : state.company === 'HVAC'
                 ? 'D2HVAC'
                 : 'D2Group';
+        const reportFileLabel = isPt ? 'RelatorioVendas' : 'SalesReport';
         const sellerFileLabel = state.reportSellerFilter === 'all'
-            ? 'Todos'
-            : String(sellerName || 'Vendedor').normalize('NFD').replace(/[\u0300-\u036f]/g, '').trim().slice(0, 3);
-        const suggestedPrintTitle = `${companyFileLabel}_Rel_${sellerFileLabel}_${compactDate}`
+            ? (isPt ? 'Todos' : 'AllSellers')
+            : String(sellerName || (isPt ? 'Vendedor' : 'Seller')).normalize('NFD').replace(/[\u0300-\u036f]/g, '').trim().slice(0, 3);
+        const suggestedPrintTitle = `${companyFileLabel}_${reportFileLabel}_${sellerFileLabel}_${compactDate}`
             .replace(/[^a-zA-Z0-9_-]/g, '')
             .replace(/_+/g, '_');
         const period = `${formatProjectDate(state.reportPeriodStart)} → ${formatProjectDate(state.reportPeriodEnd)}`;
@@ -4244,13 +4317,16 @@
         host.className = 'report-print-shell';
         host.innerHTML = `${header}${reportPage.outerHTML}${footer}`;
         document.body.appendChild(host);
+        const originalBodyClassName = document.body.className;
+        document.body.classList.remove('app-body-dark');
+        document.body.classList.add('app-body-light');
         document.body.classList.add('report-print-document', 'report-print-active');
         const originalDocumentTitle = document.title;
         document.title = suggestedPrintTitle;
 
         const cleanup = () => {
             host.remove();
-            document.body.classList.remove('report-print-document', 'report-print-active');
+            document.body.className = originalBodyClassName;
             document.title = originalDocumentTitle;
         };
         window.addEventListener('afterprint', cleanup, { once: true });
@@ -6484,14 +6560,19 @@ function getSellerCommissionPeriodReport(projects, startStr, endStr) {
        ========================================================= */
     function v86ProjectProgress(p) {
         const s = toDateOnly(p?.dataInicio); const e = toDateOnly(p?.dataEntrega); const today = new Date();
-        if (!s || !e || e <= s) return p?.status === 'Finalizado' ? 100 : 0;
         if (p?.status === 'Finalizado') return 100;
+        if (p?.commercialStatus === 'cancelled_no_movement') return 0;
+        if (p?.status === 'Aguardando Início' || String(p?.status || '').includes('Aprovado')) return 0;
+        if (!s || !e || e <= s || p?.status !== 'Em Execução') return 0;
         const pct = Math.floor(((today - s) / (e - s)) * 100);
-        return Math.max(0, Math.min(100, pct));
+        return Math.max(0, Math.min(99, pct));
     }
     function v86StatusInfo(p) {
-        if (p?.archived) return {text: state.lang==='pt'?'Arquivada':'Archived', cls:'info'};
-        if (p?.status === 'Finalizado') return {text: state.lang==='pt'?'Finalizado':'Completed', cls:'success'};
+        const lifecycle = getProjectLifecycleState(p);
+        if (lifecycle.isCanceled) return {text: state.lang==='pt'?'Cancelada / não realizada':'Canceled / not performed', cls:'warning'};
+        if (lifecycle.hasLifecycleConflict) return {text: state.lang==='pt'?'Regularização necessária':'Reconciliation required', cls:'danger'};
+        if (p?.status === 'Finalizado') return {text: p?.archived ? (state.lang==='pt'?'Finalizada · Arquivada':'Completed · Archived') : (state.lang==='pt'?'Finalizada':'Completed'), cls:'success'};
+        if (p?.archived) return {text: state.lang==='pt'?'Regularização necessária':'Reconciliation required', cls:'danger'};
         if (p?.status === 'Em Execução') return {text: state.lang==='pt'?'Em execução':'In progress', cls:'info'};
         if (p?.status === 'Aguardando Início') return {text: state.lang==='pt'?'Aguardando início':'Waiting', cls:'warning'};
         if (String(p?.status||'').includes('Aprovado')) return {text: state.lang==='pt'?'Aguardando início':'Awaiting start', cls:'warning'};
@@ -6520,12 +6601,16 @@ function getSellerCommissionPeriodReport(projects, startStr, endStr) {
     }
     function v86Header(p, moduleTitle=''){
         const st = v86StatusInfo(p);
+        const lifecycle = getProjectLifecycleState(p);
         const completed = p.status === 'Finalizado' && p.dataConclusao ? formatProjectDate(p.dataConclusao) : '';
         const financials = getFin(p);
         const closureAwaitingSync = p.status === 'Finalizado' && !p.archived
             && Number(financials.totalRecebido || 0) >= Number(p.valorTotal || 0) - 0.009
             && Number(financials.dueNow || 0) <= 0.009;
         const closureIssues = [];
+        if (lifecycle.hasLifecycleConflict) {
+            closureIssues.push(state.lang === 'pt' ? 'Status, arquivamento e conclusão não correspondem' : 'Status, archiving, and completion do not match');
+        }
         if (p.status === 'Finalizado' && Number(financials.clientOutstanding || 0) > 0.009) {
             closureIssues.push(state.lang === 'pt' ? `Recebimento pendente: ${formatCurr(financials.clientOutstanding)}` : `Client receipt pending: ${formatCurr(financials.clientOutstanding)}`);
         }
@@ -6541,9 +6626,9 @@ function getSellerCommissionPeriodReport(projects, startStr, endStr) {
                 ? `<div class="v86-closure-alert mb-4 flex items-center gap-3 rounded-xl border border-red-300/50 bg-red-500/[.12] px-4 py-3 text-sm font-bold text-red-200 animate-pulse"><i data-lucide="triangle-alert" class="w-4 h-4 shrink-0"></i><span>${state.lang==='pt'?'Pendência de encerramento:':'Closure pending action:'} ${escapeInlineHtml(closureIssues.join(' · '))}</span></div>`
                 : '');
         const finishAction = canFinishProject(p)
-            ? `<button onclick="window.finishProject('${p.id}')" class="v86-btn primary"><i data-lucide="circle-check-big" class="w-4 h-4"></i>${state.lang==='pt'?'Finalizar':'Finish'}</button>`
+            ? `<button onclick="window.finishProject('${p.id}')" class="v86-btn primary"><i data-lucide="circle-check-big" class="w-4 h-4"></i>${lifecycle.hasLifecycleConflict ? (state.lang==='pt'?'Regularizar e finalizar':'Reconcile and finish') : (state.lang==='pt'?'Finalizar':'Finish')}</button>`
             : '';
-        return `${closureNotice}<div class="v86-head no-print"><div class="v86-head-left"><button class="v86-back" aria-label="${state.lang==='pt'?'Voltar':'Back'}" title="${state.lang==='pt'?'Voltar':'Back'}" onclick="${state.activeModule?'window.closeProjectModule()':'window.closeProjectDetails()'}"><span class="v86-back-glyph" aria-hidden="true">←</span></button><div class="v86-head-copy"><div class="flex flex-wrap items-center gap-3"><h1 class="v86-title">${escapeInlineHtml(getProjectPrimaryTitle(p))}</h1><span class="v86-status ${st.cls}"><i data-lucide="${st.cls==='success'?'check-circle-2':st.cls==='warning'?'clock-3':'circle-dot'}" class="w-3.5 h-3.5"></i>${st.text}${completed?` · ${completed}`:''}</span></div>${moduleTitle?`<div class="v86-subtitle">${escapeInlineHtml(moduleTitle)}</div>`:''}${p.nomeProjeto?`<div class="v86-meta-line"><i data-lucide="bookmark" class="w-3.5 h-3.5 shrink-0"></i><span>${escapeInlineHtml(p.nomeProjeto)}</span></div>`:''}${p.endereco?`<div class="v86-meta-line"><i data-lucide="map-pin" class="w-3.5 h-3.5 shrink-0"></i><span>${escapeInlineHtml(p.endereco)}</span></div>`:''}</div></div><div class="flex flex-wrap justify-end gap-2">${finishAction}${canPrintProjectSheet()?`<button onclick="window.printReport()" class="v86-btn"><i data-lucide="printer" class="w-4 h-4"></i>${window.t('print_ficha')}</button>`:''}${state.userPerms.tab_proj||state.isSuperAdmin?`<button onclick="window.toggleArchive('${p.id}',${!!p.archived})" class="v86-btn"><i data-lucide="${p.archived?'package-open':'archive'}" class="w-4 h-4"></i>${state.lang==='pt'?(p.archived?'Reativar':'Arquivar'):(p.archived?'Restore':'Archive')}</button>`:''}${state.isSuperAdmin?`<button onclick="window.editP('${p.id}')" class="v86-btn"><i data-lucide="edit-3" class="w-4 h-4"></i>${state.lang==='pt'?'Editar':'Edit'}</button>`:''}</div></div>`;
+        return `${closureNotice}<div class="v86-head no-print"><div class="v86-head-left"><button class="v86-back" aria-label="${state.lang==='pt'?'Voltar':'Back'}" title="${state.lang==='pt'?'Voltar':'Back'}" onclick="${state.activeModule?'window.closeProjectModule()':'window.closeProjectDetails()'}"><span class="v86-back-glyph" aria-hidden="true">←</span></button><div class="v86-head-copy"><div class="flex flex-wrap items-center gap-3"><h1 class="v86-title">${escapeInlineHtml(getProjectPrimaryTitle(p))}</h1><span class="v86-status ${st.cls}"><i data-lucide="${st.cls==='success'?'check-circle-2':st.cls==='warning'?'clock-3':st.cls==='danger'?'shield-alert':'circle-dot'}" class="w-3.5 h-3.5"></i>${st.text}${completed?` · ${completed}`:''}</span></div>${moduleTitle?`<div class="v86-subtitle">${escapeInlineHtml(moduleTitle)}</div>`:''}${p.nomeProjeto?`<div class="v86-meta-line"><i data-lucide="bookmark" class="w-3.5 h-3.5 shrink-0"></i><span>${escapeInlineHtml(p.nomeProjeto)}</span></div>`:''}${p.endereco?`<div class="v86-meta-line"><i data-lucide="map-pin" class="w-3.5 h-3.5 shrink-0"></i><span>${escapeInlineHtml(p.endereco)}</span></div>`:''}</div></div><div class="flex flex-wrap justify-end gap-2">${finishAction}${canPrintProjectSheet()?`<button onclick="window.printReport()" class="v86-btn"><i data-lucide="printer" class="w-4 h-4"></i>${window.t('print_ficha')}</button>`:''}${state.userPerms.tab_proj||state.isSuperAdmin?`<button onclick="window.toggleArchive('${p.id}',${!!p.archived})" class="v86-btn"><i data-lucide="${p.archived?'package-open':'archive'}" class="w-4 h-4"></i>${state.lang==='pt'?(p.archived?'Reativar':'Arquivar'):(p.archived?'Restore':'Archive')}</button>`:''}${state.isSuperAdmin?`<button onclick="window.editP('${p.id}')" class="v86-btn"><i data-lucide="edit-3" class="w-4 h-4"></i>${state.lang==='pt'?'Editar':'Edit'}</button>`:''}</div></div>`;
     }
     function v86ReceiptRows(p){
         const rows=(p.recebimentos||[]).slice().sort((a,b)=>String(a.data||'').localeCompare(String(b.data||''))).map(r=>{const method=getReceiptEffectiveMethod(r,p);const fee=getReceiptFee(r,p);const net=getReceiptNet(r,p);return `<tr><td>${r.data?new Date(r.data+'T12:00:00').toLocaleDateString(state.lang==='pt'?'pt-BR':'en-US'):'—'}</td><td><span class="v86-status info">${escapeInlineHtml(method||'—')}</span></td><td class="money">${formatCurr(r.valor)}</td><td class="money ${fee>0?'text-red-300':''}">${formatCurr(fee)}</td><td class="money text-emerald-300">${formatCurr(net)}</td><td><span class="v86-status success">${state.lang==='pt'?'Recebido':'Received'}</span></td></tr>`}).join('');
@@ -6931,17 +7016,20 @@ function getSellerCommissionPeriodReport(projects, startStr, endStr) {
 
     function getReportCompletionChecklist(row) {
         const project = row?.project;
+        const lifecycle = getProjectLifecycleState(project);
         const totalValue = Number(row?.totalWorkValue ?? project?.valorTotal ?? 0);
         const clientBalance = roundMoney(Math.max(0, totalValue - Number(row?.receivedToEnd || 0)));
         const commissionBalance = roundMoney(Math.max(0, Number(row?.pendingEnd || 0)));
         const issues = [];
+        if (lifecycle.hasLifecycleConflict) issues.push({ type: 'lifecycle', label: state.lang === 'pt' ? 'Status e data de conclusão inconsistentes com o arquivamento' : 'Completion status and date conflict with archiving' });
         if (clientBalance > 0.009) issues.push({ type: 'client', amount: clientBalance, label: state.lang === 'pt' ? `Recebimento do cliente: ${formatCurr(clientBalance)}` : `Client receipt: ${formatCurr(clientBalance)}` });
         if (commissionBalance > 0.009) issues.push({ type: 'commission', amount: commissionBalance, label: state.lang === 'pt' ? `Comissão não paga: ${formatCurr(commissionBalance)}` : `Commission unpaid: ${formatCurr(commissionBalance)}` });
         if (!project?.archived) issues.push({ type: 'archive', label: state.lang === 'pt' ? 'Arquivamento pendente' : 'Archiving pending' });
         return {
             isFinalized: project?.status === 'Finalizado',
+            hasLifecycleConflict: lifecycle.hasLifecycleConflict,
             isPending: project?.status === 'Finalizado' && issues.length > 0,
-            isComplete: project?.status === 'Finalizado' && issues.length === 0,
+            isComplete: project?.status === 'Finalizado' && Boolean(project?.dataConclusao) && issues.length === 0,
             issues
         };
     }
@@ -7026,22 +7114,32 @@ function getSellerCommissionPeriodReport(projects, startStr, endStr) {
             const summaryDrilldowns = document.createElement('div');
             summaryDrilldowns.className = 'report-summary-drilldowns mt-4';
             const completionPendingRows = allReportRows.filter(row => getReportCompletionChecklist(row).isPending);
+            const lifecycleConflictRows = allReportRows.filter(row => getReportCompletionChecklist(row).hasLifecycleConflict);
             const statusCards = [
                 { kind: 'noInvoice', label: state.lang === 'pt' ? 'Propostas sem invoice' : 'Proposals without invoice', value: allReportRows.filter(row => !String(row.project?.numeroInvoice || '').trim()).length, cls: 'amber' },
                 { kind: 'active', label: state.lang === 'pt' ? 'Obras ativas' : 'Active projects', value: allReportRows.filter(row => !row.project?.archived).length, cls: 'green' },
                 { kind: 'archived', label: state.lang === 'pt' ? 'Obras arquivadas' : 'Archived projects', value: allReportRows.filter(row => !!row.project?.archived).length, cls: 'cyan' },
                 { kind: 'completionReady', label: state.lang === 'pt' ? 'Encerradas corretamente' : 'Properly closed', value: allReportRows.filter(row => getReportCompletionChecklist(row).isComplete).length, cls: 'green' },
+                ...(lifecycleConflictRows.length ? [{ kind: 'lifecycleConflict', label: state.lang === 'pt' ? 'Status inconsistente' : 'Inconsistent status', value: lifecycleConflictRows.length, cls: 'red' }] : []),
                 ...(completionPendingRows.length ? [{ kind: 'completionPending', label: state.lang === 'pt' ? 'Finalizadas com pendência' : 'Completed with pending actions', value: completionPendingRows.length, cls: 'red' }] : []),
-                { kind: 'inProgress', label: state.lang === 'pt' ? 'Em execução' : 'In progress', value: allReportRows.filter(row => row.project?.status === 'Em Execução').length, cls: 'cyan' },
-                { kind: 'waiting', label: state.lang === 'pt' ? 'Aguardando início' : 'Awaiting start', value: allReportRows.filter(row => row.project?.status === 'Aguardando Início' || row.project?.status === '✅ Aprovado').length, cls: 'amber' }
+                { kind: 'inProgress', label: state.lang === 'pt' ? 'Em execução' : 'In progress', value: allReportRows.filter(row => !row.project?.archived && row.project?.commercialStatus !== 'cancelled_no_movement' && row.project?.status === 'Em Execução').length, cls: 'cyan' },
+                { kind: 'waiting', label: state.lang === 'pt' ? 'Aguardando início' : 'Awaiting start', value: allReportRows.filter(row => !row.project?.archived && row.project?.commercialStatus !== 'cancelled_no_movement' && (row.project?.status === 'Aguardando Início' || row.project?.status === '✅ Aprovado')).length, cls: 'amber' }
             ];
             summaryDrilldowns.innerHTML = statusCards.map(card => `<button type="button" class="v86-kpi report-summary-card" data-report-list-kind="${card.kind}"><span>${card.label}</span><strong class="${card.cls}">${card.value}</strong><small>${state.lang === 'pt' ? 'Ver lista' : 'View list'}</small></button>`).join('');
             summaryCards[0]?.closest('.v86-kpis')?.after(summaryDrilldowns);
             summaryDrilldowns.querySelectorAll('[data-report-list-kind]').forEach(card => makeReportSummaryCardNavigable(card, card.dataset.reportListKind));
+            if (lifecycleConflictRows.length) {
+                const lifecycleAlert = document.createElement('button');
+                lifecycleAlert.type = 'button';
+                lifecycleAlert.className = 'report-completion-alert report-lifecycle-alert mt-4 w-full text-left rounded-2xl border border-rose-400/35 bg-rose-400/[.09] px-4 py-3 transition-colors hover:bg-rose-400/[.14]';
+                lifecycleAlert.innerHTML = `<div class="flex items-start gap-3"><i data-lucide="shield-alert" class="mt-0.5 h-5 w-5 shrink-0 text-rose-300"></i><div><strong class="text-sm text-rose-200">${state.lang === 'pt' ? `${lifecycleConflictRows.length} obra${lifecycleConflictRows.length === 1 ? '' : 's'} com status inconsistente` : `${lifecycleConflictRows.length} project${lifecycleConflictRows.length === 1 ? '' : 's'} with inconsistent status`}</strong><p class="mt-1 text-xs text-slate-300">${state.lang === 'pt' ? 'Há obra arquivada sem finalização válida ou finalizada sem data. Clique para revisar e regularizar cada registro.' : 'A project is archived without valid completion or completed without a date. Click to review and reconcile each record.'}</p></div></div>`;
+                lifecycleAlert.addEventListener('click', () => window.openReportProjectList('lifecycleConflict'));
+                summaryDrilldowns.after(lifecycleAlert);
+            }
             if (completionPendingRows.length) {
                 const completionAlert = document.createElement('button');
                 completionAlert.type = 'button';
-                completionAlert.className = 'report-completion-alert mt-4 w-full text-left rounded-2xl border border-amber-300/30 bg-amber-300/[.08] px-4 py-3 transition-colors hover:bg-amber-300/[.13]';
+                completionAlert.className = 'report-completion-alert report-completion-warning mt-4 w-full text-left rounded-2xl border border-amber-300/30 bg-amber-300/[.08] px-4 py-3 transition-colors hover:bg-amber-300/[.13]';
                 completionAlert.innerHTML = `<div class="flex items-start gap-3"><i data-lucide="triangle-alert" class="mt-0.5 h-5 w-5 shrink-0 text-amber-300"></i><div><strong class="text-sm text-amber-200">${state.lang === 'pt' ? `${completionPendingRows.length} obra${completionPendingRows.length === 1 ? '' : 's'} finalizada${completionPendingRows.length === 1 ? '' : 's'} com pendência` : `${completionPendingRows.length} completed project${completionPendingRows.length === 1 ? '' : 's'} with pending actions`}</strong><p class="mt-1 text-xs text-slate-300">${state.lang === 'pt' ? 'Antes do encerramento, confirme o recebimento integral do cliente, o pagamento da comissão e o arquivamento da obra. Clique para ver a lista.' : 'Before closure, confirm full client receipt, commission payment, and project archiving. Click to view the list.'}</p></div></div>`;
                 completionAlert.addEventListener('click', () => window.openReportProjectList('completionPending'));
                 summaryDrilldowns.after(completionAlert);
@@ -7114,16 +7212,20 @@ function getSellerCommissionPeriodReport(projects, startStr, endStr) {
         }));
         const getStatusIndicator = (project, checklist) => {
             const isPt = state.lang === 'pt';
+            if (checklist.hasLifecycleConflict) {
+                const label = isPt ? 'Status inconsistente: arquivamento sem finalização válida' : 'Inconsistent status: archived without valid completion';
+                return `<span class="report-status-indicator conflict" title="${escapeInlineHtml(label)}" aria-label="${escapeInlineHtml(label)}"><i data-lucide="shield-alert"></i><span class="sr-only">${escapeInlineHtml(label)}</span></span>`;
+            }
             if (checklist.isPending) {
                 const details = checklist.issues.map(issue => issue.label).join(' · ');
                 const label = `${isPt ? 'Finalizada com pendência' : 'Completed with pending actions'}: ${details}`;
                 return `<span class="report-status-indicator pending" title="${escapeInlineHtml(label)}" aria-label="${escapeInlineHtml(label)}"><i data-lucide="triangle-alert"></i><span class="sr-only">${escapeInlineHtml(label)}</span></span>`;
             }
-            if (project?.status === 'Em Execução') {
+            if (!project?.archived && project?.commercialStatus !== 'cancelled_no_movement' && project?.status === 'Em Execução') {
                 const label = isPt ? 'Em execução' : 'In progress';
                 return `<span class="report-status-indicator execution" role="img" title="${label}" aria-label="${label}">🛠️</span>`;
             }
-            if (project?.status === 'Aguardando Início' || String(project?.status || '').includes('Aprovado')) {
+            if (!project?.archived && project?.commercialStatus !== 'cancelled_no_movement' && (project?.status === 'Aguardando Início' || String(project?.status || '').includes('Aprovado'))) {
                 const label = isPt ? 'Aguardando início' : 'Awaiting start';
                 return `<span class="report-status-indicator waiting" title="${label}" aria-label="${label}"><i data-lucide="clock-3"></i><span class="sr-only">${label}</span></span>`;
             }
@@ -7529,6 +7631,14 @@ function getSellerCommissionPeriodReport(projects, startStr, endStr) {
             }
             const existingProject = id ? state.projects.find(p => p.id === id) : null;
             const nextStatus = document.getElementById('f-status').value;
+            if (existingProject?.archived && existingProject?.commercialStatus !== 'cancelled_no_movement' && nextStatus !== 'Finalizado') {
+                window.showModal(
+                    state.lang === 'pt' ? 'Fluxo de status inválido' : 'Invalid status flow',
+                    state.lang === 'pt' ? 'Uma obra arquivada não pode voltar para Aguardando início ou Em execução. Reative a obra antes de alterar o status, ou finalize-a para regularizar o registro.' : 'An archived project cannot return to Awaiting start or In progress. Restore it before changing status, or finish it to reconcile the record.',
+                    'error'
+                );
+                return;
+            }
             let completionDate = existingProject?.dataConclusao || '';
             if (nextStatus === 'Finalizado') {
                 completionDate = completionDate || new Date().toISOString().split('T')[0];

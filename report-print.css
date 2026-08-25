@@ -10,6 +10,7 @@ body.report-print-document {
     padding: 0;
     background: #ffffff;
     color: #172033;
+    color-scheme: light;
     font-family: Inter, Arial, sans-serif;
     font-size: 10px;
     -webkit-print-color-adjust: exact;
@@ -27,6 +28,7 @@ body.report-print-active #report-print-host {
     padding: 0;
     background: #ffffff !important;
     color: #172033 !important;
+    color-scheme: light;
 }
 .report-print-document .report-print-shell { width: 100%; }
 
@@ -199,6 +201,39 @@ body.report-print-active #report-print-host {
 .report-print-document .v86-kpi strong.green { color: #047857 !important; }
 .report-print-document .v86-kpi strong.cyan { color: #0f766e !important; }
 .report-print-document .v86-kpi strong.amber { color: #b45309 !important; }
+
+/* Printing is always rendered as a light document, regardless of the app theme. */
+.report-print-document .report-completion-warning {
+    border-color: #f59e0b !important;
+    background: #fffbeb !important;
+    color: #78350f !important;
+    animation: none !important;
+}
+
+.report-print-document .report-completion-warning .text-amber-200,
+.report-print-document .report-completion-warning .text-amber-300 {
+    color: #92400e !important;
+}
+
+.report-print-document .report-completion-warning .text-slate-300 {
+    color: #475569 !important;
+}
+
+.report-print-document .report-lifecycle-alert {
+    border-color: #fb7185 !important;
+    background: #fff1f2 !important;
+    color: #881337 !important;
+    animation: none !important;
+}
+
+.report-print-document .report-lifecycle-alert .text-rose-200,
+.report-print-document .report-lifecycle-alert .text-rose-300 {
+    color: #9f1239 !important;
+}
+
+.report-print-document .report-lifecycle-alert .text-slate-300 {
+    color: #475569 !important;
+}
 
 .report-print-document .v86-table-wrap { overflow: visible; }
 .report-print-document .v86-table {
