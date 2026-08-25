@@ -852,6 +852,7 @@
 #report-output .v86-table tbody tr.report-project-row{cursor:pointer;transition:background .16s ease,outline-color .16s ease}
 #report-output .v86-table tbody tr.report-project-row:hover{background:rgba(69,216,156,.06)}
 #report-output .v86-table tbody tr.report-project-row:focus-visible{outline:2px solid var(--v86-green);outline-offset:-2px}
+.report-inline-finish{display:inline-flex;align-items:center;justify-content:center;gap:5px;min-height:28px;margin-left:3px;padding:5px 9px;border:1px solid rgba(69,216,156,.34);border-radius:9px;background:rgba(69,216,156,.10);color:var(--v86-green);font-size:8px;font-weight:900;letter-spacing:.06em;text-transform:uppercase;white-space:nowrap;cursor:pointer;transition:background .16s ease,border-color .16s ease,transform .16s ease}.report-inline-finish:hover{background:rgba(69,216,156,.18);border-color:rgba(69,216,156,.58);transform:translateY(-1px)}.report-inline-finish:focus-visible{outline:2px solid var(--v86-green);outline-offset:2px}.app-body-light .report-inline-finish{background:#ecfdf5;border-color:#6ee7b7;color:#047857}
 #report-output .report-summary-card{cursor:pointer;transition:border-color .18s ease,background .18s ease,transform .18s ease;text-align:left}
 #report-output .report-summary-card:hover{border-color:rgba(69,216,156,.42);background:rgba(69,216,156,.07);transform:translateY(-1px)}
 #report-output .report-summary-card:focus-visible{outline:2px solid var(--v86-green);outline-offset:3px}
@@ -2173,11 +2174,18 @@
                     if (!ok) return;
                     payload.commercialStatus = 'cancelled_no_movement';
                     payload.archivedReason = state.lang === 'pt' ? 'Cancelada / não realizada' : 'Canceled / not realized';
+                } else if (project.status !== 'Finalizado') {
+                    window.showModal(
+                        state.lang === 'pt' ? 'Finalize antes de arquivar' : 'Finish before archiving',
+                        state.lang === 'pt'
+                            ? 'Esta obra possui movimentação financeira e não pode ser arquivada como concluída antes da finalização. Se o contrato já foi recebido integralmente, use Finalizar; o sistema fará o arquivamento correto após a conciliação.'
+                            : 'This project has financial activity and cannot be archived as completed before it is finished. If the contract has been fully received, use Finish; the system will archive it correctly after reconciliation.',
+                        'error'
+                    );
+                    return;
                 } else {
                     payload.commercialStatus = 'realized_or_completed';
-                    payload.archivedReason = project?.status === 'Finalizado'
-                        ? (state.lang === 'pt' ? 'Finalizada e arquivada' : 'Finished and archived')
-                        : (state.lang === 'pt' ? 'Arquivada com movimento financeiro' : 'Archived with financial movement');
+                    payload.archivedReason = state.lang === 'pt' ? 'Finalizada e arquivada' : 'Finished and archived';
                 }
             }
 
@@ -2215,7 +2223,7 @@
 
     function canFinishProject(project) {
         if (!canManageProjectEntries(project, 'fin')) return false;
-        if (project.archived || project.status === 'Finalizado') return false;
+        if (project.status === 'Finalizado') return false;
         const contractValue = Number(project.valorTotal || 0);
         return contractValue > 0 && getFin(project).totalRecebido >= contractValue - 0.009;
     }
@@ -2327,6 +2335,10 @@
                 dataConclusao: new Date().toISOString().split('T')[0],
                 updatedAt: serverTimestamp()
             };
+            if (project.archived) {
+                payload.commercialStatus = 'realized_or_completed';
+                payload.archivedReason = state.lang === 'pt' ? 'Finalizada e arquivada após regularização' : 'Finished and archived after reconciliation';
+            }
             if (settleCommission) {
                 const payment = {
                     id: crypto.randomUUID(),
@@ -3734,7 +3746,9 @@
         subtitle.textContent = `${list.rows.length} ${isPt ? (list.rows.length === 1 ? 'obra encontrada no filtro atual' : 'obras encontradas no filtro atual') : (list.rows.length === 1 ? 'project found in the current filter' : 'projects found in the current filter')}`;
         const rows = list.rows.map(row => {
             const project = row.project;
-            const projectState = project.archived
+            const projectState = project.commercialStatus === 'cancelled_no_movement'
+                ? { text: isPt ? 'Cancelada' : 'Canceled', cls: 'warning' }
+                : project.archived
                 ? { text: isPt ? 'Arquivada' : 'Archived', cls: 'info' }
                 : { text: isPt ? 'Ativa' : 'Active', cls: 'success' };
             const commissionState = row.excludedFromTotals
@@ -7165,7 +7179,9 @@ function getSellerCommissionPeriodReport(projects, startStr, endStr) {
             const row = orderedRows[rowIndex++];
             if (!row) return;
             reportRowByElement.set(tableRow, row);
-            const projectState = row.archived
+            const projectState = row.project?.commercialStatus === 'cancelled_no_movement'
+                ? { text: state.lang === 'pt' ? 'Cancelada' : 'Canceled', cls: 'warning' }
+                : row.archived
                 ? { text: state.lang === 'pt' ? 'Arquivada' : 'Archived', cls: 'info' }
                 : { text: state.lang === 'pt' ? 'Ativa' : 'Active', cls: 'success' };
             const commissionState = getReportCommissionStatus(row);
@@ -7179,6 +7195,20 @@ function getSellerCommissionPeriodReport(projects, startStr, endStr) {
                 : '';
             const statusIndicator = getStatusIndicator(row.project, completionChecklist);
             tableRow.cells[3].innerHTML = `<div class="flex flex-wrap items-center gap-1.5"><span class="v86-status ${projectState.cls}">${projectState.text}</span>${completedStamp}${statusIndicator}</div>`;
+            if (canFinishProject(row.project)) {
+                const finishButton = document.createElement('button');
+                finishButton.type = 'button';
+                finishButton.className = 'report-inline-finish no-print';
+                finishButton.setAttribute('aria-label', `${state.lang === 'pt' ? 'Finalizar obra' : 'Finish project'} ${getProjectPrimaryTitle(row.project)}`);
+                finishButton.title = state.lang === 'pt' ? 'Finalizar esta obra' : 'Finish this project';
+                finishButton.innerHTML = `<span aria-hidden="true">✓</span>${state.lang === 'pt' ? 'Finalizar' : 'Finish'}`;
+                finishButton.addEventListener('click', event => {
+                    event.stopPropagation();
+                    window.finishProject(row.project.id);
+                });
+                finishButton.addEventListener('keydown', event => event.stopPropagation());
+                tableRow.cells[3].querySelector('div')?.appendChild(finishButton);
+            }
             const commissionCell = document.createElement('td');
             commissionCell.innerHTML = `<span class="v86-status ${commissionState.cls}">${commissionState.text}</span>`;
             tableRow.cells[4]?.before(commissionCell);
