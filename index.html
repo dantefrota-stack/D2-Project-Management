@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>D2 Project Management - Premium Official</title>
+    <title>D2 Project Management</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
     <link href="report-print.css" rel="stylesheet">
@@ -953,9 +953,9 @@
 <section id="public-document-request" class="hidden fixed inset-0 z-[3000] overflow-y-auto bg-slate-950 text-left">
     <div class="min-h-full bg-[radial-gradient(circle_at_top_right,_rgba(34,211,238,.17),transparent_32%),radial-gradient(circle_at_bottom_left,_rgba(69,216,156,.14),transparent_36%)] px-4 py-8 sm:px-6">
         <div class="mx-auto max-w-3xl">
-            <div class="mb-6 flex items-center justify-between"><img id="public-request-logo" src="logo-D2-Group-preto.png" alt="D2 Group" class="h-12 rounded-xl bg-white p-2"><span class="rounded-full border border-cyan-300/30 bg-cyan-400/10 px-3 py-1 text-[10px] font-black uppercase tracking-[0.18em] text-cyan-200">Portal seguro de documentos</span></div>
+            <div class="mb-6 flex flex-wrap items-center justify-between gap-3"><img id="public-request-logo" src="logo-D2-Group-preto.png" alt="D2 Group" class="h-12 rounded-xl bg-white p-2"><div class="flex items-center gap-2"><span data-public-portal-badge class="rounded-full border border-cyan-300/30 bg-cyan-400/10 px-3 py-1 text-[10px] font-black uppercase tracking-[0.18em] text-cyan-200">Secure document portal</span><button type="button" data-public-lang="en" class="flex h-12 w-14 items-center justify-center rounded-xl border border-white/15 bg-white/10 p-2" title="English" aria-label="English"><img src="https://flagcdn.com/w80/us.png" alt="United States" class="w-7 rounded-sm"></button><button type="button" data-public-lang="pt" class="flex h-12 w-14 items-center justify-center rounded-xl border border-white/15 bg-white/5 p-2" title="Português" aria-label="Português"><img src="https://flagcdn.com/w80/br.png" alt="Brasil" class="w-7 rounded-sm"></button></div></div>
             <main class="rounded-[32px] border border-white/10 bg-slate-900/90 p-6 shadow-2xl sm:p-10"><div id="public-request-content"></div></main>
-            <p class="mx-auto mt-5 max-w-2xl text-center text-xs leading-5 text-slate-500">D2 Project Management · Este portal não oferece acesso a projetos, pagamentos ou dados internos.</p>
+            <p data-public-portal-footer class="mx-auto mt-5 max-w-2xl text-center text-xs leading-5 text-slate-500">D2 Project Management · This portal does not provide access to projects, payments, or internal data.</p>
         </div>
     </div>
 </section>
@@ -966,7 +966,7 @@
         <div class="logo-box">
              <img src="logo-D2-Group-preto.png" alt="D2 Group" class="h-10 brightness-0 invert">
         </div>
-        <h2 class="text-xs font-black tracking-[0.3em] mb-10 text-slate-400 uppercase" data-i18n="login_title">D2 Project Management Portal</h2>
+        <h2 class="text-xs font-black tracking-[0.3em] mb-10 text-slate-400 uppercase" data-i18n="login_title">D2 Project Management</h2>
 
         <form id="login-form" class="space-y-6 text-left mb-6">
             <div id="login-error-msg" class="hidden p-4 bg-red-50 border border-red-100 rounded-xl text-red-600 text-xs font-bold text-center uppercase tracking-widest leading-relaxed"></div>
@@ -991,8 +991,8 @@
         </form>
 
         <div class="mt-8 flex justify-center gap-4">
-            <button onclick="window.setLang('pt')" class="flag-btn active" id="l-pt"><img src="https://flagcdn.com/w80/br.png" class="w-6"></button>
-            <button onclick="window.setLang('en')" class="flag-btn" id="l-en"><img src="https://flagcdn.com/w80/us.png" class="w-6"></button>
+            <button onclick="window.setLang('en')" class="flag-btn active" id="l-en"><img src="https://flagcdn.com/w80/us.png" class="w-6" alt="English"></button>
+            <button onclick="window.setLang('pt')" class="flag-btn" id="l-pt"><img src="https://flagcdn.com/w80/br.png" class="w-6" alt="Português"></button>
         </div>
     </div>
 </div>
@@ -1136,8 +1136,8 @@
 
             <div class="c2-header-actions">
                 <div id="dashboard-language-switcher" class="dashboard-language-switcher hidden" aria-label="Selecionar idioma">
-                    <button type="button" onclick="window.setLang('pt')" class="dashboard-language-option" data-dashboard-language="pt" title="Português (Brasil)" aria-label="Português (Brasil)"><img src="https://flagcdn.com/w80/br.png" alt="Brasil"></button>
                     <button type="button" onclick="window.setLang('en')" class="dashboard-language-option" data-dashboard-language="en" title="English (United States)" aria-label="English (United States)"><img src="https://flagcdn.com/w80/us.png" alt="United States"></button>
+                    <button type="button" onclick="window.setLang('pt')" class="dashboard-language-option" data-dashboard-language="pt" title="Português (Brasil)" aria-label="Português (Brasil)"><img src="https://flagcdn.com/w80/br.png" alt="Brasil"></button>
                 </div>
                 <button onclick="window.toggleTheme()" class="c2-icon-btn" aria-label="Alternar tema"><i data-lucide="sun" id="theme-icon-light" class="hidden"></i><i data-lucide="moon" id="theme-icon-dark"></i></button>
                 <div class="c2-user hidden md:flex">
@@ -1262,12 +1262,12 @@
                         <div class="c2-form-field"><label data-i18n="team_name">Nome completo</label><input type="text" id="t-name" required class="modern-input" data-i18n-placeholder="full_name_placeholder" placeholder="Digite o nome completo"></div>
                         <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
                             <div class="c2-form-field"><label data-i18n="team_email">E-mail</label><input type="email" id="t-email" required class="modern-input" placeholder="usuario@email.com"></div>
-                            <div class="c2-form-field relative"><label data-i18n="team_pass">Senha</label><input type="password" id="t-pass" required class="modern-input !pr-12"><button type="button" onclick="window.togglePassword('t-pass', 'eye-team-btn')" class="password-toggle" id="eye-team-btn" style="top:72%"><i data-lucide="eye" class="w-4 h-4"></i></button></div>
+                            <div class="c2-form-field relative"><label data-i18n="team_pass">Senha temporária</label><input type="password" id="t-pass" minlength="8" required class="modern-input !pr-12" autocomplete="new-password"><button type="button" onclick="window.togglePassword('t-pass', 'eye-team-btn')" class="password-toggle" id="eye-team-btn" style="top:58%"><i data-lucide="eye" class="w-4 h-4"></i></button><small class="mt-2 block text-slate-500">Ao editar, deixe vazio para preservar a senha atual do Firebase.</small></div>
                         </div>
                         <div class="c2-permission-group"><p class="c2-eyebrow" data-i18n="team_scope">Visibilidade e Escopo</p><div class="grid grid-cols-1 gap-2 mt-3"><label class="perm-box"><input type="checkbox" id="p_smart" class="perm-checkbox"><span><strong>D2 Smart Home</strong><small data-i18n="team_smart_visibility">Visualizar projetos e dados Smart Home</small></span></label><label class="perm-box"><input type="checkbox" id="p_hvac" class="perm-checkbox"><span><strong>D2 HVAC</strong><small data-i18n="team_hvac_visibility">Visualizar projetos e dados HVAC</small></span></label><label class="perm-box"><input type="checkbox" id="p_global" class="perm-checkbox"><span><strong data-i18n="team_global_visibility">Ver outros vendedores</strong><small data-i18n="team_global_visibility_hint">Acesso a projetos de outros responsáveis</small></span></label></div></div>
                         <div class="c2-permission-group"><p class="c2-eyebrow" data-i18n="team_tabs">Acesso às Abas</p><div class="grid grid-cols-1 sm:grid-cols-2 gap-2 mt-3"><label class="perm-box"><input type="checkbox" id="p_tab_proj" class="perm-checkbox" checked><span><strong data-i18n="team_tab_projects">Projetos</strong></span></label><label class="perm-box"><input type="checkbox" id="p_tab_new" class="perm-checkbox"><span><strong data-i18n="team_tab_new">Nova obra</strong></span></label><label class="perm-box"><input type="checkbox" id="p_tab_rep" class="perm-checkbox"><span><strong data-i18n="team_tab_reports">Relatórios</strong></span></label><label class="perm-box"><input type="checkbox" id="p_contractors" class="perm-checkbox"><span><strong>Contractors</strong><small>Gerenciar fornecedores, documentos e pagamentos</small></span></label></div></div>
                         <div class="c2-permission-group"><p class="c2-eyebrow" data-i18n="team_perms">Permissões Financeiras</p><div class="grid grid-cols-1 gap-2 mt-3"><label class="perm-box"><input type="checkbox" id="p_fin" class="perm-checkbox"><span><strong data-i18n="team_finance_entry">Inserir recebimentos / pagamentos</strong><small data-i18n="team_finance_entry_hint">Registrar movimentações financeiras</small></span></label><label class="perm-box"><input type="checkbox" id="p_costs" class="perm-checkbox"><span><strong data-i18n="team_cost_access">Acesso a custos e margem</strong><small data-i18n="team_cost_access_hint">Visualizar despesas, orçamento e margem</small></span></label></div></div>
-                        <div class="flex justify-end gap-3 pt-4 border-t border-white/10"><button type="button" onclick="document.getElementById('team-form').reset(); document.getElementById('t-id').value=''" class="c2-secondary-btn" data-i18n="cancel">Cancelar</button><button type="submit" id="btn-save-team" class="c2-primary-btn" data-i18n="btn_team"><i data-lucide="save" class="w-4 h-4"></i>Salvar usuário</button></div>
+                        <div class="flex justify-end gap-3 pt-4 border-t border-white/10"><button type="button" onclick="window.resetTeamForm()" class="c2-secondary-btn" data-i18n="cancel">Cancelar</button><button type="submit" id="btn-save-team" class="c2-primary-btn" data-i18n="btn_team"><i data-lucide="save" class="w-4 h-4"></i>Salvar usuário</button></div>
                     </form>
                 </section>
                 <section class="c2-panel p-0 overflow-hidden text-left">
@@ -1318,10 +1318,9 @@
 </div>
 
 <script type="module">
-    import { initializeApp, deleteApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
-    import { getAuth, signInWithEmailAndPassword, createUserWithEmailAndPassword, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
-    import { getFirestore, collection, doc, updateDoc, addDoc, deleteDoc, onSnapshot, serverTimestamp, arrayUnion, getDocs, writeBatch, runTransaction } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
-    import { getStorage, ref as storageRef, getDownloadURL } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-storage.js";
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
+    import { getAuth, signInWithEmailAndPassword, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
+    import { getFirestore, collection, doc, updateDoc, addDoc, deleteDoc, onSnapshot, serverTimestamp, arrayUnion, getDocs, writeBatch, runTransaction, query, where } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
 
     const firebaseConfig = {
         apiKey: "AIzaSyDrLfIOuBwZblwKPuxBRK3R4fQpjQQbnDE",
@@ -1336,15 +1335,14 @@
     const app = initializeApp(firebaseConfig);
     const auth = getAuth(app);
     const db = getFirestore(app);
-    const storage = getStorage(app);
     const SUPER_ADMIN = "dante.frota@allcablingtech.com";
-    const LANGUAGE_STORAGE_KEY = 'd2-project-management.language';
+    const LANGUAGE_STORAGE_KEY = 'd2-project-management.language.v2';
     const savedLanguage = (() => {
         try {
             const value = localStorage.getItem(LANGUAGE_STORAGE_KEY);
-            return value === 'en' || value === 'pt' ? value : 'pt';
+            return value === 'en' || value === 'pt' ? value : 'en';
         } catch (_) {
-            return 'pt';
+            return 'en';
         }
     })();
 
@@ -1385,7 +1383,7 @@
             form_new_title: "Registrar Obra", team_title: "Gestão de Equipe", btn_team: "Salvar e Autorizar Acesso",
             filter_both: "AMBAS", filter_active: "ATIVAS", filter_archived: "ARQUIVADAS", filter_all: "TODAS",
             project_filter_seller: "Filtro por Vendedor", project_filter_all_sellers: "Todos os vendedores", report_filter_seller: "Vendedor no relatório", report_filter_all_sellers: "Todos os vendedores", logs_empty: "Nenhum log registrado", logs_filter_user: "Filtrar por usuário", logs_all_users: "Todos os usuários", logs_clear_filter: "Limpar filtro", logs_results: "registros exibidos", margin_alert_low: "Margem abaixo de 45%", margin_current: "Margem Atual", completed_on: "Concluída em", category_commission: "Comissões", seller_margin_cover: "Margem da obra",
-            login_title: "Portal D2 Project Management", lbl_email: "E-mail Corporativo", lbl_pass: "Senha de Acesso", btn_login: "Acessar Sistema",
+            login_title: "D2 Project Management", lbl_email: "E-mail Corporativo", lbl_pass: "Senha de Acesso", btn_login: "Acessar Sistema",
             f_prop: "Nº Proposta", f_inv: "Nº Invoice", f_unit: "Unidade Responsável", f_client: "Cliente", f_project_name: "Nome do Projeto / Referência", f_address: "Endereço da Obra", f_seller: "Vendedor",
             f_gross: "Valor Contrato Bruto", f_budget: "Orçamento Custo (Budget)", f_comm_perc: "% Comissão",
             f_pay_method: "Forma Pagt. Prevista", f_start: "Início", f_end: "Entrega", f_status: "Status",
@@ -1438,7 +1436,7 @@
             form_new_title: "Register Project", team_title: "Team Management", btn_team: "Authorize Access",
             filter_both: "BOTH", filter_active: "ACTIVE", filter_archived: "ARCHIVED", filter_all: "ALL",
             project_filter_seller: "Seller Filter", project_filter_all_sellers: "All sellers", report_filter_seller: "Seller in report", report_filter_all_sellers: "All sellers", logs_empty: "No logs recorded", logs_filter_user: "Filter by user", logs_all_users: "All users", logs_clear_filter: "Clear filter", logs_results: "records shown", margin_alert_low: "Margin below 45%", margin_current: "Current Margin", completed_on: "Completed on", category_commission: "Commissions", seller_margin_cover: "Project margin",
-            login_title: "D2 Project Management Portal", lbl_email: "Corporate Email", lbl_pass: "Password", btn_login: "Access System",
+            login_title: "D2 Project Management", lbl_email: "Corporate Email", lbl_pass: "Password", btn_login: "Access System",
             f_prop: "Proposal No.", f_inv: "Invoice No.", f_unit: "Responsible Unit", f_client: "Client", f_project_name: "Project name / reference", f_address: "Project address", f_seller: "Seller",
             f_gross: "Gross Contract Value", f_budget: "Cost Budget", f_comm_perc: "% Commission",
             f_pay_method: "Expected Pay Method", f_start: "Start Date", f_end: "Delivery", f_status: "Status",
@@ -1685,36 +1683,23 @@
     async function logAccess(userEmail, action, meta = {}) {
         if (!auth.currentUser || !userEmail || !action) return;
         try {
-            await addDoc(auditLogsRef(), {
-                user: userEmail,
-                action,
-                timestampIso: new Date().toISOString(),
-                createdAt: serverTimestamp(),
-                ...meta
-            });
+            await secureApi('audit', { actionText: action, meta });
         } catch (err) {
             console.error('Erro ao registrar log:', err);
-        }
-    }
-
-    async function deleteLogsInBatches() {
-        const snapshot = await getDocs(auditLogsRef());
-        if (snapshot.empty) return;
-        const docs = snapshot.docs;
-        for (let i = 0; i < docs.length; i += 450) {
-            const batch = writeBatch(db);
-            docs.slice(i, i + 450).forEach(item => batch.delete(item.ref));
-            await batch.commit();
         }
     }
 
     window.clearLogs = () => {
         if (!state.isSuperAdmin) return;
         window.showModal(window.t('attention'), 'Tem certeza que deseja limpar todo o histórico?', 'confirm', async () => {
-            await deleteLogsInBatches();
-            state.logs = [];
-            localStorage.removeItem('access_logs');
-            window.renderLogs();
+            try {
+                await secureApi('clearAudit');
+                state.logs = [];
+                localStorage.removeItem('access_logs');
+                window.renderLogs();
+            } catch (error) {
+                window.showModal('Erro', error.message || 'Não foi possível limpar o histórico.', 'error');
+            }
         });
     }
 
@@ -1840,16 +1825,47 @@
     function decodeRequestPreview(value) {
         try { const base64 = String(value || '').replaceAll('-', '+').replaceAll('_', '/'); const padded = base64 + '='.repeat((4 - base64.length % 4) % 4); return JSON.parse(decodeURIComponent(Array.from(atob(padded)).map(char => `%${char.charCodeAt(0).toString(16).padStart(2, '0')}`).join(''))); } catch { return null; }
     }
+    const PUBLIC_PORTAL_LANGUAGE_KEY = 'd2-contractor-portal.language';
+    const publicPortalLanguage = () => {
+        const requested = new URLSearchParams(window.location.search).get('lang');
+        if (requested === 'pt') return 'pt';
+        if (requested === 'en') return 'en';
+        try { return localStorage.getItem(PUBLIC_PORTAL_LANGUAGE_KEY) === 'pt' ? 'pt' : 'en'; } catch (_) { return 'en'; }
+    };
+    const PUBLIC_ENGLISH_REPLACEMENTS = [
+        ['Cadastro de contractor', 'Contractor registration'], ['Preencha os dados da sua empresa e anexe os documentos solicitados. Este portal não dá acesso ao sistema interno da D2.', 'Complete your company information and attach the requested documents. This portal does not provide access to D2 internal systems.'],
+        ['Prazo:', 'Due date:'], ['Não definido', 'Not specified'], ['Referência inicial', 'Initial project reference'], ['Informações cadastrais', 'Registration information'], ['Dados do contractor', 'Contractor information'],
+        ['Nome legal ou comercial *', 'Legal or business name *'], ['Responsável / contato *', 'Primary contact *'], ['E-mail *', 'Email *'], ['Telefone *', 'Phone *'], ['Endereço completo *', 'Full address *'], ['Serviços prestados', 'Services provided'],
+        ['Atenção ao Form W-9', 'Form W-9 required'], ['Faça o download do formulário oficial, preencha todos os campos aplicáveis, assine e date antes de anexar.', 'Download the official form, complete all applicable fields, sign and date it before uploading.'], ['Baixar Form W-9 oficial (IRS)', 'Download official Form W-9 (IRS)'], ['Confirmo que o W-9 deve ser preenchido, assinado e datado antes do envio.', 'I confirm that Form W-9 must be completed, signed, and dated before upload.'],
+        ['Documentos solicitados', 'Requested documents'], ['Documento correspondente', 'Matching document'], ['Arraste os arquivos aqui', 'Drag and drop files here'], ['Selecionar arquivos', 'Select files'], ['Enviar cadastro e documentos', 'Submit registration and documents'], ['Atualizar cadastro e documentos', 'Update registration and documents'],
+        ['Envio de documentos', 'Document upload'], ['Envie os documentos solicitados para a obra abaixo.', 'Please submit the requested documents for the project below.'], ['Obra vinculada', 'Linked project'], ['Obra', 'Project'], ['ou selecione arquivos do seu dispositivo.', 'or select files from your device.'], ['Enviar documentos', 'Submit documents'],
+        ['Solicitação não disponível', 'Request unavailable'], ['Este link precisa ser validado pelo portal seguro de documentos. Solicite um novo link à equipe D2.', 'This link cannot be validated. Request a new secure link from the D2 team.'], ['Documento', 'Document'], ['Enviado', 'Submitted'], ['Pendente', 'Pending'],
+        ['Selecione ao menos um arquivo.', 'Select at least one file.'], ['Escolha um documento diferente para cada arquivo.', 'Match each file to a different document.'], ['Associe cada arquivo a um documento diferente.', 'Match each file to a different document.'], ['Tentar novamente', 'Try again'], ['Cadastro enviado', 'Registration submitted'], ['Documentos enviados', 'Documents submitted'],
+        ['Prévia local: o cadastro e os arquivos serão enviados quando este fluxo for publicado.', 'Local preview: registration and files will be submitted when this workflow is published.'], ['PDF, JPG, PNG, DOC ou DOCX · máximo de 15 MB por arquivo.', 'PDF, JPG, or PNG · maximum 15 MB per file.'], ['PDF, JPG ou PNG · máximo de 15 MB por arquivo.', 'PDF, JPG, or PNG · maximum 15 MB per file.']
+    ];
+    function translatePublicPortalNode(root) {
+        if (!root || publicPortalLanguage() !== 'en') return;
+        const walker = document.createTreeWalker(root, NodeFilter.SHOW_TEXT); const nodes = []; while (walker.nextNode()) nodes.push(walker.currentNode);
+        nodes.forEach(node => { let value = node.nodeValue; PUBLIC_ENGLISH_REPLACEMENTS.forEach(([source, target]) => { value = value.replaceAll(source, target); }); value = value.replace(/(\d+) pendente\(s\)/g, '$1 pending').replace(/(\d+) item\(ns\)/g, '$1 items').replace(/(\d+) documento\(s\) enviado\(s\) com sucesso\./g, '$1 documents submitted successfully.'); node.nodeValue = value; });
+        root.querySelectorAll('[placeholder]').forEach(element => { if (element.placeholder === 'Descreva os principais serviços oferecidos') element.placeholder = 'Describe the primary services provided'; });
+    }
+    function finalizePublicPortalLanguage() {
+        const root = document.getElementById('public-document-request'); if (!root) return; const language = publicPortalLanguage(); document.documentElement.lang = language === 'pt' ? 'pt-BR' : 'en-US';
+        const badge = root.querySelector('[data-public-portal-badge]'); const footer = root.querySelector('[data-public-portal-footer]'); if (badge) badge.textContent = language === 'pt' ? 'Portal seguro de documentos' : 'Secure document portal'; if (footer) footer.textContent = language === 'pt' ? 'D2 Project Management · Este portal não oferece acesso a projetos, pagamentos ou dados internos.' : 'D2 Project Management · This portal does not provide access to projects, payments, or internal data.';
+        root.querySelectorAll('[data-public-lang]').forEach(button => { const active = button.dataset.publicLang === language; button.classList.toggle('ring-2', active); button.classList.toggle('ring-cyan-300', active); button.onclick = () => { const selected = button.dataset.publicLang === 'pt' ? 'pt' : 'en'; try { localStorage.setItem(PUBLIC_PORTAL_LANGUAGE_KEY, selected); } catch (_) {} const url = new URL(window.location.href); if (selected === 'pt') url.searchParams.set('lang', 'pt'); else url.searchParams.delete('lang'); window.location.href = url.toString(); }; });
+        translatePublicPortalNode(root);
+        if (language === 'en' && !root._translationObserver) { root._translationObserver = new MutationObserver(() => translatePublicPortalNode(root)); root._translationObserver.observe(root, {childList: true, subtree: true}); }
+    }
     function renderPublicContractorRegistration(request, token, live = false) {
         const root = document.getElementById('public-document-request'); const content = document.getElementById('public-request-content'); if (!root || !content) return false;
-        root.classList.remove('hidden'); const isHvac = request.company === 'HVAC'; const accent = isHvac ? 'cyan' : 'emerald'; const registration = request.registration || {}; const documents = Array.isArray(request.documents) ? request.documents : []; const pendingDocuments = documents.filter(document => document.status !== 'submitted'); const requiresW9 = documents.some(document => document.id === 'w9' && document.status !== 'submitted');
+        root.classList.remove('hidden'); const isHvac = request.company === 'HVAC'; const accent = isHvac ? 'cyan' : 'emerald'; const registration = request.registration || {}; const documents = Array.isArray(request.documents) ? request.documents : []; const pendingDocuments = documents.filter(document => !['submitted', 'approved'].includes(document.status)); const requiresW9 = documents.some(document => document.id === 'w9' && !['submitted', 'approved'].includes(document.status));
         document.getElementById('public-request-logo').src = isHvac ? 'logo-D2-HVAC-Solutions-preto.png' : 'logo-D2-SmartHome-preto.png'; document.getElementById('public-request-logo').alt = requestCompanyLabel(request.company);
         content.innerHTML = `<div class="flex flex-col gap-5 border-b border-white/10 pb-6 sm:flex-row sm:items-start sm:justify-between"><div><p class="text-[10px] font-black uppercase tracking-[0.24em] text-${accent}-300">${requestCompanyLabel(request.company)}</p><h1 class="mt-2 text-3xl font-black text-white">Cadastro de contractor</h1><p class="mt-3 max-w-xl text-sm leading-6 text-slate-400">Preencha os dados da sua empresa e anexe os documentos solicitados. Este portal não dá acesso ao sistema interno da D2.</p></div><span class="rounded-xl border border-white/10 bg-black/20 px-4 py-3 text-xs text-slate-300">Prazo: <strong class="text-white">${escapeInlineHtml(request.dueDate || 'Não definido')}</strong></span></div>
         ${request.projectName ? `<section class="mt-6 rounded-2xl border border-white/10 bg-black/20 p-5"><p class="text-[10px] font-black uppercase tracking-[0.2em] text-slate-500">Referência inicial</p><h2 class="mt-2 text-lg font-black text-white">${escapeInlineHtml(request.projectName)}</h2></section>` : ''}
         <form id="public-registration-form" class="mt-6 space-y-6"><section><div><p class="text-[10px] font-black uppercase tracking-[0.2em] text-slate-500">Informações cadastrais</p><h2 class="mt-1 text-lg font-black text-white">Dados do contractor</h2></div><div class="contractor-public-grid mt-4"><div class="contractor-public-field full"><label>Nome legal ou comercial *</label><input id="public-registration-business" required class="contractor-public-input" value="${escapeInlineHtml(registration.businessName || '')}"></div><div class="contractor-public-field"><label>Responsável / contato *</label><input id="public-registration-contact" required class="contractor-public-input" value="${escapeInlineHtml(registration.contactName || '')}"></div><div class="contractor-public-field"><label>E-mail *</label><input id="public-registration-email" type="email" required class="contractor-public-input" value="${escapeInlineHtml(registration.email || '')}"></div><div class="contractor-public-field"><label>Telefone *</label><input id="public-registration-phone" required class="contractor-public-input" value="${escapeInlineHtml(registration.phone || '')}"></div><div class="contractor-public-field"><label>EIN / Tax ID</label><input id="public-registration-ein" class="contractor-public-input" value="${escapeInlineHtml(registration.ein || '')}"></div><div class="contractor-public-field full"><label>Endereço completo *</label><input id="public-registration-address" required class="contractor-public-input" value="${escapeInlineHtml(registration.address || '')}"></div><div class="contractor-public-field full"><label>Serviços prestados</label><textarea id="public-registration-services" class="contractor-public-input min-h-[90px]" placeholder="Descreva os principais serviços oferecidos">${escapeInlineHtml(registration.services || '')}</textarea></div></div></section>
         ${requiresW9 ? `<section class="rounded-2xl border border-amber-300/25 bg-amber-300/10 p-5"><div class="flex gap-3"><i data-lucide="badge-alert" class="h-6 w-6 shrink-0 text-amber-300"></i><div><h2 class="font-black text-amber-100">Atenção ao Form W-9</h2><p class="mt-2 text-sm leading-6 text-amber-100/80">Faça o download do formulário oficial, preencha todos os campos aplicáveis, assine e date antes de anexar.</p><a href="https://www.irs.gov/pub/irs-pdf/fw9.pdf" target="_blank" rel="noopener" class="mt-3 inline-flex text-sm font-black text-amber-200 underline">Baixar Form W-9 oficial (IRS)</a><label class="mt-4 flex cursor-pointer items-start gap-3 rounded-xl border border-amber-200/20 bg-black/10 p-3 text-sm text-amber-50"><input id="public-registration-w9-confirm" type="checkbox" class="mt-1" required><span>Confirmo que o W-9 deve ser preenchido, assinado e datado antes do envio.</span></label></div></div></section>` : ''}
         <section><div class="flex flex-wrap items-end justify-between gap-3"><div><p class="text-[10px] font-black uppercase tracking-[0.2em] text-slate-500">Checklist</p><h2 class="mt-1 text-lg font-black text-white">Documentos solicitados</h2></div><span class="text-xs text-slate-500">${pendingDocuments.length} pendente(s)</span></div><div class="mt-4 grid grid-cols-1 gap-3 sm:grid-cols-2">${documents.map(document => `<div class="flex items-center gap-3 rounded-xl border border-white/10 bg-slate-950/50 p-4"><i data-lucide="${document.status === 'submitted' ? 'circle-check-big' : 'circle'}" class="h-5 w-5 text-${document.status === 'submitted' ? 'emerald' : accent}-300"></i><span class="font-bold text-slate-200">${escapeInlineHtml(document.label || 'Documento')}</span><span class="ml-auto text-xs ${document.status === 'submitted' ? 'text-emerald-300' : 'text-amber-300'}">${document.status === 'submitted' ? 'Enviado' : 'Pendente'}</span></div>`).join('')}</div></section>
-        ${pendingDocuments.length ? `<section id="public-registration-drop" class="rounded-2xl border border-dashed border-${accent}-300/40 bg-${accent}-400/5 p-6 text-center"><i data-lucide="upload-cloud" class="mx-auto h-10 w-10 text-${accent}-300"></i><h2 class="mt-3 text-lg font-black text-white">Arraste os arquivos aqui</h2><p class="mt-2 text-sm text-slate-400">PDF, JPG, PNG, DOC ou DOCX · máximo de 15 MB por arquivo.</p><input id="public-registration-files" type="file" multiple class="hidden" accept=".pdf,.jpg,.jpeg,.png,.doc,.docx"><button type="button" id="public-registration-select" class="mt-5 rounded-xl bg-${accent}-400 px-5 py-3 text-sm font-black text-slate-950">Selecionar arquivos</button><div id="public-registration-file-list" class="mt-4 space-y-2 text-left"></div></section>` : ''}
+        ${pendingDocuments.length ? `<section id="public-registration-drop" class="rounded-2xl border border-dashed border-${accent}-300/40 bg-${accent}-400/5 p-6 text-center"><i data-lucide="upload-cloud" class="mx-auto h-10 w-10 text-${accent}-300"></i><h2 class="mt-3 text-lg font-black text-white">Arraste os arquivos aqui</h2><p class="mt-2 text-sm text-slate-400">PDF, JPG ou PNG · máximo de 15 MB por arquivo.</p><input id="public-registration-files" type="file" multiple class="hidden" accept=".pdf,.jpg,.jpeg,.png"><button type="button" id="public-registration-select" class="mt-5 rounded-xl bg-${accent}-400 px-5 py-3 text-sm font-black text-slate-950">Selecionar arquivos</button><div id="public-registration-file-list" class="mt-4 space-y-2 text-left"></div></section>` : ''}
         <div id="public-registration-status" class="hidden rounded-xl p-4 text-sm leading-6"></div><button type="submit" id="public-registration-submit" class="w-full rounded-xl bg-${accent}-400 px-5 py-4 font-black text-slate-950">${request.registrationStatus === 'submitted' ? 'Atualizar cadastro e documentos' : 'Enviar cadastro e documentos'}</button></form>`;
         const form = document.getElementById('public-registration-form'); const fileInput = document.getElementById('public-registration-files'); const fileList = document.getElementById('public-registration-file-list'); const dropZone = document.getElementById('public-registration-drop'); const status = document.getElementById('public-registration-status'); const submit = document.getElementById('public-registration-submit');
         const showStatus = (message, type = 'info') => { status.className = `rounded-xl p-4 text-sm leading-6 ${type === 'error' ? 'border border-red-300/25 bg-red-300/10 text-red-100' : 'border border-emerald-300/25 bg-emerald-300/10 text-emerald-100'}`; status.textContent = message; };
@@ -1868,13 +1884,13 @@
         const params = new URLSearchParams(window.location.search); const token = params.get('contractorRegistration') || params.get('contractorRequest'); if (!token) return false;
         let request = null; try { request = JSON.parse(localStorage.getItem(`d2-contractor-request-${token}`) || 'null'); } catch {} request = request || decodeRequestPreview(params.get('preview'));
         const root = document.getElementById('public-document-request'); const content = document.getElementById('public-request-content'); if (!root || !content) return false; root.classList.remove('hidden');
-        if (!request) { content.innerHTML = `<div class="py-12 text-center"><i data-lucide="shield-alert" class="mx-auto mb-4 h-12 w-12 text-amber-300"></i><h1 class="text-2xl font-black text-white">Solicitação não disponível</h1><p class="mx-auto mt-3 max-w-md text-sm leading-6 text-slate-400">Este link precisa ser validado pelo portal seguro de documentos. Solicite um novo link à equipe D2.</p></div>`; try { lucide.createIcons(); } catch {}; return true; }
-        if (request.requestType === 'registration') return renderPublicContractorRegistration(request, token, request.live === true);
+        if (!request) { content.innerHTML = `<div class="py-12 text-center"><i data-lucide="shield-alert" class="mx-auto mb-4 h-12 w-12 text-amber-300"></i><h1 class="text-2xl font-black text-white">Solicitação não disponível</h1><p class="mx-auto mt-3 max-w-md text-sm leading-6 text-slate-400">Este link precisa ser validado pelo portal seguro de documentos. Solicite um novo link à equipe D2.</p></div>`; finalizePublicPortalLanguage(); try { lucide.createIcons(); } catch {}; return true; }
+        if (request.requestType === 'registration') { const rendered = renderPublicContractorRegistration(request, token, request.live === true); finalizePublicPortalLanguage(); return rendered; }
         const isHvac = request.company === 'HVAC'; document.getElementById('public-request-logo').src = isHvac ? 'logo-D2-HVAC-Solutions-preto.png' : 'logo-D2-SmartHome-preto.png'; document.getElementById('public-request-logo').alt = requestCompanyLabel(request.company);
-        const documents = Array.isArray(request.documents) ? request.documents : []; content.innerHTML = `<div class="flex flex-col gap-5 border-b border-white/10 pb-6 sm:flex-row sm:items-start sm:justify-between"><div><p class="text-[10px] font-black uppercase tracking-[0.24em] ${isHvac ? 'text-cyan-300' : 'text-emerald-300'}">${requestCompanyLabel(request.company)}</p><h1 class="mt-2 text-3xl font-black text-white">Envio de documentos</h1><p class="mt-3 text-sm leading-6 text-slate-400">Olá, ${escapeInlineHtml(request.contractorName || 'Contractor')}. Envie os documentos solicitados para a obra abaixo.</p></div><span class="rounded-xl border border-white/10 bg-black/20 px-4 py-3 text-xs text-slate-300">Prazo: <strong class="text-white">${escapeInlineHtml(request.dueDate || 'Não definido')}</strong></span></div><section class="mt-6 rounded-2xl border border-white/10 bg-black/20 p-5"><p class="text-[10px] font-black uppercase tracking-[0.2em] text-slate-500">Obra</p><h2 class="mt-2 text-lg font-black text-white">${escapeInlineHtml(request.projectName || 'Obra vinculada')}</h2>${request.note ? `<p class="mt-2 text-sm text-slate-400">${escapeInlineHtml(request.note)}</p>` : ''}</section><section class="mt-6"><div class="flex items-center justify-between gap-4"><div><p class="text-[10px] font-black uppercase tracking-[0.2em] text-slate-500">Checklist</p><h2 class="mt-1 text-lg font-black text-white">Documentos solicitados</h2></div><span class="text-xs text-slate-500">${documents.length} item(ns)</span></div><div class="mt-4 space-y-3">${documents.map(document => `<div class="flex items-center gap-3 rounded-xl border border-white/10 bg-slate-950/50 p-4"><i data-lucide="circle" class="h-5 w-5 ${isHvac ? 'text-cyan-300' : 'text-emerald-300'}"></i><span class="font-bold text-slate-200">${escapeInlineHtml(document.label || 'Documento')}</span><span class="ml-auto text-xs text-amber-300">Pendente</span></div>`).join('')}</div></section><section class="mt-6 rounded-2xl border border-dashed ${isHvac ? 'border-cyan-300/40 bg-cyan-400/5' : 'border-emerald-300/40 bg-emerald-400/5'} p-6 text-center"><i data-lucide="upload-cloud" class="mx-auto h-10 w-10 ${isHvac ? 'text-cyan-300' : 'text-emerald-300'}"></i><h2 class="mt-3 text-lg font-black text-white">Arraste os arquivos aqui</h2><p class="mt-2 text-sm text-slate-400">ou selecione arquivos do seu dispositivo.</p><input id="public-request-files" type="file" multiple class="hidden" accept=".pdf,.jpg,.jpeg,.png,.doc,.docx"><button type="button" id="public-request-select" class="mt-5 ${isHvac ? 'bg-cyan-400' : 'bg-emerald-400'} rounded-xl px-5 py-3 text-sm font-black text-slate-950">Selecionar arquivos</button><div id="public-request-file-list" class="mt-4 space-y-2 text-left"></div></section><div class="mt-5 rounded-xl border border-amber-300/20 bg-amber-300/10 p-4 text-sm leading-6 text-amber-100"><strong>Prévia de segurança:</strong> o envio real será habilitado após a ativação do Storage protegido. Nenhum arquivo é enviado neste ambiente de aprovação.</div><button type="button" id="public-request-submit" class="mt-6 w-full rounded-xl ${isHvac ? 'bg-cyan-400' : 'bg-emerald-400'} px-5 py-4 font-black text-slate-950">Enviar documentos</button><a href="https://www.irs.gov/pub/irs-pdf/fw9.pdf" target="_blank" rel="noopener" class="mt-4 flex justify-center text-sm font-bold ${isHvac ? 'text-cyan-300' : 'text-emerald-300'} underline">Baixar Form W-9 oficial (IRS)</a>`;
+        const documents = Array.isArray(request.documents) ? request.documents : []; content.innerHTML = `<div class="flex flex-col gap-5 border-b border-white/10 pb-6 sm:flex-row sm:items-start sm:justify-between"><div><p class="text-[10px] font-black uppercase tracking-[0.24em] ${isHvac ? 'text-cyan-300' : 'text-emerald-300'}">${requestCompanyLabel(request.company)}</p><h1 class="mt-2 text-3xl font-black text-white">Envio de documentos</h1><p class="mt-3 text-sm leading-6 text-slate-400">Olá, ${escapeInlineHtml(request.contractorName || 'Contractor')}. Envie os documentos solicitados para a obra abaixo.</p></div><span class="rounded-xl border border-white/10 bg-black/20 px-4 py-3 text-xs text-slate-300">Prazo: <strong class="text-white">${escapeInlineHtml(request.dueDate || 'Não definido')}</strong></span></div><section class="mt-6 rounded-2xl border border-white/10 bg-black/20 p-5"><p class="text-[10px] font-black uppercase tracking-[0.2em] text-slate-500">Obra</p><h2 class="mt-2 text-lg font-black text-white">${escapeInlineHtml(request.projectName || 'Obra vinculada')}</h2>${request.note ? `<p class="mt-2 text-sm text-slate-400">${escapeInlineHtml(request.note)}</p>` : ''}</section><section class="mt-6"><div class="flex items-center justify-between gap-4"><div><p class="text-[10px] font-black uppercase tracking-[0.2em] text-slate-500">Checklist</p><h2 class="mt-1 text-lg font-black text-white">Documentos solicitados</h2></div><span class="text-xs text-slate-500">${documents.length} item(ns)</span></div><div class="mt-4 space-y-3">${documents.map(document => `<div class="flex items-center gap-3 rounded-xl border border-white/10 bg-slate-950/50 p-4"><i data-lucide="circle" class="h-5 w-5 ${isHvac ? 'text-cyan-300' : 'text-emerald-300'}"></i><span class="font-bold text-slate-200">${escapeInlineHtml(document.label || 'Documento')}</span><span class="ml-auto text-xs text-amber-300">Pendente</span></div>`).join('')}</div></section><section class="mt-6 rounded-2xl border border-dashed ${isHvac ? 'border-cyan-300/40 bg-cyan-400/5' : 'border-emerald-300/40 bg-emerald-400/5'} p-6 text-center"><i data-lucide="upload-cloud" class="mx-auto h-10 w-10 ${isHvac ? 'text-cyan-300' : 'text-emerald-300'}"></i><h2 class="mt-3 text-lg font-black text-white">Arraste os arquivos aqui</h2><p class="mt-2 text-sm text-slate-400">PDF, JPG ou PNG · máximo de 15 MB por arquivo.</p><input id="public-request-files" type="file" multiple class="hidden" accept=".pdf,.jpg,.jpeg,.png"><button type="button" id="public-request-select" class="mt-5 ${isHvac ? 'bg-cyan-400' : 'bg-emerald-400'} rounded-xl px-5 py-3 text-sm font-black text-slate-950">Selecionar arquivos</button><div id="public-request-file-list" class="mt-4 space-y-2 text-left"></div></section><div class="mt-5 rounded-xl border border-amber-300/20 bg-amber-300/10 p-4 text-sm leading-6 text-amber-100"><strong>Prévia de segurança:</strong> o envio real será habilitado após a ativação do Storage protegido. Nenhum arquivo é enviado neste ambiente de aprovação.</div><button type="button" id="public-request-submit" class="mt-6 w-full rounded-xl ${isHvac ? 'bg-cyan-400' : 'bg-emerald-400'} px-5 py-4 font-black text-slate-950">Enviar documentos</button><a href="https://www.irs.gov/pub/irs-pdf/fw9.pdf" target="_blank" rel="noopener" class="mt-4 flex justify-center text-sm font-bold ${isHvac ? 'text-cyan-300' : 'text-emerald-300'} underline">Baixar Form W-9 oficial (IRS)</a>`;
         const fileInput = document.getElementById('public-request-files'); const dropZone = fileInput.closest('section'); const fileList = document.getElementById('public-request-file-list'); const renderFiles = files => { fileList.innerHTML = Array.from(files || []).map(file => `<div class="rounded-lg border border-white/10 bg-black/20 px-3 py-2 text-xs text-slate-300">${escapeInlineHtml(file.name)} <span class="text-slate-500">• ${(file.size / 1024 / 1024).toFixed(2)} MB</span></div>`).join(''); };
         document.getElementById('public-request-select').onclick = () => fileInput.click(); fileInput.onchange = () => renderFiles(fileInput.files); ['dragenter', 'dragover'].forEach(type => dropZone.addEventListener(type, event => { event.preventDefault(); dropZone.classList.add('ring-2', isHvac ? 'ring-cyan-300' : 'ring-emerald-300'); })); ['dragleave', 'drop'].forEach(type => dropZone.addEventListener(type, event => { event.preventDefault(); dropZone.classList.remove('ring-2', 'ring-cyan-300', 'ring-emerald-300'); })); dropZone.addEventListener('drop', event => { fileInput.files = event.dataTransfer.files; renderFiles(fileInput.files); }); document.getElementById('public-request-submit').onclick = () => { const count = fileInput.files.length; fileList.insertAdjacentHTML('beforeend', `<div class="rounded-lg border border-amber-300/25 bg-amber-300/10 px-3 py-3 text-xs text-amber-100">${count ? `${count} arquivo(s) selecionado(s). ` : ''}O envio está desativado nesta prévia até o endpoint seguro ser publicado.</div>`); };
-        try { lucide.createIcons(); } catch {}; return true;
+        finalizePublicPortalLanguage(); try { lucide.createIcons(); } catch {}; return true;
     }
 
     async function mountSecurePublicDocumentRequest() {
@@ -1884,19 +1900,24 @@
             const response = await fetch(`/api/contractor-documents?token=${encodeURIComponent(token)}`, { headers: { Accept: 'application/json' } });
             if (response.ok) request = { ...await response.json(), token, live: true };
         } catch (_) {}
-        if (!request) return mountPublicDocumentRequest();
+        if (!request) {
+            const localPreviewAllowed = window.location.protocol === 'file:' || ['localhost', '127.0.0.1'].includes(window.location.hostname);
+            if (localPreviewAllowed) return mountPublicDocumentRequest();
+            const root = document.getElementById('public-document-request'); const content = document.getElementById('public-request-content'); root?.classList.remove('hidden'); if (content) content.innerHTML = '<div class="py-12 text-center"><h1 class="text-2xl font-black text-white">Request unavailable</h1><p class="mx-auto mt-3 max-w-md text-sm leading-6 text-slate-400">This secure link is invalid, expired, or revoked. Request a new link from the D2 team.</p></div>'; finalizePublicPortalLanguage(); return true;
+        }
         try { localStorage.setItem(`d2-contractor-request-${token}`, JSON.stringify(request)); } catch (_) {}
         mountPublicDocumentRequest();
         const warning = Array.from(document.querySelectorAll('#public-request-content div')).find(element => element.textContent.includes('Prévia de segurança:'));
         if (warning) warning.innerHTML = '<strong>Envio protegido:</strong> os arquivos são enviados ao cofre privado da D2 e ficam disponíveis somente para a equipe autorizada.';
         const fileInput = document.getElementById('public-request-files'); const fileList = document.getElementById('public-request-file-list'); const submit = document.getElementById('public-request-submit'); const uploadZone = fileInput?.closest('section'); if (!fileInput || !fileList || !submit) return true;
-        const renderMappings = () => { const files = Array.from(fileInput.files || []); fileList.innerHTML = files.map((file, index) => `<div class="rounded-lg border border-white/10 bg-black/20 px-3 py-3 text-xs text-slate-300"><strong>${escapeInlineHtml(file.name)}</strong><span class="text-slate-500"> · ${(file.size / 1024 / 1024).toFixed(2)} MB</span><label class="mt-2 block text-[10px] font-black uppercase tracking-wider text-slate-500">Documento correspondente</label><select data-upload-index="${index}" class="modern-input mt-1 !py-2 !text-xs">${request.documents.filter(document => document.status !== 'submitted').map(document => `<option value="${document.id}">${escapeInlineHtml(document.label)}</option>`).join('')}</select></div>`).join(''); };
+        const renderMappings = () => { const files = Array.from(fileInput.files || []); fileList.innerHTML = files.map((file, index) => `<div class="rounded-lg border border-white/10 bg-black/20 px-3 py-3 text-xs text-slate-300"><strong>${escapeInlineHtml(file.name)}</strong><span class="text-slate-500"> · ${(file.size / 1024 / 1024).toFixed(2)} MB</span><label class="mt-2 block text-[10px] font-black uppercase tracking-wider text-slate-500">Documento correspondente</label><select data-upload-index="${index}" class="modern-input mt-1 !py-2 !text-xs">${request.documents.filter(document => !['submitted', 'approved'].includes(document.status)).map(document => `<option value="${document.id}">${escapeInlineHtml(document.label)}</option>`).join('')}</select></div>`).join(''); };
         fileInput.onchange = renderMappings; uploadZone?.addEventListener('drop', () => setTimeout(renderMappings, 0)); const liveSubmit = submit.cloneNode(true); submit.replaceWith(liveSubmit);
         liveSubmit.onclick = async () => { const files = Array.from(fileInput.files || []); const selects = Array.from(fileList.querySelectorAll('select[data-upload-index]')); if (!files.length) { fileList.innerHTML = '<div class="rounded-lg border border-amber-300/25 bg-amber-300/10 px-3 py-3 text-xs text-amber-100">Selecione ao menos um arquivo.</div>'; return; } const documentIds = selects.map(select => select.value); if (new Set(documentIds).size !== documentIds.length) { fileList.insertAdjacentHTML('beforeend', '<div class="rounded-lg border border-amber-300/25 bg-amber-300/10 px-3 py-3 text-xs text-amber-100">Escolha um documento diferente para cada arquivo.</div>'); return; }
             liveSubmit.disabled = true; liveSubmit.textContent = 'Enviando documentos…'; const results = [];
             for (let index = 0; index < files.length; index += 1) { const body = new FormData(); body.append('action', 'upload'); body.append('token', token); body.append('documentId', documentIds[index]); body.append('file', files[index]); const response = await fetch('/api/contractor-documents', { method: 'POST', body }); const payload = await response.json().catch(() => ({})); if (!response.ok) { results.push(payload.error || 'Falha no envio.'); break; } results.push('ok'); }
             if (results.every(result => result === 'ok')) { fileList.innerHTML = `<div class="rounded-lg border border-emerald-300/25 bg-emerald-300/10 px-3 py-3 text-sm text-emerald-100">${files.length} documento(s) enviado(s) com sucesso. A equipe D2 foi atualizada.</div>`; liveSubmit.textContent = 'Documentos enviados'; } else { fileList.insertAdjacentHTML('beforeend', `<div class="rounded-lg border border-red-300/25 bg-red-300/10 px-3 py-3 text-xs text-red-100">${escapeInlineHtml(results.find(result => result !== 'ok') || 'Falha no envio.')}</div>`); liveSubmit.disabled = false; liveSubmit.textContent = 'Enviar documentos'; }
         };
+        finalizePublicPortalLanguage();
         return true;
     }
 
@@ -2295,6 +2316,33 @@
             }
         } catch (e) { console.error("Erro ao adicionar despesa:", e); }
     };
+
+    async function secureApi(action, payload = {}) {
+        if (!auth.currentUser) throw new Error(state.lang === 'pt' ? 'Sessão não autenticada.' : 'Unauthenticated session.');
+        const idToken = await auth.currentUser.getIdToken();
+        const response = await fetch('/api/admin', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${idToken}` },
+            body: JSON.stringify({ action, ...payload })
+        });
+        const result = await response.json().catch(() => ({}));
+        if (!response.ok) throw new Error(result.error || (state.lang === 'pt' ? 'Operação não concluída.' : 'Operation failed.'));
+        return result;
+    }
+
+    function applySessionPermissions(permissions = {}) {
+        state.userPerms = {
+            tab_proj: permissions.p_tab_proj !== false,
+            tab_new: permissions.p_tab_new === true,
+            tab_rep: permissions.p_tab_rep === true,
+            fin: permissions.p_fin === true,
+            costs: permissions.p_costs === true,
+            contractors: permissions.p_contractors === true,
+            smart: permissions.p_smart !== false,
+            hvac: permissions.p_hvac !== false,
+            global: permissions.p_global === true
+        };
+    }
 
     window.deleteExpense = (projectId, expenseId, expenseDesc, expenseVal) => {
         const existingProject = state.projects.find(x => x.id === projectId);
@@ -4163,7 +4211,7 @@
         window.safeRenderReport();
     };
 
-    window.editTeamMember = (id, name, email, password, permObj) => {
+    window.editTeamMember = (id, name, email, permObj) => {
         if (!state.isSuperAdmin) {
             window.showModal(window.t('modal_access_denied'), window.t('modal_access_denied_msg'), 'error');
             return;
@@ -4172,7 +4220,9 @@
         document.getElementById('t-id').value = id; 
         document.getElementById('t-name').value = name || ''; 
         document.getElementById('t-email').value = email; 
-        document.getElementById('t-pass').value = password; 
+        document.getElementById('t-pass').value = '';
+        document.getElementById('t-pass').required = false;
+        document.getElementById('t-pass').placeholder = state.lang === 'pt' ? 'Deixe vazio para manter a senha atual' : 'Leave blank to keep current password';
         
         document.getElementById('p_smart').checked = permObj.smart;
         document.getElementById('p_hvac').checked = permObj.hvac;
@@ -4186,6 +4236,11 @@
 
         window.scrollTo({ top: 0, behavior: 'smooth' });
     };
+    window.resetTeamForm = () => {
+        const form = document.getElementById('team-form'); form?.reset(); document.getElementById('t-id').value = '';
+        const password = document.getElementById('t-pass'); password.required = true; password.placeholder = state.lang === 'pt' ? 'Mínimo de 8 caracteres' : 'At least 8 characters';
+        document.getElementById('p_smart').checked = true; document.getElementById('p_hvac').checked = true; document.getElementById('p_tab_proj').checked = true;
+    };
 
     window.deleteTeam = (id) => {
         if (!state.isSuperAdmin) {
@@ -4195,9 +4250,10 @@
 
         window.showModal(window.t('modal_del_team_title'), window.t('modal_del_team_msg'), 'confirm', async () => {
             try {
-                await deleteDoc(doc(db, 'artifacts', appId, 'public', 'data', 'user_credentials', id));
-                logAccess(state.user.email, `Removeu acesso de membro da equipe.`);
-            } catch(e) { console.error(e); }
+                const result = await secureApi('deleteUser', { profileId: id });
+                state.team = result.team || [];
+                renderTeamAdmin();
+            } catch(error) { window.showModal('Erro', error.message || 'Não foi possível excluir o usuário.', 'error'); }
         });
     };
 
@@ -4282,7 +4338,8 @@
     const contractorCompanies = (item) => { const companies = Array.isArray(item?.companies) && item.companies.length ? item.companies : [item?.company || item].filter(value => value === 'HVAC' || value === 'Smart Home'); return [...new Set(companies)]; };
     const contractorCompanyAllowed = (item) => contractorCompanies(item).some(company => state.isSuperAdmin || (company === 'HVAC' ? state.userPerms?.hvac : state.userPerms?.smart));
     const contractorCompanyLabel = (item) => contractorCompanies(item).map(company => company === 'HVAC' ? 'D2 HVAC Solutions' : 'D2 Smart Home').join(' + ') || 'Empresa não definida';
-    const contractorStatus = (value) => ({ received: ['W-9 recebido', 'green'], not_required: ['Não necessário', 'cyan'], pending: ['Documentos pendentes', 'amber'] }[value] || ['Documentos pendentes', 'amber']);
+    const contractorStatus = (value) => ({ approved: ['W-9 aprovado', 'green'], received: ['W-9 recebido (revisar)', 'amber'], not_required: ['Não necessário', 'cyan'], pending: ['Documentos pendentes', 'amber'] }[value] || ['Documentos pendentes', 'amber']);
+    const contractorW9Complete = item => ['approved', 'not_required'].includes(item?.w9Status);
     const getContractorPayments = (id) => state.contractorPayments.filter(item => item.contractorId === id);
     const getContractorPaidTotal = (id) => getContractorPayments(id).reduce((sum, item) => sum + Number(item.amount || 0), 0);
     const getContractorProjects = (contractor) => state.projects.filter(project => !project.archived && contractorCompanies(contractor).includes(project.empresa));
@@ -4294,6 +4351,12 @@
     const requestCompanyLabel = (company) => company === 'HVAC' ? 'D2 HVAC Solutions' : 'D2 Smart Home';
     const encodeRequestPreview = (data) => btoa(unescape(encodeURIComponent(JSON.stringify(data)))).replaceAll('+', '-').replaceAll('/', '_').replaceAll('=', '');
     const publicPortalBaseUrl = () => window.location.protocol === 'file:' ? window.location.href.split('?')[0].split('#')[0] : `${window.location.origin}${window.location.pathname}`;
+    const buildPublicRequestLink = (parameter, token, previewData = null) => {
+        const url = new URL(publicPortalBaseUrl(), window.location.href);
+        url.searchParams.set(parameter, token);
+        if (previewData && (window.location.protocol === 'file:' || ['localhost', '127.0.0.1'].includes(window.location.hostname))) url.searchParams.set('preview', encodeRequestPreview(previewData));
+        return url.toString();
+    };
     const getDocumentRequestsForContractor = (contractorId) => state.contractorDocumentRequests.filter(request => request.contractorId === contractorId).sort((a, b) => String(b.createdAtClient || '').localeCompare(String(a.createdAtClient || '')));
 
     window.refreshContractorInviteProjects = () => {
@@ -4312,11 +4375,9 @@
         event.preventDefault(); if (!contractorCanAccess()) return;
         const company = document.getElementById('contractor-invite-company').value; const projectId = document.getElementById('contractor-invite-project').value; const project = state.projects.find(item => item.id === projectId); const recipient = document.getElementById('contractor-invite-recipient').value.trim(); const dueDate = document.getElementById('contractor-invite-due-date').value; const documents = Array.from(document.querySelectorAll('.contractor-invite-document:checked')).map(input => ({ id: input.value, label: input.dataset.label, status: 'pending' })); const custom = document.getElementById('contractor-invite-custom-document').value.trim(); if (custom) documents.push({ id: `custom_${crypto.randomUUID()}`, label: custom, status: 'pending', custom: true });
         if (!documents.length || !['HVAC', 'Smart Home'].includes(company) || (project && project.empresa !== company)) { window.showModal('Dados incompletos', 'Escolha a empresa e pelo menos um documento para o convite.', 'error'); return; }
-        const contractorRef = doc(contractorsRef()); const requestRef = doc(contractorDocumentRequestsRef()); const token = crypto.randomUUID(); const companyName = requestCompanyLabel(company); const projectName = project ? getProjectDisplayName(project) : 'Cadastro geral de contractor'; const placeholderName = recipient ? `Cadastro pendente • ${recipient}` : 'Cadastro pendente';
-        const request = { token, requestType: 'registration', registrationStatus: 'pending', contractorId: contractorRef.id, contractorName: placeholderName, contractorEmail: recipient.includes('@') ? recipient : '', company, projectId: project?.id || '', projectName, dueDate, note: 'Complete seu cadastro e envie todos os documentos selecionados.', documents, status: 'open', createdAt: serverTimestamp(), createdAtClient: new Date().toISOString(), createdBy: state.user.email };
-        const previewData = { requestType: 'registration', registrationStatus: 'pending', contractorName: placeholderName, company, projectName, dueDate, documents, note: request.note, registration: { email: recipient.includes('@') ? recipient : '' } }; const preview = encodeRequestPreview(previewData); const link = `${publicPortalBaseUrl()}?contractorRegistration=${encodeURIComponent(token)}&preview=${encodeURIComponent(preview)}`;
-        const message = `Hello,\n\n${companyName} is requesting that you complete your contractor registration and submit the selected compliance documents using the secure link below.\n\nIMPORTANT: If Form W-9 is requested, complete all applicable fields, SIGN and DATE the form before uploading it.\n\nSecure registration link:\n${link}\n\nDeadline: ${dueDate || 'Please complete as soon as possible.'}\n\nThis link does not provide access to D2 projects, payments, or internal information.`;
-        try { const batch = writeBatch(db); batch.set(contractorRef, { businessName: placeholderName, contactName: '', email: recipient.includes('@') ? recipient : '', phone: '', ein: '', address: '', services: '', companies: [company], company, w9Status: 'pending', registrationStatus: 'pending', registrationInviteToken: token, archived: false, documents: [], documentRequests: {}, createdAt: serverTimestamp(), createdBy: state.user.email, updatedAt: serverTimestamp(), updatedBy: state.user.email }); batch.set(requestRef, request); await batch.commit(); try { localStorage.setItem(`d2-contractor-request-${token}`, JSON.stringify(previewData)); } catch {} await navigator.clipboard.writeText(message); logAccess(state.user.email, `Criou convite de cadastro para contractor: ${companyName}`, { contractorId: contractorRef.id, contractorRequestId: requestRef.id, contractorCompany: company, projectId: project?.id || '', documentsRequested: documents.map(item => item.label) }); window.closeContractorInvite(); window.showModal('Convite criado e mensagem copiada', `O cadastro provisório foi criado em ${companyName}. A mensagem em inglês, o link seguro e a orientação para preencher, assinar e datar o W-9 foram copiados.`, 'info'); } catch (error) { window.showModal('Erro', `Não foi possível criar o convite: ${error.message || error}`, 'error'); }
+        const companyName = requestCompanyLabel(company); const projectName = project ? getProjectDisplayName(project) : 'General contractor registration'; const placeholderName = recipient ? `Pending registration • ${recipient}` : 'Pending registration';
+        const previewData = { requestType: 'registration', registrationStatus: 'pending', contractorName: placeholderName, company, projectName, dueDate, documents, note: 'Complete your registration and submit all selected documents.', registration: { email: recipient.includes('@') ? recipient : '' } };
+        try { const result = await secureApi('createContractorRequest', { requestType: 'registration', company, projectId: project?.id || '', projectName, dueDate, note: previewData.note, documents, recipient }); const link = buildPublicRequestLink('contractorRegistration', result.token, previewData); const message = `Hello,\n\n${companyName} is requesting that you complete your contractor registration and submit the selected compliance documents using the secure link below.\n\nIMPORTANT: If Form W-9 is requested, complete all applicable fields, SIGN and DATE the form before uploading it.\n\nSecure registration link:\n${link}\n\nDeadline: ${dueDate || 'Please complete as soon as possible.'}\n\nThis link does not provide access to D2 projects, payments, or internal information.`; await navigator.clipboard.writeText(message); window.closeContractorInvite(); window.showModal('Convite criado e mensagem copiada', `O cadastro provisório foi criado em ${companyName}. A mensagem padrão em inglês e o link seguro foram copiados.`, 'info'); } catch (error) { window.showModal('Erro', `Não foi possível criar o convite: ${error.message || error}`, 'error'); }
     });
 
     window.refreshContractorRequestProjects = () => {
@@ -4348,7 +4409,7 @@
             return archiveMatch && companyMatch && (!q || search.includes(q));
         });
         const active = state.contractors.filter(item => !item.archived && contractorCompanyAllowed(item.company));
-        const pending = active.filter(item => item.w9Status !== 'received' && item.w9Status !== 'not_required');
+        const pending = active.filter(item => !contractorW9Complete(item));
         const paid = state.contractorPayments.filter(item => { const contractor = state.contractors.find(c => c.id === item.contractorId); return contractor && contractorCompanyAllowed(contractor.company); }).reduce((sum, item) => sum + Number(item.amount || 0), 0);
         summary.innerHTML = [[active.length, 'Contractors ativos', 'users'], [pending.length, 'Documentos pendentes', 'file-warning'], [formatCurr(paid), 'Pagamentos registrados', 'badge-dollar-sign']].map(([value, label, icon]) => `<div class="c2-panel p-5"><div class="flex items-center justify-between gap-4"><div><p class="c2-eyebrow">${label}</p><strong class="block mt-2 text-2xl font-black text-slate-100">${value}</strong></div><i data-lucide="${icon}" class="w-6 h-6 text-emerald-300"></i></div></div>`).join('');
         ['active', 'archived', 'all'].forEach(key => document.getElementById(`contractor-filter-${key}`)?.classList.toggle('active', state.contractorArchiveFilter === key));
@@ -4368,7 +4429,7 @@
     window.openContractorReports = () => {
         if (!contractorCanAccess()) return; const year = new Date().getFullYear(); const eligible = state.contractors.filter(item => !item.archived && contractorCompanyAllowed(item.company));
         const rows = eligible.map(item => ({ ...item, total: getContractorPayments(item.id).filter(payment => String(payment.date || '').startsWith(String(year))).reduce((sum, payment) => sum + Number(payment.amount || 0), 0) })).sort((a, b) => b.total - a.total);
-        const missingW9 = rows.filter(item => item.w9Status !== 'received'); const overThreshold = rows.filter(item => item.total >= 600); const totalPaid = rows.reduce((sum, item) => sum + item.total, 0);
+        const missingW9 = rows.filter(item => !contractorW9Complete(item)); const overThreshold = rows.filter(item => item.total >= (year >= 2026 ? 2000 : 600)); const totalPaid = rows.reduce((sum, item) => sum + item.total, 0);
         const renderRow = (item) => { const [status, color] = contractorStatus(item.w9Status); return `<tr><td><strong>${escapeInlineHtml(item.businessName || '—')}</strong><small class="block text-slate-500 mt-1">${escapeInlineHtml(item.company === 'HVAC' ? 'D2 HVAC Solutions' : 'D2 Smart Home')}</small></td><td>${escapeInlineHtml(item.contactName || item.email || '—')}</td><td><span class="c2-tag ${color}">${status}</span></td><td class="text-right font-black ${item.total >= 600 ? 'text-amber-300' : 'text-emerald-300'}">${formatCurr(item.total)}</td></tr>`; };
         document.getElementById('contractor-report-content').innerHTML = `<div class="flex items-start justify-between gap-4 pb-6 border-b border-white/10"><div><p class="c2-eyebrow">Compliance e 1099</p><h2 class="mt-1 text-2xl font-black text-slate-100">Relatório de Contractors • ${year}</h2><p class="mt-2 text-sm text-slate-400">Controle interno para revisão de W-9 e preparação de informações de pagamentos. Não substitui a preparação ou o envio fiscal.</p></div><button type="button" onclick="window.closeContractorReports()" class="c2-icon-btn"><i data-lucide="x" class="w-5 h-5"></i></button></div><div class="grid grid-cols-1 sm:grid-cols-3 gap-4 my-6"><div class="rounded-2xl border border-white/10 bg-black/10 p-5"><p class="c2-eyebrow">Total pago em ${year}</p><strong class="block mt-2 text-2xl text-emerald-300">${formatCurr(totalPaid)}</strong></div><div class="rounded-2xl border border-white/10 bg-black/10 p-5"><p class="c2-eyebrow">Revisar W-9</p><strong class="block mt-2 text-2xl text-amber-300">${missingW9.length}</strong></div><div class="rounded-2xl border border-white/10 bg-black/10 p-5"><p class="c2-eyebrow">Pagamentos ≥ $600</p><strong class="block mt-2 text-2xl text-slate-100">${overThreshold.length}</strong></div></div><div class="flex flex-wrap gap-3 mb-6"><a href="https://www.irs.gov/pub/irs-pdf/fw9.pdf" target="_blank" rel="noopener" class="c2-primary-btn"><i data-lucide="download" class="w-4 h-4"></i>Baixar Form W-9 oficial (IRS)</a><a href="https://www.irs.gov/forms-pubs/about-form-1099-nec" target="_blank" rel="noopener" class="c2-secondary-btn"><i data-lucide="external-link" class="w-4 h-4"></i>Orientação oficial 1099-NEC</a><button onclick="window.print()" class="c2-secondary-btn"><i data-lucide="printer" class="w-4 h-4"></i>Imprimir relatório</button></div><section class="c2-panel p-0 overflow-hidden"><div class="c2-list-head"><div><p class="c2-eyebrow">Revisão anual</p><h3>W-9 e pagamentos por contractor</h3></div><div class="c2-list-head-icon"><i data-lucide="file-check-2" class="w-5 h-5"></i></div></div><div class="overflow-x-auto c2-table-scroll"><table class="w-full c2-table"><thead><tr><th>Contractor / empresa</th><th>Contato</th><th>W-9</th><th class="text-right">Pagamentos ${year}</th></tr></thead><tbody>${rows.length ? rows.map(renderRow).join('') : '<tr><td colspan="4" class="py-10 text-center text-slate-500">Nenhum dado para o período.</td></tr>'}</tbody></table></div></section>`;
         document.getElementById('contractor-report-modal').classList.add('active'); try { lucide.createIcons(); } catch {};
@@ -4382,15 +4443,12 @@
         document.getElementById('contractor-detail-content').innerHTML = `<div class="flex items-start justify-between gap-4 pb-6 border-b border-white/10"><div><p class="c2-eyebrow">${company}</p><h2 class="mt-1 text-2xl font-black text-slate-100">${escapeInlineHtml(item.businessName)}</h2><p class="mt-2 text-sm text-slate-400">${escapeInlineHtml(item.contactName || item.email || 'Contato não informado')}</p></div><button type="button" onclick="window.closeContractorDetail()" class="c2-icon-btn"><i data-lucide="x" class="w-5 h-5"></i></button></div><div class="grid grid-cols-1 sm:grid-cols-3 gap-4 my-6"><div class="rounded-2xl border border-white/10 bg-black/10 p-4"><p class="c2-eyebrow">Conformidade</p><strong class="block mt-2 text-sm text-${color === 'green' ? 'emerald-300' : color === 'amber' ? 'amber-300' : 'cyan-300'}">${status}</strong></div><div class="rounded-2xl border border-white/10 bg-black/10 p-4"><p class="c2-eyebrow">Documentos</p><strong class="block mt-2 text-xl text-slate-100">${docs.length}</strong></div><div class="rounded-2xl border border-white/10 bg-black/10 p-4"><p class="c2-eyebrow">Total pago</p><strong class="block mt-2 text-xl text-emerald-300">${formatCurr(getContractorPaidTotal(id))}</strong></div></div><div class="flex flex-wrap gap-3 pb-6"><button onclick="window.copyContractorDocumentRequest('${id}')" class="c2-primary-btn"><i data-lucide="send" class="w-4 h-4"></i>Gerar solicitação de documentos</button><button onclick="window.openContractorPayment('${id}')" class="c2-secondary-btn"><i data-lucide="badge-dollar-sign" class="w-4 h-4"></i>Registrar pagamento</button><button onclick="window.openContractorEditor('${id}');window.closeContractorDetail()" class="c2-secondary-btn"><i data-lucide="pencil" class="w-4 h-4"></i>Editar</button>${state.isSuperAdmin ? `<button onclick="window.deleteContractor('${id}')" class="c2-secondary-btn text-red-300"><i data-lucide="trash-2" class="w-4 h-4"></i>Excluir</button>` : ''}</div><div class="grid grid-cols-1 lg:grid-cols-2 gap-6"><section><div class="flex items-center justify-between mb-3"><div><p class="c2-eyebrow">Compliance</p><h3 class="font-black text-slate-100">Documentos recebidos</h3></div></div><div class="space-y-3">${documentRows}</div></section><section><div class="flex items-center justify-between mb-3"><div><p class="c2-eyebrow">Financeiro</p><h3 class="font-black text-slate-100">Histórico de pagamentos</h3></div></div><div class="space-y-3">${paymentRows}</div></section></div>`;
         document.getElementById('contractor-detail-modal').classList.add('active'); try { lucide.createIcons(); } catch {};
     };
-    window.copyContractorDocumentRequest = async (id) => { const item = state.contractors.find(row => row.id === id); if (!item) return; const token = item.documentRequestToken || crypto.randomUUID(); const company = item.company === 'HVAC' ? 'D2 HVAC Solutions' : 'D2 Smart Home'; const link = `${window.location.origin}${window.location.pathname}?contractorRequest=${encodeURIComponent(token)}`; try { if (!item.documentRequestToken) await updateDoc(doc(contractorsRef(), id), { documentRequestToken: token, documentRequestCreatedAt: serverTimestamp(), documentRequestCreatedBy: state.user.email }); await navigator.clipboard.writeText(link); logAccess(state.user.email, `Gerou solicitação de documentos para contractor: ${item.businessName}`, { contractorId: id, contractorName: item.businessName, contractorCompany: item.company }); window.showModal('Link de solicitação copiado', `Link exclusivo de ${company} copiado. O portal externo mostrará somente ${item.businessName}. A ativação do upload depende da regra segura de Storage antes do deploy.`, 'info'); } catch (error) { window.showModal('Solicitação de documentos', `Não foi possível gerar o link: ${error.message || error}`, 'error'); } };
-
     document.getElementById('contractor-request-form')?.addEventListener('submit', async (event) => {
         event.preventDefault(); if (!contractorCanAccess()) return;
         const contractor = state.contractors.find(item => item.id === document.getElementById('contractor-request-contractor-id').value); const company = document.getElementById('contractor-request-company').value; const project = state.projects.find(item => item.id === document.getElementById('contractor-request-project-id').value); const selected = Array.from(document.querySelectorAll('.contractor-request-document:checked')).map(input => ({ id: input.value, label: input.dataset.label, status: 'pending' })); const custom = document.getElementById('contractor-request-custom-document').value.trim(); if (custom) selected.push({ id: `custom_${crypto.randomUUID()}`, label: custom, status: 'pending', custom: true });
         if (!contractor || !project || !selected.length || !contractorCompanies(contractor).includes(company) || project.empresa !== company) { window.showModal('Dados incompletos', 'Selecione a obra, a empresa correta e pelo menos um documento.', 'error'); return; }
-        const requestRef = doc(contractorDocumentRequestsRef()); const token = crypto.randomUUID(); const dueDate = document.getElementById('contractor-request-due-date').value; const note = document.getElementById('contractor-request-note').value.trim(); const request = { token, contractorId: contractor.id, contractorName: contractor.businessName, contractorEmail: contractor.email || '', company, projectId: project.id, projectName: getProjectDisplayName(project), dueDate, note, documents: selected, status: 'open', createdAt: serverTimestamp(), createdAtClient: new Date().toISOString(), createdBy: state.user.email };
-        const preview = encodeRequestPreview({ contractorName: contractor.businessName, company, projectName: request.projectName, dueDate, documents: selected, note }); const link = `${publicPortalBaseUrl()}?contractorRequest=${encodeURIComponent(token)}&preview=${encodeURIComponent(preview)}`;
-        try { await addDoc(contractorDocumentRequestsRef(), request); try { localStorage.setItem(`d2-contractor-request-${token}`, JSON.stringify({ contractorName: contractor.businessName, company, projectName: request.projectName, dueDate, documents: selected, note })); } catch {} await navigator.clipboard.writeText(link); logAccess(state.user.email, `Criou solicitação de documentos para contractor: ${contractor.businessName}`, { ...getProjectLogMeta(project), contractorId: contractor.id, contractorName: contractor.businessName, contractorRequestId: requestRef.id, contractorCompany: company, documentsRequested: selected.map(item => item.label) }); window.closeContractorDocumentRequest(); window.showModal('Link de documentos copiado', `Checklist de ${requestCompanyLabel(company)} para a obra ${request.projectName} copiado. A página pública já pode ser revisada; o envio real será ativado com o endpoint seguro de Storage.`, 'info'); } catch (error) { window.showModal('Erro', `Não foi possível criar a solicitação: ${error.message || error}`, 'error'); }
+        const dueDate = document.getElementById('contractor-request-due-date').value; const note = document.getElementById('contractor-request-note').value.trim(); const projectName = getProjectDisplayName(project); const previewData = { requestType: 'documents', contractorName: contractor.businessName, company, projectName, dueDate, documents: selected, note };
+        try { const result = await secureApi('createContractorRequest', { requestType: 'documents', contractorId: contractor.id, company, projectId: project.id, projectName, dueDate, note, documents: selected }); const link = buildPublicRequestLink('contractorRequest', result.token, previewData); await navigator.clipboard.writeText(link); window.closeContractorDocumentRequest(); window.showModal('Link seguro copiado', `Checklist de ${requestCompanyLabel(company)} para a obra ${projectName} copiado. O link não expõe dados do contractor na URL.`, 'info'); } catch (error) { window.showModal('Erro', `Não foi possível criar a solicitação: ${error.message || error}`, 'error'); }
     });
 
     document.getElementById('contractor-form')?.addEventListener('submit', async (event) => { event.preventDefault(); if (!contractorCanAccess()) return; const id = document.getElementById('contractor-id').value; const companies = ['HVAC', 'Smart Home'].filter(company => document.getElementById(`contractor-company-${company === 'HVAC' ? 'hvac' : 'smart'}`).checked); if (!companies.length) { window.showModal('Empresa obrigatória', 'Selecione ao menos uma empresa atendida pelo contractor.', 'error'); return; } const data = { businessName: document.getElementById('contractor-business-name').value.trim(), contactName: document.getElementById('contractor-contact-name').value.trim(), email: document.getElementById('contractor-email').value.trim(), phone: document.getElementById('contractor-phone').value.trim(), ein: document.getElementById('contractor-ein').value.trim(), address: document.getElementById('contractor-address').value.trim(), companies, company: companies[0], w9Status: document.getElementById('contractor-w9-status').value, notes: document.getElementById('contractor-notes').value.trim(), updatedAt: serverTimestamp(), updatedBy: state.user.email }; try { if (id) { await updateDoc(doc(contractorsRef(), id), data); logAccess(state.user.email, `Atualizou contractor: ${data.businessName}`, { contractorId: id, contractorName: data.businessName, contractorCompanies: companies }); } else { const ref = await addDoc(contractorsRef(), { ...data, archived: false, documents: [], documentRequests: {}, createdAt: serverTimestamp(), createdBy: state.user.email }); logAccess(state.user.email, `Cadastrou contractor: ${data.businessName}`, { contractorId: ref.id, contractorName: data.businessName, contractorCompanies: companies }); } window.closeContractorEditor(); } catch (error) { window.showModal('Erro', `Não foi possível salvar o contractor: ${error.message || error}`, 'error'); } });
@@ -4407,7 +4465,7 @@
             return archiveMatch && companyMatch && (!q || search.includes(q));
         });
         const active = state.contractors.filter(item => !item.archived && contractorCompanyAllowed(item));
-        const pending = active.filter(item => item.w9Status !== 'received' && item.w9Status !== 'not_required');
+        const pending = active.filter(item => !contractorW9Complete(item));
         const paid = state.contractorPayments.filter(payment => state.isSuperAdmin || (payment.company === 'HVAC' ? state.userPerms?.hvac : state.userPerms?.smart)).reduce((sum, payment) => sum + Number(payment.amount || 0), 0);
         summary.innerHTML = [[active.length, 'Contractors ativos', 'users'], [pending.length, 'Documentos pendentes', 'file-warning'], [formatCurr(paid), 'Pagamentos registrados', 'badge-dollar-sign']].map(([value, label, icon]) => `<div class="c2-panel p-5"><div class="flex items-center justify-between gap-4"><div><p class="c2-eyebrow">${label}</p><strong class="block mt-2 text-2xl font-black text-slate-100">${value}</strong></div><i data-lucide="${icon}" class="w-6 h-6 text-emerald-300"></i></div></div>`).join('');
         ['active', 'archived', 'all'].forEach(key => document.getElementById(`contractor-filter-${key}`)?.classList.toggle('active', state.contractorArchiveFilter === key));
@@ -4434,15 +4492,18 @@
     window.copyContractorDocumentRequest = (id, requestedCompany = '') => window.openContractorDocumentRequest(id, requestedCompany);
     window.copyExistingContractorRequest = async (requestId) => {
         const request = state.contractorDocumentRequests.find(item => item.id === requestId); if (!request) return;
-        const preview = encodeRequestPreview({ contractorName: request.contractorName, company: request.company, projectName: request.projectName, dueDate: request.dueDate, documents: request.documents, note: request.note }); const link = `${publicPortalBaseUrl()}?contractorRequest=${encodeURIComponent(request.token)}&preview=${encodeURIComponent(preview)}`;
-        try { await navigator.clipboard.writeText(link); window.showModal('Link copiado', `Link do checklist para ${requestCompanyLabel(request.company)} e obra ${request.projectName} copiado.`, 'info'); } catch (error) { window.showModal('Erro', `Não foi possível copiar o link: ${error.message || error}`, 'error'); }
+        try { const result = await secureApi('renewContractorRequest', { requestId }); const parameter = request.requestType === 'registration' ? 'contractorRegistration' : 'contractorRequest'; const previewData = { ...request, token: undefined }; const link = buildPublicRequestLink(parameter, result.token, previewData); await navigator.clipboard.writeText(link); window.showModal('Novo link seguro copiado', `O link anterior foi invalidado e um novo link para ${requestCompanyLabel(request.company)} foi copiado.`, 'info'); } catch (error) { window.showModal('Erro', `Não foi possível renovar o link: ${error.message || error}`, 'error'); }
+    };
+    window.revokeContractorRequest = async (requestId) => {
+        try { await secureApi('revokeContractorRequest', { requestId }); window.showModal('Link revogado', 'O link público foi invalidado.', 'info'); }
+        catch (error) { window.showModal('Erro', error.message || 'Não foi possível revogar o link.', 'error'); }
     };
     const contractorDetailWithCompanyRequestLinks = window.openContractorDetail;
     window.openContractorDetail = (id) => {
         contractorDetailWithCompanyRequestLinks(id);
         const content = document.getElementById('contractor-detail-content'); if (!content || content.querySelector('[data-request-history]')) return;
         const requests = getDocumentRequestsForContractor(id); const section = document.createElement('section'); section.dataset.requestHistory = 'true'; section.className = 'mt-6 rounded-2xl border border-white/10 bg-black/10 p-5';
-        section.innerHTML = `<div class="flex flex-wrap items-start justify-between gap-3"><div><p class="c2-eyebrow">Solicitações por obra</p><h3 class="mt-1 font-black text-slate-100">Checklists enviados</h3></div><span class="c2-tag cyan">${requests.length} solicitação(ões)</span></div><div class="mt-4 space-y-3">${requests.length ? requests.map(request => `<div class="rounded-xl border border-white/10 bg-slate-950/40 p-4"><div class="flex flex-wrap items-start justify-between gap-3"><div><strong class="block text-sm text-slate-100">${escapeInlineHtml(request.projectName || 'Obra')}</strong><small class="mt-1 block text-slate-500">${requestCompanyLabel(request.company)} · prazo: ${escapeInlineHtml(request.dueDate || 'não definido')}</small><small class="mt-2 block text-slate-400">${(request.documents || []).map(document => escapeInlineHtml(document.label)).join(' · ')}</small></div><button onclick="window.copyExistingContractorRequest('${request.id}')" class="c2-secondary-btn !px-3 !py-2 text-xs"><i data-lucide="copy" class="w-4 h-4"></i>Copiar link</button></div></div>`).join('') : '<div class="rounded-xl border border-dashed border-white/15 p-5 text-center text-sm text-slate-500">Nenhuma solicitação criada para este contractor.</div>'}</div>`;
+        section.innerHTML = `<div class="flex flex-wrap items-start justify-between gap-3"><div><p class="c2-eyebrow">Solicitações por obra</p><h3 class="mt-1 font-black text-slate-100">Checklists enviados</h3></div><span class="c2-tag cyan">${requests.length} solicitação(ões)</span></div><div class="mt-4 space-y-3">${requests.length ? requests.map(request => `<div class="rounded-xl border border-white/10 bg-slate-950/40 p-4"><div class="flex flex-wrap items-start justify-between gap-3"><div><strong class="block text-sm text-slate-100">${escapeInlineHtml(request.projectName || 'Obra')}</strong><small class="mt-1 block text-slate-500">${requestCompanyLabel(request.company)} · prazo: ${escapeInlineHtml(request.dueDate || 'não definido')} · ${escapeInlineHtml(request.status || 'open')}</small><small class="mt-2 block text-slate-400">${(request.documents || []).map(document => escapeInlineHtml(document.label)).join(' · ')}</small></div><div class="flex flex-wrap gap-2"><button onclick="window.copyExistingContractorRequest('${request.id}')" class="c2-secondary-btn !px-3 !py-2 text-xs"><i data-lucide="refresh-cw" class="w-4 h-4"></i>Gerar novo link</button>${request.status !== 'revoked' ? `<button onclick="window.revokeContractorRequest('${request.id}')" class="c2-secondary-btn !px-3 !py-2 text-xs text-red-300"><i data-lucide="link-2-off" class="w-4 h-4"></i>Revogar</button>` : ''}</div></div></div>`).join('') : '<div class="rounded-xl border border-dashed border-white/15 p-5 text-center text-sm text-slate-500">Nenhuma solicitação criada para este contractor.</div>'}</div>`;
         content.appendChild(section); try { lucide.createIcons(); } catch {};
     };
 
@@ -4454,10 +4515,10 @@
             const contractorPayments = payments.filter(payment => payment.contractorId === contractor.id); const hvac = contractorPayments.filter(payment => payment.company === 'HVAC').reduce((sum, payment) => sum + Number(payment.amount || 0), 0); const smart = contractorPayments.filter(payment => payment.company === 'Smart Home').reduce((sum, payment) => sum + Number(payment.amount || 0), 0);
             return { contractor, hvac, smart, total: hvac + smart, projects: new Set(contractorPayments.map(payment => payment.projectId).filter(Boolean)).size };
         }).sort((a, b) => b.total - a.total);
-        const totalHvac = payments.filter(payment => payment.company === 'HVAC').reduce((sum, payment) => sum + Number(payment.amount || 0), 0); const totalSmart = payments.filter(payment => payment.company === 'Smart Home').reduce((sum, payment) => sum + Number(payment.amount || 0), 0); const needsW9 = rows.filter(row => row.contractor.w9Status !== 'received' && row.total > 0).length;
+        const threshold = year >= 2026 ? 2000 : 600; const totalHvac = payments.filter(payment => payment.company === 'HVAC').reduce((sum, payment) => sum + Number(payment.amount || 0), 0); const totalSmart = payments.filter(payment => payment.company === 'Smart Home').reduce((sum, payment) => sum + Number(payment.amount || 0), 0); const needsW9 = rows.filter(row => !contractorW9Complete(row.contractor) && row.total > 0).length; const review1099 = rows.filter(row => row.hvac >= threshold || row.smart >= threshold).length;
         const logo = state.company === 'HVAC' ? 'logo-D2-HVAC-Solutions-preto.png' : state.company === 'Smart Home' ? 'logo-D2-SmartHome-preto.png' : 'logo-D2-Group-preto.png';
-        const tableRows = rows.length ? rows.map(row => `<tr><td><strong>${escapeInlineHtml(row.contractor.businessName || '—')}</strong><small class="block text-slate-500 mt-1">${escapeInlineHtml(contractorCompanyLabel(row.contractor))} · ${row.projects} obra(s)</small></td><td><span class="c2-tag ${row.contractor.w9Status === 'received' ? 'green' : 'amber'}">${row.contractor.w9Status === 'received' ? 'W-9 recebido' : 'Revisar W-9'}</span></td><td class="text-right">${formatCurr(row.hvac)}</td><td class="text-right">${formatCurr(row.smart)}</td><td class="text-right font-black text-emerald-300">${formatCurr(row.total)}</td></tr>`).join('') : '<tr><td colspan="5" class="py-10 text-center text-slate-500">Nenhum pagamento no período.</td></tr>';
-        document.getElementById('contractor-report-content').innerHTML = `<div class="flex items-start justify-between gap-4 pb-6 border-b border-white/10"><div class="flex items-center gap-4"><img src="${logo}" alt="D2 Group" class="h-12 w-auto object-contain"><div><p class="c2-eyebrow">Compliance e 1099</p><h2 class="mt-1 text-2xl font-black text-slate-100">Relatório de Contractors • ${year}</h2><p class="mt-2 text-sm text-slate-400">Pagamentos separados por empresa e vinculados às respectivas obras.</p></div></div><button type="button" onclick="window.closeContractorReports()" class="c2-icon-btn"><i data-lucide="x" class="w-5 h-5"></i></button></div><div class="grid grid-cols-1 sm:grid-cols-3 gap-4 my-6"><div class="rounded-2xl border border-cyan-500/20 bg-cyan-500/5 p-5"><p class="c2-eyebrow">D2 HVAC Solutions</p><strong class="block mt-2 text-2xl text-cyan-300">${formatCurr(totalHvac)}</strong></div><div class="rounded-2xl border border-emerald-500/20 bg-emerald-500/5 p-5"><p class="c2-eyebrow">D2 Smart Home</p><strong class="block mt-2 text-2xl text-emerald-300">${formatCurr(totalSmart)}</strong></div><div class="rounded-2xl border border-amber-500/20 bg-amber-500/5 p-5"><p class="c2-eyebrow">W-9 a revisar</p><strong class="block mt-2 text-2xl text-amber-300">${needsW9}</strong></div></div><div class="flex flex-wrap gap-3 mb-6"><a href="https://www.irs.gov/pub/irs-pdf/fw9.pdf" target="_blank" rel="noopener" class="c2-primary-btn"><i data-lucide="download" class="w-4 h-4"></i>Baixar Form W-9 oficial (IRS)</a><a href="https://www.irs.gov/forms-pubs/about-form-1099-nec" target="_blank" rel="noopener" class="c2-secondary-btn"><i data-lucide="external-link" class="w-4 h-4"></i>Orientação oficial 1099-NEC</a><button onclick="window.print()" class="c2-secondary-btn"><i data-lucide="printer" class="w-4 h-4"></i>Imprimir relatório</button></div><section class="c2-panel p-0 overflow-hidden"><div class="c2-list-head"><div><p class="c2-eyebrow">Revisão anual</p><h3>W-9, obras e pagamentos por empresa</h3></div><div class="c2-list-head-icon"><i data-lucide="file-check-2" class="w-5 h-5"></i></div></div><div class="overflow-x-auto c2-table-scroll"><table class="w-full c2-table"><thead><tr><th>Contractor / obras</th><th>W-9</th><th class="text-right">D2 HVAC</th><th class="text-right">D2 Smart</th><th class="text-right">Total ${year}</th></tr></thead><tbody>${tableRows}</tbody></table></div></section>`;
+        const tableRows = rows.length ? rows.map(row => `<tr><td><strong>${escapeInlineHtml(row.contractor.businessName || '—')}</strong><small class="block text-slate-500 mt-1">${escapeInlineHtml(contractorCompanyLabel(row.contractor))} · ${row.projects} obra(s)</small></td><td><span class="c2-tag ${contractorW9Complete(row.contractor) ? 'green' : 'amber'}">${contractorW9Complete(row.contractor) ? 'W-9 aprovado' : 'Revisar W-9'}</span></td><td class="text-right">${formatCurr(row.hvac)}</td><td class="text-right">${formatCurr(row.smart)}</td><td class="text-right"><span class="c2-tag ${(row.hvac >= threshold || row.smart >= threshold) ? 'amber' : 'cyan'}">${(row.hvac >= threshold || row.smart >= threshold) ? 'Revisar 1099' : 'Abaixo do indicador'}</span></td><td class="text-right font-black text-emerald-300">${formatCurr(row.total)}</td></tr>`).join('') : '<tr><td colspan="6" class="py-10 text-center text-slate-500">Nenhum pagamento no período.</td></tr>';
+        document.getElementById('contractor-report-content').innerHTML = `<div class="flex items-start justify-between gap-4 pb-6 border-b border-white/10"><div class="flex items-center gap-4"><img src="${logo}" alt="D2 Group" class="h-12 w-auto object-contain"><div><p class="c2-eyebrow">Compliance e 1099</p><h2 class="mt-1 text-2xl font-black text-slate-100">Relatório de Contractors • ${year}</h2><p class="mt-2 text-sm text-slate-400">Pagamentos separados por empresa e vinculados às respectivas obras.</p></div></div><button type="button" onclick="window.closeContractorReports()" class="c2-icon-btn"><i data-lucide="x" class="w-5 h-5"></i></button></div><div class="grid grid-cols-1 sm:grid-cols-4 gap-4 my-6"><div class="rounded-2xl border border-cyan-500/20 bg-cyan-500/5 p-5"><p class="c2-eyebrow">D2 HVAC Solutions</p><strong class="block mt-2 text-2xl text-cyan-300">${formatCurr(totalHvac)}</strong></div><div class="rounded-2xl border border-emerald-500/20 bg-emerald-500/5 p-5"><p class="c2-eyebrow">D2 Smart Home</p><strong class="block mt-2 text-2xl text-emerald-300">${formatCurr(totalSmart)}</strong></div><div class="rounded-2xl border border-amber-500/20 bg-amber-500/5 p-5"><p class="c2-eyebrow">W-9 a revisar</p><strong class="block mt-2 text-2xl text-amber-300">${needsW9}</strong></div><div class="rounded-2xl border border-amber-500/20 bg-amber-500/5 p-5"><p class="c2-eyebrow">Indicador 1099 ≥ ${formatCurr(threshold)}</p><strong class="block mt-2 text-2xl text-amber-300">${review1099}</strong></div></div><div class="mb-6 rounded-xl border border-amber-300/20 bg-amber-300/10 p-4 text-sm leading-6 text-amber-100">O indicador é calculado separadamente para cada empresa pagadora. Forma de pagamento, classificação fiscal e exceções ainda devem ser revisadas antes da emissão.</div><div class="flex flex-wrap gap-3 mb-6"><a href="https://www.irs.gov/pub/irs-pdf/fw9.pdf" target="_blank" rel="noopener" class="c2-primary-btn"><i data-lucide="download" class="w-4 h-4"></i>Baixar Form W-9 oficial (IRS)</a><a href="https://www.irs.gov/forms-pubs/about-form-1099-nec" target="_blank" rel="noopener" class="c2-secondary-btn"><i data-lucide="external-link" class="w-4 h-4"></i>Orientação oficial 1099-NEC</a><button onclick="window.print()" class="c2-secondary-btn"><i data-lucide="printer" class="w-4 h-4"></i>Imprimir relatório</button></div><section class="c2-panel p-0 overflow-hidden"><div class="c2-list-head"><div><p class="c2-eyebrow">Revisão anual</p><h3>W-9, obras e pagamentos por empresa</h3></div><div class="c2-list-head-icon"><i data-lucide="file-check-2" class="w-5 h-5"></i></div></div><div class="overflow-x-auto c2-table-scroll"><table class="w-full c2-table"><thead><tr><th>Contractor / obras</th><th>W-9</th><th class="text-right">D2 HVAC</th><th class="text-right">D2 Smart</th><th class="text-right">1099</th><th class="text-right">Total ${year}</th></tr></thead><tbody>${tableRows}</tbody></table></div></section>`;
         document.getElementById('contractor-report-modal').classList.add('active'); try { lucide.createIcons(); } catch {};
     };
 
@@ -4498,15 +4559,22 @@
     window.openContractorDetail = (id) => { contractorDetailWithRequestHistory(id); const content = document.getElementById('contractor-detail-content'); const legacyButton = Array.from(content?.querySelectorAll('button') || []).find(button => button.textContent.includes('Gerar solicitação de documentos')); legacyButton?.remove(); decorateContractorPaymentHistory(id); const cards = Array.from(content?.querySelectorAll('div[class*="sm:grid-cols-3"] > div') || []).slice(0, 3); const targets = [content?.querySelector('[data-request-history]'), Array.from(content?.querySelectorAll('h3') || []).find(item => item.textContent.includes('Documentos recebidos'))?.closest('section'), Array.from(content?.querySelectorAll('h3') || []).find(item => item.textContent.includes('Histórico de pagamentos'))?.closest('section')]; cards.forEach((card, index) => { if (!targets[index] || card.dataset.sourceCard) return; card.dataset.sourceCard = 'true'; card.classList.add('cursor-pointer', 'hover:bg-cyan-500/10', 'transition-colors'); card.tabIndex = 0; card.setAttribute('role', 'button'); card.setAttribute('aria-label', 'Ver fonte do indicador'); const open = () => targets[index].scrollIntoView({ behavior: 'smooth', block: 'center' }); card.addEventListener('click', open); card.addEventListener('keydown', event => { if (event.key === 'Enter' || event.key === ' ') { event.preventDefault(); open(); } }); }); };
 
     window.openStoredContractorDocument = async (storagePath) => {
-        try { const url = await getDownloadURL(storageRef(storage, storagePath)); window.open(url, '_blank', 'noopener'); } catch (error) { window.showModal('Documento indisponível', `Não foi possível abrir o documento: ${error.message || error}`, 'error'); }
+        try { const result = await secureApi('downloadDocument', { storagePath }); window.open(result.url, '_blank', 'noopener'); } catch (error) { window.showModal('Documento indisponível', `Não foi possível abrir o documento: ${error.message || error}`, 'error'); }
+    };
+    window.reviewContractorDocument = async (contractorId, requestId, documentId, decision) => {
+        const payload = { contractorId, requestId, documentId, decision };
+        if (decision === 'approved') payload.expiresOn = window.prompt('Data de vencimento (opcional, AAAA-MM-DD):', '') || '';
+        if (decision === 'rejected') { payload.reason = window.prompt('Motivo da rejeição:', '') || ''; if (!payload.reason) return; }
+        try { await secureApi('reviewDocument', payload); window.showModal(decision === 'approved' ? 'Documento aprovado' : 'Documento rejeitado', decision === 'approved' ? 'O documento foi aprovado e o status de compliance foi atualizado.' : 'O contractor poderá reenviar este documento pelo mesmo link enquanto ele estiver válido.', 'info'); }
+        catch (error) { window.showModal('Erro', error.message || 'Não foi possível revisar o documento.', 'error'); }
     };
     const contractorDetailWithPaymentActions = window.openContractorDetail;
-    window.openContractorDetail = (id) => { contractorDetailWithPaymentActions(id); const contractor = state.contractors.find(item => item.id === id); const content = document.getElementById('contractor-detail-content'); const pending = Array.from(content?.querySelectorAll('span') || []).filter(item => item.textContent.trim() === 'Aguardando arquivo'); const files = (contractor?.documents || []).filter(file => file.storagePath); pending.forEach((placeholder, index) => { const file = files[index]; if (!file) return; const button = document.createElement('button'); button.type = 'button'; button.className = 'c2-secondary-btn !px-3 !py-2 text-xs'; button.innerHTML = '<i data-lucide="external-link" class="w-4 h-4"></i>Visualizar'; button.onclick = () => window.openStoredContractorDocument(file.storagePath); placeholder.replaceWith(button); }); try { lucide.createIcons(); } catch {}; };
+    window.openContractorDetail = (id) => { contractorDetailWithPaymentActions(id); const contractor = state.contractors.find(item => item.id === id); const content = document.getElementById('contractor-detail-content'); const documentSection = Array.from(content?.querySelectorAll('h3') || []).find(item => item.textContent.includes('Documentos recebidos'))?.closest('section'); const list = documentSection?.querySelector('.space-y-3'); const files = Array.isArray(contractor?.documents) ? contractor.documents : []; if (list) list.innerHTML = files.length ? files.map(file => { const status = file.status || 'submitted'; const statusLabel = {submitted:'Aguardando revisão',approved:'Aprovado',rejected:'Rejeitado'}[status] || status; const statusClass = status === 'approved' ? 'green' : status === 'rejected' ? 'red' : 'amber'; const path = encodeURIComponent(file.storagePath || ''); return `<div class="rounded-xl border border-white/10 bg-black/10 p-4"><div class="flex flex-wrap items-start justify-between gap-3"><div class="min-w-0"><strong class="block text-sm text-slate-100">${escapeInlineHtml(file.label || file.name || 'Documento')}</strong><small class="mt-1 block text-slate-500">${escapeInlineHtml(file.name || '')} · ${escapeInlineHtml(file.company || '')}${file.expiresOn ? ` · vence ${escapeInlineHtml(file.expiresOn)}` : ''}</small><span class="c2-tag ${statusClass} mt-2">${statusLabel}</span>${file.rejectionReason ? `<small class="mt-2 block text-red-300">${escapeInlineHtml(file.rejectionReason)}</small>` : ''}</div><div class="flex flex-wrap gap-2"><button type="button" onclick="window.openStoredContractorDocument(decodeURIComponent('${path}'))" class="c2-secondary-btn !px-3 !py-2 text-xs"><i data-lucide="external-link" class="w-4 h-4"></i>Visualizar</button>${status !== 'approved' ? `<button type="button" onclick="window.reviewContractorDocument('${id}','${file.requestId}','${file.documentId}','approved')" class="c2-primary-btn !px-3 !py-2 text-xs">Aprovar</button>` : ''}${status !== 'rejected' ? `<button type="button" onclick="window.reviewContractorDocument('${id}','${file.requestId}','${file.documentId}','rejected')" class="c2-secondary-btn !px-3 !py-2 text-xs text-red-300">Rejeitar</button>` : ''}</div></div></div>`; }).join('') : '<div class="rounded-xl border border-dashed border-white/15 p-6 text-center text-sm text-slate-500">Nenhum documento recebido ainda.</div>'; try { lucide.createIcons(); } catch {}; };
 
     window.openContractorFromSummary = id => { window.closeContractorReports(); window.openContractorDetail(id); };
     window.openContractorSummarySource = kind => {
         if (!contractorCanAccess()) return; const visible = state.contractors.filter(item => !item.archived && contractorCompanyAllowed(item)); let rows = visible; let title = 'Contractors ativos'; let subtitle = 'Fonte do indicador de contractors ativos.';
-        if (kind === 'pending') { rows = visible.filter(item => item.w9Status !== 'received' && item.w9Status !== 'not_required'); title = 'Documentos pendentes'; subtitle = 'Contractors cujo W-9 ou cadastro documental ainda exige atenção.'; }
+        if (kind === 'pending') { rows = visible.filter(item => !contractorW9Complete(item)); title = 'Documentos pendentes'; subtitle = 'Contractors cujo W-9 ou cadastro documental ainda exige atenção.'; }
         if (kind === 'payments') { rows = visible.filter(item => getContractorPayments(item.id).length).sort((a, b) => getContractorPaidTotal(b.id) - getContractorPaidTotal(a.id)); title = 'Pagamentos registrados'; subtitle = 'Valores lançados por contractor e vinculados ao custo das obras.'; }
         const valueFor = item => kind === 'payments' ? formatCurr(getContractorPaidTotal(item.id)) : kind === 'pending' ? contractorStatus(item.w9Status)[0] : contractorCompanyLabel(item);
         const list = rows.length ? rows.map(item => `<button type="button" onclick="window.openContractorFromSummary('${item.id}')" class="report-project-list-item contractor-source-card rounded-2xl border border-white/10 bg-black/10 p-5"><div class="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between"><div class="min-w-0"><p class="c2-eyebrow">${escapeInlineHtml(contractorCompanyLabel(item))}</p><strong class="mt-2 block text-base text-slate-100">${escapeInlineHtml(item.businessName || 'Cadastro pendente')}</strong><small class="mt-1 block text-slate-500">${escapeInlineHtml(item.contactName || item.email || (item.registrationStatus === 'pending' ? 'Aguardando preenchimento do convite' : 'Contato não informado'))}</small></div><div class="report-project-list-value text-left sm:text-right"><p class="c2-eyebrow">${kind === 'payments' ? 'Total pago' : kind === 'pending' ? 'Situação' : 'Empresa'}</p><strong class="mt-1 block ${kind === 'payments' ? 'text-emerald-300' : 'text-slate-200'}">${escapeInlineHtml(valueFor(item))}</strong></div></div></button>`).join('') : '<div class="rounded-2xl border border-dashed border-white/15 p-8 text-center text-sm text-slate-500">Nenhum registro para este indicador.</div>';
@@ -4587,19 +4655,6 @@
     };
 
     window.handleLogout = () => signOut(auth).then(() => location.reload()).catch(console.error);
-
-    // Navigation bridge. Contractors remains an independently deployed application.
-    const CONTRACTORS_APP_URL = 'https://d2group.github.io/Contractors/';
-    window.openContractorsApp = () => {
-        const destination = new URL(CONTRACTORS_APP_URL);
-        const returnTo = new URL(window.location.href);
-        returnTo.search = '';
-        returnTo.hash = '';
-        destination.searchParams.set('returnTo', returnTo.toString());
-        if (state.company === 'HVAC') destination.searchParams.set('company', 'hvac');
-        if (state.company === 'Smart Home') destination.searchParams.set('company', 'smart');
-        window.location.assign(destination.toString());
-    };
 
     function getFin(p) {
         const percComissao = Number(p?.percComissao || 0) / 100;
@@ -7209,17 +7264,28 @@ function getSellerCommissionPeriodReport(projects, startStr, endStr) {
         baseShowView(view);
     };
 
-    onAuthStateChanged(auth, (u) => {
+    onAuthStateChanged(auth, async (u) => {
         state.user = u;
         applyThemeConfig(); 
         if (u) {
-            document.getElementById('auth-screen').classList.add('hidden'); document.getElementById('main-app').classList.remove('hidden');
-            document.getElementById('user-display').innerText = getUserDisplayName(u.email, 'USR').toUpperCase();
-            
-            // Check Se é o Super Admin (Mestre)
-            state.isSuperAdmin = (u.email.toLowerCase() === SUPER_ADMIN.toLowerCase());
-
-            initData(); logAccess(u.email, 'Fez login no sistema');
+            try {
+                const session = await secureApi('session');
+                state.isSuperAdmin = session.superAdmin === true;
+                state.team = Array.isArray(session.team) ? session.team : [];
+                applySessionPermissions(session.permissions || {});
+                document.getElementById('auth-screen').classList.add('hidden');
+                document.getElementById('main-app').classList.remove('hidden');
+                document.getElementById('user-display').innerText = getUserDisplayName(u.email, 'USR').toUpperCase();
+                renderTeamAdmin();
+                window.applyPermissions();
+                renderVendedores();
+                initData();
+                void logAccess(u.email, 'Fez login no sistema');
+            } catch (error) {
+                console.error('Sessão não autorizada:', error);
+                showLoginError(state.lang === 'pt' ? 'Acesso não autorizado para este usuário.' : 'This user is not authorized.');
+                await signOut(auth);
+            }
         } else {
             document.getElementById('auth-screen').classList.remove('hidden'); document.getElementById('main-app').classList.add('hidden'); document.body.className = 'auth-body';
         }
@@ -7229,25 +7295,34 @@ function getSellerCommissionPeriodReport(projects, startStr, endStr) {
     function initData() {
         if (!auth.currentUser) return;
         const projectsRef = collection(db, 'artifacts', appId, 'public', 'data', 'projects');
-        onSnapshot(projectsRef, snap => {
-            state.projects = snap.docs.map(d => ({ id: d.id, ...d.data() }));
+        const projectSnapshots = new Map();
+        const allowedCompanies = ['HVAC', 'Smart Home'].filter(company => state.isSuperAdmin || (company === 'HVAC' ? state.userPerms.hvac : state.userPerms.smart));
+        const publishProjects = () => {
+            state.projects = Array.from(projectSnapshots.values());
             state.projects.forEach(project => { void reconcileCompletedProjectClosure(project); });
             window.renderProjectSellerFilter();
             window.renderProjects(); window.safeRenderReport();
-        }, err => console.error(err));
+        };
+        allowedCompanies.forEach(company => {
+            const constraints = [where('empresa', '==', company)];
+            if (!state.isSuperAdmin && !state.userPerms.global) constraints.push(where('vendedor', '==', auth.currentUser.email));
+            onSnapshot(query(projectsRef, ...constraints), snap => {
+                Array.from(projectSnapshots.entries()).filter(([, project]) => project.empresa === company).forEach(([id]) => projectSnapshots.delete(id));
+                snap.docs.forEach(item => projectSnapshots.set(item.id, { id: item.id, ...item.data() }));
+                publishProjects();
+            }, err => console.error('Erro ao carregar obras autorizadas:', err));
+        });
 
-        onSnapshot(contractorsRef(), snap => {
-            state.contractors = snap.docs.map(d => ({ id: d.id, ...d.data() }));
-            if (state.currentView === 'contractors') window.renderContractors();
-        }, err => console.error('Erro ao carregar contractors:', err));
-        onSnapshot(contractorPaymentsRef(), snap => {
-            state.contractorPayments = snap.docs.map(d => ({ id: d.id, ...d.data() }));
-            if (state.currentView === 'contractors') window.renderContractors();
-        }, err => console.error('Erro ao carregar pagamentos de contractors:', err));
-        onSnapshot(contractorDocumentRequestsRef(), snap => {
-            state.contractorDocumentRequests = snap.docs.map(d => ({ id: d.id, ...d.data() }));
-            if (state.currentView === 'contractors') window.renderContractors();
-        }, err => console.error('Erro ao carregar solicitações de documentos:', err));
+        const contractorSnapshots = new Map(); const paymentSnapshots = new Map(); const requestSnapshots = new Map();
+        const publishContractors = () => { state.contractors = Array.from(contractorSnapshots.values()); if (state.currentView === 'contractors') window.renderContractors(); };
+        const publishPayments = () => { state.contractorPayments = Array.from(paymentSnapshots.values()); if (state.currentView === 'contractors') window.renderContractors(); };
+        const publishRequests = () => { state.contractorDocumentRequests = Array.from(requestSnapshots.values()); if (state.currentView === 'contractors') window.renderContractors(); };
+        if (state.isSuperAdmin || state.userPerms.contractors) allowedCompanies.forEach(company => {
+            const replaceCompanyRows = (map, snapshot, companyKey = 'company') => { Array.from(map.entries()).filter(([, value]) => value[companyKey] === company || (Array.isArray(value.companies) && value.companies.includes(company))).forEach(([id]) => map.delete(id)); snapshot.docs.forEach(item => map.set(item.id, { id: item.id, ...item.data() })); };
+            onSnapshot(query(contractorsRef(), where('companies', 'array-contains', company)), snap => { replaceCompanyRows(contractorSnapshots, snap); publishContractors(); }, err => console.error('Erro ao carregar contractors autorizados:', err));
+            onSnapshot(query(contractorPaymentsRef(), where('company', '==', company)), snap => { replaceCompanyRows(paymentSnapshots, snap); publishPayments(); }, err => console.error('Erro ao carregar pagamentos autorizados:', err));
+            onSnapshot(query(contractorDocumentRequestsRef(), where('company', '==', company)), snap => { replaceCompanyRows(requestSnapshots, snap); publishRequests(); }, err => console.error('Erro ao carregar solicitações autorizadas:', err));
+        });
 
         if (state.isSuperAdmin) {
             onSnapshot(auditLogsRef(), snap => {
@@ -7258,36 +7333,15 @@ function getSellerCommissionPeriodReport(projects, startStr, endStr) {
             state.logs = [];
         }
 
-        onSnapshot(collection(db, 'artifacts', appId, 'public', 'data', 'user_credentials'), snap => {
-            if (!auth.currentUser) return; 
-            const team = snap.docs.map(d => ({ id: d.id, ...d.data() })); state.team = team;
+    }
+
+    function renderTeamAdmin() {
+            if (!auth.currentUser) return;
+            const team = state.team;
             const userDisplayEl = document.getElementById('user-display');
             if (userDisplayEl && auth.currentUser?.email) userDisplayEl.innerText = getUserDisplayName(auth.currentUser.email, 'USR').toUpperCase();
             const avatarEl = document.getElementById('c2-user-avatar'); if (avatarEl && auth.currentUser?.email) avatarEl.textContent = getUserDisplayName(auth.currentUser.email, 'D2').split(/\s+/).filter(Boolean).slice(0,2).map(x=>x[0]).join('').toUpperCase();
             
-            if (state.isSuperAdmin) {
-                // SUPER ADMIN tem passe livre para tudo
-                state.userPerms = { tab_proj: true, tab_new: true, tab_rep: true, fin: true, costs: true, contractors: true, smart: true, hvac: true, global: true };
-            } else {
-                const myProfile = team.find(u => u.email.toLowerCase() === auth.currentUser.email.toLowerCase());
-                if (!myProfile) { window.showModal(window.t('modal_access_denied'), window.t('error'), 'error'); signOut(auth); return; }
-                
-                // Mapeia permissões do usuário
-                state.userPerms = {
-                    tab_proj: myProfile.p_tab_proj !== false, 
-                    tab_new: myProfile.p_tab_new === true, 
-                    tab_rep: myProfile.p_tab_rep === true,
-                    fin: myProfile.p_fin === true,
-                    costs: myProfile.p_costs === true || myProfile.viewCosts === true, 
-                    contractors: myProfile.p_contractors === true,
-                    smart: myProfile.p_smart !== false, 
-                    hvac: myProfile.p_hvac !== false,   
-                    global: myProfile.p_global === true || myProfile.viewAll === true 
-                };
-            }
-            
-            window.applyPermissions(); renderVendedores();
-
             const container = document.getElementById('users-list');
             if (container && state.isSuperAdmin) {
                 container.innerHTML = team.map(u => {
@@ -7316,18 +7370,15 @@ function getSellerCommissionPeriodReport(projects, startStr, endStr) {
 
                     const sellerName = escapeInlineHtml(String(u.name || getUserDisplayName(u.email, u.email)).trim());
                     const sellerEmail = escapeInlineHtml(String(u.email || '').trim());
-                    const safePassword = escapeInlineHtml(String(u.password || ''));
                     const encodedName = encodeURIComponent(String(u.name || ''));
                     const encodedEmail = encodeURIComponent(String(u.email || ''));
-                    const encodedPassword = encodeURIComponent(String(u.password || ''));
                     const initials = sellerName.split(/\s+/).filter(Boolean).slice(0,2).map(part => part[0]).join('').toUpperCase() || 'U';
                     const scopeText = [p.smart ? 'Smart Home' : '', p.hvac ? 'HVAC' : '', p.global ? 'Global' : ''].filter(Boolean).join(' • ') || '—';
                     const permissionText = [p.fin ? 'Finanças' : '', p.costs ? 'Custos' : '', p.tab_rep ? 'Relatórios' : ''].filter(Boolean).join(' • ') || 'Projetos';
-                    return `<div class="c2-user-row"><div class="c2-user-identity"><div class="c2-user-initials">${escapeInlineHtml(initials)}</div><div class="min-w-0"><div class="c2-user-name">${sellerName}</div><div class="c2-user-email">${sellerEmail}</div></div></div><div><span class="c2-tag ${roleStr==='Admin'?'green':''}">${roleStr}</span><div class="c2-user-perms mt-2">${escapeInlineHtml(scopeText)}</div></div><div class="c2-user-perms"><strong class="text-slate-300">Acessos</strong><br>${escapeInlineHtml(permissionText)}</div><div class="c2-row-actions"><button onclick="window.editTeamMember('${u.id}', decodeURIComponent('${encodedName}'), decodeURIComponent('${encodedEmail}'), decodeURIComponent('${encodedPassword}'), JSON.parse(decodeURIComponent('${tagObj}')))" title="Editar"><i data-lucide="edit-3" class="w-4 h-4"></i></button><button onclick="window.deleteTeam('${u.id}')" title="Excluir" class="${u.email.toLowerCase() === SUPER_ADMIN.toLowerCase() ? 'hidden' : ''}"><i data-lucide="trash-2" class="w-4 h-4 text-red-400"></i></button></div></div>`;
+                    return `<div class="c2-user-row"><div class="c2-user-identity"><div class="c2-user-initials">${escapeInlineHtml(initials)}</div><div class="min-w-0"><div class="c2-user-name">${sellerName}</div><div class="c2-user-email">${sellerEmail}</div></div></div><div><span class="c2-tag ${roleStr==='Admin'?'green':''}">${roleStr}</span><div class="c2-user-perms mt-2">${escapeInlineHtml(scopeText)}</div></div><div class="c2-user-perms"><strong class="text-slate-300">Acessos</strong><br>${escapeInlineHtml(permissionText)}</div><div class="c2-row-actions"><button onclick="window.editTeamMember('${u.id}', decodeURIComponent('${encodedName}'), decodeURIComponent('${encodedEmail}'), JSON.parse(decodeURIComponent('${tagObj}')))" title="Editar"><i data-lucide="edit-3" class="w-4 h-4"></i></button><button onclick="window.deleteTeam('${u.id}')" title="Excluir" class="${u.email.toLowerCase() === SUPER_ADMIN.toLowerCase() ? 'hidden' : ''}"><i data-lucide="trash-2" class="w-4 h-4 text-red-400"></i></button></div></div>`;
                 }).join('');
                 try { lucide.createIcons(); } catch {}
             }
-        });
     }
 
     document.addEventListener('DOMContentLoaded', () => {
@@ -7339,11 +7390,8 @@ function getSellerCommissionPeriodReport(projects, startStr, endStr) {
             try {
                 await signInWithEmailAndPassword(auth, email, pass);
             } catch (err) {
-                if (err?.code === 'auth/invalid-credential' || err?.code === 'auth/user-not-found') {
-                    try { await createUserWithEmailAndPassword(auth, email, pass); return; } 
-                    catch (createErr) { if (createErr.code === 'auth/email-already-in-use') showLoginError(window.t('error')); else showLoginError(window.t('error')); }
-                } else if (err?.code === 'auth/unauthorized-domain') { showLoginError('Domínio não autorizado.'); } 
-                else { showLoginError('Falha no login: ' + err.message); }
+                if (err?.code === 'auth/unauthorized-domain') showLoginError('Domínio não autorizado.');
+                else showLoginError(state.lang === 'pt' ? 'E-mail ou senha inválidos.' : 'Invalid email or password.');
             } finally { btn.disabled = false; }
         };
 
@@ -7392,8 +7440,7 @@ function getSellerCommissionPeriodReport(projects, startStr, endStr) {
             if (!name) { window.showModal(window.t('attention'), state.lang === 'pt' ? 'Informe o nome do vendedor.' : 'Enter the seller name.', 'alert'); return; }
             
             // Lê o novo sistema de permissões
-            const permData = {
-                name, email: mail, password: pass, updatedAt: serverTimestamp(),
+            const permissions = {
                 p_smart: document.getElementById('p_smart').checked,
                 p_hvac: document.getElementById('p_hvac').checked,
                 p_global: document.getElementById('p_global').checked,
@@ -7406,10 +7453,13 @@ function getSellerCommissionPeriodReport(projects, startStr, endStr) {
             };
 
             try {
-                try { const secApp = initializeApp(firebaseConfig, "SecApp_" + Date.now()); const secAuth = getAuth(secApp); await createUserWithEmailAndPassword(secAuth, mail, pass); await signOut(secAuth); await deleteApp(secApp); } catch (authErr) {}
-                if (!id) { await addDoc(collection(db, 'artifacts', appId, 'public', 'data', 'user_credentials'), permData); logAccess(state.user.email, `Adicionou usuário: ${name}`); } 
-                else { await updateDoc(doc(db, 'artifacts', appId, 'public', 'data', 'user_credentials', id), permData); logAccess(state.user.email, `Atualizou usuário: ${name}`); }
+                if (!id && pass.length < 8) throw new Error('A senha temporária deve conter pelo menos 8 caracteres.');
+                const result = await secureApi(id ? 'updateUser' : 'createUser', { profileId: id || undefined, name, email: mail, password: pass || undefined, permissions });
+                state.team = result.team || [];
+                renderTeamAdmin();
                 e.target.reset(); document.getElementById('t-id').value = ''; document.getElementById('t-name').value = ''; 
+                document.getElementById('t-pass').required = true;
+                document.getElementById('t-pass').placeholder = 'Mínimo de 8 caracteres';
                 document.querySelectorAll('.perm-checkbox').forEach(c => c.checked = false);
                 document.getElementById('p_smart').checked = true; document.getElementById('p_hvac').checked = true; document.getElementById('p_tab_proj').checked = true;
             } catch (err) { window.showModal('Erro', 'Erro ao salvar usuário: ' + err.message, 'error'); }

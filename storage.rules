@@ -1,11 +1,10 @@
 rules_version = '2';
 service firebase.storage {
   match /b/{bucket}/o {
-    // Os documentos fiscais são gravados exclusivamente pela Cloud Function.
-    // Funcionários autenticados podem consultar e baixar; uploads diretos são negados.
+    // Contractor documents are handled exclusively by verified Cloud Functions.
+    // Client-side reads and writes are denied, including authenticated users.
     match /contractor_documents/{allPaths=**} {
-      allow read: if request.auth != null;
-      allow write: if false;
+      allow read, write: if false;
     }
     match /{allPaths=**} {
       allow read, write: if false;

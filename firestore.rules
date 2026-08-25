@@ -1,0 +1,88 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+    function signedIn() {
+      return request.auth != null;
+    }
+
+    function accessPath() {
+      return /databases/$(database)/documents/artifacts/d2-Project-Management/public/data/access_control/$(request.auth.uid);
+    }
+
+    function hasAccess() {
+      return signedIn() && exists(accessPath()) && get(accessPath()).data.active == true;
+    }
+
+    function access() {
+      return get(accessPath()).data;
+    }
+
+    function isSuperAdmin() {
+      return hasAccess() && access().superAdmin == true;
+    }
+
+    function companyAllowed(company) {
+      return isSuperAdmin()
+        || (company == 'HVAC' && access().p_hvac == true)
+        || (company == 'Smart Home' && access().p_smart == true);
+    }
+
+    function projectReadable(data) {
+      return companyAllowed(data.empresa)
+        && (isSuperAdmin() || access().p_global == true || data.vendedor == request.auth.token.email);
+    }
+
+    function contractorCompanyAllowed(data) {
+      return isSuperAdmin()
+        || (access().p_contractors == true && (
+          (access().p_hvac == true && (data.company == 'HVAC' || ('HVAC' in data.companies)))
+          || (access().p_smart == true && (data.company == 'Smart Home' || ('Smart Home' in data.companies)))
+        ));
+    }
+
+    match /artifacts/d2-Project-Management/public/data/access_control/{uid} {
+      allow get: if hasAccess() && request.auth.uid == uid;
+      allow list, create, update, delete: if false;
+    }
+
+    match /artifacts/d2-Project-Management/public/data/user_credentials/{userId} {
+      allow read, write: if false;
+    }
+
+    match /artifacts/d2-Project-Management/public/data/projects/{projectId} {
+      allow read: if hasAccess() && projectReadable(resource.data);
+      allow create: if hasAccess() && access().p_tab_new == true && projectReadable(request.resource.data);
+      allow update: if hasAccess() && projectReadable(resource.data) && projectReadable(request.resource.data)
+        && (isSuperAdmin() || access().p_tab_new == true || access().p_fin == true || access().p_costs == true);
+      allow delete: if isSuperAdmin();
+    }
+
+    match /artifacts/d2-Project-Management/public/data/contractors/{contractorId} {
+      allow read: if hasAccess() && access().p_contractors == true && contractorCompanyAllowed(resource.data);
+      allow create: if hasAccess() && access().p_contractors == true && contractorCompanyAllowed(request.resource.data);
+      allow update: if hasAccess() && access().p_contractors == true && contractorCompanyAllowed(resource.data) && contractorCompanyAllowed(request.resource.data);
+      allow delete: if isSuperAdmin();
+    }
+
+    match /artifacts/d2-Project-Management/public/data/contractor_payments/{paymentId} {
+      allow read: if hasAccess() && access().p_contractors == true && companyAllowed(resource.data.company);
+      allow create: if hasAccess() && access().p_contractors == true && companyAllowed(request.resource.data.company);
+      allow update: if hasAccess() && access().p_contractors == true && companyAllowed(resource.data.company) && companyAllowed(request.resource.data.company);
+      allow delete: if hasAccess() && access().p_contractors == true && companyAllowed(resource.data.company);
+    }
+
+    match /artifacts/d2-Project-Management/public/data/contractor_document_requests/{requestId} {
+      allow read: if hasAccess() && access().p_contractors == true && companyAllowed(resource.data.company);
+      allow write: if false;
+    }
+
+    match /artifacts/d2-Project-Management/public/data/audit_logs/{logId} {
+      allow read: if isSuperAdmin();
+      allow write: if false;
+    }
+
+    match /{document=**} {
+      allow read, write: if false;
+    }
+  }
+}
