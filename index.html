@@ -7035,7 +7035,7 @@ function getSellerCommissionPeriodReport(projects, startStr, endStr) {
         const root = document.querySelector('#projects-grid .v86-grid-overview');
         if (!root || root.dataset.sourceCardsDecorated === 'true') return;
         const isPt = state.lang === 'pt';
-        const bind = (elements, detailTypes, className) => elements.forEach((element, index) => {
+        const bind = (elements, detailTypes, className) => Array.from(elements || []).forEach((element, index) => {
             const detailType = detailTypes[index];
             if (!detailType) return;
             element.classList.add(className);
