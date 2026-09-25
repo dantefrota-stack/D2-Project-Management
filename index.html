@@ -7041,14 +7041,14 @@ function getSellerCommissionPeriodReport(projects, startStr, endStr) {
             element.classList.add(className);
             element.tabIndex = 0;
             element.setAttribute('role', 'button');
-            element.setAttribute('aria-label', isPt ? 'Ver fonte do indicador' : 'View indicator source');
+            element.setAttribute('aria-label', isPt ? 'Ver fonte do indicador' : state.lang === 'es' ? 'Ver origen del indicador' : 'View indicator source');
             element.addEventListener('click', () => window.openProjectKpiDetail(project.id, detailType));
             element.addEventListener('keydown', event => {
                 if (event.key === 'Enter' || event.key === ' ') { event.preventDefault(); window.openProjectKpiDetail(project.id, detailType); }
             });
             const hint = document.createElement('small');
             hint.className = 'v86-source-hint';
-            hint.textContent = isPt ? 'Ver fonte →' : 'View source →';
+            hint.textContent = isPt ? 'Ver fonte →' : state.lang === 'es' ? 'Ver origen →' : 'View source →';
             element.appendChild(hint);
         });
         bind(root.querySelectorAll('.v86-stack:first-child > section:first-child .v86-kpi:not(.v86-payment-action)'), ['contract', 'released', 'received', 'paid'], 'v86-source-card');
@@ -7076,7 +7076,12 @@ function getSellerCommissionPeriodReport(projects, startStr, endStr) {
             alert.type = 'button';
             alert.dataset.clientReceiptAlert = 'true';
             alert.className = 'v86-closure-alert mb-4 flex w-full items-center gap-3 rounded-xl border border-red-300/50 bg-red-500/[.12] px-4 py-3 text-left text-sm font-bold text-red-200 animate-pulse';
-            alert.innerHTML = `<i data-lucide="triangle-alert" class="w-4 h-4 shrink-0"></i><span>${isPt ? `Recebimento em atraso: ${formatCurr(financials.clientOutstanding)} pendente. Último recebimento há ${overdueDays} dia${overdueDays === 1 ? '' : 's'}. Clique para registrar.` : `Overdue client receipt: ${formatCurr(financials.clientOutstanding)} pending. Last receipt ${overdueDays} day${overdueDays === 1 ? '' : 's'} ago. Click to record.`}</span>`;
+            const alertText = isPt
+                ? `Recebimento em atraso: ${formatCurr(financials.clientOutstanding)} pendente. Último recebimento há ${overdueDays} dia${overdueDays === 1 ? '' : 's'}. Clique para registrar.`
+                : state.lang === 'es'
+                    ? `Cobro atrasado del cliente: ${formatCurr(financials.clientOutstanding)} pendiente. Último cobro hace ${overdueDays} día${overdueDays === 1 ? '' : 's'}. Pulsa para registrar.`
+                    : `Overdue client receipt: ${formatCurr(financials.clientOutstanding)} pending. Last receipt ${overdueDays} day${overdueDays === 1 ? '' : 's'} ago. Click to record.`;
+            alert.innerHTML = `<i data-lucide="triangle-alert" class="w-4 h-4 shrink-0"></i><span>${alertText}</span>`;
             alert.addEventListener('click', () => window.openKpiFinancialEditor(project.id, 'receipts'));
             root.before(alert);
         }
