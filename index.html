@@ -6784,11 +6784,11 @@ function getSellerCommissionPeriodReport(projects, startStr, endStr) {
         return `${closureNotice}<div class="v86-head no-print"><div class="v86-head-left"><button class="v86-back" aria-label="${state.lang==='pt'?'Voltar':'Back'}" title="${state.lang==='pt'?'Voltar':'Back'}" onclick="${state.activeModule?'window.closeProjectModule()':'window.closeProjectDetails()'}"><span class="v86-back-glyph" aria-hidden="true">←</span></button><div class="v86-head-copy"><div class="flex flex-wrap items-center gap-3"><h1 class="v86-title">${escapeInlineHtml(getProjectPrimaryTitle(p))}</h1><span class="v86-status ${st.cls}"><i data-lucide="${st.cls==='success'?'check-circle-2':st.cls==='warning'?'clock-3':st.cls==='danger'?'shield-alert':'circle-dot'}" class="w-3.5 h-3.5"></i>${st.text}${completed?` · ${completed}`:''}</span></div>${moduleTitle?`<div class="v86-subtitle">${escapeInlineHtml(moduleTitle)}</div>`:''}${p.nomeProjeto?`<div class="v86-meta-line"><i data-lucide="bookmark" class="w-3.5 h-3.5 shrink-0"></i><span>${escapeInlineHtml(p.nomeProjeto)}</span></div>`:''}${p.endereco?`<div class="v86-meta-line"><i data-lucide="map-pin" class="w-3.5 h-3.5 shrink-0"></i><span>${escapeInlineHtml(p.endereco)}</span></div>`:''}</div></div><div class="flex flex-wrap justify-end gap-2">${finishAction}${canPrintProjectSheet()?`<button onclick="window.printReport()" class="v86-btn"><i data-lucide="printer" class="w-4 h-4"></i>${window.t('print_ficha')}</button>`:''}${!state.portalBridge && (state.userPerms.tab_proj||state.isSuperAdmin)?`<button onclick="window.toggleArchive('${p.id}',${!!p.archived})" class="v86-btn"><i data-lucide="${p.archived?'package-open':'archive'}" class="w-4 h-4"></i>${state.lang==='pt'?(p.archived?'Reativar':'Arquivar'):(p.archived?'Restore':'Archive')}</button>`:''}${state.isSuperAdmin?`<button onclick="window.editP('${p.id}')" class="v86-btn"><i data-lucide="edit-3" class="w-4 h-4"></i>${state.lang==='pt'?'Editar':'Edit'}</button>`:''}</div></div>`;
     }
     function v86ReceiptRows(p){
-        const rows=(p.recebimentos||[]).slice().sort((a,b)=>String(a.data||'').localeCompare(String(b.data||''))).map(r=>{const method=getReceiptEffectiveMethod(r,p);const fee=getReceiptFee(r,p);const net=getReceiptNet(r,p);return `<tr><td>${r.data?new Date(r.data+'T12:00:00').toLocaleDateString(state.lang==='pt'?'pt-BR':'en-US'):'—'}</td><td><span class="v86-status info">${escapeInlineHtml(method||'—')}</span></td><td class="money">${formatCurr(r.valor)}</td><td class="money ${fee>0?'text-red-300':''}">${formatCurr(fee)}</td><td class="money text-emerald-300">${formatCurr(net)}</td><td><span class="v86-status success">${state.lang==='pt'?'Recebido':'Received'}</span></td></tr>`}).join('');
+        const rows=(p.recebimentos||[]).slice().sort((a,b)=>String(a.data||'').localeCompare(String(b.data||''))).map(r=>{const method=getReceiptEffectiveMethod(r,p);const fee=getReceiptFee(r,p);const net=getReceiptNet(r,p);return `<tr><td>${r.data?formatProjectDate(r.data):'—'}</td><td><span class="v86-status info">${escapeInlineHtml(method||'—')}</span></td><td class="money">${formatCurr(r.valor)}</td><td class="money ${fee>0?'text-red-300':''}">${formatCurr(fee)}</td><td class="money text-emerald-300">${formatCurr(net)}</td><td><span class="v86-status success">${state.lang==='pt'?'Recebido':'Received'}</span></td></tr>`}).join('');
         return rows||`<tr><td colspan="6" class="v86-empty">${window.t('no_receipts')}</td></tr>`;
     }
     function v86PaymentRows(p){
-        const rows=normalizePaymentEntries(p.pagamentosEfetuados||[]).slice().sort((a,b)=>String(a.data||'').localeCompare(String(b.data||''))).map(pay=>`<tr><td>${pay.data?new Date(pay.data+'T12:00:00').toLocaleDateString(state.lang==='pt'?'pt-BR':'en-US'):'—'}</td><td>${escapeInlineHtml(getCompanyDisplayName(p.empresa))}</td><td class="money">${formatCurr(pay.valor)}</td><td>${isAdvanceCommissionPayment(pay)?`<span class="v86-status warning">${state.lang==='pt'?'Adiantamento':'Advance'}</span>`:`<span class="v86-status success">${state.lang==='pt'?'Pago':'Paid'}</span>`}</td></tr>`).join('');
+        const rows=normalizePaymentEntries(p.pagamentosEfetuados||[]).slice().sort((a,b)=>String(a.data||'').localeCompare(String(b.data||''))).map(pay=>`<tr><td>${pay.data?formatProjectDate(pay.data):'—'}</td><td>${escapeInlineHtml(getCompanyDisplayName(p.empresa))}</td><td class="money">${formatCurr(pay.valor)}</td><td>${isAdvanceCommissionPayment(pay)?`<span class="v86-status warning">${state.lang==='pt'?'Adiantamento':'Advance'}</span>`:`<span class="v86-status success">${state.lang==='pt'?'Pago':'Paid'}</span>`}</td></tr>`).join('');
         return rows||`<tr><td colspan="4" class="v86-empty">${window.t('no_payments')}</td></tr>`;
     }
     function v86CostRows(p,f){
@@ -7133,21 +7133,54 @@ function getSellerCommissionPeriodReport(projects, startStr, endStr) {
             'Client':'Cliente', 'Seller':'Vendedor', 'Paying company':'Empresa pagadora',
             'Commission':'Comisión', 'Quick Actions':'Acciones rápidas',
             'Receipts and payments':'Cobros y pagos', 'View source →':'Ver origen →',
-            'Back':'Volver', 'No expenses':'Sin gastos'
+            'Back':'Volver', 'No expenses':'Sin gastos',
+            'Commissions & Finance':'Comisiones y finanzas',
+            'Essential receipt and payout values.':'Valores esenciales de cobros y pagos.',
+            'Settled':'Conciliado', 'Payment due':'Pago pendiente',
+            'Gross contract commission':'Comisión bruta del contrato',
+            'Commission balance due':'Comisión pendiente de pago',
+            'Fully paid':'Totalmente pagado', 'Client balance':'Saldo pendiente del cliente',
+            'Future commission':'Comisión futura', 'Card discount':'Descuento por tarjeta',
+            'Released commission is settled. New amounts depend on future client receipts.':'La comisión aprobada está pagada. Los próximos importes dependen de los cobros del cliente.',
+            'Project financially reconciled. No client or seller balance due.':'Proyecto conciliado. No quedan saldos pendientes del cliente ni del vendedor.',
+            'Client Receipts':'Cobros del cliente', 'Seller Payments':'Pagos al vendedor',
+            'Date':'Fecha', 'Method':'Forma', 'Gross':'Bruto', 'Fee':'Cargo',
+            'Net':'Neto', 'Status':'Estado', 'Received':'Recibido', 'Paid':'Pagado',
+            'Advance':'Anticipo', 'Paid amount':'Importe pagado', 'Total paid':'Total pagado',
+            'Quick summary':'Resumen rápido', 'Project reference information.':'Datos de referencia del proyecto.',
+            'Contract commission':'Comisión del contrato', 'Manage receipts':'Gestionar cobros',
+            'Manage payments':'Gestionar pagos', 'No receipts registered.':'No hay cobros registrados.',
+            'No payments made.':'No hay pagos registrados.'
         };
         const walker = document.createTreeWalker(root, NodeFilter.SHOW_TEXT);
         while (walker.nextNode()) {
             const node = walker.currentNode;
             const value = node.nodeValue.trim();
             if (labels[value]) node.nodeValue = node.nodeValue.replace(value, labels[value]);
+            else if (/^\d+ entries$/.test(value)) {
+                const count = Number(value.split(' ')[0]);
+                node.nodeValue = node.nodeValue.replace(value, `${count} ${count === 1 ? 'registro' : 'registros'}`);
+            } else if (value.endsWith(' is released and due to the seller.')) {
+                node.nodeValue = node.nodeValue.replace(value, value.replace(' is released and due to the seller.', ' está aprobada y pendiente de pago al vendedor.'));
+            }
         }
         root.querySelectorAll('[aria-label="View indicator source"]').forEach(button => button.setAttribute('aria-label','Ver origen del indicador'));
         root.querySelectorAll('[aria-label="Back"]').forEach(button => button.setAttribute('aria-label','Volver'));
     }
+    function correctFinanceCountPortuguese() {
+        if (state.lang !== 'pt' || state.activeModule !== 'commissions') return;
+        const root = document.querySelector('#projects-grid .v86-page');
+        if (!root) return;
+        const walker = document.createTreeWalker(root, NodeFilter.SHOW_TEXT);
+        while (walker.nextNode()) {
+            const node = walker.currentNode;
+            if (node.nodeValue.trim() === '1 lançamentos') node.nodeValue = node.nodeValue.replace('1 lançamentos', '1 lançamento');
+        }
+    }
     const renderProjectsWithMargin = window.renderProjects;
     window.renderProjects = () => {
         renderProjectsWithMargin();
-        if (state.focusedProject) { const focused = state.projects.find(project => project.id === state.focusedProject); if (focused) setTimeout(() => { if (state.activeModule === 'costs') { decorateContractorExpenseControl(focused); decorateProjectCostSourceLinks(focused); decorateProjectCostKpis(focused); } else if (state.activeModule === 'commissions') decorateProjectFinanceKpis(focused); else decorateProjectOverviewKpis(focused); translateProjectDetailSpanish(); }, 0); return; }
+        if (state.focusedProject) { const focused = state.projects.find(project => project.id === state.focusedProject); if (focused) setTimeout(() => { if (state.activeModule === 'costs') { decorateContractorExpenseControl(focused); decorateProjectCostSourceLinks(focused); decorateProjectCostKpis(focused); } else if (state.activeModule === 'commissions') decorateProjectFinanceKpis(focused); else decorateProjectOverviewKpis(focused); translateProjectDetailSpanish(); correctFinanceCountPortuguese(); }, 0); return; }
         const canAll = state.userPerms.global;
         const visibleProjects = state.projects.filter(project => {
             const companyAllowed = (project.empresa === 'Smart Home' && state.userPerms.smart) || (project.empresa === 'HVAC' && state.userPerms.hvac);
