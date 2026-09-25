@@ -1601,7 +1601,11 @@
         status_wait:'Pendiente de inicio', status_exec:'En ejecución', status_fin:'Finalizado',
         no_projects:'No se encontraron proyectos activos.', search:'Buscar', clear_filters:'Borrar filtros',
         records:'Registros', user:'Usuario', back:'Volver', print_ficha:'Imprimir ficha', print_view:'Imprimir vista',
-        attention:'Atención', error:'Error', understood:'Entendido'
+        attention:'Atención', error:'Error', understood:'Entendido',
+        comm_finances:'Comisiones y finanzas', cost_management:'Gestión de costes',
+        real_profit:'Beneficio actual', total_expenses:'Gastos totales', avg_expense:'Gasto medio',
+        planned_profit:'Beneficio previsto', expense_entries:'Registros', top_category:'Categoría principal',
+        largest_expense:'Mayor gasto'
     };
     window.t = (key) => translations[state.lang]?.[key] || translations.en[key] || key;
     const loc = (pt, en, es) => state.lang === 'pt' ? pt : state.lang === 'es' ? es : en;
@@ -7106,10 +7110,39 @@ function getSellerCommissionPeriodReport(projects, startStr, endStr) {
         filters?.classList.remove('hidden','flex');grid.className='v86-project-grid text-left';if(!filtered.length){grid.innerHTML=`<div class="v86-empty col-span-full">${window.t('no_active_works')}</div>`;return;}
         grid.innerHTML=filtered.map(p=>{const f=getFin(p),st=v86StatusInfo(p),margin=f.margemLucro;return `<article class="v86-project-card" onclick="window.openProjectDetails('${p.id}')"><div class="v86-project-card-top"><div class="v86-project-id"><div class="v86-icon ${p.empresa==='HVAC'?'cyan':'green'}"><i data-lucide="building-2" class="w-5 h-5"></i></div><div><h3 class="v86-project-name">${escapeInlineHtml(getProjectPrimaryTitle(p))}</h3><div class="v86-project-ref">${escapeInlineHtml(p.nomeProjeto||getCompanyDisplayName(p.empresa))}</div></div></div><div class="flex items-center gap-2"><span class="v86-status ${st.cls}">${st.text}</span>${v86ProjectActions(p)}</div></div><div class="v86-project-address"><i data-lucide="map-pin" class="w-3.5 h-3.5 shrink-0"></i><span>${escapeInlineHtml(p.endereco||'—')}</span></div><div class="v86-project-meta"><div><span class="v86-label">${state.lang==='pt'?'Vendedor':'Seller'}</span><strong>${escapeInlineHtml(getUserDisplayName(p.vendedor,'—'))}</strong></div><div><span class="v86-label">${window.t("prop_inv")}</span><strong>${escapeInlineHtml(p.numeroInvoice||'—')} / ${escapeInlineHtml(p.numeroProposta||'—')}</strong></div></div><div class="v86-project-fin"><div><span class="v86-label">${state.lang==='pt'?'Valor contrato bruto':'Gross contract value'}</span><strong>${formatCurr(p.valorTotal)}</strong></div><div><span class="v86-label">${state.lang==='pt'?'Margem da obra':'Project margin'}</span><strong style="color:${margin<45?'var(--v86-red)':'var(--v86-green)'}">${margin.toFixed(1)}%</strong></div></div><div class="v86-project-footer"><div class="v86-project-dates"><span class="v86-project-date"><i data-lucide="calendar-days" class="w-3.5 h-3.5"></i>${state.lang==='pt'?'Atualização':'Updated'} ${v86ProjectDateLabel(p)}</span><span class="v86-project-date"><i data-lucide="calendar-plus" class="w-3.5 h-3.5"></i>${state.lang==='pt'?'Cadastro':'Created'} ${formatProjectCreatedAt(p)}</span></div><span>${p.archived?(state.lang==='pt'?'Arquivada':'Archived'):''}</span></div></article>`}).join('');try{lucide.createIcons()}catch{}
     };
+    function translateProjectDetailSpanish() {
+        if (state.lang !== 'es') return;
+        const root = document.querySelector('#projects-grid .v86-page');
+        if (!root) return;
+        const labels = {
+            'Project Overview':'Resumen del proyecto', 'Project status':'Estado del proyecto',
+            'Operational and financial summary':'Resumen operativo y financiero',
+            'Gross contract value':'Importe bruto del contrato', 'Released commission':'Comisión aprobada',
+            'Total received':'Total cobrado', 'Client receipt pending':'Cobro pendiente del cliente',
+            'Paid to seller':'Pagado al vendedor', 'Commission pending':'Comisión pendiente',
+            'Project Progress':'Progreso del proyecto', 'Project schedule':'Calendario del proyecto',
+            'Start':'Inicio', 'Due':'Entrega', 'Completion':'Finalización',
+            'Financial Performance':'Resultados financieros', 'Margin, profit and expenses':'Margen, beneficio y gastos',
+            'Margin':'Margen', 'Quick Summary':'Resumen rápido', 'Indicators at a glance':'Indicadores principales',
+            'Budget':'Presupuesto', 'Not set':'Sin definir', 'Project Reference':'Datos del proyecto',
+            'Client':'Cliente', 'Seller':'Vendedor', 'Paying company':'Empresa pagadora',
+            'Commission':'Comisión', 'Quick Actions':'Acciones rápidas',
+            'Receipts and payments':'Cobros y pagos', 'View source →':'Ver origen →',
+            'Back':'Volver', 'No expenses':'Sin gastos'
+        };
+        const walker = document.createTreeWalker(root, NodeFilter.SHOW_TEXT);
+        while (walker.nextNode()) {
+            const node = walker.currentNode;
+            const value = node.nodeValue.trim();
+            if (labels[value]) node.nodeValue = node.nodeValue.replace(value, labels[value]);
+        }
+        root.querySelectorAll('[aria-label="View indicator source"]').forEach(button => button.setAttribute('aria-label','Ver origen del indicador'));
+        root.querySelectorAll('[aria-label="Back"]').forEach(button => button.setAttribute('aria-label','Volver'));
+    }
     const renderProjectsWithMargin = window.renderProjects;
     window.renderProjects = () => {
         renderProjectsWithMargin();
-        if (state.focusedProject) { const focused = state.projects.find(project => project.id === state.focusedProject); if (focused) setTimeout(() => { if (state.activeModule === 'costs') { decorateContractorExpenseControl(focused); decorateProjectCostSourceLinks(focused); decorateProjectCostKpis(focused); } else if (state.activeModule === 'commissions') decorateProjectFinanceKpis(focused); else decorateProjectOverviewKpis(focused); }, 0); return; }
+        if (state.focusedProject) { const focused = state.projects.find(project => project.id === state.focusedProject); if (focused) setTimeout(() => { if (state.activeModule === 'costs') { decorateContractorExpenseControl(focused); decorateProjectCostSourceLinks(focused); decorateProjectCostKpis(focused); } else if (state.activeModule === 'commissions') decorateProjectFinanceKpis(focused); else decorateProjectOverviewKpis(focused); translateProjectDetailSpanish(); }, 0); return; }
         const canAll = state.userPerms.global;
         const visibleProjects = state.projects.filter(project => {
             const companyAllowed = (project.empresa === 'Smart Home' && state.userPerms.smart) || (project.empresa === 'HVAC' && state.userPerms.hvac);
