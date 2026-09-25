@@ -1021,6 +1021,8 @@
 .v86-back-glyph{display:block;color:currentColor;font-size:25px;font-weight:700;line-height:1;transform:translateY(-1px)}
 
 </style>
+<style>html.portal-embedded #auth-screen{display:none!important}html.portal-embedded #portal-boot{display:flex!important}html.portal-embedded.portal-ready #portal-boot{display:none!important}html.portal-embedded #portal-back,html.portal-embedded #portal-boot-back,html.portal-embedded #portal-link-account,html.portal-embedded .c2-brand-wrap,html.portal-embedded .c2-logout{display:none!important}</style>
+<script>if(new URLSearchParams(location.search).get('embed')==='1'&&window.parent!==window)document.documentElement.classList.add('portal-embedded');</script>
 </head>
 <body class="auth-body">
 
@@ -1036,6 +1038,9 @@
 </section>
 
 <!-- Login Screen -->
+<div id="portal-boot" class="hidden fixed inset-0 z-[2100] flex items-center justify-center p-6" style="background:#f4f8fb;color:#193b4e;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif">
+    <div style="max-width:420px;text-align:center"><img src="logo-D2-Group-preto.png" alt="D2 Group" style="width:145px;height:70px;object-fit:contain;margin:0 auto 16px"><p id="portal-boot-message" role="status" style="font-size:16px;font-weight:650">Connecting Projects…</p><a id="portal-boot-back" href="https://d2-group-system.web.app/workspace.html" class="hidden" style="display:inline-flex;margin-top:20px;min-height:44px;align-items:center;padding:0 18px;border:1px solid #b8ccd8;border-radius:10px;color:#204d62;text-decoration:none;font-weight:700">← Back to Portal</a></div>
+</div>
 <div id="auth-screen" class="fixed inset-0 z-[2000] flex items-center justify-center p-6">
     <div class="auth-card">
         <div class="logo-box">
@@ -1063,6 +1068,8 @@
             <button type="submit" id="btn-entrar" class="btn-access">
                 <span data-i18n="btn_login">Acessar Sistema</span>
             </button>
+            <button type="button" id="portal-signin" class="btn-access" style="margin-top:12px;background:#e8f4f5;color:#183d4d">Continue from D2 Portal</button>
+            <a href="https://d2-group-system.web.app/workspace.html" id="auth-portal-back" style="display:flex;align-items:center;justify-content:center;min-height:44px;margin-top:12px;color:#d4e8ef;text-decoration:underline;font-size:13px;font-weight:700">← Back to Portal</a>
         </form>
 
         <div class="mt-8 flex justify-center gap-4">
@@ -1188,6 +1195,7 @@
     <!-- HEADER PRINCIPAL · CONCEITO 2 -->
     <header id="main-header" class="no-print c2-topbar sticky top-0 z-40">
         <div class="c2-topbar-inner">
+            <a id="portal-back" href="https://d2-group-system.web.app/workspace.html" style="display:inline-flex;align-items:center;min-height:44px;padding:0 11px;border:1px solid #bdcddb;border-radius:11px;color:inherit;text-decoration:none;font-size:13px;font-weight:700;white-space:nowrap">← <span id="portal-back-label" style="margin-left:6px">Back to Portal</span></a>
             <div class="c2-brand-wrap">
                 <div class="c2-brand-mark"><img id="header-logo" src="logo-D2-Group-trimmed.png" alt="D2 Group"></div>
                 <div class="c2-brand-copy hidden sm:block">
@@ -1210,6 +1218,7 @@
             </nav>
 
             <div class="c2-header-actions">
+                <button type="button" id="portal-link-account" class="c2-icon-btn" title="Link this Projects account to D2 Portal" aria-label="Link this Projects account to D2 Portal" style="width:auto;padding:0 10px;font-size:12px;font-weight:700">Link Portal</button>
                 <div id="dashboard-language-switcher" class="dashboard-language-switcher hidden" aria-label="Selecionar idioma">
                     <button type="button" onclick="window.setLang('en')" class="dashboard-language-option" data-dashboard-language="en" title="English (United States)" aria-label="English (United States)"><img src="https://flagcdn.com/w80/us.png" alt="United States"></button>
                     <button type="button" onclick="window.setLang('pt')" class="dashboard-language-option" data-dashboard-language="pt" title="Português (Brasil)" aria-label="Português (Brasil)"><img src="https://flagcdn.com/w80/br.png" alt="Brasil"></button>
@@ -1394,7 +1403,7 @@
 <script type="module">
     import { preferredCompany, allowedCompany, companyQueryValue, COMPANY_KEY } from './portal-entry.mjs';
     import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
-    import { getAuth, signInWithEmailAndPassword, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
+    import { getAuth, signInWithEmailAndPassword, signInWithCustomToken, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
     import { getFirestore, collection, doc, updateDoc, addDoc, deleteDoc, onSnapshot, serverTimestamp, arrayUnion, getDocs, writeBatch, runTransaction, query, where } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
 
     const firebaseConfig = {
@@ -1428,7 +1437,7 @@
 
     let state = { 
         user: null, 
-        isSuperAdmin: false,
+        isSuperAdmin: false, portalBridge: false,
         userPerms: { tab_proj: true, tab_new: false, tab_rep: false, fin: false, costs: false, contractors: false, smart: true, hvac: false, global: false },
         projects: [], contractors: [], contractorPayments: [], contractorDocumentRequests: [], team: [], logs: [], logsUserFilter: '', logsSearchQuery: '', company: initialCompany, lang: savedLanguage, theme: 'dark',
         editingPayments: null, editingRecs: null, reportPendingPayments: null, reportProjectList: null, reportProjectListReturn: null, returnToReport: false, returnToReportAfterEdit: false, focusedProject: null, activeModule: null, archiveFilter: 'active',
@@ -1616,6 +1625,16 @@
             window.history.replaceState(window.history.state, '', url);
         }
         document.documentElement.lang = language === 'pt' ? 'pt-BR' : 'en';
+        const portalBackText = language === 'pt' ? 'Voltar ao Portal' : 'Back to Portal';
+        document.getElementById('portal-back-label').textContent = portalBackText;
+        document.getElementById('auth-portal-back').textContent = `← ${portalBackText}`;
+        document.getElementById('portal-boot-back').textContent = `← ${portalBackText}`;
+        if (state.portalBridge) {
+            const portalButton = document.getElementById('portal-link-account');
+            portalButton.textContent = language === 'pt' ? 'Voltar ao Portal' : 'Back to Portal';
+            portalButton.title = portalButton.textContent;
+            portalButton.setAttribute('aria-label', portalButton.textContent);
+        }
         document.querySelectorAll('.flag-btn').forEach(b => b.classList.toggle('active', b.id === 'l-' + language));
         document.querySelectorAll('[data-dashboard-language]').forEach(b => b.classList.toggle('active', b.dataset.dashboardLanguage === language));
         document.querySelectorAll('[data-i18n]').forEach(el => {
@@ -2183,7 +2202,7 @@
     };
 
     window.toggleArchive = async (id, currentArchivedStatus) => {
-        if (!state.userPerms.tab_proj) return;
+        if (state.portalBridge || !state.userPerms.tab_proj) return;
         try {
             const project = state.projects.find(x => x.id === id);
             const action = currentArchivedStatus ? "Desarquivou" : "Arquivou";
@@ -2501,6 +2520,79 @@
         });
         const result = await response.json().catch(() => ({}));
         if (!response.ok) throw new Error(result.error || (state.lang === 'pt' ? 'Operação não concluída.' : 'Operation failed.'));
+        return result;
+    }
+
+    const portalCompany = new URLSearchParams(window.location.search).get('company');
+    const portalCompanyAllowed = portalCompany === 'smart' || portalCompany === 'hvac';
+    const portalEmbedded = document.documentElement.classList.contains('portal-embedded') && portalCompanyAllowed;
+    // Owner-only Projects pilot. Server and Firestore rules enforce the scope.
+    const portalBridgeAvailable = true;
+    let portalExpiryNotice;
+    function requestPortalToken() {
+        if (!portalCompanyAllowed) return Promise.reject(new Error('Open Projects from a company in the D2 Portal.'));
+        const nonce = Array.from(crypto.getRandomValues(new Uint8Array(24)), byte => byte.toString(16).padStart(2, '0')).join('');
+        if (portalEmbedded) return new Promise((resolve, reject) => {
+            let done = false;
+            const finish = (error, token) => {
+                if (done) return;
+                done = true; clearInterval(send); clearTimeout(timeout); window.removeEventListener('message', receive);
+                if (error) reject(error); else resolve(token);
+            };
+            const receive = event => {
+                if (event.origin !== 'https://d2-group-system.web.app' || event.source !== window.parent || event.data?.type !== 'd2-project-handoff-response' || event.data.nonce !== nonce) return;
+                if (event.data.company !== portalCompany) return finish(new Error('The selected company changed.'));
+                if (event.data.error) return finish(new Error(event.data.error));
+                if (typeof event.data.token !== 'string') return finish(new Error('Portal connection failed.'));
+                finish(null, event.data.token);
+            };
+            window.addEventListener('message', receive);
+            const request = { type: 'd2-project-handoff-request', nonce, company: portalCompany };
+            const send = window.setInterval(() => window.parent.postMessage(request, 'https://d2-group-system.web.app'), 400);
+            window.parent.postMessage(request, 'https://d2-group-system.web.app');
+            const timeout = window.setTimeout(() => finish(new Error('Portal connection timed out.')), 30000);
+        });
+        const popup = window.open('https://d2-group-system.web.app/portal-handoff.html', 'd2-project-portal', 'popup,width=560,height=650');
+        if (!popup) return Promise.reject(new Error('Allow the D2 Portal window and try again.'));
+        return new Promise((resolve, reject) => {
+            let done = false;
+            const finish = (error, token) => {
+                if (done) return;
+                done = true; clearInterval(send); clearTimeout(timeout); window.removeEventListener('message', receive);
+                try { popup.close(); } catch (_) {}
+                if (error) reject(error); else resolve(token);
+            };
+            const receive = event => {
+                if (event.origin !== 'https://d2-group-system.web.app' || event.source !== popup || event.data?.type !== 'd2-project-handoff-response' || event.data.nonce !== nonce) return;
+                if (event.data.company && event.data.company !== portalCompany) return finish(new Error('The selected company changed.'));
+                if (event.data.error) return finish(new Error(event.data.error));
+                if (typeof event.data.token !== 'string') return finish(new Error('Portal connection failed.'));
+                finish(null, event.data.token);
+            };
+            window.addEventListener('message', receive);
+            const request = { type: 'd2-project-handoff-request', nonce, company: portalCompany };
+            const send = window.setInterval(() => { if (popup.closed) return finish(new Error('Portal window was closed.')); popup.postMessage(request, 'https://d2-group-system.web.app'); }, 400);
+            const timeout = window.setTimeout(() => finish(new Error('Portal connection timed out.')), 30000);
+        });
+    }
+
+    async function portalSso(action) {
+        const portalToken = await requestPortalToken();
+        const pmToken = action === 'pair' ? await auth.currentUser?.getIdToken() : null;
+        const response = await fetch('/api/portal-sso', { method: 'POST', headers: { 'Content-Type': 'application/json', ...(pmToken ? { Authorization: `Bearer ${pmToken}` } : {}) }, body: JSON.stringify({ action, portalToken, company: portalCompany }), cache: 'no-store' });
+        const result = await response.json().catch(() => ({}));
+        if (!response.ok) throw new Error(result.error || 'Portal connection failed.');
+        if (action === 'pair') return result;
+        await signInWithCustomToken(auth, result.token);
+        clearTimeout(portalExpiryNotice);
+        portalExpiryNotice = window.setTimeout(() => {
+            if (portalEmbedded) portalSso('exchange').catch(() => {
+                document.documentElement.classList.remove('portal-ready');
+                document.getElementById('portal-boot-message').textContent = 'Your Portal session ended. Return to the workspace and open Projects again.';
+                document.getElementById('portal-boot-back').classList.remove('hidden');
+            });
+            else window.showModal('Portal session', 'This Projects connection expires soon. Return to the Portal workspace and open Projects again.', 'info');
+        }, 14 * 60 * 1000);
         return result;
     }
 
@@ -4500,6 +4592,7 @@
     };
 
     window.editP = (id) => {
+        if (state.portalBridge) return;
         const p = state.projects.find(x => x.id === id); if (!p) return;
         renderVendedores(); const vendSelect = document.getElementById('f-vendedor');
         if (p.vendedor && !Array.from(vendSelect.options).some(opt => opt.value === p.vendedor)) { vendSelect.innerHTML += `<option value="${p.vendedor}">${p.vendedor} (Cadastro Antigo)</option>`; }
@@ -6618,6 +6711,7 @@ function getSellerCommissionPeriodReport(projects, startStr, endStr) {
         return `<div class="v86-finished-stamp" aria-hidden="true"><span>${state.lang === 'pt' ? 'Finalizada' : 'Finished'}</span></div>`;
     }
     function v86ProjectActions(p){
+        if (state.portalBridge) return '';
         const archiveIcon=p.archived?'package-open':'archive';
         return `<div class="v86-actions" onclick="event.stopPropagation()"><button title="${p.archived?'Reativar':'Arquivar'}" onclick="window.toggleArchive('${p.id}',${!!p.archived})"><i data-lucide="${archiveIcon}" class="w-4 h-4"></i></button><button title="Editar" onclick="window.editP('${p.id}')"><i data-lucide="edit-3" class="w-4 h-4"></i></button>${state.isSuperAdmin?`<button title="Excluir" onclick="window.deleteP('${p.id}')"><i data-lucide="trash-2" class="w-4 h-4 text-red-400"></i></button>`:''}</div>`;
     }
@@ -6647,10 +6741,10 @@ function getSellerCommissionPeriodReport(projects, startStr, endStr) {
             : (closureIssues.length
                 ? `<div class="v86-closure-alert mb-4 flex items-center gap-3 rounded-xl border border-red-300/50 bg-red-500/[.12] px-4 py-3 text-sm font-bold text-red-200 animate-pulse"><i data-lucide="triangle-alert" class="w-4 h-4 shrink-0"></i><span>${state.lang==='pt'?'Pendência de encerramento:':'Closure pending action:'} ${escapeInlineHtml(closureIssues.join(' · '))}</span></div>`
                 : '');
-        const finishAction = canFinishProject(p)
+        const finishAction = !state.portalBridge && canFinishProject(p)
             ? `<button onclick="window.finishProject('${p.id}')" class="v86-btn primary"><i data-lucide="circle-check-big" class="w-4 h-4"></i>${lifecycle.hasLifecycleConflict ? (state.lang==='pt'?'Regularizar e finalizar':'Reconcile and finish') : (state.lang==='pt'?'Finalizar':'Finish')}</button>`
             : '';
-        return `${closureNotice}<div class="v86-head no-print"><div class="v86-head-left"><button class="v86-back" aria-label="${state.lang==='pt'?'Voltar':'Back'}" title="${state.lang==='pt'?'Voltar':'Back'}" onclick="${state.activeModule?'window.closeProjectModule()':'window.closeProjectDetails()'}"><span class="v86-back-glyph" aria-hidden="true">←</span></button><div class="v86-head-copy"><div class="flex flex-wrap items-center gap-3"><h1 class="v86-title">${escapeInlineHtml(getProjectPrimaryTitle(p))}</h1><span class="v86-status ${st.cls}"><i data-lucide="${st.cls==='success'?'check-circle-2':st.cls==='warning'?'clock-3':st.cls==='danger'?'shield-alert':'circle-dot'}" class="w-3.5 h-3.5"></i>${st.text}${completed?` · ${completed}`:''}</span></div>${moduleTitle?`<div class="v86-subtitle">${escapeInlineHtml(moduleTitle)}</div>`:''}${p.nomeProjeto?`<div class="v86-meta-line"><i data-lucide="bookmark" class="w-3.5 h-3.5 shrink-0"></i><span>${escapeInlineHtml(p.nomeProjeto)}</span></div>`:''}${p.endereco?`<div class="v86-meta-line"><i data-lucide="map-pin" class="w-3.5 h-3.5 shrink-0"></i><span>${escapeInlineHtml(p.endereco)}</span></div>`:''}</div></div><div class="flex flex-wrap justify-end gap-2">${finishAction}${canPrintProjectSheet()?`<button onclick="window.printReport()" class="v86-btn"><i data-lucide="printer" class="w-4 h-4"></i>${window.t('print_ficha')}</button>`:''}${state.userPerms.tab_proj||state.isSuperAdmin?`<button onclick="window.toggleArchive('${p.id}',${!!p.archived})" class="v86-btn"><i data-lucide="${p.archived?'package-open':'archive'}" class="w-4 h-4"></i>${state.lang==='pt'?(p.archived?'Reativar':'Arquivar'):(p.archived?'Restore':'Archive')}</button>`:''}${state.isSuperAdmin?`<button onclick="window.editP('${p.id}')" class="v86-btn"><i data-lucide="edit-3" class="w-4 h-4"></i>${state.lang==='pt'?'Editar':'Edit'}</button>`:''}</div></div>`;
+        return `${closureNotice}<div class="v86-head no-print"><div class="v86-head-left"><button class="v86-back" aria-label="${state.lang==='pt'?'Voltar':'Back'}" title="${state.lang==='pt'?'Voltar':'Back'}" onclick="${state.activeModule?'window.closeProjectModule()':'window.closeProjectDetails()'}"><span class="v86-back-glyph" aria-hidden="true">←</span></button><div class="v86-head-copy"><div class="flex flex-wrap items-center gap-3"><h1 class="v86-title">${escapeInlineHtml(getProjectPrimaryTitle(p))}</h1><span class="v86-status ${st.cls}"><i data-lucide="${st.cls==='success'?'check-circle-2':st.cls==='warning'?'clock-3':st.cls==='danger'?'shield-alert':'circle-dot'}" class="w-3.5 h-3.5"></i>${st.text}${completed?` · ${completed}`:''}</span></div>${moduleTitle?`<div class="v86-subtitle">${escapeInlineHtml(moduleTitle)}</div>`:''}${p.nomeProjeto?`<div class="v86-meta-line"><i data-lucide="bookmark" class="w-3.5 h-3.5 shrink-0"></i><span>${escapeInlineHtml(p.nomeProjeto)}</span></div>`:''}${p.endereco?`<div class="v86-meta-line"><i data-lucide="map-pin" class="w-3.5 h-3.5 shrink-0"></i><span>${escapeInlineHtml(p.endereco)}</span></div>`:''}</div></div><div class="flex flex-wrap justify-end gap-2">${finishAction}${canPrintProjectSheet()?`<button onclick="window.printReport()" class="v86-btn"><i data-lucide="printer" class="w-4 h-4"></i>${window.t('print_ficha')}</button>`:''}${!state.portalBridge && (state.userPerms.tab_proj||state.isSuperAdmin)?`<button onclick="window.toggleArchive('${p.id}',${!!p.archived})" class="v86-btn"><i data-lucide="${p.archived?'package-open':'archive'}" class="w-4 h-4"></i>${state.lang==='pt'?(p.archived?'Reativar':'Arquivar'):(p.archived?'Restore':'Archive')}</button>`:''}${state.isSuperAdmin?`<button onclick="window.editP('${p.id}')" class="v86-btn"><i data-lucide="edit-3" class="w-4 h-4"></i>${state.lang==='pt'?'Editar':'Edit'}</button>`:''}</div></div>`;
     }
     function v86ReceiptRows(p){
         const rows=(p.recebimentos||[]).slice().sort((a,b)=>String(a.data||'').localeCompare(String(b.data||''))).map(r=>{const method=getReceiptEffectiveMethod(r,p);const fee=getReceiptFee(r,p);const net=getReceiptNet(r,p);return `<tr><td>${r.data?new Date(r.data+'T12:00:00').toLocaleDateString(state.lang==='pt'?'pt-BR':'en-US'):'—'}</td><td><span class="v86-status info">${escapeInlineHtml(method||'—')}</span></td><td class="money">${formatCurr(r.valor)}</td><td class="money ${fee>0?'text-red-300':''}">${formatCurr(fee)}</td><td class="money text-emerald-300">${formatCurr(net)}</td><td><span class="v86-status success">${state.lang==='pt'?'Recebido':'Received'}</span></td></tr>`}).join('');
@@ -6963,7 +7057,9 @@ function getSellerCommissionPeriodReport(projects, startStr, endStr) {
         today.setHours(0, 0, 0, 0);
         const clientReceiptOverdue = pendingClientReceipt && lastReceiptDate && lastReceiptDate < today;
         const overdueDays = clientReceiptOverdue ? Math.floor((today - lastReceiptDate) / 86400000) : 0;
-        const commissionCard = pendingClientReceipt
+        const commissionCard = state.portalBridge
+            ? `<div class="v86-kpi"><span>${pendingClientReceipt ? (state.lang==='pt'?'Recebimento pendente':'Client receipt pending') : (state.lang==='pt'?'Pago ao vendedor':'Paid to seller')}</span><strong class="amber">${formatCurr(pendingClientReceipt ? f.clientOutstanding : f.totalPaid)}</strong></div>`
+            : pendingClientReceipt
             ? `<button type="button" onclick="window.openKpiFinancialEditor('${p.id}','receipts')" class="v86-kpi v86-payment-action balance-due-pulse text-left hover:bg-red-500/10 transition-colors"><span>${clientReceiptOverdue ? (state.lang==='pt'?'Recebimento em atraso':'Overdue client receipt') : (state.lang==='pt'?'Recebimento pendente':'Client receipt pending')}</span><strong class="red">${formatCurr(f.clientOutstanding)}</strong><small class="mt-2 block text-[10px] font-black uppercase tracking-widest text-red-300">${clientReceiptOverdue ? (state.lang==='pt' ? `Último recebimento há ${overdueDays} dia${overdueDays === 1 ? '' : 's'} · Clique para registrar` : `Last receipt ${overdueDays} day${overdueDays === 1 ? '' : 's'} ago · Click to record`) : (state.lang==='pt'?'Clique para registrar':'Click to record')}</small></button>`
             : canPayCommission
             ? `<button type="button" onclick="window.confirmCommissionPayment('${p.id}','due')" class="v86-kpi v86-payment-action balance-due-pulse text-left hover:bg-amber-500/10 transition-colors"><span>${state.lang==='pt'?'Comissão pendente':'Commission pending'}</span><strong class="amber">${formatCurr(commissionDue)}</strong><small class="mt-2 block text-[10px] font-black uppercase tracking-widest text-amber-300">${state.lang==='pt'?'Clique para pagar':'Click to pay'}</small></button>`
@@ -7510,17 +7606,51 @@ function getSellerCommissionPeriodReport(projects, startStr, endStr) {
         baseShowView(view);
     };
 
+    let portalAutoStarted = false;
+    let portalSessionOpening = false;
     onAuthStateChanged(auth, async (u) => {
+        if (portalEmbedded && portalSessionOpening) return;
+        if (portalEmbedded && !portalAutoStarted) {
+            portalAutoStarted = true;
+            portalSessionOpening = true;
+            try {
+                await portalSso('exchange');
+                u = auth.currentUser;
+            } catch (error) {
+                document.getElementById('portal-boot-message').textContent = error.message || 'Projects could not be opened.';
+                document.getElementById('portal-boot-back').classList.remove('hidden');
+                portalSessionOpening = false;
+                return;
+            }
+            portalSessionOpening = false;
+        }
         state.user = u;
         applyThemeConfig(); 
         if (u) {
             try {
+                const tokenClaims = (await u.getIdTokenResult()).claims;
+                if (portalBridgeAvailable && portalCompanyAllowed && tokenClaims.portal_bridge === true && tokenClaims.portal_company !== portalCompany) {
+                    await signOut(auth);
+                    return;
+                }
                 const session = await secureApi('session');
                 state.isSuperAdmin = session.superAdmin === true;
+                state.portalBridge = tokenClaims.portal_bridge === true;
+                if (portalBridgeAvailable && portalCompanyAllowed) {
+                    const portalButton = document.getElementById('portal-link-account');
+                    portalButton.textContent = state.portalBridge ? (state.lang === 'pt' ? 'Voltar ao Portal' : 'Back to Portal') : 'Link Portal';
+                    portalButton.title = portalButton.textContent;
+                    portalButton.setAttribute('aria-label', portalButton.textContent);
+                    document.getElementById('portal-back').style.display = state.portalBridge ? 'none' : 'inline-flex';
+                }
                 state.team = Array.isArray(session.team) ? session.team : [];
                 applySessionPermissions(session.permissions || {});
                 document.getElementById('auth-screen').classList.add('hidden');
                 document.getElementById('main-app').classList.remove('hidden');
+                if (portalEmbedded) {
+                    document.documentElement.classList.add('portal-ready');
+                    window.parent.postMessage({ type: 'd2-project-ready', company: portalCompany }, 'https://d2-group-system.web.app');
+                }
                 document.getElementById('user-display').innerText = getUserDisplayName(u.email, 'USR').toUpperCase();
                 renderTeamAdmin();
                 window.applyPermissions();
@@ -7529,10 +7659,22 @@ function getSellerCommissionPeriodReport(projects, startStr, endStr) {
                 void logAccess(u.email, 'Fez login no sistema');
             } catch (error) {
                 console.error('Sessão não autorizada:', error);
+                if (portalEmbedded) {
+                    document.getElementById('portal-boot-message').textContent = state.lang === 'pt' ? 'Acesso não autorizado. Volte ao início do Portal.' : 'Access denied. Return to the Portal workspace.';
+                    document.getElementById('portal-boot-back').classList.remove('hidden');
+                    document.documentElement.classList.remove('portal-ready');
+                }
                 showLoginError(state.lang === 'pt' ? 'Acesso não autorizado para este usuário.' : 'This user is not authorized.');
                 await signOut(auth);
             }
         } else {
+            state.portalBridge = false;
+            if (portalEmbedded) {
+                document.documentElement.classList.remove('portal-ready');
+                document.getElementById('portal-boot-message').textContent = 'Your Portal session ended. Return to the workspace and open Projects again.';
+                document.getElementById('portal-boot-back').classList.remove('hidden');
+                return;
+            }
             document.getElementById('auth-screen').classList.remove('hidden'); document.getElementById('main-app').classList.add('hidden'); document.body.className = 'auth-body';
         }
         window.setLang(state.lang); try { lucide.createIcons(); } catch {}
@@ -7630,6 +7772,13 @@ function getSellerCommissionPeriodReport(projects, startStr, endStr) {
 
     document.addEventListener('DOMContentLoaded', () => {
         try { lucide.createIcons(); } catch {}
+
+        const portalSignIn = document.getElementById('portal-signin');
+        const portalLink = document.getElementById('portal-link-account');
+        portalSignIn.style.display = portalBridgeAvailable && portalCompanyAllowed ? '' : 'none';
+        portalLink.style.display = portalBridgeAvailable && portalCompanyAllowed ? '' : 'none';
+        portalSignIn.onclick = async () => { portalSignIn.disabled = true; hideLoginMessages(); try { await portalSso('exchange'); } catch (error) { showLoginError(error.message); } finally { portalSignIn.disabled = false; } };
+        portalLink.onclick = async () => { const claims = (await auth.currentUser.getIdTokenResult()).claims; if (claims.portal_bridge === true) { location.assign('https://d2-group-system.web.app/workspace.html'); return; } portalLink.disabled = true; try { await portalSso('pair'); window.showModal('D2 Portal', 'Projects is linked to your D2 Portal account. Future visits can use Continue from D2 Portal.', 'info'); } catch (error) { window.showModal('D2 Portal', error.message, 'error'); } finally { portalLink.disabled = false; } };
 
         document.getElementById('login-form').onsubmit = async (e) => {
             e.preventDefault(); hideLoginMessages(); const btn = document.getElementById('btn-entrar'); btn.disabled = true;

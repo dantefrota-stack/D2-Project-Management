@@ -10,7 +10,16 @@ service cloud.firestore {
     }
 
     function hasAccess() {
-      return signedIn() && exists(accessPath()) && get(accessPath()).data.active == true;
+      return signedIn() && exists(accessPath()) && get(accessPath()).data.active == true
+        && (!portalBridge() || request.time < timestamp.value(request.auth.token.get('portal_until', 0) * 1000));
+    }
+
+    function portalBridge() {
+      return signedIn() && request.auth.token.get('portal_bridge', false) == true;
+    }
+
+    function portalAction(action) {
+      return !portalBridge() || action in request.auth.token.get('portal_actions', []);
     }
 
     function access() {
@@ -18,18 +27,19 @@ service cloud.firestore {
     }
 
     function isSuperAdmin() {
-      return hasAccess() && access().superAdmin == true;
+      return hasAccess() && !portalBridge() && access().superAdmin == true;
     }
 
     function companyAllowed(company) {
-      return isSuperAdmin()
-        || (company == 'HVAC' && access().p_hvac == true)
-        || (company == 'Smart Home' && access().p_smart == true);
+      return (!portalBridge() || (company == 'HVAC' && request.auth.token.portal_company == 'hvac') || (company == 'Smart Home' && request.auth.token.portal_company == 'smart'))
+        && (isSuperAdmin()
+          || (company == 'HVAC' && access().p_hvac == true)
+          || (company == 'Smart Home' && access().p_smart == true));
     }
 
     function projectReadable(data) {
       return companyAllowed(data.empresa)
-        && (isSuperAdmin() || access().p_global == true || data.vendedor == request.auth.token.email);
+        && (isSuperAdmin() || (access().p_global == true && (!portalBridge() || request.auth.token.portal_scope == 'company')) || data.vendedor == request.auth.token.email);
     }
 
     function contractorCompanyAllowed(data) {
@@ -50,29 +60,29 @@ service cloud.firestore {
     }
 
     match /artifacts/d2-Project-Management/public/data/projects/{projectId} {
-      allow read: if hasAccess() && projectReadable(resource.data);
-      allow create: if hasAccess() && access().p_tab_new == true && projectReadable(request.resource.data);
+      allow read: if hasAccess() && access().p_tab_proj == true && portalAction('read') && projectReadable(resource.data);
+      allow create: if hasAccess() && portalAction('create') && access().p_tab_new == true && projectReadable(request.resource.data);
       allow update: if hasAccess() && projectReadable(resource.data) && projectReadable(request.resource.data)
-        && (isSuperAdmin() || access().p_tab_new == true || access().p_fin == true || access().p_costs == true);
+        && portalAction('edit') && (isSuperAdmin() || access().p_tab_new == true || access().p_fin == true || access().p_costs == true);
       allow delete: if isSuperAdmin();
     }
 
     match /artifacts/d2-Project-Management/public/data/contractors/{contractorId} {
-      allow read: if hasAccess() && access().p_contractors == true && contractorCompanyAllowed(resource.data);
-      allow create: if hasAccess() && access().p_contractors == true && contractorCompanyAllowed(request.resource.data);
-      allow update: if hasAccess() && access().p_contractors == true && contractorCompanyAllowed(resource.data) && contractorCompanyAllowed(request.resource.data);
+      allow read: if hasAccess() && !portalBridge() && access().p_contractors == true && contractorCompanyAllowed(resource.data);
+      allow create: if hasAccess() && !portalBridge() && access().p_contractors == true && contractorCompanyAllowed(request.resource.data);
+      allow update: if hasAccess() && !portalBridge() && access().p_contractors == true && contractorCompanyAllowed(resource.data) && contractorCompanyAllowed(request.resource.data);
       allow delete: if isSuperAdmin();
     }
 
     match /artifacts/d2-Project-Management/public/data/contractor_payments/{paymentId} {
-      allow read: if hasAccess() && access().p_contractors == true && companyAllowed(resource.data.company);
-      allow create: if hasAccess() && access().p_contractors == true && companyAllowed(request.resource.data.company);
-      allow update: if hasAccess() && access().p_contractors == true && companyAllowed(resource.data.company) && companyAllowed(request.resource.data.company);
-      allow delete: if hasAccess() && access().p_contractors == true && companyAllowed(resource.data.company);
+      allow read: if hasAccess() && !portalBridge() && access().p_contractors == true && companyAllowed(resource.data.company);
+      allow create: if hasAccess() && !portalBridge() && access().p_contractors == true && companyAllowed(request.resource.data.company);
+      allow update: if hasAccess() && !portalBridge() && access().p_contractors == true && companyAllowed(resource.data.company) && companyAllowed(request.resource.data.company);
+      allow delete: if hasAccess() && !portalBridge() && access().p_contractors == true && companyAllowed(resource.data.company);
     }
 
     match /artifacts/d2-Project-Management/public/data/contractor_document_requests/{requestId} {
-      allow read: if hasAccess() && access().p_contractors == true && companyAllowed(resource.data.company);
+      allow read: if hasAccess() && !portalBridge() && access().p_contractors == true && companyAllowed(resource.data.company);
       allow write: if false;
     }
 

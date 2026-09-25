@@ -6,8 +6,9 @@ const {getStorage} = require('firebase-admin/storage');
 const {getAuth} = require('firebase-admin/auth');
 const Busboy = require('busboy');
 const crypto = require('crypto');
+const {createPortalSso,intersectPermissions}=require('./portal-sso');
 
-initializeApp({storageBucket: 'd2-project-management.firebasestorage.app'});
+initializeApp({storageBucket: 'd2-project-management.firebasestorage.app',serviceAccountId:'254630664761-compute@developer.gserviceaccount.com'});
 
 const db = getFirestore();
 const bucket = getStorage().bucket();
@@ -125,15 +126,18 @@ async function normalizeLegacyContractors() {
 async function authenticatedContext(req) {
   const header = String(req.headers.authorization || '');
   if (!header.startsWith('Bearer ')) throw Object.assign(new Error('Authentication required.'), {status: 401});
-  const decoded = await auth.verifyIdToken(header.slice(7));
+  const decoded = await auth.verifyIdToken(header.slice(7),true);
+  if(decoded.portal_bridge===true && (!['smart','hvac'].includes(decoded.portal_company) || !Array.isArray(decoded.portal_actions) || !decoded.portal_actions.includes('read') || Number(decoded.portal_until||0)<=Date.now()/1000))throw Object.assign(new Error('Portal connection expired. Reconnect from the Portal.'),{status:401});
   const email = String(decoded.email || '').toLowerCase();
-  const superAdmin = isSuperAdminEmail(email);
+  const ownerRecord=isSuperAdminEmail(email);
+  const superAdmin=ownerRecord && decoded.portal_bridge!==true;
   const profileDoc = await profileByEmail(email);
-  if (!superAdmin && !profileDoc) throw Object.assign(new Error('User is not authorized for this system.'), {status: 403});
+  if (!ownerRecord && !profileDoc) throw Object.assign(new Error('User is not authorized for this system.'), {status: 403});
   const userRecord = await auth.getUser(decoded.uid);
   if (userRecord.disabled) throw Object.assign(new Error('User is disabled.'), {status: 403});
   const profile = profileDoc?.data() || {};
-  const access = await writeAccess(userRecord, profile, superAdmin);
+  const access = intersectPermissions(await writeAccess(userRecord, profile, ownerRecord),decoded);
+  if(decoded.portal_bridge===true && !access.p_tab_proj)throw Object.assign(new Error('Projects access is not authorized for this company.'),{status:403});
   return {decoded, email, superAdmin, profileDoc, profile, access, userRecord};
 }
 
@@ -318,13 +322,21 @@ async function createSecureRequest(context, body) {
   return {ok: true, token: rawToken, requestId: requestRef.id, contractorId};
 }
 
+exports.portalSso = onRequest({region:'us-east1',cors:CORS_ORIGINS,invoker:'public',timeoutSeconds:30,memory:'256MiB'},createPortalSso({auth,db,getPmContext:authenticatedContext,getPmProfile:profileByEmail,
+  getPortalSession:async token=>{
+    const response=await fetch('https://d2-group-system.web.app/api/workspace',{headers:{Authorization:`Bearer ${token}`},signal:AbortSignal.timeout(10000)});
+    if(!response.ok)throw Object.assign(new Error('Portal session is unavailable.'),{status:response.status===401?401:403});
+    return response.json();
+  }
+}));
+
 exports.adminApi = onRequest({region: 'us-east1', cors: CORS_ORIGINS, invoker: 'public', timeoutSeconds: 60, memory: '512MiB'}, async (req, res) => {
   try {
     if (req.method !== 'POST') return res.status(405).json({error: 'Method not allowed.'});
     const context = await authenticatedContext(req); const action = cleanText(req.body?.action, 80);
     if (action === 'session') {
       if (context.superAdmin) { await sanitizeAndSynchronizeAllUsers(); await normalizeLegacyContractors(); }
-      return res.json({ok: true, superAdmin: context.superAdmin, permissions: normalizePermissions(context.profile, context.superAdmin), team: await listSanitizedTeam()});
+      return res.json({ok: true, superAdmin: context.superAdmin, permissions: normalizePermissions(context.access, false), team: context.decoded.portal_bridge===true ? [] : await listSanitizedTeam()});
     }
     if (action === 'audit') { await auditLog(context, req.body.actionText, req.body.meta); return res.json({ok: true}); }
     if (action === 'clearAudit') {
