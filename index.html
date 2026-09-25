@@ -2892,7 +2892,7 @@
     function formatProjectDate(dateStr) {
         if (!dateStr) return '-';
         try {
-            return new Date(String(dateStr) + 'T12:00:00').toLocaleDateString(state.lang === 'pt' ? 'pt-BR' : 'en-US');
+            return new Date(String(dateStr) + 'T12:00:00').toLocaleDateString(state.lang === 'pt' ? 'pt-BR' : state.lang === 'es' ? 'es-ES' : 'en-US');
         } catch (_) {
             return dateStr;
         }
@@ -2907,7 +2907,7 @@
                 ? createdAt
                 : (typeof createdAt === 'string' || typeof createdAt === 'number' ? new Date(createdAt) : null);
         return date && !Number.isNaN(date.getTime())
-            ? date.toLocaleDateString(state.lang === 'pt' ? 'pt-BR' : 'en-US')
+            ? date.toLocaleDateString(state.lang === 'pt' ? 'pt-BR' : state.lang === 'es' ? 'es-ES' : 'en-US')
             : '—';
     }
 
@@ -6716,13 +6716,13 @@ function getSellerCommissionPeriodReport(projects, startStr, endStr) {
     }
     function v86StatusInfo(p) {
         const lifecycle = getProjectLifecycleState(p);
-        if (lifecycle.isCanceled) return {text: state.lang==='pt'?'Cancelada / não realizada':'Canceled / not performed', cls:'warning'};
-        if (lifecycle.hasLifecycleConflict) return {text: state.lang==='pt'?'Regularização necessária':'Reconciliation required', cls:'danger'};
-        if (p?.status === 'Finalizado') return {text: p?.archived ? (state.lang==='pt'?'Finalizada · Arquivada':'Completed · Archived') : (state.lang==='pt'?'Finalizada':'Completed'), cls:'success'};
-        if (p?.archived) return {text: state.lang==='pt'?'Regularização necessária':'Reconciliation required', cls:'danger'};
-        if (p?.status === 'Em Execução') return {text: state.lang==='pt'?'Em execução':'In progress', cls:'info'};
-        if (p?.status === 'Aguardando Início') return {text: state.lang==='pt'?'Aguardando início':'Waiting', cls:'warning'};
-        if (String(p?.status||'').includes('Aprovado')) return {text: state.lang==='pt'?'Aguardando início':'Awaiting start', cls:'warning'};
+        if (lifecycle.isCanceled) return {text: loc('Cancelada / não realizada','Canceled / not performed','Cancelado / no realizado'), cls:'warning'};
+        if (lifecycle.hasLifecycleConflict) return {text: loc('Regularização necessária','Reconciliation required','Revisión necesaria'), cls:'danger'};
+        if (p?.status === 'Finalizado') return {text: p?.archived ? loc('Finalizada · Arquivada','Completed · Archived','Finalizado · Archivado') : loc('Finalizada','Completed','Finalizado'), cls:'success'};
+        if (p?.archived) return {text: loc('Regularização necessária','Reconciliation required','Revisión necesaria'), cls:'danger'};
+        if (p?.status === 'Em Execução') return {text: loc('Em execução','In progress','En ejecución'), cls:'info'};
+        if (p?.status === 'Aguardando Início') return {text: loc('Aguardando início','Waiting','Pendiente de inicio'), cls:'warning'};
+        if (String(p?.status||'').includes('Aprovado')) return {text: loc('Aguardando início','Awaiting start','Pendiente de inicio'), cls:'warning'};
         return {text: escapeInlineHtml(tStatus(p?.status||'—')), cls:''};
     }
     function v86ProjectDateLabel(p){ return formatProjectDate(p?.dataConclusao || p?.dataInicio || '') || '—'; }
@@ -7127,6 +7127,23 @@ function getSellerCommissionPeriodReport(projects, startStr, endStr) {
             if (!metric || receivable === null) return;
             metric.innerHTML = `<span class="v86-label">${state.lang === 'pt' ? 'A receber' : 'Client outstanding'}</span><strong style="color:${receivable > 0.009 ? 'var(--v86-red)' : 'var(--v86-green)'}">${formatCurr(receivable)}</strong>`;
         });
+        if (state.lang === 'es') {
+            const labels = {
+                'Seller':'Vendedor', 'Invoice / Proposta':'Factura / Propuesta',
+                'Gross contract value':'Importe bruto del contrato',
+                'Client outstanding':'Saldo pendiente', 'Archived':'Archivado'
+            };
+            document.querySelectorAll('#projects-grid .v86-project-card').forEach(card => {
+                card.querySelectorAll('.v86-label, .v86-project-footer > span').forEach(label => {
+                    const translated = labels[label.textContent.trim()];
+                    if (translated) label.textContent = translated;
+                });
+                card.querySelectorAll('.v86-project-date').forEach(date => {
+                    const text = [...date.childNodes].find(node => node.nodeType === Node.TEXT_NODE);
+                    if (text) text.nodeValue = text.nodeValue.replace('Updated','Actualizado').replace('Created','Registrado');
+                });
+            });
+        }
     };
     window.renderReport = () => {
         const out=document.getElementById('report-output'); if(!out||!state.user)return; ensureReportPeriod();
