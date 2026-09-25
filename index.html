@@ -1021,7 +1021,7 @@
 .v86-back-glyph{display:block;color:currentColor;font-size:25px;font-weight:700;line-height:1;transform:translateY(-1px)}
 
 </style>
-<style>html.portal-embedded #auth-screen{display:none!important}html.portal-embedded #portal-boot{display:flex!important}html.portal-embedded.portal-ready #portal-boot{display:none!important}html.portal-embedded #portal-back,html.portal-embedded #portal-boot-back,html.portal-embedded #portal-link-account,html.portal-embedded .c2-brand-wrap,html.portal-embedded .c2-logout{display:none!important}</style>
+<style>html.portal-embedded #auth-screen{display:none!important}html.portal-embedded #portal-boot{display:flex!important}html.portal-embedded.portal-ready #portal-boot{display:none!important}html.portal-embedded #portal-back,html.portal-embedded #portal-boot-back,html.portal-embedded #portal-link-account,html.portal-embedded .c2-brand-wrap,html.portal-embedded .c2-logout,html.portal-embedded #dashboard-language-switcher,html.portal-embedded #theme-toggle{display:none!important}</style>
 <script>if(new URLSearchParams(location.search).get('embed')==='1'&&window.parent!==window)document.documentElement.classList.add('portal-embedded');</script>
 </head>
 <body class="auth-body">
@@ -1222,8 +1222,9 @@
                 <div id="dashboard-language-switcher" class="dashboard-language-switcher hidden" aria-label="Selecionar idioma">
                     <button type="button" onclick="window.setLang('en')" class="dashboard-language-option" data-dashboard-language="en" title="English (United States)" aria-label="English (United States)"><img src="https://flagcdn.com/w80/us.png" alt="United States"></button>
                     <button type="button" onclick="window.setLang('pt')" class="dashboard-language-option" data-dashboard-language="pt" title="Português (Brasil)" aria-label="Português (Brasil)"><img src="https://flagcdn.com/w80/br.png" alt="Brasil"></button>
+                    <button type="button" onclick="window.setLang('es')" class="dashboard-language-option" data-dashboard-language="es" title="Español (España)" aria-label="Español (España)"><img src="https://flagcdn.com/w80/es.png" alt="España"></button>
                 </div>
-                <button onclick="window.toggleTheme()" class="c2-icon-btn" aria-label="Alternar tema"><i data-lucide="sun" id="theme-icon-light" class="hidden"></i><i data-lucide="moon" id="theme-icon-dark"></i></button>
+                <button id="theme-toggle" onclick="window.toggleTheme()" class="c2-icon-btn" aria-label="Alternar tema"><i data-lucide="sun" id="theme-icon-light" class="hidden"></i><i data-lucide="moon" id="theme-icon-dark"></i></button>
                 <div class="c2-user hidden md:flex">
                     <div class="c2-avatar" id="c2-user-avatar">D2</div>
                     <div class="c2-user-copy">
@@ -1424,9 +1425,9 @@
     const savedLanguage = (() => {
         try {
             const requested = new URLSearchParams(window.location.search).get('lang');
-            if (requested === 'en' || requested === 'pt') return requested;
+            if (['en', 'pt', 'es'].includes(requested)) return requested;
             const value = localStorage.getItem(LANGUAGE_STORAGE_KEY);
-            return value === 'en' || value === 'pt' ? value : 'en';
+            return ['en', 'pt', 'es'].includes(value) ? value : 'en';
         } catch (_) {
             return 'en';
         }
@@ -1574,7 +1575,36 @@
         }
     };
     
-    window.t = (key) => translations[state.lang]?.[key] || key;
+    translations.es = {
+        nav_proj:'Proyectos', nav_new:'Nueva obra', nav_rep:'Informes', nav_users:'Equipo', nav_logs:'Registros',
+        admin_panel:'Gestión corporativa', project_search_label:'Búsqueda rápida', project_search_placeholder:'Buscar por cliente, proyecto, dirección, factura, propuesta o importe',
+        filter_both:'AMBAS', filter_active:'ACTIVOS', filter_archived:'ARCHIVADOS', filter_all:'TODOS',
+        project_filter_seller:'Filtrar por vendedor', project_filter_all_sellers:'Todos los vendedores',
+        report_filter_seller:'Vendedor del informe', report_filter_all_sellers:'Todos los vendedores',
+        page_projects_eyebrow:'Cartera de proyectos', page_projects_title:'Proyectos',
+        page_projects_subtitle:'Consulta el estado, los contratos, los márgenes y el rendimiento en un solo lugar.',
+        unit_business:'Unidad de negocio', filters_realtime:'Los filtros se aplican al instante',
+        page_new_eyebrow:'Registro de proyecto', page_new_subtitle:'Registra los datos, las finanzas y el calendario del proyecto.',
+        back_to_projects:'Volver', section_identification:'Identificación', section_project_details:'Datos del proyecto',
+        section_financial:'Finanzas', section_contract_commission:'Contrato y comisión', section_schedule:'Calendario',
+        section_project_dates:'Fechas del proyecto', optional:'Opcional',
+        page_team_eyebrow:'Administración', page_team_title:'Equipo', page_team_subtitle:'Gestiona usuarios, visibilidad y permisos.',
+        page_logs_eyebrow:'Auditoría', page_logs_title:'Registro de auditoría', page_logs_subtitle:'Consulta las acciones y los cambios registrados.',
+        login_title:'D2 Project Management', lbl_email:'Correo electrónico', lbl_pass:'Contraseña', btn_login:'Acceder',
+        f_prop:'N.º de propuesta', f_inv:'N.º de factura', f_unit:'Empresa responsable', f_client:'Cliente',
+        f_project_name:'Nombre del proyecto', f_address:'Dirección de la obra', f_seller:'Vendedor',
+        f_gross:'Importe bruto del contrato', f_budget:'Presupuesto de costes', f_comm_perc:'% de comisión',
+        f_pay_method:'Forma de pago prevista', f_start:'Inicio', f_end:'Entrega', f_status:'Estado',
+        btn_save:'Guardar', btn_cancel:'Cancelar', cancel:'Cancelar', confirm:'Confirmar', close:'Cerrar',
+        team_name:'Nombre del vendedor', team_email:'Correo electrónico', team_pass:'Contraseña',
+        seller:'Vendedor', status_obra:'Estado de la obra', client:'Cliente', commission:'Comisión',
+        status_wait:'Pendiente de inicio', status_exec:'En ejecución', status_fin:'Finalizado',
+        no_projects:'No se encontraron proyectos activos.', search:'Buscar', clear_filters:'Borrar filtros',
+        records:'Registros', user:'Usuario', back:'Volver', print_ficha:'Imprimir ficha', print_view:'Imprimir vista',
+        attention:'Atención', error:'Error', understood:'Entendido'
+    };
+    window.t = (key) => translations[state.lang]?.[key] || translations.en[key] || key;
+    const loc = (pt, en, es) => state.lang === 'pt' ? pt : state.lang === 'es' ? es : en;
 
     const tStatus = (s) => {
         if(s === '✅ Aprovado') return window.t('status_wait');
@@ -1616,22 +1646,22 @@
     };
 
     window.setLang = (l) => { 
-        const language = l === 'en' ? 'en' : 'pt';
+        const language = ['en', 'pt', 'es'].includes(l) ? l : 'en';
         state.lang = language;
-        try { localStorage.setItem(LANGUAGE_STORAGE_KEY, language); } catch (_) {}
+        if (!portalEmbedded) try { localStorage.setItem(LANGUAGE_STORAGE_KEY, language); } catch (_) {}
         const url = new URL(window.location.href);
         if (url.searchParams.has('lang') && url.searchParams.get('lang') !== language) {
             url.searchParams.set('lang', language);
             window.history.replaceState(window.history.state, '', url);
         }
-        document.documentElement.lang = language === 'pt' ? 'pt-BR' : 'en';
-        const portalBackText = language === 'pt' ? 'Voltar ao Portal' : 'Back to Portal';
+        document.documentElement.lang = language === 'pt' ? 'pt-BR' : language === 'es' ? 'es-ES' : 'en';
+        const portalBackText = language === 'pt' ? 'Voltar ao Portal' : language === 'es' ? 'Volver al Portal' : 'Back to Portal';
         document.getElementById('portal-back-label').textContent = portalBackText;
         document.getElementById('auth-portal-back').textContent = `← ${portalBackText}`;
         document.getElementById('portal-boot-back').textContent = `← ${portalBackText}`;
         if (state.portalBridge) {
             const portalButton = document.getElementById('portal-link-account');
-            portalButton.textContent = language === 'pt' ? 'Voltar ao Portal' : 'Back to Portal';
+            portalButton.textContent = portalBackText;
             portalButton.title = portalButton.textContent;
             portalButton.setAttribute('aria-label', portalButton.textContent);
         }
@@ -1639,14 +1669,14 @@
         document.querySelectorAll('[data-dashboard-language]').forEach(b => b.classList.toggle('active', b.dataset.dashboardLanguage === language));
         document.querySelectorAll('[data-i18n]').forEach(el => {
             const key = el.getAttribute('data-i18n');
-            if (translations[language] && translations[language][key]) {
-                if (el.tagName === 'INPUT' && el.type === 'button') el.value = translations[language][key];
-                else el.innerText = translations[language][key];
+            if (window.t(key) !== key) {
+                if (el.tagName === 'INPUT' && el.type === 'button') el.value = window.t(key);
+                else el.innerText = window.t(key);
             }
         });
         document.querySelectorAll('[data-i18n-placeholder]').forEach(el => {
             const key = el.getAttribute('data-i18n-placeholder');
-            if (translations[language] && translations[language][key]) el.setAttribute('placeholder', translations[language][key]);
+            if (window.t(key) !== key) el.setAttribute('placeholder', window.t(key));
         });
         window.updateDashboardLanguageSwitcher();
         if (typeof window.renderProjectSellerFilter === 'function') window.renderProjectSellerFilter();
@@ -1909,7 +1939,8 @@
     };
 
     function applyThemeConfig() {
-        state.theme = localStorage.getItem('d2_theme') || 'dark';
+        const requestedTheme = new URLSearchParams(window.location.search).get('theme');
+        state.theme = portalEmbedded ? (requestedTheme === 'dark' ? 'dark' : 'light') : (localStorage.getItem('d2_theme') || 'dark');
         const appDiv = document.getElementById('main-app');
         if (state.theme === 'dark') {
             document.body.className = 'app-body-dark';
@@ -2032,6 +2063,7 @@
     });
 
     window.toggleTheme = () => {
+        if (portalEmbedded) return;
         state.theme = state.theme === 'dark' ? 'light' : 'dark';
         localStorage.setItem('d2_theme', state.theme);
         applyThemeConfig();
@@ -5503,10 +5535,10 @@
             if (!isFocused) {
                 const dueLabel = p.status === 'Finalizado' ? formatProjectDate(p.dataConclusao) : (scheduleAlert.isLate ? window.t('late') : (scheduleAlert.isDueSoon ? window.t('timeline_due_soon') : tStatus(p.status)));
                 const statusClass = p.archived ? '' : (p.status === 'Finalizado' || p.status === '✅ Aprovado' ? 'success' : (scheduleAlert.isLate ? 'danger' : 'warning'));
-                const statusLabel = p.archived ? (state.lang === 'pt' ? 'Arquivada' : 'Archived') : (p.status === 'Finalizado' ? (state.lang === 'pt' ? 'Finalizada' : 'Completed') : tStatus(p.status).replace('✅ ',''));
+                const statusLabel = p.archived ? loc('Arquivada','Archived','Archivado') : (p.status === 'Finalizado' ? loc('Finalizada','Completed','Finalizado') : tStatus(p.status).replace('✅ ',''));
                 const marginLow = f.margemLucro < 45;
                 const projectReference = escapeInlineHtml(p.nomeProjeto || (p.empresa === 'HVAC' ? 'HVAC' : 'Smart Home'));
-                const address = escapeInlineHtml(p.endereco || (state.lang === 'pt' ? 'Endereço não cadastrado' : 'Address not registered'));
+                const address = escapeInlineHtml(p.endereco || loc('Endereço não cadastrado','Address not registered','Dirección no registrada'));
                 const sellerName = escapeInlineHtml(getUserDisplayName(p.vendedor, '—'));
                 const proposalRef = `${escapeInlineHtml(p.numeroInvoice || '—')} / ${escapeInlineHtml(p.numeroProposta || '—')}`;
                 const updateDate = formatProjectDate(p.dataConclusao || p.dataInicio) || '—';
@@ -5521,15 +5553,15 @@
                         </div>
                         <div class="c2-project-address"><i data-lucide="map-pin" class="w-4 h-4 shrink-0 mt-0.5"></i><span>${address}</span></div>
                         <div class="c2-project-meta">
-                            <div><label>${state.lang === 'pt' ? 'Vendedor' : 'Seller'}</label><strong>${sellerName}</strong></div>
-                            <div><label>${state.lang === 'pt' ? 'Invoice / Proposta' : 'Invoice / Proposal'}</label><strong>${proposalRef}</strong></div>
+                            <div><label>${loc('Vendedor','Seller','Vendedor')}</label><strong>${sellerName}</strong></div>
+                            <div><label>${loc('Invoice / Proposta','Invoice / Proposal','Factura / Propuesta')}</label><strong>${proposalRef}</strong></div>
                         </div>
                         <div class="c2-project-fin">
-                            <div><label>${state.lang === 'pt' ? 'Valor do contrato' : 'Contract value'}</label><strong>${formatCurr(p.valorTotal)}</strong></div>
-                            <div><label>${state.lang === 'pt' ? 'Margem da obra' : 'Project margin'}</label><strong class="${marginLow ? 'margin-low' : ''}">${f.margemLucro.toFixed(1)}%</strong></div>
+                            <div><label>${loc('Valor do contrato','Contract value','Importe del contrato')}</label><strong>${formatCurr(p.valorTotal)}</strong></div>
+                            <div><label>${loc('Margem da obra','Project margin','Margen del proyecto')}</label><strong class="${marginLow ? 'margin-low' : ''}">${f.margemLucro.toFixed(1)}%</strong></div>
                         </div>
                         <div class="c2-project-footer">
-                            <div><label>${p.status === 'Finalizado' ? (state.lang === 'pt' ? 'Finalização' : 'Completion') : (state.lang === 'pt' ? 'Referência' : 'Reference')}</label><div class="c2-project-update">${p.status === 'Finalizado' ? updateDate : dueLabel}</div></div>
+                            <div><label>${p.status === 'Finalizado' ? loc('Finalização','Completion','Finalización') : loc('Referência','Reference','Referencia')}</label><div class="c2-project-update">${p.status === 'Finalizado' ? updateDate : dueLabel}</div></div>
                             <div class="c2-row-actions no-print" onclick="event.stopPropagation()">${actionButtons}</div>
                         </div>
                     </article>`;
@@ -7638,7 +7670,7 @@ function getSellerCommissionPeriodReport(projects, startStr, endStr) {
                 state.portalBridge = tokenClaims.portal_bridge === true;
                 if (portalBridgeAvailable && portalCompanyAllowed) {
                     const portalButton = document.getElementById('portal-link-account');
-                    portalButton.textContent = state.portalBridge ? (state.lang === 'pt' ? 'Voltar ao Portal' : 'Back to Portal') : 'Link Portal';
+                    portalButton.textContent = state.portalBridge ? (state.lang === 'pt' ? 'Voltar ao Portal' : state.lang === 'es' ? 'Volver al Portal' : 'Back to Portal') : 'Link Portal';
                     portalButton.title = portalButton.textContent;
                     portalButton.setAttribute('aria-label', portalButton.textContent);
                     document.getElementById('portal-back').style.display = state.portalBridge ? 'none' : 'inline-flex';
