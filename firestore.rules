@@ -38,7 +38,7 @@ service cloud.firestore {
     }
 
     function projectReadable(data) {
-      return companyAllowed(data.empresa)
+      return (!portalBridge() || portalAction('read_cost')) && companyAllowed(data.empresa)
         && (isSuperAdmin() || (access().p_global == true && (!portalBridge() || request.auth.token.portal_scope == 'company')) || data.vendedor == request.auth.token.email);
     }
 
