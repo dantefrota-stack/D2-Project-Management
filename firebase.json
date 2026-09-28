@@ -25,6 +25,11 @@
       ".idea/**",
       "functions/**",
       "tests/**",
+      "rules-tests/**",
+      "scripts/**",
+      "package*.json",
+      "firebase.*.json",
+      "**/*.md",
       "firestore.rules",
       "storage.rules",
       "**/node_modules/**",
@@ -73,6 +78,10 @@
         "headers": [
           { "key": "Cache-Control", "value": "no-cache, no-store, must-revalidate" }
         ]
+      },
+      {
+        "source": "**/*.mjs",
+        "headers": [{ "key": "Cache-Control", "value": "no-cache" }]
       },
       {
         "source": "/",

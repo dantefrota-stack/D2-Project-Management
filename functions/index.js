@@ -6,7 +6,8 @@ const {getStorage} = require('firebase-admin/storage');
 const {getAuth} = require('firebase-admin/auth');
 const Busboy = require('busboy');
 const crypto = require('crypto');
-const {createPortalSso,intersectPermissions}=require('./portal-sso');
+const {createPortalSso,intersectPermissions,assertPortalLease}=require('./portal-sso');
+const {isPrimaryOwner}=require('./identity-policy');
 
 initializeApp({storageBucket: 'd2-project-management.firebasestorage.app',serviceAccountId:'254630664761-compute@developer.gserviceaccount.com'});
 
@@ -94,7 +95,7 @@ async function sanitizeAndSynchronizeAllUsers() {
     for (const userRecord of page.users) {
       const email = String(userRecord.email || '').toLowerCase();
       const profileDoc = byEmail.get(email);
-      const superAdmin = isSuperAdminEmail(email);
+      const superAdmin = isPrimaryOwner(userRecord);
       if (profileDoc || superAdmin) {
         const permissions = normalizePermissions(profileDoc?.data() || {}, superAdmin);
         batch.set(db.doc(`${ACCESS}/${userRecord.uid}`), {
@@ -127,9 +128,9 @@ async function authenticatedContext(req) {
   const header = String(req.headers.authorization || '');
   if (!header.startsWith('Bearer ')) throw Object.assign(new Error('Authentication required.'), {status: 401});
   const decoded = await auth.verifyIdToken(header.slice(7),true);
-  if(decoded.portal_bridge===true && (!['smart','hvac'].includes(decoded.portal_company) || !Array.isArray(decoded.portal_actions) || !decoded.portal_actions.includes('read') || Number(decoded.portal_until||0)<=Date.now()/1000))throw Object.assign(new Error('Portal connection expired. Reconnect from the Portal.'),{status:401});
+  assertPortalLease(decoded);
   const email = String(decoded.email || '').toLowerCase();
-  const ownerRecord=isSuperAdminEmail(email);
+  const ownerRecord=isPrimaryOwner(decoded);
   const superAdmin=ownerRecord && decoded.portal_bridge!==true;
   const profileDoc = await profileByEmail(email);
   if (!ownerRecord && !profileDoc) throw Object.assign(new Error('User is not authorized for this system.'), {status: 403});
@@ -336,7 +337,17 @@ exports.adminApi = onRequest({region: 'us-east1', cors: CORS_ORIGINS, invoker: '
     const context = await authenticatedContext(req); const action = cleanText(req.body?.action, 80);
     if (action === 'session') {
       if (context.superAdmin) { await sanitizeAndSynchronizeAllUsers(); await normalizeLegacyContractors(); }
-      return res.json({ok: true, superAdmin: context.superAdmin, permissions: normalizePermissions(context.access, false), team: context.decoded.portal_bridge===true ? [] : await listSanitizedTeam()});
+      const bridge=context.decoded.portal_bridge===true;
+      const actions=context.decoded.portal_actions||[];
+      const permissions={...normalizePermissions(context.access,false),
+        p_cost_edit:context.access.p_costs===true&&(!bridge||context.access.p_cost_edit===true),
+        p_edit:context.access.p_tab_new===true&&(!bridge||actions.includes('edit')),
+        p_assign:context.access.p_tab_new===true&&(!bridge||actions.includes('assign'))};
+      const team=await listSanitizedTeam();
+      const scopedTeam=context.superAdmin?team:team.filter(member=>
+        (context.access.p_smart&&member.p_smart===true)||(context.access.p_hvac&&member.p_hvac===true)
+      ).map(member=>({name:member.name||'',email:member.email||''}));
+      return res.json({ok: true, superAdmin: context.superAdmin, permissions, team:scopedTeam});
     }
     if (action === 'audit') { await auditLog(context, req.body.actionText, req.body.meta); return res.json({ok: true}); }
     if (action === 'clearAudit') {

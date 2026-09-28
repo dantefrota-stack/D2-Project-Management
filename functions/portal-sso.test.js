@@ -1,6 +1,6 @@
 const test=require('node:test');
 const assert=require('node:assert/strict');
-const {projectGrant,portalClaims,intersectPermissions,createPortalSso}=require('./portal-sso');
+const {projectGrant,portalClaims,intersectPermissions,createPortalSso,assertPortalLease}=require('./portal-sso');
 
 const session={uid:'portal-owner',email:'owner@example.com',superAdmin:true,companies:['smart'],grants:{smart:{status:'active',modules:{projects:{scope:'company',actions:['read','read_cost','create']}}}}};
 
@@ -23,8 +23,17 @@ test('Portal claims expire and Project permissions are narrowed to one company',
   assert.equal(effective.p_tab_new,true);
   assert.equal(effective.p_fin,false);
   assert.equal(effective.p_costs,true);
+  assert.equal(effective.p_cost_edit,false);
   assert.equal(effective.p_contractors,false);
   assert.equal(intersectPermissions(current,{}),current);
+});
+
+test('custom sessions fail closed if bridge claims disappear or become invalid',()=>{
+  const claims={...portalClaims('smart',projectGrant(session,'smart'),1000000),firebase:{sign_in_provider:'custom'}};
+  assert.doesNotThrow(()=>assertPortalLease(claims,1000000));
+  assert.doesNotThrow(()=>assertPortalLease({firebase:{sign_in_provider:'password'}},1000000));
+  for(const patch of [{portal_bridge:false},{portal_until:1},{portal_until:'1300'},{portal_company:'other'},{portal_actions:['read']},{portal_scope:'own'},{firebase:{sign_in_provider:'password'}}])
+    assert.throws(()=>assertPortalLease({...claims,...patch},1000000));
 });
 
 function harness({portal=session,pmEmail='owner@example.com',signerFails=false,pmAccountMissing=false}={}){

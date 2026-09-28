@@ -4,6 +4,16 @@ const COMPANY_LABELS={smart:'Smart Home',hvac:'HVAC'};
 const error=(message,status)=>Object.assign(new Error(message),{status});
 const normalizedEmail=value=>String(value||'').trim().toLowerCase();
 
+function assertPortalLease(claims,now=Date.now()){
+  const custom=claims?.firebase?.sign_in_provider==='custom';
+  if(!custom && claims?.portal_bridge!==true)return;
+  if(!custom || claims.portal_bridge!==true || !Object.hasOwn(COMPANY_LABELS,claims.portal_company)
+    || !Number.isSafeInteger(claims.portal_until) || claims.portal_until<=Math.floor(now/1000)
+    || claims.portal_scope!=='company' || !Array.isArray(claims.portal_actions)
+    || !claims.portal_actions.includes('read') || !claims.portal_actions.includes('read_cost'))
+    throw error('Portal connection expired. Reconnect from the Portal.',401);
+}
+
 function projectGrant(session,company){
   // Firestore returns whole project documents, including financial fields.
   // Never issue a bridge token without the explicit cost grant.
@@ -31,6 +41,7 @@ function intersectPermissions(permissions,claims){
     p_tab_rep:permissions.p_tab_rep && actions.includes('read'),
     p_fin:permissions.p_fin && actions.includes('edit') && actions.includes('read_cost'),
     p_costs:permissions.p_costs && actions.includes('read_cost'),
+    p_cost_edit:permissions.p_costs && actions.includes('edit') && actions.includes('read_cost'),
     p_contractors:false};
 }
 
@@ -105,4 +116,4 @@ function createPortalSso({auth,db,getPortalSession,getPmContext,getPmProfile,clo
   };
 }
 
-module.exports={projectGrant,portalClaims,intersectPermissions,createPortalSso};
+module.exports={projectGrant,portalClaims,intersectPermissions,createPortalSso,assertPortalLease};
