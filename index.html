@@ -1402,7 +1402,7 @@
 </div>
 
 <script type="module">
-    import { preferredCompany, allowedCompany, companyQueryValue, COMPANY_KEY } from './portal-entry.mjs';
+    import { preferredCompany, allowedCompany, allowedView, companyQueryValue, COMPANY_KEY } from './portal-entry.mjs';
     import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
     import { getAuth, signInWithEmailAndPassword, signInWithCustomToken, onIdTokenChanged, signOut } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
     import { createSessionLifecycle } from './session-lifecycle.mjs';
@@ -2077,7 +2077,7 @@
         try { lucide.createIcons(); } catch {}
     };
 
-    window.applyPermissions = () => {
+    window.applyPermissions = (preserveView = false) => {
         const p = state.userPerms;
         
         if (state.isSuperAdmin) {
@@ -2125,15 +2125,8 @@
         renderCompanyPills('dynamic-unit-pills-proj');
         window.renderProjectSellerFilter();
 
-        // A tela administrativa nunca deve permanecer aberta para membros da equipe.
-        if (!state.isSuperAdmin && ['users', 'logs'].includes(state.currentView)) {
-            const fallbackView = p.tab_proj ? 'projects' : (p.tab_rep ? 'reports' : 'new');
-            window.showView(fallbackView);
-        }
-        
-        if(p.tab_proj) window.showView('projects');
-        else if(p.tab_rep) window.showView('reports');
-        else if(p.tab_new) window.showView('new');
+        const nextView = allowedView(preserveView ? state.currentView : '', p, state.isSuperAdmin);
+        if (nextView && (!preserveView || nextView !== state.currentView)) window.showView(nextView);
 
         if (state.projects.length > 0) {
             window.renderProjects();
@@ -7770,7 +7763,8 @@ function getSellerCommissionPeriodReport(projects, startStr, endStr) {
     let portalSessionOpening = false;
     onIdTokenChanged(auth, async (u) => {
         if (portalEmbedded && portalSessionOpening) return;
-        preserveSessionDrafts=!!u && state.user?.uid===u.uid;
+        const renewingSession=!!u && state.user?.uid===u.uid;
+        preserveSessionDrafts=renewingSession;
         const sessionRevision = sessionLifecycle.reset();
         preserveSessionDrafts=false;
         if (portalEmbedded && !portalAutoStarted) {
@@ -7823,10 +7817,10 @@ function getSellerCommissionPeriodReport(projects, startStr, endStr) {
                 }
                 document.getElementById('user-display').innerText = getUserDisplayName(u.email, 'USR').toUpperCase();
                 renderTeamAdmin();
-                window.applyPermissions();
+                window.applyPermissions(renewingSession);
                 renderVendedores();
                 initData();
-                void logAccess(u.email, 'Fez login no sistema');
+                if (!renewingSession) void logAccess(u.email, 'Fez login no sistema');
             } catch (error) {
                 if (!sessionLifecycle.current(sessionRevision)) return;
                 console.error('Sessão não autorizada:', error);
