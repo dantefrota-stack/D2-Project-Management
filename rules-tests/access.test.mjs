@@ -1,0 +1,58 @@
+import {readFileSync} from 'node:fs';
+import {before,after,beforeEach,test} from 'node:test';
+import {initializeTestEnvironment,assertSucceeds,assertFails} from '@firebase/rules-unit-testing';
+import {doc,setDoc,getDoc,updateDoc,deleteDoc,collection,query,where,getDocs} from 'firebase/firestore';
+
+if(process.env.FIRESTORE_EMULATOR_HOST!=='127.0.0.1:8280')throw Error('Requires isolated Projects emulator on port 8280');
+const root='artifacts/d2-Project-Management/public/data',project='demo-d2-project-audit';
+let env;
+const perms={active:true,superAdmin:false,p_smart:true,p_hvac:false,p_global:true,p_tab_proj:true,p_tab_new:true,p_tab_rep:true,p_fin:true,p_costs:true,p_contractors:false};
+const record={empresa:'Smart Home',vendedor:'manager@example.test',cliente:'Audit',valorTotal:100,orcamento:20,percComissao:10,recebimentos:[],pagamentosEfetuados:[],despesas:[]};
+const claims={email:'manager@example.test',email_verified:true,firebase:{sign_in_provider:'custom'},portal_bridge:true,portal_company:'smart',portal_scope:'company',portal_actions:['read','read_cost','create','edit','assign'],portal_until:Math.floor(Date.now()/1000)+300};
+const db=(overrides={},uid='manager')=>env.authenticatedContext(uid,{...claims,...overrides}).firestore();
+const projectRef=(database,id='smart')=>doc(database,`${root}/projects/${id}`);
+const seed=async(uid,permissions)=>env.withSecurityRulesDisabled(c=>setDoc(doc(c.firestore(),`${root}/access_control/${uid}`),{...perms,...permissions}));
+before(async()=>{env=await initializeTestEnvironment({projectId:project,firestore:{rules:readFileSync(new URL('../firestore.rules',import.meta.url),'utf8')}});});
+after(async()=>env?.cleanup());
+beforeEach(async()=>{await env.clearFirestore();await seed('manager',{});await env.withSecurityRulesDisabled(async c=>{
+ await setDoc(projectRef(c.firestore()),record);await setDoc(projectRef(c.firestore(),'hvac'),{...record,empresa:'HVAC'});
+});});
+test('manager can list only the authorized company and cannot delete projects',async()=>{
+ const d=db();await assertSucceeds(getDocs(query(collection(d,`${root}/projects`),where('empresa','==','Smart Home'))));
+ await assertFails(getDoc(projectRef(d,'hvac')));await assertFails(getDocs(collection(d,`${root}/projects`)));await assertFails(deleteDoc(projectRef(d)));
+});
+test('missing, expired, or malformed bridge claims never become direct access',async()=>{
+ for(const override of [{portal_until:1},{portal_until:'9999999999'},{portal_bridge:false},{portal_actions:[]},{portal_actions:['read']}])await assertFails(getDoc(projectRef(db(override))));
+});
+test('suspension and removal of company/read permissions reject existing sessions',async()=>{
+ const d=db();await assertSucceeds(getDoc(projectRef(d)));
+ for(const change of [{active:false},{p_smart:false},{p_tab_proj:false}]){await seed('manager',change);await assertFails(getDoc(projectRef(d)));}
+});
+test('a read-only bridge cannot create, edit, assign, or mutate financial records',async()=>{
+ const d=db({portal_actions:['read','read_cost']});await assertSucceeds(getDoc(projectRef(d)));
+ await assertFails(setDoc(projectRef(d,'new'),record));await assertFails(updateDoc(projectRef(d),{cliente:'Changed'}));await assertFails(updateDoc(projectRef(d),{recebimentos:[{valor:1}]}));
+});
+test('cost permission does not grant payments, assignment, contract changes, or arbitrary fields',async()=>{
+ await seed('manager',{p_tab_new:false,p_fin:false});const d=db();
+ await assertSucceeds(updateDoc(projectRef(d),{despesas:[{valor:5}]}));
+ for(const patch of [{recebimentos:[{valor:50}]},{pagamentosEfetuados:[{valor:50}]},{valorTotal:2},{vendedor:'other@example.test'},{injected:true}])await assertFails(updateDoc(projectRef(d),patch));
+});
+test('creation permits clean valid projects but not seeded payments or invalid amounts',async()=>{
+ const d=db();await assertSucceeds(setDoc(projectRef(d,'new'),record));
+ for(const patch of [{valorTotal:-1},{orcamento:-1},{percComissao:101},{recebimentos:[{valor:50}]},{despesas:[{valor:20}]}])await assertFails(setDoc(projectRef(d,'bad'),{...record,...patch}));
+});
+test('assign action is required to change the seller and companies cannot be moved',async()=>{
+ const d=db({portal_actions:['read','read_cost','edit','create']});
+ await assertFails(updateDoc(projectRef(d),{vendedor:'other@example.test'}));await assertFails(updateDoc(projectRef(db()),{empresa:'HVAC'}));
+ await assertSucceeds(updateDoc(projectRef(db()),{vendedor:'other@example.test'}));
+});
+test('credentials, access controls, audit, and contractor records remain protected',async()=>{
+ const d=db();for(const name of ['user_credentials','access_control','audit_logs','contractors','portal_links']){
+ await assertFails(setDoc(doc(d,`${root}/${name}/tamper`),{superAdmin:true}));
+ await assertFails(getDocs(collection(d,`${root}/${name}`)));
+ }
+});
+test('direct authorized access still works and an owner bridge has no owner bypass',async()=>{
+ await seed('owner',{superAdmin:true,p_hvac:true});const owner=db({},'owner');await assertFails(getDoc(projectRef(owner,'hvac')));
+ const direct=db({firebase:{sign_in_provider:'password'},portal_bridge:false},'owner');await assertSucceeds(getDoc(projectRef(direct,'hvac')));
+});

@@ -1,0 +1,12 @@
+{
+  "name": "d2-project-management-validation",
+  "private": true,
+  "scripts": {
+    "test": "node --test functions/*.test.js tests/*.test.mjs",
+    "test:rules": "node --test rules-tests/*.test.mjs"
+  },
+  "devDependencies": {
+    "@firebase/rules-unit-testing": "5.0.2",
+    "firebase": "12.19.0"
+  }
+}

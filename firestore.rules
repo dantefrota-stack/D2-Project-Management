@@ -11,11 +11,15 @@ service cloud.firestore {
 
     function hasAccess() {
       return signedIn() && exists(accessPath()) && get(accessPath()).data.active == true
-        && (!portalBridge() || request.time < timestamp.value(request.auth.token.get('portal_until', 0) * 1000));
+        && (!portalBridge() || (request.auth.token.get('portal_bridge', false) == true
+          && request.auth.token.get('firebase', {}).get('sign_in_provider', '') == 'custom'
+          && request.auth.token.get('portal_until', 0) is int
+          && request.time.toMillis() < request.auth.token.portal_until * 1000));
     }
 
     function portalBridge() {
-      return signedIn() && request.auth.token.get('portal_bridge', false) == true;
+      return request.auth.token.get('portal_bridge', false) == true
+        || request.auth.token.get('firebase', {}).get('sign_in_provider', '') == 'custom';
     }
 
     function portalAction(action) {
@@ -27,7 +31,9 @@ service cloud.firestore {
     }
 
     function isSuperAdmin() {
-      return hasAccess() && !portalBridge() && access().superAdmin == true;
+      // Callers check hasAccess once. Repeating it in every nested company/field
+      // check can exhaust Firestore's expression limit on valid updates.
+      return !portalBridge() && access().superAdmin == true;
     }
 
     function companyAllowed(company) {
@@ -50,6 +56,34 @@ service cloud.firestore {
         ));
     }
 
+    function validAmounts(data) {
+      return data.valorTotal is number && data.valorTotal >= 0 && data.valorTotal <= 1000000000000
+        && data.get('orcamento', 0) is number && data.get('orcamento', 0) >= 0 && data.get('orcamento', 0) <= 1000000000000
+        && data.get('percComissao', 0) is number && data.get('percComissao', 0) >= 0 && data.get('percComissao', 0) <= 100;
+    }
+
+    function validLists(data) {
+      return data.get('recebimentos', []) is list && data.get('recebimentos', []).size() <= 2000
+        && data.get('pagamentosEfetuados', []) is list && data.get('pagamentosEfetuados', []).size() <= 2000
+        && data.get('despesas', []) is list && data.get('despesas', []).size() <= 2000;
+    }
+
+    function projectUpdateAllowed() {
+      let changed = request.resource.data.diff(resource.data).affectedKeys();
+      let financial = ['recebimentos', 'pagamentosEfetuados'];
+      let lifecycle = ['status', 'dataConclusao', 'archived', 'commercialStatus', 'archivedReason', 'updatedAt'];
+      let metadata = ['numeroProposta', 'numeroInvoice', 'cliente', 'nomeProjeto', 'endereco', 'vendedor', 'valorTotal', 'orcamento', 'metodo', 'percComissao', 'dataInicio', 'dataEntrega'];
+      return isSuperAdmin() || (
+        request.resource.data.empresa == resource.data.empresa
+        && changed.hasOnly(metadata.concat(lifecycle).concat(financial).concat(['despesas']))
+        && (!changed.hasAny(metadata) || access().p_tab_new == true)
+        && (!changed.hasAny(['vendedor']) || portalAction('assign'))
+        && (!changed.hasAny(financial) || access().p_fin == true)
+        && (!changed.hasAny(['despesas']) || access().p_costs == true || (access().p_fin == true && changed.hasAny(['pagamentosEfetuados'])))
+        && (!changed.hasAny(lifecycle) || access().p_fin == true || access().p_tab_new == true || (access().p_costs == true && changed.hasOnly(['despesas', 'updatedAt'])))
+      );
+    }
+
     match /artifacts/d2-Project-Management/public/data/access_control/{uid} {
       allow get: if hasAccess() && request.auth.uid == uid;
       allow list, create, update, delete: if false;
@@ -61,17 +95,22 @@ service cloud.firestore {
 
     match /artifacts/d2-Project-Management/public/data/projects/{projectId} {
       allow read: if hasAccess() && access().p_tab_proj == true && portalAction('read') && projectReadable(resource.data);
-      allow create: if hasAccess() && portalAction('create') && access().p_tab_new == true && projectReadable(request.resource.data);
+      allow create: if hasAccess() && portalAction('create') && access().p_tab_new == true && projectReadable(request.resource.data)
+        && validAmounts(request.resource.data) && validLists(request.resource.data)
+        && request.resource.data.get('recebimentos', []).size() == 0
+        && request.resource.data.get('pagamentosEfetuados', []).size() == 0
+        && request.resource.data.get('despesas', []).size() == 0
+        && (request.resource.data.vendedor == request.auth.token.email || portalAction('assign'));
       allow update: if hasAccess() && projectReadable(resource.data) && projectReadable(request.resource.data)
-        && portalAction('edit') && (isSuperAdmin() || access().p_tab_new == true || access().p_fin == true || access().p_costs == true);
-      allow delete: if isSuperAdmin();
+        && portalAction('edit') && validAmounts(request.resource.data) && validLists(request.resource.data) && projectUpdateAllowed();
+      allow delete: if hasAccess() && isSuperAdmin();
     }
 
     match /artifacts/d2-Project-Management/public/data/contractors/{contractorId} {
       allow read: if hasAccess() && !portalBridge() && access().p_contractors == true && contractorCompanyAllowed(resource.data);
       allow create: if hasAccess() && !portalBridge() && access().p_contractors == true && contractorCompanyAllowed(request.resource.data);
       allow update: if hasAccess() && !portalBridge() && access().p_contractors == true && contractorCompanyAllowed(resource.data) && contractorCompanyAllowed(request.resource.data);
-      allow delete: if isSuperAdmin();
+      allow delete: if hasAccess() && isSuperAdmin();
     }
 
     match /artifacts/d2-Project-Management/public/data/contractor_payments/{paymentId} {
@@ -87,7 +126,7 @@ service cloud.firestore {
     }
 
     match /artifacts/d2-Project-Management/public/data/audit_logs/{logId} {
-      allow read: if isSuperAdmin();
+      allow read: if hasAccess() && isSuperAdmin();
       allow write: if false;
     }
 
