@@ -5,9 +5,9 @@ const error=(message,status)=>Object.assign(new Error(message),{status});
 const normalizedEmail=value=>String(value||'').trim().toLowerCase();
 
 function projectGrant(session,company){
-  // Project documents contain contract amounts; the pilot is owner-only until
-  // a redacted Projects API can enforce read_cost for other Portal roles.
-  if(session?.superAdmin!==true || !Object.hasOwn(COMPANY_LABELS,company) || !session?.companies?.includes(company))return null;
+  // Firestore returns whole project documents, including financial fields.
+  // Never issue a bridge token without the explicit cost grant.
+  if(!Object.hasOwn(COMPANY_LABELS,company) || !session?.companies?.includes(company) || (session.superAdmin!==true && session.emailVerified!==true))return null;
   const grant=session.grants?.[company];
   const projects=grant?.modules?.projects;
   return grant?.status==='active' && projects?.scope==='company' && projects?.actions?.includes('read') && projects?.actions?.includes('read_cost') ? projects : null;
@@ -15,8 +15,8 @@ function projectGrant(session,company){
 
 function portalClaims(company,grant,now=Date.now()){
   return {portal_bridge:true,portal_company:company,portal_scope:grant.scope,
-    portal_actions:['read'],
-    portal_until:Math.floor(now/1000)+15*60};
+    portal_actions:Array.isArray(grant.actions)?grant.actions.filter(action=>['read','create','edit','assign','read_cost','export'].includes(action)):[],
+    portal_until:Math.floor(now/1000)+5*60};
 }
 
 function intersectPermissions(permissions,claims){
@@ -27,9 +27,11 @@ function intersectPermissions(permissions,claims){
     p_hvac:permissions.p_hvac && claims.portal_company==='hvac',
     p_global:permissions.p_global && claims.portal_scope==='company',
     p_tab_proj:permissions.p_tab_proj && actions.includes('read'),
-    p_tab_new:false,
-    p_tab_rep:false,
-    p_fin:false,p_costs:false,p_contractors:false};
+    p_tab_new:permissions.p_tab_new && actions.includes('create'),
+    p_tab_rep:permissions.p_tab_rep && actions.includes('read'),
+    p_fin:permissions.p_fin && actions.includes('edit') && actions.includes('read_cost'),
+    p_costs:permissions.p_costs && actions.includes('read_cost'),
+    p_contractors:false};
 }
 
 function createPortalSso({auth,db,getPortalSession,getPmContext,getPmProfile,clock=Date.now}){
@@ -62,16 +64,40 @@ function createPortalSso({auth,db,getPortalSession,getPmContext,getPmProfile,clo
         });
         return res.json({ok:true,linked:true});
       }
-      const linked=await ref.get();
-      if(!linked.exists)throw error('Sign in to Projects once to link your existing account.',409);
+      let linked=await ref.get();
+      if(!linked.exists){
+        if(session.emailVerified!==true)throw error('Confirm your Portal email before linking Projects.',403);
+        let candidate;
+        try{candidate=await auth.getUserByEmail(session.email);}catch(failure){if(failure.code==='auth/user-not-found')throw error('The Projects account is not available.',409);throw failure;}
+        if(candidate.disabled || normalizedEmail(candidate.email)!==normalizedEmail(session.email))throw error('The Projects account is unavailable.',403);
+        const candidateProfile=await getPmProfile(session.email);
+        if(!candidateProfile)throw error('The Projects profile is unavailable.',403);
+        const profile=candidateProfile.data();
+        if(profile.p_tab_proj===false || profile[company==='smart'?'p_smart':'p_hvac']===false || (profile.p_costs!==true && profile.viewCosts!==true))throw error('The Projects profile does not allow company-wide financial access.',403);
+        const reverseRef=reverse.doc(candidate.uid);
+        await db.runTransaction(async tx=>{
+          const [forward,back]=await Promise.all([tx.get(ref),tx.get(reverseRef)]);
+          if(forward.exists && forward.data().pmUid!==candidate.uid)throw error('This Portal account is linked to another Projects account.',409);
+          if(back.exists && back.data().portalUid!==session.uid)throw error('This Projects account is linked to another Portal account.',409);
+          if(!forward.exists){
+            tx.set(ref,{portalUid:session.uid,portalEmail:normalizedEmail(session.email),pmUid:candidate.uid,pmEmail:normalizedEmail(candidate.email),updatedAt:new Date(clock()).toISOString()});
+            tx.set(reverseRef,{portalUid:session.uid});
+          }
+        });
+        linked=await ref.get();
+      }
       const mapping=linked.data();
       if(mapping.portalUid!==session.uid || mapping.portalEmail!==normalizedEmail(session.email))throw error('The Portal identity changed. Link accounts again.',403);
       const pmUser=await auth.getUser(mapping.pmUid);
       if(pmUser.disabled || normalizedEmail(pmUser.email)!==mapping.pmEmail)throw error('The linked Projects account is unavailable.',403);
       const profile=await getPmProfile(mapping.pmEmail);
       if(!profile && mapping.pmEmail!=='dante.frota@allcablingtech.com')throw error('The linked Projects profile is unavailable.',403);
+      if(profile && mapping.pmEmail!=='dante.frota@allcablingtech.com'){
+        const access=profile.data();
+        if(access.p_tab_proj===false || access[company==='smart'?'p_smart':'p_hvac']===false || (access.p_costs!==true && access.viewCosts!==true))throw error('The linked Projects profile no longer allows company-wide financial access.',403);
+      }
       const token=await auth.createCustomToken(mapping.pmUid,portalClaims(company,grant,clock()));
-      return res.json({ok:true,token,expiresInSeconds:15*60});
+      return res.json({ok:true,token,expiresInSeconds:5*60});
     }catch(failure){
       if(!failure.status)console.error('Portal SSO failed:',failure.code||failure.name||'unknown',failure.message);
       return res.status(failure.status||500).json({error:failure.status?failure.message:'Unable to connect Projects. Try again.'});
