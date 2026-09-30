@@ -7788,18 +7788,28 @@ function getSellerCommissionPeriodReport(projects, startStr, endStr) {
         }
         projectProgressUI.clear();
         if (state.activeModule) return;
-        const actions = document.querySelector('#projects-grid .v86-head > .flex.flex-wrap.justify-end.gap-2');
-        if (!actions) return;
+        const copy = document.querySelector('#projects-grid .v86-head-copy');
+        if (!copy) return;
+        const subtitle = copy.querySelector('.v86-subtitle');
+        const row = document.createElement('div');
+        row.className = 'project-progress-heading-row';
+        const shortcuts = document.createElement('div');
+        shortcuts.className = 'project-progress-shortcuts';
+        shortcuts.setAttribute('role', 'group');
+        shortcuts.setAttribute('aria-label', progressText('Ações dos relatórios da obra', 'Project report actions', 'Acciones de informes de la obra'));
+        copy.insertBefore(row, subtitle || copy.querySelector('.v86-meta-line'));
+        if (subtitle) row.append(subtitle);
+        row.append(shortcuts);
         for (const [icon, label, mode] of [
-            ['mic', progressText('Gravar atualização', 'Record update', 'Grabar actualización'), 'record'],
             ['folder-open', progressText('Relatórios da obra', 'Project reports', 'Informes de la obra'), 'history'],
+            ['mic', progressText('Gravar atualização', 'Record update', 'Grabar actualización'), 'record'],
         ]) {
             const button = document.createElement('button');
             button.type = 'button'; button.className = 'v86-btn project-progress-shortcut';
             button.title = label; button.setAttribute('aria-label', label);
-            button.innerHTML = `<i data-lucide="${icon}" class="w-4 h-4"></i>`;
+            button.innerHTML = `<i data-lucide="${icon}"></i>`;
             button.addEventListener('click', () => window.openProjectProgress(focused.id, mode));
-            actions.prepend(button);
+            shortcuts.append(button);
         }
         try { lucide.createIcons(); } catch {}
     };
