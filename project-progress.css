@@ -1,4 +1,6 @@
 .project-progress{margin:0 0 26px;padding:26px;border:1px solid #c9d8e3;border-radius:24px;background:#fff;box-shadow:0 12px 35px rgba(21,45,65,.06);color:#14283a}
+.project-progress-page{max-width:1180px;margin:0 auto}
+.project-progress-shortcut{min-width:38px;padding:9px!important}
 .progress-head,.progress-history-title,.progress-report-top{display:flex;align-items:flex-start;justify-content:space-between;gap:18px}
 .progress-head-main{display:flex;align-items:center;gap:23px;min-width:0}
 .progress-head-main>div{min-width:0}
@@ -7,6 +9,12 @@
 .progress-head .progress-consent{margin-top:9px;font-size:.79rem}
 .progress-kicker{color:#087c68;font-size:.72rem;font-weight:800;letter-spacing:.13em;text-transform:uppercase}
 .progress-all-pdf,.progress-report-top button,.progress-generate,.progress-save{display:inline-flex;align-items:center;justify-content:center;gap:8px;border:1px solid #b9d0dd;border-radius:11px;padding:10px 14px;background:#fff;color:#19425a;font-size:.86rem;font-weight:700;cursor:pointer;transition:background .15s,transform .15s}
+.progress-new,.progress-write,.progress-cancel,.progress-danger{display:inline-flex;align-items:center;justify-content:center;gap:8px;border:1px solid #b9d0dd;border-radius:11px;padding:10px 14px;background:#fff;color:#19425a;font-size:.86rem;font-weight:700;cursor:pointer}
+.progress-new svg,.progress-write svg{width:17px;height:17px}
+.progress-write{margin-top:10px}
+.progress-danger{border-color:#b32631;color:#b32631}
+.progress-danger:hover{background:#fff0f1}
+.progress-new:hover,.progress-write:hover,.progress-cancel:hover{background:#eaf4f8}
 .progress-all-pdf:hover,.progress-report-top button:hover{background:#eaf4f8}
 .progress-all-pdf:disabled,.progress-generate:disabled,.progress-save:disabled{opacity:.55;cursor:not-allowed}
 .progress-all-pdf svg,.progress-report-top button svg{width:17px;height:17px}
@@ -45,12 +53,18 @@
 .progress-pdf-language select:focus{outline:2px solid #0e8b78;outline-offset:1px}
 .progress-report{margin-top:13px;padding:17px;border:1px solid #d7e1e7;border-radius:14px;background:#fff}
 .progress-report h4{margin:0 0 4px;font-size:.98rem;font-weight:800}
+.progress-report-actions{display:flex;flex-wrap:wrap;justify-content:flex-end;gap:7px}
+.progress-report-editor,.progress-delete-confirm{margin-top:14px;padding:14px;border:1px solid #d7e1e7;border-radius:12px;background:#f5fafc}
+.progress-report-editor .progress-field{margin:0 0 12px}
+.progress-delete-confirm .progress-field{margin:0 0 12px}
 .progress-report small{color:#60758a;font-size:.76rem}
+.progress-report .progress-edited{display:block;margin-top:4px}
 .progress-report>p,.progress-report-section p{margin:10px 0 0;color:#30465a;font-size:.88rem;line-height:1.5;white-space:pre-wrap}
 .progress-report-section{margin-top:13px}
 .progress-report-section strong{color:#14536b;font-size:.79rem}
 .progress-empty{margin-top:13px}
 @media(max-width:650px){.project-progress{padding:17px;border-radius:18px}.progress-head,.progress-report-top{flex-direction:column}.progress-head-main{gap:14px}.progress-mic{flex-basis:112px;min-height:112px}.progress-mic svg{width:45px;height:45px}.progress-all-pdf,.progress-report-top button{width:100%}}
+@media(max-width:650px){.progress-new,.progress-report-actions{width:100%}.progress-report-actions button{flex:1}}
 @media(max-width:650px){.progress-history-title{flex-direction:column}.progress-history-actions,.progress-pdf-language,.progress-pdf-language select{width:100%}}
 @media(max-width:390px){.progress-head-main{flex-direction:column;align-items:stretch}.progress-mic{flex-basis:auto;width:100%;min-height:100px}}
 @media(max-width:390px){.progress-language{flex-direction:column;align-items:stretch}.progress-language select{width:100%}}

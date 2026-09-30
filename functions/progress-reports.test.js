@@ -28,15 +28,21 @@ function manager(access = {}) {
 }
 function fakeDb() {
   const saved = [];
+  const firstReport = {...report};
   const db = {
-    saved,
+    saved, firstReport,
     doc(path) { return {get: async () => ({exists: path.endsWith('/project-smart'), data: () => project})}; },
     collection() {
       return {
         where(_field, _operator, id) {
-          return {limit() { return {get: async () => ({size: id === 'project-smart' ? 1 + saved.length : 0, docs: id === 'project-smart' ? [{id: 'report-one', data: () => report}, ...saved.map((item, index) => ({id: `saved-${index}`, data: () => item}))] : []})}; }};
+          return {limit() { return {get: async () => ({size: id === 'project-smart' ? 1 + saved.length : 0, docs: id === 'project-smart' ? [{id: 'report-one', data: () => firstReport}, ...saved.map((item, index) => ({id: `saved-${index}`, data: () => item}))] : []})}; }};
         },
-        doc() { return {id: `saved-${saved.length}`, create: async value => {saved.push(value);}}; },
+        doc(id = `saved-${saved.length}`) { return {
+          id,
+          create: async value => {saved.push(value);},
+          get: async () => ({exists: id === 'report-one' || /^saved-\d+$/.test(id) && !!saved[Number(id.slice(6))], data: () => id === 'report-one' ? firstReport : saved[Number(id.slice(6))]}),
+          update: async value => {Object.assign(id === 'report-one' ? firstReport : saved[Number(id.slice(6))], value);},
+        }; },
       };
     },
   };
@@ -117,6 +123,42 @@ test('generated drafts are reviewed before save; saving stores text and project 
   assert.equal(db.saved[0].reportLanguage, 'pt');
   assert.equal(db.saved[0].audio, undefined);
   assert.equal(auditCount, 1);
+});
+
+test('edit preserves the source transcript; deletion requires a reason and removes the report from lists and PDF exports', async () => {
+  const db = fakeDb();
+  const actions = [];
+  const handler = createProgressReportsHandler({db, authenticate: async () => manager(), audit: async (_context, action, meta) => actions.push({action, meta}), renderPdf: async () => Buffer.from('%PDF-test')});
+  const call = async body => {
+    const res = fakeResponse();
+    await handler({method: 'POST', body: {projectId: 'project-smart', ...body}}, res);
+    return res;
+  };
+  assert.equal((await call({action: 'edit', reportId: 'report-one', report: {...draft, title: 'Relatório revisado', transcript: 'untrusted replacement'}})).code, 200);
+  assert.equal(db.firstReport.title, 'Relatório revisado');
+  assert.equal(db.firstReport.transcript, draft.transcript);
+  assert.equal(db.firstReport.createdBy.uid, 'manager-1');
+  assert.equal((await call({action: 'delete', reportId: 'report-one', reason: ''})).code, 400);
+  assert.equal((await call({action: 'delete', reportId: 'report-one', reason: 'Registro duplicado'})).code, 200);
+  assert.equal(db.firstReport.deleteReason, 'Registro duplicado');
+  const list = fakeResponse();
+  await handler({method: 'GET', query: {projectId: 'project-smart'}}, list);
+  assert.deepEqual(list.payload.reports, []);
+  assert.equal((await call({action: 'pdf', ids: ['report-one']})).code, 404);
+  assert.equal((await call({action: 'edit', reportId: 'report-one', report: draft})).code, 404);
+  assert.deepEqual(actions.map(item => item.action), ['Edited project progress report', 'Deleted project progress report']);
+  assert.equal(actions[1].meta.reason, 'Registro duplicado');
+});
+
+test('report edits and deletions require manager access to the project company', async () => {
+  const db = fakeDb();
+  for (const action of ['edit', 'delete']) {
+    const handler = createProgressReportsHandler({db, authenticate: async () => manager({p_global: false})});
+    const res = fakeResponse();
+    await handler({method: 'POST', body: {projectId: 'project-smart', reportId: 'report-one', action, report: draft, reason: 'Duplicado'}}, res);
+    assert.equal(res.code, 403);
+  }
+  assert.equal(db.firstReport.deletedAt, undefined);
 });
 
 test('PDF export translates one or all reports on demand without changing stored originals', async () => {

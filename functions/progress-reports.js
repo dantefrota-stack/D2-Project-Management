@@ -23,6 +23,7 @@ const FIELDS = {
   nextSteps: 1800,
   transcript: 16000,
 };
+const EDIT_FIELDS = Object.keys(FIELDS).filter(key => key !== 'transcript');
 
 function failure(message, status = 400) {
   return Object.assign(new Error(message), {status});
@@ -40,6 +41,10 @@ function normalizedDraft(input) {
   const result = {};
   for (const [key, max] of Object.entries(FIELDS)) result[key] = text(input[key] || '', max, key === 'title' || key === 'summary' || key === 'transcript');
   return result;
+}
+function normalizedEdit(input) {
+  if (!input || typeof input !== 'object' || Array.isArray(input)) throw failure('Invalid report.');
+  return Object.fromEntries(EDIT_FIELDS.map(key => [key, text(input[key] || '', FIELDS[key], key === 'title' || key === 'summary')]));
 }
 function parseAudio(value) {
   if (typeof value !== 'string' || value.length > MAX_AUDIO_BYTES * 1.4 + 100) throw failure('Audio recording is too large.');
@@ -195,7 +200,7 @@ function createProgressReportsHandler({db, authenticate, audit = async () => {},
       const projectRows = async () => {
         const found = await collection.where('projectId', '==', projectId).limit(MAX_REPORTS + 1).get();
         if (found.size > MAX_REPORTS) throw failure('This project has too many reports for one request.', 409);
-        return found.docs.map(item => ({id: item.id, ...item.data()})).sort((a, b) => (b.createdAt?.toMillis?.() || 0) - (a.createdAt?.toMillis?.() || 0));
+        return found.docs.map(item => ({id: item.id, ...item.data()})).filter(item => !item.deletedAt).sort((a, b) => (b.createdAt?.toMillis?.() || 0) - (a.createdAt?.toMillis?.() || 0));
       };
       if (req.method === 'GET') {
         const reports = (await projectRows()).map(({transcript, ...row}) => ({...row, createdAt: row.createdAt?.toDate?.().toISOString() || null}));
@@ -223,6 +228,23 @@ function createProgressReportsHandler({db, authenticate, audit = async () => {},
         await reference.create(report);
         await audit(context, 'Created project progress report', {projectId, reportId: reference.id, company: project.empresa});
         return res.json({id: reference.id});
+      }
+      if (action === 'edit' || action === 'delete') {
+        const reportId = safeId(req.body?.reportId);
+        const reference = collection.doc(reportId);
+        const snapshot = await reference.get();
+        if (!snapshot.exists || snapshot.data().projectId !== projectId || snapshot.data().deletedAt) throw failure('Report not found in this project.', 404);
+        const actor = {uid: context.decoded.uid, email: context.email, name: String(context.profile?.name || context.userRecord?.displayName || context.email).slice(0, 120)};
+        if (action === 'edit') {
+          const changes = normalizedEdit(req.body?.report);
+          await reference.update({...changes, updatedAt: FieldValue.serverTimestamp(), updatedBy: actor});
+          await audit(context, 'Edited project progress report', {projectId, reportId, company: project.empresa});
+        } else {
+          const reason = text(req.body?.reason, 300, true);
+          await reference.update({deletedAt: FieldValue.serverTimestamp(), deletedBy: actor, deleteReason: reason});
+          await audit(context, 'Deleted project progress report', {projectId, reportId, company: project.empresa, reason});
+        }
+        return res.json({id: reportId});
       }
       if (action === 'pdf') {
         const rows = await projectRows();
