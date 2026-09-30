@@ -8,6 +8,7 @@ const Busboy = require('busboy');
 const crypto = require('crypto');
 const {createPortalSso,intersectPermissions,assertPortalLease}=require('./portal-sso');
 const {isPrimaryOwner}=require('./identity-policy');
+const {createProgressReportsHandler}=require('./progress-reports');
 
 initializeApp({storageBucket: 'd2-project-management.firebasestorage.app',serviceAccountId:'254630664761-compute@developer.gserviceaccount.com'});
 
@@ -34,6 +35,8 @@ const CORS_ORIGINS = [
   'http://127.0.0.1:4173',
   'http://localhost:4173'
 ];
+
+exports.progressReportsApi = onRequest({region: 'us-east1', cors: CORS_ORIGINS, invoker: 'public', timeoutSeconds: 120, memory: '1GiB', maxInstances: 3}, createProgressReportsHandler({db, authenticate: authenticatedContext, audit: auditLog}));
 
 const cleanText = (value, maxLength = 180) => String(value || '').trim().replace(/[\u0000-\u001f\u007f]/g, '').slice(0, maxLength);
 const safeFileName = value => cleanText(value || 'document', 120).replace(/[^a-zA-Z0-9._-]/g, '_').slice(-120);

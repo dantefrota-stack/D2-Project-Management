@@ -1,0 +1,39 @@
+.project-progress{margin:0 0 26px;padding:26px;border:1px solid #c9d8e3;border-radius:24px;background:#fff;box-shadow:0 12px 35px rgba(21,45,65,.06);color:#14283a}
+.progress-head,.progress-history-title,.progress-report-top{display:flex;align-items:flex-start;justify-content:space-between;gap:18px}
+.progress-head h2{margin:4px 0 5px;font-size:clamp(1.25rem,2.2vw,1.7rem);font-weight:800}
+.progress-head p,.progress-compose-copy p,.progress-draft>p,.progress-empty{margin:0;color:#516477;font-size:.9rem;line-height:1.5}
+.progress-kicker{color:#087c68;font-size:.72rem;font-weight:800;letter-spacing:.13em;text-transform:uppercase}
+.progress-all-pdf,.progress-report-top button,.progress-generate,.progress-save{display:inline-flex;align-items:center;justify-content:center;gap:8px;border:1px solid #b9d0dd;border-radius:11px;padding:10px 14px;background:#fff;color:#19425a;font-size:.86rem;font-weight:700;cursor:pointer;transition:background .15s,transform .15s}
+.progress-all-pdf:hover,.progress-report-top button:hover{background:#eaf4f8}
+.progress-all-pdf:disabled,.progress-generate:disabled,.progress-save:disabled{opacity:.55;cursor:not-allowed}
+.progress-all-pdf svg,.progress-report-top button svg{width:17px;height:17px}
+.progress-compose{display:flex;align-items:center;gap:24px;margin:22px 0;padding:22px;border:1px solid #c9e6dc;border-radius:20px;background:linear-gradient(115deg,#effaf5,#f4f9fc)}
+.progress-mic{display:flex;flex:0 0 132px;min-height:132px;flex-direction:column;align-items:center;justify-content:center;gap:7px;border:0;border-radius:22px;background:#13536a;color:#fff;box-shadow:0 9px 25px rgba(19,83,106,.2);font-size:.81rem;font-weight:800;cursor:pointer;transition:transform .15s,box-shadow .15s}
+.progress-mic svg{width:58px;height:58px;stroke-width:1.7}
+.progress-mic:hover:not(:disabled){transform:translateY(-2px);box-shadow:0 13px 28px rgba(19,83,106,.27)}
+.progress-mic.recording{background:#b32631;animation:progress-pulse 1.4s ease-in-out infinite}
+.progress-mic:disabled{opacity:.55;cursor:not-allowed}
+@keyframes progress-pulse{50%{box-shadow:0 0 0 10px rgba(179,38,49,.12)}}
+.progress-compose-copy strong{display:block;margin-bottom:5px;font-size:1.09rem}
+.progress-notes,.progress-field{display:block;margin:12px 0;font-size:.86rem;font-weight:700}
+.progress-notes span,.progress-field span{display:block;margin-bottom:7px}
+.progress-notes textarea,.progress-field textarea{width:100%;box-sizing:border-box;padding:12px;border:1px solid #bfd0da;border-radius:11px;background:#fff;color:#14283a;line-height:1.5;resize:vertical;min-height:90px}
+.progress-notes textarea:focus,.progress-field textarea:focus{outline:2px solid #0e8b78;outline-offset:1px}
+.progress-generate,.progress-save{border-color:#15536b;background:#15536b;color:#fff}
+.progress-generate:hover:not(:disabled),.progress-save:hover:not(:disabled){background:#0a3e53}
+.progress-status{min-height:20px;margin:10px 0;color:#14664f;font-size:.84rem}
+.progress-status.error{color:#ae2431}
+.progress-draft{margin:21px 0;padding:20px;border:1px solid #b6d2e1;border-radius:16px;background:#f5fafc}
+.progress-draft h3,.progress-history h3{margin:0 0 5px;font-size:1.08rem;font-weight:800}
+.progress-history{margin-top:23px;border-top:1px solid #d8e1e8;padding-top:20px}
+.progress-history-title span{border-radius:99px;padding:3px 9px;background:#e8f1f5;color:#19425a;font-size:.8rem;font-weight:700}
+.progress-report{margin-top:13px;padding:17px;border:1px solid #d7e1e7;border-radius:14px;background:#fff}
+.progress-report h4{margin:0 0 4px;font-size:.98rem;font-weight:800}
+.progress-report small{color:#60758a;font-size:.76rem}
+.progress-report>p,.progress-report-section p{margin:10px 0 0;color:#30465a;font-size:.88rem;line-height:1.5;white-space:pre-wrap}
+.progress-report-section{margin-top:13px}
+.progress-report-section strong{color:#14536b;font-size:.79rem}
+.progress-empty{margin-top:13px}
+@media(max-width:650px){.project-progress{padding:17px;border-radius:18px}.progress-head,.progress-report-top{flex-direction:column}.progress-compose{padding:17px;gap:14px}.progress-mic{flex-basis:112px;min-height:112px}.progress-mic svg{width:45px;height:45px}.progress-compose-copy{min-width:0}.progress-all-pdf,.progress-report-top button{width:100%}}
+@media(max-width:390px){.progress-compose{flex-direction:column;align-items:stretch}.progress-mic{flex-basis:auto;width:100%;min-height:100px}}
+@media(prefers-reduced-motion:reduce){.progress-mic.recording{animation:none}.progress-mic,.progress-all-pdf,.progress-report-top button{transition:none}}
