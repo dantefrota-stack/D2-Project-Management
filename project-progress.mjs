@@ -12,6 +12,7 @@ const words = {
     recordedBy: 'Registrado por', saveDone: 'Relatório salvo.', noAudio: 'A gravação está vazia. Tente novamente.',
     tooLarge: 'Gravação acima de 6 MB. Faça uma atualização mais curta.', microphoneDenied: 'Não foi possível acessar o microfone. Verifique a permissão do navegador.',
     moreDetail: 'Descreva o andamento com mais detalhes.', reviewWarning: 'Confira nomes, datas, números e fatos antes de salvar.',
+    spokenLanguage: 'Idioma falado', detectAutomatically: 'Detectar automaticamente', portuguese: 'Português', english: 'English', spanish: 'Español', reportLanguageHint: 'O relatório será escrito no idioma selecionado no Portal; a transcrição manterá o idioma falado.',
   },
   en: {
     heading: 'Progress reports', intro: 'Record a project update and review the report before saving.',
@@ -26,6 +27,7 @@ const words = {
     recordedBy: 'Recorded by', saveDone: 'Report saved.', noAudio: 'Recording is empty. Please try again.',
     tooLarge: 'Recording exceeds 6 MB. Please make a shorter update.', microphoneDenied: 'Microphone access failed. Check the browser permission.',
     moreDetail: 'Describe the progress in more detail.', reviewWarning: 'Check names, dates, numbers, and facts before saving.',
+    spokenLanguage: 'Spoken language', detectAutomatically: 'Detect automatically', portuguese: 'Português', english: 'English', spanish: 'Español', reportLanguageHint: 'The report uses the Portal language; the transcript keeps the language spoken.',
   },
   es: {
     heading: 'Informes de avance', intro: 'Graba una actualización de la obra y revisa el informe antes de guardarlo.',
@@ -40,6 +42,7 @@ const words = {
     recordedBy: 'Registrado por', saveDone: 'Informe guardado.', noAudio: 'La grabación está vacía. Inténtalo de nuevo.',
     tooLarge: 'La grabación supera 6 MB. Haz una actualización más breve.', microphoneDenied: 'No se pudo acceder al micrófono. Revisa los permisos del navegador.',
     moreDetail: 'Describe el avance con más detalle.', reviewWarning: 'Comprueba nombres, fechas, números y hechos antes de guardar.',
+    spokenLanguage: 'Idioma hablado', detectAutomatically: 'Detectar automáticamente', portuguese: 'Português', english: 'English', spanish: 'Español', reportLanguageHint: 'El informe usa el idioma del Portal; la transcripción conserva el idioma hablado.',
   },
 };
 const reportFields = ['title', 'summary', 'completed', 'progress', 'issues', 'nextSteps', 'transcript'];
@@ -50,6 +53,12 @@ const niceDate = (value, lang) => {
 };
 
 export function createProjectProgressUI({getToken, getLang}) {
+  const languageChoices = ['auto', 'pt', 'en', 'es'];
+  let spokenLanguage = 'auto';
+  try {
+    const saved = localStorage.getItem('d2-project-progress.spoken-language');
+    if (languageChoices.includes(saved)) spokenLanguage = saved;
+  } catch {}
   let project = null;
   let root = null;
   let reports = [];
@@ -111,6 +120,9 @@ export function createProjectProgressUI({getToken, getLang}) {
         </div>
         <button type="button" class="progress-all-pdf" data-all-pdf ${reports.length ? '' : 'disabled'}><i data-lucide="files"></i>${t.allPdf}</button>
       </div>
+      <label class="progress-language"><span>${t.spokenLanguage}</span><select data-spoken-language ${busy || recorder ? 'disabled' : ''}>
+        ${[['auto', t.detectAutomatically], ['pt', t.portuguese], ['en', t.english], ['es', t.spanish]].map(([id, label]) => `<option value="${id}" ${spokenLanguage === id ? 'selected' : ''}>${label}</option>`).join('')}
+      </select></label><p class="progress-language-hint">${t.reportLanguageHint}</p>
       <label class="progress-notes"><span>${t.notes}</span><textarea data-notes maxlength="16000" placeholder="${t.notesPlaceholder}" ${busy || recorder ? 'disabled' : ''}>${escape(notes)}</textarea></label>
       <button type="button" class="progress-generate" data-generate ${busy || recorder ? 'disabled' : ''}>${busy ? t.generating : t.generate}</button>
       <p class="progress-status ${error ? 'error' : ''}" data-progress-status role="status">${escape(error || status)}</p>
@@ -127,6 +139,11 @@ export function createProjectProgressUI({getToken, getLang}) {
         </article>`).join('') : `<p class="progress-empty">${t.empty}</p>`}
       </div>`;
     root.querySelector('[data-mic]')?.addEventListener('click', () => recorder ? recorder.stop() : startRecording());
+    root.querySelector('[data-spoken-language]')?.addEventListener('change', event => {
+      if (!languageChoices.includes(event.target.value)) return;
+      spokenLanguage = event.target.value;
+      try { localStorage.setItem('d2-project-progress.spoken-language', spokenLanguage); } catch {}
+    });
     root.querySelector('[data-notes]')?.addEventListener('input', event => { notes = event.target.value; });
     root.querySelector('[data-generate]')?.addEventListener('click', () => generateFromNotes());
     root.querySelectorAll('[data-field]').forEach(field => field.addEventListener('input', () => { draft[field.dataset.field] = field.value; }));
@@ -141,7 +158,7 @@ export function createProjectProgressUI({getToken, getLang}) {
     const expectedId = project.id;
     busy = true; setMessage(w().generating); render();
     try {
-      const result = await request({action: 'generate', notes: notes.trim()}, false, expectedId);
+      const result = await request({action: 'generate', notes: notes.trim(), spokenLanguage}, false, expectedId);
       if (project?.id === expectedId) { draft = result.draft; setMessage(); }
     } catch (cause) { setMessage('', cause.message); }
     finally { busy = false; render(); }
@@ -176,7 +193,7 @@ export function createProjectProgressUI({getToken, getLang}) {
             reader.onerror = () => reject(Error(w().noAudio));
             reader.readAsDataURL(blob);
           });
-          const result = await request({action: 'generate', audio}, false, recordedProjectId);
+          const result = await request({action: 'generate', audio, spokenLanguage}, false, recordedProjectId);
           if (project?.id === recordedProjectId) { draft = result.draft; setMessage(); }
         } catch (cause) { setMessage('', cause.message); }
         finally { busy = false; render(); }
