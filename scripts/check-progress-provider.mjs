@@ -4,7 +4,7 @@ import fs from 'node:fs';
 import path from 'node:path';
 
 const require = createRequire(fileURLToPath(import.meta.url));
-const {buildProgressPrompt, buildTranscriptionPrompt} = require('../functions/progress-reports.js');
+const {buildProgressPrompt, buildTranscriptionPrompt, buildLocalizationPrompt} = require('../functions/progress-reports.js');
 if (!process.env.D2_FIREBASE_AUTH_MODULE) throw Error('D2_FIREBASE_AUTH_MODULE is required.');
 const cli = require(process.env.D2_FIREBASE_AUTH_MODULE);
 const account = cli.getGlobalDefaultAccount();
@@ -96,4 +96,19 @@ if (process.argv.includes('--audio-probe') && serviceData.state === 'ENABLED') {
     audioProbe.push({source, audioLanguage, report: target, transcriptionStatus: transcriptionResponse.status, status: response.status, validDraft: !!(transcript && draft?.summary && draft?.title), transcript: transcript.slice(0, 180), summary: String(draft?.summary || '').slice(0, 180), errorCode: result.error?.status || null});
   }
 }
-console.log(JSON.stringify({serviceStatus: service.status, vertexState: serviceData.state || null, iamStatus: iam.status, runtimeRoles: roles, probe, languageProbe, audioProbe}));
+const localizationProbe = [];
+if (process.argv.includes('--localization-probe') && serviceData.state === 'ENABLED') {
+  const englishReport = {title: 'Daily Progress Report', summary: 'A normal site survey was completed. Equipment was installed between 8 AM and 5 PM. Márcio and Léo were present.', completed: 'Site survey completed. Equipment installed.', progress: 'Work was performed between 8 AM and 5 PM.', issues: '', nextSteps: ''};
+  for (const target of ['pt', 'es']) {
+    const response = await fetch(endpoint, {
+      method: 'POST', headers: {...headers, 'Content-Type': 'application/json'},
+      body: JSON.stringify({contents: [{role: 'user', parts: [{text: `${buildLocalizationPrompt(target)}\n\nReport fields to revise:\n${JSON.stringify(englishReport)}`}]}], generationConfig: {responseMimeType: 'application/json', temperature: 0, maxOutputTokens: 3000, thinkingConfig: {thinkingBudget: 0}}}),
+      signal: AbortSignal.timeout(60000),
+    });
+    const result = await response.json().catch(() => ({}));
+    let draft = null;
+    try { draft = JSON.parse(result.candidates?.[0]?.content?.parts?.map(part => part.text || '').join('') || ''); } catch {}
+    localizationProbe.push({target, status: response.status, validDraft: !!(draft?.title && draft?.summary && draft?.completed && draft?.progress), title: String(draft?.title || '').slice(0, 180), summary: String(draft?.summary || '').slice(0, 250), errorCode: result.error?.status || null});
+  }
+}
+console.log(JSON.stringify({serviceStatus: service.status, vertexState: serviceData.state || null, iamStatus: iam.status, runtimeRoles: roles, probe, languageProbe, audioProbe, localizationProbe}));

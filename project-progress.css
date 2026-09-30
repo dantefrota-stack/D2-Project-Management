@@ -26,6 +26,10 @@
 .progress-notes textarea,.progress-field textarea{width:100%;box-sizing:border-box;padding:12px;border:1px solid #bfd0da;border-radius:11px;background:#fff;color:#14283a;line-height:1.5;resize:vertical;min-height:90px}
 .progress-notes textarea:focus,.progress-field textarea:focus{outline:2px solid #0e8b78;outline-offset:1px}
 .progress-generate,.progress-save{border-color:#15536b;background:#15536b;color:#fff}
+.progress-draft-actions{display:flex;flex-wrap:wrap;gap:10px;margin-top:12px}
+.progress-correct-language{border:1px solid #b9d0dd;border-radius:11px;padding:10px 14px;background:#fff;color:#19425a;font-size:.86rem;font-weight:700;cursor:pointer}
+.progress-correct-language:hover:not(:disabled){background:#eaf4f8}
+.progress-correct-language:disabled{opacity:.55;cursor:not-allowed}
 .progress-generate:hover:not(:disabled),.progress-save:hover:not(:disabled){background:#0a3e53}
 .progress-status{min-height:20px;margin:10px 0;color:#14664f;font-size:.84rem}
 .progress-status.error{color:#ae2431}

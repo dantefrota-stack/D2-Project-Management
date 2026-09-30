@@ -2,7 +2,7 @@
 
 const test = require('node:test');
 const assert = require('node:assert/strict');
-const {createProgressReportsHandler, normalizedDraft, parseAudio, pdfReport, buildProgressPrompt, buildTranscriptionPrompt, spokenLanguage} = require('./progress-reports');
+const {createProgressReportsHandler, normalizedDraft, parseAudio, pdfReport, buildProgressPrompt, buildTranscriptionPrompt, buildLocalizationPrompt, localizeDraft, spokenLanguage} = require('./progress-reports');
 
 const draft = {
   title: 'Instalação elétrica', summary: 'A equipe concluiu a passagem de cabos.',
@@ -68,6 +68,9 @@ test('speech preference is a hint while transcript stays original and report fol
   assert.match(buildProgressPrompt({project, lang: 'pt', spokenLanguage: 'auto', audio: false}), /Copy the original manager notes faithfully/);
   assert.match(buildTranscriptionPrompt('auto'), /Never translate/);
   assert.doesNotMatch(buildTranscriptionPrompt('es'), /Português do Brasil/);
+  assert.match(buildLocalizationPrompt('pt'), /somente em português do Brasil/);
+  assert.match(buildLocalizationPrompt('en'), /only in English/);
+  assert.match(buildLocalizationPrompt('es'), /solo en español/);
 });
 
 test('only managers authorized for the project company can access progress reports', async () => {
@@ -124,6 +127,29 @@ test('generate action passes spoken language separately from report language', a
     assert.equal(res.code, 200);
   }
   assert.deepEqual(inputs.map(({spokenLanguage: spoken, lang}) => [spoken, lang]), [['es', 'pt'], ['en', 'es'], ['pt', 'en'], ['auto', 'pt']]);
+});
+
+test('language correction keeps the original transcript and does not save automatically', async () => {
+  const db = fakeDb();
+  const handler = createProgressReportsHandler({db, authenticate: async () => manager(), localize: async ({draft: input, lang}) => ({...input, title: lang === 'pt' ? 'Relatório diário' : input.title, summary: 'Instalação realizada.', transcript: 'changed by model'})});
+  const res = fakeResponse();
+  await handler({method: 'POST', body: {projectId: 'project-smart', action: 'localize', lang: 'pt', draft: {...draft, title: 'Daily Progress Report'}}}, res);
+  assert.equal(res.code, 200);
+  assert.equal(res.payload.draft.title, 'Relatório diário');
+  assert.equal(res.payload.draft.transcript, draft.transcript);
+  assert.equal(db.saved.length, 0);
+});
+
+test('localization pass replaces English report fields but never rewrites the source transcript', async () => {
+  const input = {...draft, title: 'Daily Progress Report', summary: 'We installed cable.'};
+  const client = {models: {generateContent: async request => {
+    assert.match(request.contents[0].text, /somente em português do Brasil/);
+    return {text: JSON.stringify({...input, title: 'Relatório diário', summary: 'Instalamos os cabos.', transcript: 'model changed this'})};
+  }}};
+  const result = await localizeDraft({client, draft: input, lang: 'pt'});
+  assert.equal(result.title, 'Relatório diário');
+  assert.equal(result.summary, 'Instalamos os cabos.');
+  assert.equal(result.transcript, draft.transcript);
 });
 
 test('branded PDFs for both companies contain a valid PDF and embedded logo', async () => {
