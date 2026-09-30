@@ -105,12 +105,11 @@ export function createProjectProgressUI({getToken, getLang}) {
     const micAvailable = !!(navigator.mediaDevices?.getUserMedia && window.MediaRecorder);
     root.innerHTML = `
       <div class="progress-head">
-        <div><span class="progress-kicker">D2 • ${escape(project.empresa)}</span><h2>${t.heading}</h2><p>${t.intro}</p></div>
+        <div class="progress-head-main">
+          <button type="button" class="progress-mic ${recorder ? 'recording' : ''}" data-mic aria-label="${recorder ? t.stop : t.record}" ${busy || !micAvailable ? 'disabled' : ''}><i data-lucide="${recorder ? 'square' : 'mic'}"></i><strong>${recorder ? t.stop : t.record}</strong></button>
+          <div><span class="progress-kicker">D2 • ${escape(project.empresa)}</span><h2>${t.heading}</h2><p>${t.intro}</p><p class="progress-consent">${micAvailable ? t.consent : t.unavailable}</p></div>
+        </div>
         <button type="button" class="progress-all-pdf" data-all-pdf ${reports.length ? '' : 'disabled'}><i data-lucide="files"></i>${t.allPdf}</button>
-      </div>
-      <div class="progress-compose">
-        <button type="button" class="progress-mic ${recorder ? 'recording' : ''}" data-mic aria-label="${recorder ? t.stop : t.record}" ${busy || !micAvailable ? 'disabled' : ''}><i data-lucide="${recorder ? 'square' : 'mic'}"></i><strong>${recorder ? t.stop : t.record}</strong></button>
-        <div class="progress-compose-copy"><strong>${recorder ? t.listening : t.record}</strong><p>${micAvailable ? t.consent : t.unavailable}</p></div>
       </div>
       <label class="progress-notes"><span>${t.notes}</span><textarea data-notes maxlength="16000" placeholder="${t.notesPlaceholder}" ${busy || recorder ? 'disabled' : ''}>${escape(notes)}</textarea></label>
       <button type="button" class="progress-generate" data-generate ${busy || recorder ? 'disabled' : ''}>${busy ? t.generating : t.generate}</button>
