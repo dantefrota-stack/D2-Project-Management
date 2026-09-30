@@ -6782,9 +6782,10 @@ function getSellerCommissionPeriodReport(projects, startStr, endStr) {
         return `<div class="v86-finished-stamp" aria-hidden="true"><span>${state.lang === 'pt' ? 'Finalizada' : 'Finished'}</span></div>`;
     }
     function v86ProjectActions(p){
-        if (!state.isSuperAdmin && !state.userPerms.edit) return '';
+        const folder = (state.isSuperAdmin || state.userPerms.global) ? `<button type="button" title="${state.lang==='pt'?'Relatórios da obra':state.lang==='es'?'Informes de la obra':'Project reports'}" aria-label="${state.lang==='pt'?'Abrir relatórios desta obra':state.lang==='es'?'Abrir informes de esta obra':'Open this project’s reports'}" onclick="window.openProjectProgress('${p.id}','history')"><i data-lucide="folder-open" class="w-4 h-4"></i></button>` : '';
+        if (!state.isSuperAdmin && !state.userPerms.edit) return folder ? `<div class="v86-actions" onclick="event.stopPropagation()">${folder}</div>` : '';
         const archiveIcon=p.archived?'package-open':'archive';
-        return `<div class="v86-actions" onclick="event.stopPropagation()"><button title="${p.archived?'Reativar':'Arquivar'}" onclick="window.toggleArchive('${p.id}',${!!p.archived})"><i data-lucide="${archiveIcon}" class="w-4 h-4"></i></button><button title="Editar" onclick="window.editP('${p.id}')"><i data-lucide="edit-3" class="w-4 h-4"></i></button>${state.isSuperAdmin?`<button title="Excluir" onclick="window.deleteP('${p.id}')"><i data-lucide="trash-2" class="w-4 h-4 text-red-400"></i></button>`:''}</div>`;
+        return `<div class="v86-actions" onclick="event.stopPropagation()">${folder}<button title="${p.archived?'Reativar':'Arquivar'}" onclick="window.toggleArchive('${p.id}',${!!p.archived})"><i data-lucide="${archiveIcon}" class="w-4 h-4"></i></button><button title="Editar" onclick="window.editP('${p.id}')"><i data-lucide="edit-3" class="w-4 h-4"></i></button>${state.isSuperAdmin?`<button title="Excluir" onclick="window.deleteP('${p.id}')"><i data-lucide="trash-2" class="w-4 h-4 text-red-400"></i></button>`:''}</div>`;
     }
     function v86Header(p, moduleTitle=''){
         const st = v86StatusInfo(p);
@@ -7728,15 +7729,79 @@ function getSellerCommissionPeriodReport(projects, startStr, endStr) {
         getToken: () => auth.currentUser?.getIdToken(),
         getLang: () => state.lang,
     });
+    let progressReturnToList = false;
+    let progressEntryMode = 'history';
+    const progressText = (pt, en, es) => state.lang === 'pt' ? pt : state.lang === 'es' ? es : en;
+    window.openProjectProgress = (projectId, mode = 'history') => {
+        const project = state.projects.find(item => item.id === projectId);
+        if (!project || !(state.isSuperAdmin || state.userPerms.global)) return;
+        if (state.activeModule !== 'progress') progressReturnToList = !state.focusedProject;
+        progressEntryMode = mode === 'record' ? 'record' : 'history';
+        state.focusedProject = projectId;
+        state.activeModule = 'progress';
+        logAccess(state.user?.email, `Acessou relatórios de andamento da obra: ${getProjectDisplayName(project)}`, getProjectLogMeta(project));
+        window.renderProjects();
+        window.scrollTo({top: 0, behavior: 'smooth'});
+        if (progressEntryMode === 'record') projectProgressUI.record();
+    };
+    window.closeProjectProgress = () => {
+        if (progressReturnToList) {
+            progressReturnToList = false;
+            state.activeModule = null;
+            window.closeProjectDetails();
+        } else {
+            window.closeProjectModule();
+        }
+    };
     const renderProjectsBeforeProgress = window.renderProjects;
     window.renderProjects = () => {
         renderProjectsBeforeProgress();
         const focused = state.focusedProject && state.projects.find(item => item.id === state.focusedProject);
-        if (focused && !state.activeModule && (state.isSuperAdmin || state.userPerms.global)) {
-            projectProgressUI.mount(document.querySelector('#projects-grid .v86-page'), focused);
-        } else {
-            projectProgressUI.clear();
+        if (!focused || !(state.isSuperAdmin || state.userPerms.global)) { projectProgressUI.clear(); return; }
+        if (state.activeModule === 'progress') {
+            const grid = document.querySelector('#projects-grid');
+            if (!grid) return;
+            grid.replaceChildren();
+            const page = document.createElement('div');
+            page.className = 'v86-page project-progress-page';
+            const header = document.createElement('div');
+            header.className = 'v86-head no-print';
+            const title = document.createElement('div');
+            title.className = 'v86-head-left';
+            const back = document.createElement('button');
+            back.type = 'button'; back.className = 'v86-back';
+            back.setAttribute('aria-label', progressText('Voltar', 'Back', 'Volver'));
+            back.textContent = '←'; back.addEventListener('click', window.closeProjectProgress);
+            const copy = document.createElement('div');
+            copy.className = 'v86-head-copy';
+            const heading = document.createElement('h1');
+            heading.className = 'v86-title'; heading.textContent = getProjectPrimaryTitle(focused);
+            const subtitle = document.createElement('div');
+            subtitle.className = 'v86-subtitle'; subtitle.textContent = progressText('Pasta de relatórios da obra', 'Project report folder', 'Carpeta de informes de la obra');
+            const reference = document.createElement('div');
+            reference.className = 'v86-meta-line';
+            reference.textContent = [focused.nomeProjeto, focused.numeroInvoice && `Invoice ${focused.numeroInvoice}`, focused.numeroProposta && `${progressText('Proposta','Proposal','Propuesta')} ${focused.numeroProposta}`].filter(Boolean).join(' • ');
+            copy.append(heading, subtitle, reference);
+            title.append(back, copy); header.append(title); page.append(header); grid.append(page);
+            projectProgressUI.mount(page, focused, progressEntryMode);
+            return;
         }
+        projectProgressUI.clear();
+        if (state.activeModule) return;
+        const actions = document.querySelector('#projects-grid .v86-head > .flex.flex-wrap.justify-end.gap-2');
+        if (!actions) return;
+        for (const [icon, label, mode] of [
+            ['mic', progressText('Gravar atualização', 'Record update', 'Grabar actualización'), 'record'],
+            ['folder-open', progressText('Relatórios da obra', 'Project reports', 'Informes de la obra'), 'history'],
+        ]) {
+            const button = document.createElement('button');
+            button.type = 'button'; button.className = 'v86-btn project-progress-shortcut';
+            button.title = label; button.setAttribute('aria-label', label);
+            button.innerHTML = `<i data-lucide="${icon}" class="w-4 h-4"></i>`;
+            button.addEventListener('click', () => window.openProjectProgress(focused.id, mode));
+            actions.prepend(button);
+        }
+        try { lucide.createIcons(); } catch {}
     };
 
     const baseEditProject = window.editP;
