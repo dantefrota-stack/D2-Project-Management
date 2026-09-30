@@ -7,6 +7,7 @@
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
     <link href="report-print.css" rel="stylesheet">
+    <link href="project-progress.css" rel="stylesheet">
     <script src="https://unpkg.com/lucide@latest"></script>
     <!-- Chart.js para Gráficos Interativos -->
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
@@ -1406,6 +1407,7 @@
     import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
     import { getAuth, signInWithEmailAndPassword, signInWithCustomToken, onIdTokenChanged, signOut } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
     import { createSessionLifecycle } from './session-lifecycle.mjs';
+    import { createProjectProgressUI } from './project-progress.mjs';
     import { assertUnchangedProjectFields } from './project-concurrency.mjs';
     import { getFirestore, collection, doc, updateDoc, addDoc, deleteDoc, onSnapshot, serverTimestamp, arrayUnion, getDocs, writeBatch, runTransaction, query, where } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
 
@@ -7720,6 +7722,21 @@ function getSellerCommissionPeriodReport(projects, startStr, endStr) {
     window.openProjectDetails = (projectId) => {
         baseOpenProjectDetails(projectId);
         mountSuperAdminProposalDeleteAction(projectId);
+    };
+
+    const projectProgressUI = createProjectProgressUI({
+        getToken: () => auth.currentUser?.getIdToken(),
+        getLang: () => state.lang,
+    });
+    const renderProjectsBeforeProgress = window.renderProjects;
+    window.renderProjects = () => {
+        renderProjectsBeforeProgress();
+        const focused = state.focusedProject && state.projects.find(item => item.id === state.focusedProject);
+        if (focused && !state.activeModule && (state.isSuperAdmin || state.userPerms.global)) {
+            projectProgressUI.mount(document.querySelector('#projects-grid .v86-page'), focused);
+        } else {
+            projectProgressUI.clear();
+        }
     };
 
     const baseEditProject = window.editP;

@@ -16,5 +16,6 @@ jobs:
           distribution: temurin
           java-version: '21'
       - run: npm ci --ignore-scripts
+      - run: npm ci --ignore-scripts --prefix functions
       - run: npm test
       - run: npx --yes firebase-tools@15.10.1 emulators:exec --project demo-d2-project-audit --config firebase.emulators.json --only firestore "npm run test:rules"
