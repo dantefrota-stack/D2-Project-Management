@@ -36,7 +36,7 @@ const CORS_ORIGINS = [
   'http://localhost:4173'
 ];
 
-exports.progressReportsApi = onRequest({region: 'us-east1', cors: CORS_ORIGINS, invoker: 'public', timeoutSeconds: 120, memory: '1GiB', maxInstances: 3}, createProgressReportsHandler({db, authenticate: authenticatedContext, audit: auditLog}));
+exports.progressReportsApi = onRequest({region: 'us-east1', cors: CORS_ORIGINS, invoker: 'public', timeoutSeconds: 300, memory: '1GiB', maxInstances: 3}, createProgressReportsHandler({db, authenticate: authenticatedContext, audit: auditLog}));
 
 const cleanText = (value, maxLength = 180) => String(value || '').trim().replace(/[\u0000-\u001f\u007f]/g, '').slice(0, maxLength);
 const safeFileName = value => cleanText(value || 'document', 120).replace(/[^a-zA-Z0-9._-]/g, '_').slice(-120);

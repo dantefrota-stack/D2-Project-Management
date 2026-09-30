@@ -37,6 +37,12 @@
 .progress-draft h3,.progress-history h3{margin:0 0 5px;font-size:1.08rem;font-weight:800}
 .progress-history{margin-top:23px;border-top:1px solid #d8e1e8;padding-top:20px}
 .progress-history-title span{border-radius:99px;padding:3px 9px;background:#e8f1f5;color:#19425a;font-size:.8rem;font-weight:700}
+.progress-history-actions{display:flex;align-items:flex-end;flex-wrap:wrap;gap:10px}
+.progress-pdf-language{display:flex;flex-direction:column;gap:5px;color:#30465a;font-size:.8rem;font-weight:700}
+.progress-pdf-language span{padding:0;border:0;background:none;color:inherit;font-size:inherit}
+.progress-pdf-language select{min-width:185px;padding:9px 12px;border:1px solid #bfd0da;border-radius:10px;background:#fff;color:#14283a;font:inherit}
+.progress-pdf-language small{color:#60758a;font-size:.7rem;font-weight:400}
+.progress-pdf-language select:focus{outline:2px solid #0e8b78;outline-offset:1px}
 .progress-report{margin-top:13px;padding:17px;border:1px solid #d7e1e7;border-radius:14px;background:#fff}
 .progress-report h4{margin:0 0 4px;font-size:.98rem;font-weight:800}
 .progress-report small{color:#60758a;font-size:.76rem}
@@ -45,6 +51,7 @@
 .progress-report-section strong{color:#14536b;font-size:.79rem}
 .progress-empty{margin-top:13px}
 @media(max-width:650px){.project-progress{padding:17px;border-radius:18px}.progress-head,.progress-report-top{flex-direction:column}.progress-head-main{gap:14px}.progress-mic{flex-basis:112px;min-height:112px}.progress-mic svg{width:45px;height:45px}.progress-all-pdf,.progress-report-top button{width:100%}}
+@media(max-width:650px){.progress-history-title{flex-direction:column}.progress-history-actions,.progress-pdf-language,.progress-pdf-language select{width:100%}}
 @media(max-width:390px){.progress-head-main{flex-direction:column;align-items:stretch}.progress-mic{flex-basis:auto;width:100%;min-height:100px}}
 @media(max-width:390px){.progress-language{flex-direction:column;align-items:stretch}.progress-language select{width:100%}}
 @media(prefers-reduced-motion:reduce){.progress-mic.recording{animation:none}.progress-mic,.progress-all-pdf,.progress-report-top button{transition:none}}

@@ -99,10 +99,11 @@ if (process.argv.includes('--audio-probe') && serviceData.state === 'ENABLED') {
 const localizationProbe = [];
 if (process.argv.includes('--localization-probe') && serviceData.state === 'ENABLED') {
   const englishReport = {title: 'Daily Progress Report', summary: 'A normal site survey was completed. Equipment was installed between 8 AM and 5 PM. Márcio and Léo were present.', completed: 'Site survey completed. Equipment installed.', progress: 'Work was performed between 8 AM and 5 PM.', issues: '', nextSteps: ''};
-  for (const target of ['pt', 'es']) {
+  const portugueseReport = {title: 'Relatório diário de andamento', summary: 'A vistoria foi concluída. Equipamentos foram instalados entre 8h e 17h. Márcio e Léo estavam presentes.', completed: 'Vistoria concluída. Equipamentos instalados.', progress: 'O trabalho ocorreu entre 8h e 17h.', issues: '', nextSteps: ''};
+  for (const [target, source] of [['pt', englishReport], ['es', englishReport], ['en', portugueseReport]]) {
     const response = await fetch(endpoint, {
       method: 'POST', headers: {...headers, 'Content-Type': 'application/json'},
-      body: JSON.stringify({contents: [{role: 'user', parts: [{text: `${buildLocalizationPrompt(target)}\n\nReport fields to revise:\n${JSON.stringify(englishReport)}`}]}], generationConfig: {responseMimeType: 'application/json', temperature: 0, maxOutputTokens: 3000, thinkingConfig: {thinkingBudget: 0}}}),
+      body: JSON.stringify({contents: [{role: 'user', parts: [{text: `${buildLocalizationPrompt(target)}\n\nReport fields to revise:\n${JSON.stringify(source)}`}]}], generationConfig: {responseMimeType: 'application/json', temperature: 0, maxOutputTokens: 3000, thinkingConfig: {thinkingBudget: 0}}}),
       signal: AbortSignal.timeout(60000),
     });
     const result = await response.json().catch(() => ({}));

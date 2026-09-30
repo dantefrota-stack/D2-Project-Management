@@ -14,6 +14,8 @@ const words = {
     moreDetail: 'Descreva o andamento com mais detalhes.', reviewWarning: 'Confira nomes, datas, números e fatos antes de salvar.',
     spokenLanguage: 'Idioma falado', detectAutomatically: 'Detectar automaticamente', portuguese: 'Português', english: 'English', spanish: 'Español', reportLanguageHint: 'O relatório será escrito no idioma selecionado no Portal; a transcrição manterá o idioma falado.',
     correctLanguage: 'Corrigir idioma do relatório',
+    pdfLanguage: 'Idioma do PDF', originalLanguage: 'Original (sem tradução)',
+    pdfReview: 'Revise a tradução antes de enviar.',
   },
   en: {
     heading: 'Progress reports', intro: 'Record a project update and review the report before saving.',
@@ -30,6 +32,8 @@ const words = {
     moreDetail: 'Describe the progress in more detail.', reviewWarning: 'Check names, dates, numbers, and facts before saving.',
     spokenLanguage: 'Spoken language', detectAutomatically: 'Detect automatically', portuguese: 'Português', english: 'English', spanish: 'Español', reportLanguageHint: 'The report uses the Portal language; the transcript keeps the language spoken.',
     correctLanguage: 'Correct report language',
+    pdfLanguage: 'PDF language', originalLanguage: 'Original (no translation)',
+    pdfReview: 'Review the translation before sharing.',
   },
   es: {
     heading: 'Informes de avance', intro: 'Graba una actualización de la obra y revisa el informe antes de guardarlo.',
@@ -46,6 +50,8 @@ const words = {
     moreDetail: 'Describe el avance con más detalle.', reviewWarning: 'Comprueba nombres, fechas, números y hechos antes de guardar.',
     spokenLanguage: 'Idioma hablado', detectAutomatically: 'Detectar automáticamente', portuguese: 'Português', english: 'English', spanish: 'Español', reportLanguageHint: 'El informe usa el idioma del Portal; la transcripción conserva el idioma hablado.',
     correctLanguage: 'Corregir idioma del informe',
+    pdfLanguage: 'Idioma del PDF', originalLanguage: 'Original (sin traducción)',
+    pdfReview: 'Revisa la traducción antes de enviarla.',
   },
 };
 const reportFields = ['title', 'summary', 'completed', 'progress', 'issues', 'nextSteps', 'transcript'];
@@ -58,6 +64,7 @@ const niceDate = (value, lang) => {
 export function createProjectProgressUI({getToken, getLang}) {
   const languageChoices = ['auto', 'pt', 'en', 'es'];
   let spokenLanguage = 'auto';
+  let exportLanguage = 'original';
   try {
     const saved = localStorage.getItem('d2-project-progress.spoken-language');
     if (languageChoices.includes(saved)) spokenLanguage = saved;
@@ -121,7 +128,6 @@ export function createProjectProgressUI({getToken, getLang}) {
           <button type="button" class="progress-mic ${recorder ? 'recording' : ''}" data-mic aria-label="${recorder ? t.stop : t.record}" ${busy || !micAvailable ? 'disabled' : ''}><i data-lucide="${recorder ? 'square' : 'mic'}"></i><strong>${recorder ? t.stop : t.record}</strong></button>
           <div><span class="progress-kicker">D2 • ${escape(project.empresa)}</span><h2>${t.heading}</h2><p>${t.intro}</p><p class="progress-consent">${micAvailable ? t.consent : t.unavailable}</p></div>
         </div>
-        <button type="button" class="progress-all-pdf" data-all-pdf ${reports.length ? '' : 'disabled'}><i data-lucide="files"></i>${t.allPdf}</button>
       </div>
       <label class="progress-language"><span>${t.spokenLanguage}</span><select data-spoken-language ${busy || recorder ? 'disabled' : ''}>
         ${[['auto', t.detectAutomatically], ['pt', t.portuguese], ['en', t.english], ['es', t.spanish]].map(([id, label]) => `<option value="${id}" ${spokenLanguage === id ? 'selected' : ''}>${label}</option>`).join('')}
@@ -133,7 +139,10 @@ export function createProjectProgressUI({getToken, getLang}) {
         ${reportFields.map(key => `<label class="progress-field"><span>${t[key]}</span><textarea data-field="${key}" maxlength="${key === 'transcript' ? 16000 : key === 'title' ? 160 : key === 'summary' || key === 'progress' || key === 'issues' ? 1200 : 1800}" rows="${key === 'title' ? 2 : key === 'transcript' ? 5 : 3}">${escape(draft[key])}</textarea></label>`).join('')}
         <div class="progress-draft-actions"><button type="button" class="progress-correct-language" data-localize ${busy ? 'disabled' : ''}>${t.correctLanguage}</button><button type="button" class="progress-save" data-save ${busy ? 'disabled' : ''}>${t.save}</button></div>
       </div>` : ''}
-      <div class="progress-history"><div class="progress-history-title"><h3>${t.history}</h3><span>${reports.length}</span></div>
+      <div class="progress-history"><div class="progress-history-title"><div><h3>${t.history}</h3><span>${reports.length}</span></div><div class="progress-history-actions">
+        <label class="progress-pdf-language"><span>${t.pdfLanguage}</span><select data-export-language>
+          ${[['original', t.originalLanguage], ['pt', t.portuguese], ['en', t.english], ['es', t.spanish]].map(([id, label]) => `<option value="${id}" ${exportLanguage === id ? 'selected' : ''}>${label}</option>`).join('')}
+        </select><small data-pdf-review ${exportLanguage === 'original' ? 'hidden' : ''}>${t.pdfReview}</small></label><button type="button" class="progress-all-pdf" data-all-pdf ${reports.length ? '' : 'disabled'}><i data-lucide="files"></i>${t.allPdf}</button></div></div>
         ${reports.length ? reports.map(row => `<article class="progress-report">
           <div class="progress-report-top"><div><h4>${escape(row.title)}</h4><small>${escape(niceDate(row.createdAt, lang()))} • ${t.recordedBy}: ${escape(row.createdBy?.name || row.createdBy?.email || '—')}</small></div>
           <button type="button" data-one-pdf="${escape(row.id)}"><i data-lucide="file-down"></i>${t.onePdf}</button></div>
@@ -153,6 +162,12 @@ export function createProjectProgressUI({getToken, getLang}) {
     root.querySelector('[data-save]')?.addEventListener('click', () => saveDraft());
     root.querySelector('[data-localize]')?.addEventListener('click', () => correctLanguage());
     root.querySelector('[data-all-pdf]')?.addEventListener('click', () => downloadPdf({all: true}));
+    root.querySelector('[data-export-language]')?.addEventListener('change', event => {
+      if (['original', 'pt', 'en', 'es'].includes(event.target.value)) {
+        exportLanguage = event.target.value;
+        root.querySelector('[data-pdf-review]').hidden = exportLanguage === 'original';
+      }
+    });
     root.querySelectorAll('[data-one-pdf]').forEach(button => button.addEventListener('click', () => downloadPdf({ids: [button.dataset.onePdf]})));
     try { window.lucide?.createIcons(); } catch {}
   }
@@ -240,11 +255,11 @@ export function createProjectProgressUI({getToken, getLang}) {
     const expectedId = project.id;
     busy = true; render();
     try {
-      const blob = await request({action: 'pdf', ...selection}, true, expectedId);
+      const blob = await request({action: 'pdf', exportLang: exportLanguage, ...selection}, true, expectedId);
       const url = URL.createObjectURL(blob);
       const link = document.createElement('a');
       link.href = url;
-      link.download = `project-progress-${expectedId}.pdf`;
+      link.download = `project-progress-${expectedId}-${exportLanguage}.pdf`;
       document.body.append(link); link.click(); link.remove();
       setTimeout(() => URL.revokeObjectURL(url), 60000);
     } catch (cause) { setMessage('', cause.message); }

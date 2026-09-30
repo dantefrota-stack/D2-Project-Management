@@ -114,8 +114,38 @@ test('generated drafts are reviewed before save; saving stores text and project 
   assert.equal(db.saved.length, 1);
   assert.equal(db.saved[0].projectId, 'project-smart');
   assert.equal(db.saved[0].company, 'Smart Home');
+  assert.equal(db.saved[0].reportLanguage, 'pt');
   assert.equal(db.saved[0].audio, undefined);
   assert.equal(auditCount, 1);
+});
+
+test('PDF export translates one or all reports on demand without changing stored originals', async () => {
+  const db = fakeDb();
+  db.saved.push({...report, title: 'Outro relatório', summary: 'Outra obra concluída.', reportLanguage: 'pt'});
+  const exports = [];
+  let translations = 0;
+  const handler = createProgressReportsHandler({
+    db, authenticate: async () => manager(),
+    localize: async ({draft: input, lang}) => {translations += 1; assert.equal(lang, 'en'); return {...input, summary: `Translated: ${input.summary}`};},
+    renderPdf: async input => {exports.push(input); return Buffer.from('%PDF-test');},
+  });
+  for (const body of [
+    {action: 'pdf', ids: ['report-one'], exportLang: 'original'},
+    {action: 'pdf', ids: ['report-one'], exportLang: 'en'},
+    {action: 'pdf', all: true, exportLang: 'en'},
+  ]) {
+    const res = fakeResponse();
+    await handler({method: 'POST', body: {projectId: 'project-smart', lang: 'pt', ...body}}, res);
+    assert.equal(res.code, 200);
+  }
+  assert.equal(exports[0].reports[0].summary, report.summary);
+  assert.equal(exports[0].lang, 'pt');
+  assert.equal(exports[1].reports[0].summary, `Translated: ${report.summary}`);
+  assert.equal(exports[1].lang, 'en');
+  assert.equal(exports[2].reports.length, 2);
+  assert.equal(translations, 3);
+  assert.equal(db.saved[0].summary, 'Outra obra concluída.');
+  assert.equal(report.summary, 'A equipe concluiu a passagem de cabos.');
 });
 
 test('generate action passes spoken language separately from report language', async () => {
