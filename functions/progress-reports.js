@@ -219,7 +219,7 @@ function createProgressReportsHandler({db, authenticate, audit = async () => {},
         const draft = normalizedDraft(req.body.draft);
         const reference = collection.doc();
         const createdBy = {uid: context.decoded.uid, email: context.email, name: String(context.profile?.name || context.userRecord?.displayName || context.email).slice(0, 120)};
-        const report = {...draft, projectId, company: project.empresa, createdBy, createdAt: FieldValue.serverTimestamp()};
+        const report = {...draft, projectId, company: project.empresa, reportLanguage: lang, createdBy, createdAt: FieldValue.serverTimestamp()};
         await reference.create(report);
         await audit(context, 'Created project progress report', {projectId, reportId: reference.id, company: project.empresa});
         return res.json({id: reference.id});
@@ -230,7 +230,23 @@ function createProgressReportsHandler({db, authenticate, audit = async () => {},
         if (!Array.isArray(ids) || !ids.length || ids.length > MAX_REPORTS || ids.some(id => typeof id !== 'string' || !/^[A-Za-z0-9_-]{1,160}$/.test(id))) throw failure('Select one or more reports.');
         const selected = ids.map(id => rows.find(row => row.id === id));
         if (selected.some(row => !row)) throw failure('Report not found in this project.', 404);
-        const pdf = await renderPdf({project, reports: selected, lang});
+        const requestedLanguage = req.body.exportLang || 'original';
+        if (requestedLanguage !== 'original' && !Object.hasOwn(LANGUAGES, requestedLanguage)) throw failure('Invalid PDF language.');
+        const pdfLanguage = requestedLanguage === 'original' ? language(selected.length === 1 ? selected[0].reportLanguage || lang : lang) : requestedLanguage;
+        let pdfRows = selected;
+        if (requestedLanguage !== 'original') {
+          pdfRows = new Array(selected.length);
+          let next = 0;
+          await Promise.all(Array.from({length: Math.min(4, selected.length)}, async () => {
+            while (next < selected.length) {
+              const index = next++;
+              const row = selected[index];
+              const translated = await localize({draft: {...row, transcript: row.transcript || row.summary}, lang: pdfLanguage});
+              pdfRows[index] = {...row, ...translated};
+            }
+          }));
+        }
+        const pdf = await renderPdf({project, reports: pdfRows, lang: pdfLanguage});
         res.set('Content-Type', 'application/pdf');
         res.set('Content-Disposition', `attachment; filename="project-progress-${projectId}.pdf"`);
         return res.send(pdf);
