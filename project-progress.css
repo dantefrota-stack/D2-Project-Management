@@ -1,6 +1,11 @@
 .project-progress{margin:0 0 26px;padding:26px;border:1px solid #c9d8e3;border-radius:24px;background:#fff;box-shadow:0 12px 35px rgba(21,45,65,.06);color:#14283a}
 .project-progress-page{max-width:1180px;margin:0 auto}
-.project-progress-shortcut{min-width:38px;padding:9px!important}
+.project-progress-heading-row{display:flex;align-items:center;flex-wrap:wrap;gap:12px 18px;margin-top:7px}
+.project-progress-heading-row .v86-subtitle{margin-top:0}
+.project-progress-shortcuts{display:inline-flex;align-items:center;gap:10px}
+.v86-head .project-progress-shortcuts .project-progress-shortcut{flex:0 0 52px;width:52px;min-width:52px;height:52px;min-height:52px;padding:0!important;border-radius:14px}
+.project-progress-shortcut svg{width:23px;height:23px}
+.project-progress-shortcut:focus-visible{outline:3px solid #0e8b78;outline-offset:2px}
 .progress-head,.progress-history-title,.progress-report-top{display:flex;align-items:flex-start;justify-content:space-between;gap:18px}
 .progress-head-main{display:flex;align-items:center;gap:23px;min-width:0}
 .progress-head-main>div{min-width:0}
