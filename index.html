@@ -582,13 +582,14 @@
         .c2-filter-grid { display:grid; grid-template-columns:minmax(280px,1.5fr) minmax(260px,.9fr) minmax(220px,.8fr); gap:14px; align-items:end; }
         .c2-filter-footer { display:flex; align-items:center; justify-content:space-between; gap:16px; margin-top:14px; padding-top:14px; border-top:1px solid var(--c2-line); }
         .c2-filter-hint,.c2-filter-summary { display:flex; align-items:center; gap:8px; color:var(--c2-muted); font-size:10px; font-weight:700; }
-        .c2-receivable-summary { display:flex; align-items:center; justify-content:space-between; gap:16px; margin-top:16px; padding-top:16px; border-top:1px solid var(--c2-line); }
+        .c2-filter-actions { display:flex; flex:1; flex-wrap:wrap; align-items:center; gap:12px 28px; min-width:0; }
+        .c2-receivable-summary { display:flex; align-items:center; gap:14px; min-width:0; }
         .c2-receivable-summary[hidden] { display:none; }
-        .c2-receivable-label { display:block; color:var(--c2-text); font-size:13px; font-weight:850; }
-        .c2-receivable-count { display:block; margin-top:4px; color:var(--c2-muted); font-size:11px; }
-        .c2-receivable-value { color:#ff6e6e; font-size:clamp(22px,2vw,28px); font-weight:900; font-variant-numeric:tabular-nums; white-space:nowrap; }
+        .c2-receivable-label { display:block; color:var(--c2-text); font-size:11px; font-weight:850; }
+        .c2-receivable-count { display:block; margin-top:2px; color:var(--c2-muted); font-size:10px; }
+        .c2-receivable-value { color:#ff6e6e; font-size:clamp(20px,1.8vw,25px); font-weight:900; font-variant-numeric:tabular-nums; white-space:nowrap; }
         .app-body-light .c2-receivable-value { color:#b91c1c; }
-        @media (max-width:600px) { .c2-receivable-summary { align-items:flex-start; flex-direction:column; } }
+        @media (max-width:600px) { .c2-receivable-summary { justify-content:space-between; width:100%; } }
         .c2-input-icon { position:absolute; left:14px; top:50%; transform:translateY(-50%); color:var(--c2-muted); pointer-events:none; z-index:2; }
         .c2-input-with-icon { padding-left:42px !important; }
         .c2-unit-switch,.c2-segmented { display:flex; align-items:center; gap:5px; padding:4px; border:1px solid var(--c2-line); border-radius:13px; background:rgba(0,0,0,.15); min-height:47px; overflow-x:auto; }
@@ -1273,16 +1274,18 @@
                     <div id="seller-filter-box" class="hidden c2-filter-field"></div>
                 </div>
                 <div class="c2-filter-footer">
-                    <div class="c2-segmented">
-                        <button onclick="window.setArchiveFilter('active')" id="filter-active" class="filter-pill active" data-i18n="filter_active">Ativas</button>
-                        <button onclick="window.setArchiveFilter('archived')" id="filter-archived" class="filter-pill" data-i18n="filter_archived">Arquivadas</button>
-                        <button onclick="window.setArchiveFilter('all')" id="filter-all" class="filter-pill" data-i18n="filter_all">Todas</button>
+                    <div class="c2-filter-actions">
+                        <div class="c2-segmented">
+                            <button onclick="window.setArchiveFilter('active')" id="filter-active" class="filter-pill active" data-i18n="filter_active">Ativas</button>
+                            <button onclick="window.setArchiveFilter('archived')" id="filter-archived" class="filter-pill" data-i18n="filter_archived">Arquivadas</button>
+                            <button onclick="window.setArchiveFilter('all')" id="filter-all" class="filter-pill" data-i18n="filter_all">Todas</button>
+                        </div>
+                        <div id="projects-receivable-summary" class="c2-receivable-summary" aria-live="polite" hidden>
+                            <div><span class="c2-receivable-label"></span><small class="c2-receivable-count"></small></div>
+                            <strong class="c2-receivable-value"></strong>
+                        </div>
                     </div>
                     <div class="c2-filter-hint"><i data-lucide="sliders-horizontal" class="w-4 h-4"></i><span data-i18n="filters_realtime">Filtros aplicados em tempo real</span></div>
-                </div>
-                <div id="projects-receivable-summary" class="c2-receivable-summary" aria-live="polite" hidden>
-                    <div><span class="c2-receivable-label"></span><small class="c2-receivable-count"></small></div>
-                    <strong class="c2-receivable-value"></strong>
                 </div>
             </section>
             <div id="projects-grid" class="c2-project-grid text-left"></div>
