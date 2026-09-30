@@ -2,7 +2,7 @@ import {readFile} from 'node:fs/promises';
 import {createHash} from 'node:crypto';
 
 const base = 'https://d2-project-management.web.app';
-const hash = bytes => createHash('sha256').update(bytes).digest('hex');
+const hash = bytes => createHash('sha256').update(bytes.toString('utf8').replace(/\r\n/g, '\n')).digest('hex');
 const files = ['index.html', 'project-progress.mjs', 'project-progress.css'];
 const results = [];
 for (const file of files) {

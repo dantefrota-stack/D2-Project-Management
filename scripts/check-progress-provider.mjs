@@ -1,7 +1,10 @@
 import {createRequire} from 'node:module';
 import {fileURLToPath} from 'node:url';
+import fs from 'node:fs';
+import path from 'node:path';
 
 const require = createRequire(fileURLToPath(import.meta.url));
+const {buildProgressPrompt, buildTranscriptionPrompt, buildLocalizationPrompt} = require('../functions/progress-reports.js');
 if (!process.env.D2_FIREBASE_AUTH_MODULE) throw Error('D2_FIREBASE_AUTH_MODULE is required.');
 const cli = require(process.env.D2_FIREBASE_AUTH_MODULE);
 const account = cli.getGlobalDefaultAccount();
@@ -28,8 +31,8 @@ const iamData = await iam.json().catch(() => ({}));
 const member = 'serviceAccount:254630664761-compute@developer.gserviceaccount.com';
 const roles = (iamData.bindings || []).filter(binding => binding.members?.includes(member)).map(binding => binding.role).sort();
 let probe = null;
+const endpoint = 'https://us-central1-aiplatform.googleapis.com/v1/projects/d2-project-management/locations/us-central1/publishers/google/models/gemini-2.5-flash:generateContent';
 if (process.argv.includes('--probe') && serviceData.state === 'ENABLED') {
-  const endpoint = 'https://us-central1-aiplatform.googleapis.com/v1/projects/d2-project-management/locations/us-central1/publishers/google/models/gemini-2.5-flash:generateContent';
   const response = await fetch(endpoint, {
     method: 'POST', headers: {...headers, 'Content-Type': 'application/json'},
     body: JSON.stringify({contents: [{role: 'user', parts: [{text: 'Reply with valid JSON: {"ok":true}'}]}], generationConfig: {responseMimeType: 'application/json', maxOutputTokens: 80}}),
@@ -38,4 +41,74 @@ if (process.argv.includes('--probe') && serviceData.state === 'ENABLED') {
   const result = await response.json().catch(() => ({}));
   probe = {status: response.status, generated: Boolean(result.candidates?.[0]?.content?.parts?.[0]?.text), errorCode: result.error?.status || null};
 }
-console.log(JSON.stringify({serviceStatus: service.status, vertexState: serviceData.state || null, iamStatus: iam.status, runtimeRoles: roles, probe}));
+const languageProbe = [];
+if (process.argv.includes('--language-probe') && serviceData.state === 'ENABLED') {
+  const cases = [
+    {spokenLanguage: 'pt', lang: 'en', notes: 'Concluímos a instalação dos cabos no primeiro andar. Falta agendar a inspeção.'},
+    {spokenLanguage: 'en', lang: 'es', notes: 'We completed the first-floor cable installation. The inspection has not been scheduled.'},
+    {spokenLanguage: 'es', lang: 'pt', notes: 'Terminamos la instalación de cables en el primer piso. Falta programar la inspección.'},
+  ];
+  const project = {cliente: 'Projeto de teste de idioma', nomeProjeto: 'Verificação multilíngue', numeroInvoice: '', numeroProposta: ''};
+  for (const item of cases) {
+    const prompt = buildProgressPrompt({project, lang: item.lang, spokenLanguage: item.spokenLanguage, audio: false});
+    const response = await fetch(endpoint, {
+      method: 'POST', headers: {...headers, 'Content-Type': 'application/json'},
+      body: JSON.stringify({contents: [{role: 'user', parts: [{text: `${prompt}\n\nManager notes:\n${item.notes}`}]}], generationConfig: {responseMimeType: 'application/json', temperature: 0.1, maxOutputTokens: 3000, thinkingConfig: {thinkingBudget: 0}}}),
+      signal: AbortSignal.timeout(60000),
+    });
+    const result = await response.json().catch(() => ({}));
+    const raw = result.candidates?.[0]?.content?.parts?.map(part => part.text || '').join('') || '';
+    let draft = null;
+    try { draft = JSON.parse(raw); } catch {}
+    languageProbe.push({source: item.spokenLanguage, report: item.lang, status: response.status, validDraft: !!(draft?.transcript && draft?.summary && draft?.title), transcript: String(draft?.transcript || '').slice(0, 180), summary: String(draft?.summary || '').slice(0, 180), errorCode: result.error?.status || null});
+  }
+}
+const audioProbe = [];
+if (process.argv.includes('--audio-probe') && serviceData.state === 'ENABLED') {
+  const directory = process.env.D2_PROGRESS_AUDIO_PROBE_DIR;
+  if (!directory) throw Error('D2_PROGRESS_AUDIO_PROBE_DIR is required for --audio-probe.');
+  const project = {cliente: 'Projeto de teste de idioma', nomeProjeto: 'Verificação multilíngue', numeroInvoice: '', numeroProposta: ''};
+  for (const [source, target, audioLanguage] of [['pt', 'en', 'pt'], ['en', 'es', 'en'], ['es', 'pt', 'es'], ['auto', 'en', 'pt'], ['auto', 'es', 'en'], ['auto', 'pt', 'es']]) {
+    const file = path.join(directory, `${audioLanguage}.wav`);
+    const data = fs.readFileSync(file).toString('base64');
+    const transcriptionResponse = await fetch(endpoint, {
+      method: 'POST', headers: {...headers, 'Content-Type': 'application/json'},
+      body: JSON.stringify({contents: [{role: 'user', parts: [{inlineData: {mimeType: 'audio/wav', data}}, {text: buildTranscriptionPrompt(source)}]}], generationConfig: {responseMimeType: 'application/json', temperature: 0.1, maxOutputTokens: 8192, thinkingConfig: {thinkingBudget: 0}}}),
+      signal: AbortSignal.timeout(90000),
+    });
+    const transcriptionResult = await transcriptionResponse.json().catch(() => ({}));
+    let transcript = '';
+    try { transcript = JSON.parse(transcriptionResult.candidates?.[0]?.content?.parts?.map(part => part.text || '').join('') || '').transcript || ''; } catch {}
+    if (!transcript) {
+      audioProbe.push({source, audioLanguage, report: target, transcriptionStatus: transcriptionResponse.status, validDraft: false, errorCode: transcriptionResult.error?.status || null});
+      continue;
+    }
+    const prompt = buildProgressPrompt({project, lang: target, spokenLanguage: source, audio: false});
+    const response = await fetch(endpoint, {
+      method: 'POST', headers: {...headers, 'Content-Type': 'application/json'},
+      body: JSON.stringify({contents: [{role: 'user', parts: [{text: `${prompt}\n\nManager notes:\n${transcript}`}]}], generationConfig: {responseMimeType: 'application/json', temperature: 0.1, maxOutputTokens: 3000, thinkingConfig: {thinkingBudget: 0}}}),
+      signal: AbortSignal.timeout(90000),
+    });
+    const result = await response.json().catch(() => ({}));
+    const raw = result.candidates?.[0]?.content?.parts?.map(part => part.text || '').join('') || '';
+    let draft = null;
+    try { draft = JSON.parse(raw); } catch {}
+    audioProbe.push({source, audioLanguage, report: target, transcriptionStatus: transcriptionResponse.status, status: response.status, validDraft: !!(transcript && draft?.summary && draft?.title), transcript: transcript.slice(0, 180), summary: String(draft?.summary || '').slice(0, 180), errorCode: result.error?.status || null});
+  }
+}
+const localizationProbe = [];
+if (process.argv.includes('--localization-probe') && serviceData.state === 'ENABLED') {
+  const englishReport = {title: 'Daily Progress Report', summary: 'A normal site survey was completed. Equipment was installed between 8 AM and 5 PM. Márcio and Léo were present.', completed: 'Site survey completed. Equipment installed.', progress: 'Work was performed between 8 AM and 5 PM.', issues: '', nextSteps: ''};
+  for (const target of ['pt', 'es']) {
+    const response = await fetch(endpoint, {
+      method: 'POST', headers: {...headers, 'Content-Type': 'application/json'},
+      body: JSON.stringify({contents: [{role: 'user', parts: [{text: `${buildLocalizationPrompt(target)}\n\nReport fields to revise:\n${JSON.stringify(englishReport)}`}]}], generationConfig: {responseMimeType: 'application/json', temperature: 0, maxOutputTokens: 3000, thinkingConfig: {thinkingBudget: 0}}}),
+      signal: AbortSignal.timeout(60000),
+    });
+    const result = await response.json().catch(() => ({}));
+    let draft = null;
+    try { draft = JSON.parse(result.candidates?.[0]?.content?.parts?.map(part => part.text || '').join('') || ''); } catch {}
+    localizationProbe.push({target, status: response.status, validDraft: !!(draft?.title && draft?.summary && draft?.completed && draft?.progress), title: String(draft?.title || '').slice(0, 180), summary: String(draft?.summary || '').slice(0, 250), errorCode: result.error?.status || null});
+  }
+}
+console.log(JSON.stringify({serviceStatus: service.status, vertexState: serviceData.state || null, iamStatus: iam.status, runtimeRoles: roles, probe, languageProbe, audioProbe, localizationProbe}));

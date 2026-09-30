@@ -17,11 +17,19 @@
 .progress-mic:disabled{opacity:.55;cursor:not-allowed}
 @keyframes progress-pulse{50%{box-shadow:0 0 0 10px rgba(179,38,49,.12)}}
 .progress-compose-copy strong{display:block;margin-bottom:5px;font-size:1.09rem}
+.progress-language{display:flex;align-items:center;gap:12px;margin:17px 0 5px;font-size:.86rem;font-weight:700}
+.progress-language select{min-width:210px;max-width:100%;padding:9px 12px;border:1px solid #bfd0da;border-radius:10px;background:#fff;color:#14283a;font:inherit}
+.progress-language select:focus{outline:2px solid #0e8b78;outline-offset:1px}
+.progress-language-hint{margin:0 0 12px;color:#60758a;font-size:.78rem;line-height:1.45}
 .progress-notes,.progress-field{display:block;margin:12px 0;font-size:.86rem;font-weight:700}
 .progress-notes span,.progress-field span{display:block;margin-bottom:7px}
 .progress-notes textarea,.progress-field textarea{width:100%;box-sizing:border-box;padding:12px;border:1px solid #bfd0da;border-radius:11px;background:#fff;color:#14283a;line-height:1.5;resize:vertical;min-height:90px}
 .progress-notes textarea:focus,.progress-field textarea:focus{outline:2px solid #0e8b78;outline-offset:1px}
 .progress-generate,.progress-save{border-color:#15536b;background:#15536b;color:#fff}
+.progress-draft-actions{display:flex;flex-wrap:wrap;gap:10px;margin-top:12px}
+.progress-correct-language{border:1px solid #b9d0dd;border-radius:11px;padding:10px 14px;background:#fff;color:#19425a;font-size:.86rem;font-weight:700;cursor:pointer}
+.progress-correct-language:hover:not(:disabled){background:#eaf4f8}
+.progress-correct-language:disabled{opacity:.55;cursor:not-allowed}
 .progress-generate:hover:not(:disabled),.progress-save:hover:not(:disabled){background:#0a3e53}
 .progress-status{min-height:20px;margin:10px 0;color:#14664f;font-size:.84rem}
 .progress-status.error{color:#ae2431}
@@ -38,4 +46,5 @@
 .progress-empty{margin-top:13px}
 @media(max-width:650px){.project-progress{padding:17px;border-radius:18px}.progress-head,.progress-report-top{flex-direction:column}.progress-head-main{gap:14px}.progress-mic{flex-basis:112px;min-height:112px}.progress-mic svg{width:45px;height:45px}.progress-all-pdf,.progress-report-top button{width:100%}}
 @media(max-width:390px){.progress-head-main{flex-direction:column;align-items:stretch}.progress-mic{flex-basis:auto;width:100%;min-height:100px}}
+@media(max-width:390px){.progress-language{flex-direction:column;align-items:stretch}.progress-language select{width:100%}}
 @media(prefers-reduced-motion:reduce){.progress-mic.recording{animation:none}.progress-mic,.progress-all-pdf,.progress-report-top button{transition:none}}
