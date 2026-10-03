@@ -1,7 +1,14 @@
 import {test} from 'node:test';
 import assert from 'node:assert/strict';
-import {isInventoryExpense,preserveInventoryExpenses} from '../inventory-expenses.mjs';
+import {isInventoryExpense,preserveInventoryExpenses,formatInventoryUnitCost} from '../inventory-expenses.mjs';
 import {assertUnchangedProjectFields} from '../project-concurrency.mjs';
+
+test('fractional per-foot prices retain six decimal places in all portal languages',()=>{
+  assert.equal(formatInventoryUnitCost(0.333333,'en'),'$0.333333');
+  assert.match(formatInventoryUnitCost(0.333333,'pt'),/0,333333/);
+  assert.match(formatInventoryUnitCost(0.333333,'es'),/0,333333/);
+  assert.equal(formatInventoryUnitCost(1.25,'en'),'$1.25');
+});
 test('manual edits and stale arrays retain the authoritative inventory cost and reversal',()=>{
   const charge={id:'stock-a',autoType:'inventory_consumption',valor:7.5};
   const reversal={id:'stock-b',autoType:'inventory_reversal',valor:-7.5};
