@@ -1417,6 +1417,7 @@
 </div>
 
 <script type="module">
+    import { isInventoryExpense, preserveInventoryExpenses } from './inventory-expenses.mjs';
     import { preferredCompany, allowedCompany, allowedView, companyQueryValue, COMPANY_KEY } from './portal-entry.mjs';
     import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
     import { getAuth, signInWithEmailAndPassword, signInWithCustomToken, onIdTokenChanged, signOut } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
@@ -2334,7 +2335,9 @@
         await runTransaction(db,async transaction=>{
             const fresh=await transaction.get(reference);
             assertUnchangedProjectFields(fresh.exists()?fresh.data():null,baseline,patch);
-            transaction.update(reference,patch);
+            // Keep costs posted by inventory while this screen was open.
+            const safePatch=Array.isArray(patch.despesas)?{...patch,despesas:preserveInventoryExpenses(patch.despesas,fresh.data()?.inventoryExpenses||[])}:patch;
+            transaction.update(reference,safePatch);
         });
     }
 
@@ -2697,6 +2700,7 @@
         const existingProject = state.projects.find(x => x.id === projectId);
         if (!canManageProjectEntries(existingProject, 'costs')) { denyProjectEntryManagement(); return; }
         const linkedExpense = (existingProject?.despesas || []).find(expense => expense.id === expenseId);
+        if (isInventoryExpense(linkedExpense)) { window.showModal(window.t('attention'), state.lang==='pt'?'Esta despesa veio do estoque. Corrija ou estorne a movimentação no Estoque.':state.lang==='es'?'Este gasto proviene del inventario. Corrija o revierta el movimiento en Inventario.':'This expense came from inventory. Correct or reverse the movement in Inventory.', 'info'); return; }
         if (linkedExpense?.autoType === 'contractor_payment') { window.showModal('Lançamento vinculado', 'Este custo está vinculado ao histórico de pagamento do contractor. A edição e a exclusão serão disponibilizadas em uma ação financeira única para evitar divergência entre a obra e o contractor.', 'info'); return; }
         
         window.showModal(window.t('modal_del_exp_title'), `${window.t('modal_del_exp_msg')} ${expenseDesc}?`, 'confirm', async () => {
@@ -2715,7 +2719,7 @@
         const project = state.projects.find(x => x.id === projectId);
         if (!canManageProjectEntries(project, 'costs')) { denyProjectEntryManagement(); return; }
         const expense = (project.despesas || []).find(item => item.id === expenseId);
-        if (!expense || expense.autoType === 'commission_payment' || expense.autoType === 'contractor_payment') return;
+        if (!expense || expense.autoType === 'commission_payment' || expense.autoType === 'contractor_payment' || isInventoryExpense(expense)) return;
         const date = prompt(state.lang === 'pt' ? 'Data (AAAA-MM-DD)' : 'Date (YYYY-MM-DD)', expense.data || '');
         if (date === null) return;
         const description = prompt(state.lang === 'pt' ? 'Descrição' : 'Description', expense.descricao || '');
@@ -6847,11 +6851,13 @@ function getSellerCommissionPeriodReport(projects, startStr, endStr) {
     function v86ExpenseHistory(p){
         const canManageCosts = canManageProjectEntries(p, 'costs');
         return (p.despesas||[]).slice().sort((a,b)=>String(b.data||'').localeCompare(String(a.data||''))).map(exp => {
-            const isManualExpense = exp.autoType !== 'commission_payment';
+            const isManualExpense = !exp.autoType;
             const actions = canManageCosts && isManualExpense
                 ? `<button class="v86-table-action" title="${state.lang==='pt'?'Editar despesa':'Edit expense'}" onclick="window.editExpense('${p.id}','${exp.id}')"><i data-lucide="pencil" class="w-4 h-4 text-cyan-300"></i></button><button class="v86-table-action" title="${state.lang==='pt'?'Excluir despesa':'Delete expense'}" onclick="window.deleteExpense('${p.id}','${exp.id}','${escapeInlineHtml(String(exp.descricao||'').replace(/'/g,"\\'"))}',${Number(exp.valor)||0})"><i data-lucide="trash-2" class="w-4 h-4 text-red-400"></i></button>`
                 : '';
-            return `<tr><td>${exp.data?new Date(exp.data+'T12:00:00').toLocaleDateString(state.lang==='pt'?'pt-BR':'en-US'):'—'}</td><td class="wrap font-bold text-slate-100">${escapeInlineHtml(exp.descricao||'—')}</td><td><span class="v86-status info">${escapeInlineHtml(exp.categoria||'—')}</span></td><td class="money text-amber-300">${formatCurr(exp.valor)}</td><td class="money no-print">${actions}</td></tr>`;
+            const inventoryLabel=state.lang==='pt'?'Estoque':state.lang==='es'?'Inventario':'Inventory';
+            const provenance=isInventoryExpense(exp)?`<small class="block text-slate-400">${inventoryLabel} · ${escapeInlineHtml(exp.inventoryMovementId||'')} · ${escapeInlineHtml(String(exp.inventoryQuantity))} ${escapeInlineHtml(exp.inventoryUnit||'')} × ${formatCurr(exp.inventoryUnitCost)}</small>`:'';
+            return `<tr><td>${exp.data?new Date(exp.data+'T12:00:00').toLocaleDateString(state.lang==='pt'?'pt-BR':'en-US'):'—'}</td><td class="wrap font-bold text-slate-100">${escapeInlineHtml(exp.descricao||'—')}${provenance}</td><td><span class="v86-status info">${escapeInlineHtml(exp.categoria||'—')}</span></td><td class="money text-amber-300">${formatCurr(exp.valor)}</td><td class="money no-print">${actions}</td></tr>`;
         }).join('')||`<tr><td colspan="5" class="v86-empty">${window.t('no_expenses')}</td></tr>`;
     }
     function v86RenderCost(p,f){

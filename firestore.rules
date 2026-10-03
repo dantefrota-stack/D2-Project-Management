@@ -65,7 +65,17 @@ service cloud.firestore {
     function validLists(data) {
       return data.get('recebimentos', []) is list && data.get('recebimentos', []).size() <= 2000
         && data.get('pagamentosEfetuados', []) is list && data.get('pagamentosEfetuados', []).size() <= 2000
-        && data.get('despesas', []) is list && data.get('despesas', []).size() <= 2000;
+        && data.get('despesas', []) is list && data.get('despesas', []).size() <= 2000
+        && data.get('inventoryExpenses', []) is list && data.get('inventoryExpenses', []).size() <= 2000;
+    }
+
+    // Server-managed immutable copies of inventory costs. Clients (including
+    // owners) cannot remove/modify these entries through stale expense arrays.
+    function inventoryExpensesProtected() {
+      return !request.resource.data.diff(resource.data).affectedKeys().hasAny(['inventoryExpenses'])
+        && request.resource.data.get('despesas', []).hasAll(resource.data.get('inventoryExpenses', []))
+        && request.resource.data.get('despesas', []).removeAll(resource.data.get('inventoryExpenses', [])).size()
+          + resource.data.get('inventoryExpenses', []).size() == request.resource.data.get('despesas', []).size();
     }
 
     function projectUpdateAllowed() {
@@ -100,9 +110,10 @@ service cloud.firestore {
         && request.resource.data.get('recebimentos', []).size() == 0
         && request.resource.data.get('pagamentosEfetuados', []).size() == 0
         && request.resource.data.get('despesas', []).size() == 0
+        && request.resource.data.get('inventoryExpenses', []).size() == 0
         && (request.resource.data.vendedor == request.auth.token.email || portalAction('assign'));
       allow update: if hasAccess() && projectReadable(resource.data) && projectReadable(request.resource.data)
-        && portalAction('edit') && validAmounts(request.resource.data) && validLists(request.resource.data) && projectUpdateAllowed();
+        && portalAction('edit') && validAmounts(request.resource.data) && validLists(request.resource.data) && inventoryExpensesProtected() && projectUpdateAllowed();
       allow delete: if hasAccess() && isSuperAdmin();
     }
 

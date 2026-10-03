@@ -56,3 +56,18 @@ test('direct authorized access still works and an owner bridge has no owner bypa
  await seed('owner',{superAdmin:true,p_hvac:true});const owner=db({},'owner');await assertFails(getDoc(projectRef(owner,'hvac')));
  const direct=db({firebase:{sign_in_provider:'password'},portal_bridge:false},'owner');await assertSucceeds(getDoc(projectRef(direct,'hvac')));
 });
+
+test('automatic inventory expenses cannot be removed, edited or unlocked even by an owner',async()=>{
+ const automatic={id:'stock-a',autoType:'inventory_consumption',valor:7.5};
+ await env.withSecurityRulesDisabled(c=>updateDoc(projectRef(c.firestore()),{despesas:[automatic],inventoryExpenses:[automatic]}));
+ await seed('owner',{superAdmin:true,p_hvac:true});
+ for(const d of [db(),db({firebase:{sign_in_provider:'password'},portal_bridge:false},'owner')]){
+  await assertFails(updateDoc(projectRef(d),{despesas:[]}));
+  await assertFails(updateDoc(projectRef(d),{despesas:[{...automatic,valor:999}]}));
+  await assertFails(updateDoc(projectRef(d),{despesas:[automatic,automatic]}));
+  await assertFails(updateDoc(projectRef(d),{inventoryExpenses:[],despesas:[]}));
+  await assertSucceeds(updateDoc(projectRef(d),{despesas:[automatic,{id:'manual',valor:10}]}));
+ }
+ await assertFails(setDoc(projectRef(db(),'bad-inventory'),{...record,inventoryExpenses:[automatic]}));
+ await assertFails(setDoc(doc(db(),`${root}/projects/smart/inventory_expense_events/forged`),{amountCents:1}));
+});
