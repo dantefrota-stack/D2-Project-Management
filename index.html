@@ -1417,7 +1417,7 @@
 </div>
 
 <script type="module">
-    import { isInventoryExpense, preserveInventoryExpenses } from './inventory-expenses.mjs';
+    import { isInventoryExpense, preserveInventoryExpenses, formatInventoryUnitCost } from './inventory-expenses.mjs';
     import { preferredCompany, allowedCompany, allowedView, companyQueryValue, COMPANY_KEY } from './portal-entry.mjs';
     import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
     import { getAuth, signInWithEmailAndPassword, signInWithCustomToken, onIdTokenChanged, signOut } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
@@ -6856,7 +6856,7 @@ function getSellerCommissionPeriodReport(projects, startStr, endStr) {
                 ? `<button class="v86-table-action" title="${state.lang==='pt'?'Editar despesa':'Edit expense'}" onclick="window.editExpense('${p.id}','${exp.id}')"><i data-lucide="pencil" class="w-4 h-4 text-cyan-300"></i></button><button class="v86-table-action" title="${state.lang==='pt'?'Excluir despesa':'Delete expense'}" onclick="window.deleteExpense('${p.id}','${exp.id}','${escapeInlineHtml(String(exp.descricao||'').replace(/'/g,"\\'"))}',${Number(exp.valor)||0})"><i data-lucide="trash-2" class="w-4 h-4 text-red-400"></i></button>`
                 : '';
             const inventoryLabel=state.lang==='pt'?'Estoque':state.lang==='es'?'Inventario':'Inventory';
-            const provenance=isInventoryExpense(exp)?`<small class="block text-slate-400">${inventoryLabel} · ${escapeInlineHtml(exp.inventoryMovementId||'')} · ${escapeInlineHtml(String(exp.inventoryQuantity))} ${escapeInlineHtml(exp.inventoryUnit||'')} × ${formatCurr(exp.inventoryUnitCost)}</small>`:`<small class="block text-slate-400">${state.lang==='pt'?'Referência do lançamento':state.lang==='es'?'Referencia del gasto':'Expense reference'}: ${escapeInlineHtml(String(exp.id||''))}</small>`;
+            const provenance=isInventoryExpense(exp)?`<small class="block text-slate-400">${inventoryLabel} · ${escapeInlineHtml(exp.inventoryMovementId||'')} · ${escapeInlineHtml(String(exp.inventoryQuantity))} ${escapeInlineHtml(exp.inventoryUnit||'')} × ${formatInventoryUnitCost(exp.inventoryUnitCost,state.lang)}</small>`:`<small class="block text-slate-400">${state.lang==='pt'?'Referência do lançamento':state.lang==='es'?'Referencia del gasto':'Expense reference'}: ${escapeInlineHtml(String(exp.id||''))}</small>`;
             return `<tr><td>${exp.data?new Date(exp.data+'T12:00:00').toLocaleDateString(state.lang==='pt'?'pt-BR':'en-US'):'—'}</td><td class="wrap font-bold text-slate-100">${escapeInlineHtml(exp.descricao||'—')}${provenance}</td><td><span class="v86-status info">${escapeInlineHtml(exp.categoria||'—')}</span></td><td class="money text-amber-300">${formatCurr(exp.valor)}</td><td class="money no-print">${actions}</td></tr>`;
         }).join('')||`<tr><td colspan="5" class="v86-empty">${window.t('no_expenses')}</td></tr>`;
     }
