@@ -1,0 +1,115 @@
+/* Financial editors use the selected theme for every nested surface. */
+:is(#edit-payment-modal, #edit-rec-modal) {
+  --finance-surface: #0d1926;
+  --finance-card: #132233;
+  --finance-line: #34465a;
+  --finance-text: #f2f6fb;
+  --finance-muted: #b0bfd0;
+  --finance-positive: #6ee7b7;
+  --finance-negative: #fca5a5;
+  --finance-info: #7dd3fc;
+  --finance-warning: #fcd34d;
+  --finance-highlight: #29271c;
+  --finance-highlight-line: #887136;
+}
+.app-body-light :is(#edit-payment-modal, #edit-rec-modal) {
+  --finance-surface: #ffffff;
+  --finance-card: #f8fafc;
+  --finance-line: #ccd7e2;
+  --finance-text: #0f172a;
+  --finance-muted: #475569;
+  --finance-positive: #047857;
+  --finance-negative: #b91c1c;
+  --finance-info: #0369a1;
+  --finance-warning: #854d0e;
+  --finance-highlight: #fffbeb;
+  --finance-highlight-line: #d5b45c;
+}
+:is(#edit-payment-modal, #edit-rec-modal) .modal-content {
+  max-width: 1200px !important;
+  background: var(--finance-surface) !important;
+  color: var(--finance-text) !important;
+  border-color: var(--finance-line) !important;
+  text-align: left;
+}
+:is(#edit-payment-modal, #edit-rec-modal) .modal-workspace-header,
+:is(#edit-payment-modal, #edit-rec-modal) .modal-workspace-header-inset {
+  background: var(--finance-surface) !important;
+  border-color: var(--finance-line) !important;
+  box-shadow: 0 1px 0 var(--finance-line) !important;
+}
+:is(#edit-payment-modal, #edit-rec-modal) :is(#payment-edit-summary, #rec-edit-summary) :is(.financial-summary, .financial-state, .financial-quick-read),
+:is(#edit-payment-modal, #edit-rec-modal) :is(#payment-edit-list, #rec-edit-list) > div,
+:is(#edit-payment-modal, #edit-rec-modal) :is(#payment-edit-summary, #rec-edit-summary) :is([class~="bg-white/5"], [class~="bg-black/20"], [class~="bg-black/25"], [class~="bg-cyan-500/5"], [class~="bg-cyan-500/10"], [class~="bg-red-500/10"], [class~="bg-emerald-500/10"], [class~="bg-amber-500/10"], [class~="bg-gold/10"], [class~="bg-blue-500/10"], [class~="bg-rose-500/10"]) {
+  background: var(--finance-card) !important;
+  border-color: var(--finance-line) !important;
+  box-shadow: none !important;
+}
+:is(#edit-payment-modal, #edit-rec-modal) .financial-summary {
+  border-radius: 18px;
+  padding: 20px;
+}
+:is(#edit-payment-modal, #edit-rec-modal) :is(.text-white, .force-white-text, .text-slate-100, .text-slate-200) { color: var(--finance-text) !important; }
+:is(#edit-payment-modal, #edit-rec-modal) :is(.c2-eyebrow, .text-slate-300, .text-slate-400, .text-slate-500, .text-slate-600) { color: var(--finance-muted) !important; }
+:is(#edit-payment-modal, #edit-rec-modal) :is([class*="text-red-"], [class*="text-rose-"]) { color: var(--finance-negative) !important; }
+:is(#edit-payment-modal, #edit-rec-modal) :is([class*="text-emerald-"], .payment-company-pill-value) { color: var(--finance-positive) !important; }
+:is(#edit-payment-modal, #edit-rec-modal) :is([class*="text-cyan-"], [class*="text-blue-"]) { color: var(--finance-info) !important; }
+:is(#edit-payment-modal, #edit-rec-modal) :is([class*="text-amber-"], .text-gold) { color: var(--finance-warning) !important; }
+:is(#edit-payment-modal, #edit-rec-modal) :is([class~="text-[9px]"], [class~="text-[10px]"], .payment-company-pill-label) { font-size: 11px; letter-spacing: .06em; }
+:is(#edit-payment-modal, #edit-rec-modal) .payment-company-pill {
+  background: var(--finance-card);
+  border-color: var(--finance-line);
+}
+:is(#edit-payment-modal, #edit-rec-modal) .payment-company-pill-label { color: var(--finance-muted); }
+#edit-payment-modal .financial-balance {
+  background: var(--finance-highlight) !important;
+  border-color: var(--finance-highlight-line) !important;
+  border-radius: 18px;
+  box-shadow: none !important;
+  animation: none;
+}
+#edit-payment-modal .financial-balance:focus-visible { outline: 3px solid var(--finance-info); outline-offset: 3px; }
+:is(#edit-payment-modal, #edit-rec-modal) .modern-input {
+  background: var(--finance-surface) !important;
+  border-color: var(--finance-line) !important;
+  color: var(--finance-text) !important;
+  color-scheme: dark;
+}
+.app-body-light :is(#edit-payment-modal, #edit-rec-modal) .modern-input { color-scheme: light; }
+:is(#edit-payment-modal, #edit-rec-modal) button[data-i18n="btn_save_changes"] {
+  background: #047857 !important;
+  border-color: #047857 !important;
+  color: #ffffff !important;
+  box-shadow: none;
+}
+:is(#edit-payment-modal, #edit-rec-modal) button.bg-slate-900 { background: var(--finance-card) !important; border-color: var(--finance-line) !important; }
+.report-project-row { position: relative; border: 1px solid var(--c2-line-strong); border-radius: 16px; background: var(--c2-panel); padding-bottom: 14px; }
+.report-project-row .report-project-list-item { border: 0; min-height: 0; background: transparent; }
+.report-commission-pay { margin-left: 16px; min-height: 44px; }
+.report-table-payment { display: flex; margin-top: 8px; margin-left: auto; min-height: 44px; font-size: 12px; padding: 8px 12px; white-space: nowrap; }
+:is(#edit-payment-modal, #edit-rec-modal) .info-mini-btn { color: var(--finance-muted); border-color: var(--finance-line); }
+.report-payment-status:not(:empty) { padding: 12px 20px; color: var(--c2-text); background: var(--c2-panel-2); border-bottom: 1px solid var(--c2-line); }
+.commission-confirmation .modal-content { background: var(--c2-panel) !important; color: var(--c2-text); border-color: var(--c2-line-strong); }
+.commission-confirmation #custom-modal-msg { white-space: pre-line; color: var(--c2-text) !important; line-height: 1.7; text-align: left; }
+.commission-confirmation #custom-modal-title { color: var(--c2-text) !important; }
+.commission-confirmation #custom-modal-buttons button:last-child { background: #047857; color: #fff !important; box-shadow: none; }
+#report-output .report-summary-kpis { grid-template-columns: repeat(5, minmax(0, 1fr)); gap: 14px; }
+#report-output .report-summary-kpis > .v86-kpi:not(.report-monthly-chart-card) { display: flex; flex-direction: column; justify-content: flex-start; gap: 12px; min-height: 126px; padding: 20px; }
+#report-output .report-summary-kpis > .v86-kpi:not(.report-monthly-chart-card) > span { min-height: 2.7em; font-size: 12px; line-height: 1.35; }
+#report-output .report-summary-kpis > .v86-kpi > strong { margin-top: 0; font-size: clamp(22px, 2.1vw, 30px); line-height: 1.15; }
+#report-output .report-summary-kpis > .report-monthly-chart-card { grid-column: 1 / -1; min-height: 210px; padding: 20px; }
+#report-output .report-summary-kpis .report-monthly-chart-wrap { height: 150px; }
+#report-output .report-summary-kpis .report-monthly-chart-head strong { font-size: 14px; }
+#report-output .report-summary-kpis .report-monthly-chart-total b { font-size: 20px; }
+@media (max-width: 1100px) {
+  #report-output .report-summary-kpis { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  #report-output .report-summary-kpis > .report-client-receivable { grid-column: 1 / -1; flex-direction: row; align-items: center; justify-content: space-between; min-height: 88px; }
+  #report-output .report-summary-kpis > .report-client-receivable > span { min-height: 0; }
+}
+@media (max-width: 640px) {
+  #report-output .report-summary-kpis > .v86-kpi:not(.report-monthly-chart-card) { padding: 15px; }
+  :is(#edit-payment-modal, #edit-rec-modal) .financial-summary { padding: 14px; }
+  :is(#edit-payment-modal, #edit-rec-modal) .modal-workspace-header { padding: 20px; }
+  #edit-payment-modal .modal-workspace-header + div { padding: 16px; }
+  #edit-payment-modal .financial-state { min-width: 0; max-width: 100%; }
+}

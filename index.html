@@ -1032,6 +1032,7 @@
 </style>
 <style>html.portal-embedded #auth-screen{display:none!important}html.portal-embedded #portal-boot{display:flex!important}html.portal-embedded.portal-ready #portal-boot{display:none!important}html.portal-embedded #portal-back,html.portal-embedded #portal-boot-back,html.portal-embedded #portal-link-account,html.portal-embedded .c2-brand-wrap,html.portal-embedded .c2-logout,html.portal-embedded #dashboard-language-switcher,html.portal-embedded #theme-toggle{display:none!important}</style>
 <script>if(new URLSearchParams(location.search).get('embed')==='1'&&window.parent!==window)document.documentElement.classList.add('portal-embedded');</script>
+    <link href="financial-modal.css?v=20261005" rel="stylesheet">
 </head>
 <body class="auth-body">
 
@@ -1195,7 +1196,8 @@
                 </button>
             </div>
         </div>
-        <div id="report-project-list-content" class="px-5 py-5 sm:px-7 sm:py-6"></div>
+        <p id="report-payment-status" role="status" class="report-payment-status"></p>
+            <div id="report-project-list-content" class="px-5 py-5 sm:px-7 sm:py-6"></div>
     </div>
 </div>
 
@@ -1723,6 +1725,7 @@
     };
 
     window.showModal = (title, msg, type = 'alert', onConfirm = null) => {
+        document.getElementById('custom-modal').classList.remove('commission-confirmation');
         document.getElementById('custom-modal-title').innerText = title;
         document.getElementById('custom-modal-msg').innerText = msg;
         const btnContainer = document.getElementById('custom-modal-buttons');
@@ -2327,17 +2330,18 @@
         return companyAllowed && sellerAllowed;
     }
 
-    async function updateProjectSafely(reference, patch) {
+    async function updateProjectSafely(reference, patch, expectedBase = null) {
         const id=reference.id;
         const draft=('recebimentos' in patch && state.editingRecs?.projectId===id) ? state.editingRecs
             : ('pagamentosEfetuados' in patch && state.editingPayments?.projectId===id) ? state.editingPayments : null;
-        const baseline=draft?.baseRecord || (state.editingProjectBase?.id===id ? state.editingProjectBase : null) || state.projects.find(project=>project.id===id);
-        await runTransaction(db,async transaction=>{
+        const baseline=expectedBase || draft?.baseRecord || (state.editingProjectBase?.id===id ? state.editingProjectBase : null) || state.projects.find(project=>project.id===id);
+        return await runTransaction(db,async transaction=>{
             const fresh=await transaction.get(reference);
             assertUnchangedProjectFields(fresh.exists()?fresh.data():null,baseline,patch);
             // Keep costs posted by inventory while this screen was open.
             const safePatch=Array.isArray(patch.despesas)?{...patch,despesas:preserveInventoryExpenses(patch.despesas,fresh.data()?.inventoryExpenses||[])}:patch;
             transaction.update(reference,safePatch);
+            return safePatch;
         });
     }
 
@@ -3462,7 +3466,7 @@
             : 'Net basis received by the project after deducting only installments registered as card payments.';
 
         summaryEl.innerHTML = `
-            <div class="rounded-[28px] border border-white/10 bg-gradient-to-br from-slate-900 via-slate-900 to-black/90 p-5 sm:p-6 shadow-[0_20px_60px_-30px_rgba(0,0,0,0.75)]">
+            <div class="financial-summary rounded-[28px] border border-white/10 bg-gradient-to-br from-slate-900 via-slate-900 to-black/90 p-5 sm:p-6 shadow-[0_20px_60px_-30px_rgba(0,0,0,0.75)]">
                 <div class="flex flex-col gap-4 xl:flex-row xl:items-start xl:justify-between mb-5">
                     <div>
                         <p class="text-[10px] font-black uppercase tracking-[0.28em] text-slate-500 mb-2">${isPT ? 'Resumo executivo do pagamento' : 'Executive payment summary'}</p>
@@ -3471,7 +3475,7 @@
                         <p class="text-xs text-slate-400 mt-2">${isPT ? 'Vendedor responsável' : 'Responsible seller'}: <span class="text-slate-200 font-bold">${sellerName}</span></p>
                         ${renderProjectDocumentMeta(project, true, false)}
                     </div>
-                    <div class="inline-flex items-center gap-3 self-start rounded-2xl border ${statusChipClass} px-4 py-3 min-w-[220px]">
+                    <div class="financial-state inline-flex items-center gap-3 self-start rounded-2xl border ${statusChipClass} px-4 py-3 min-w-[220px]">
                         <div class="w-2.5 h-2.5 rounded-full ${statusDotClass}"></div>
                         <div>
                             <p class="text-[10px] font-black uppercase tracking-widest text-slate-500 mb-1">${isPT ? 'Situação atual' : 'Current status'}</p>
@@ -3531,7 +3535,7 @@
                     </div>
                 </div>
 
-                <div ${summary.overpaidAmount <= 0.009 && ((summary.remainingToPay > 0.009 && state.userPerms.fin) || (summary.advanceCredit <= 0.009 && summary.advanceAvailable > 0.009 && state.isSuperAdmin)) ? `onclick="window.confirmCommissionPayment('${project.id}', '${summary.remainingToPay > 0.009 ? 'due' : 'advance'}')" role="button" tabindex="0"` : ''} class="mt-4 rounded-[26px] border ${summary.overpaidAmount > 0.009 ? 'border-blue-500/30 bg-blue-500/10' : (summary.advanceCredit > 0.009 ? 'border-cyan-500/30 bg-cyan-500/10' : 'border-gold/20 bg-gold/10')} ${exactDuePulseClass} p-5 ${summary.overpaidAmount <= 0.009 && ((summary.remainingToPay > 0.009 && state.userPerms.fin) || (summary.advanceCredit <= 0.009 && summary.advanceAvailable > 0.009 && state.isSuperAdmin)) ? 'cursor-pointer hover:-translate-y-0.5 hover:border-cyan-400/60 transition-all' : ''}">
+                <div ${summary.overpaidAmount <= 0.009 && ((summary.remainingToPay > 0.009 && state.userPerms.fin) || (summary.advanceCredit <= 0.009 && summary.advanceAvailable > 0.009 && state.isSuperAdmin)) ? `onclick="window.confirmCommissionPayment('${project.id}', '${summary.remainingToPay > 0.009 ? 'due' : 'advance'}')" role="button" tabindex="0"` : ''} class="financial-balance mt-4 rounded-[26px] border ${summary.overpaidAmount > 0.009 ? 'border-blue-500/30 bg-blue-500/10' : (summary.advanceCredit > 0.009 ? 'border-cyan-500/30 bg-cyan-500/10' : 'border-gold/20 bg-gold/10')} ${exactDuePulseClass} p-5 ${summary.overpaidAmount <= 0.009 && ((summary.remainingToPay > 0.009 && state.userPerms.fin) || (summary.advanceCredit <= 0.009 && summary.advanceAvailable > 0.009 && state.isSuperAdmin)) ? 'cursor-pointer hover:-translate-y-0.5 hover:border-cyan-400/60 transition-all' : ''}">
                     <div class="flex flex-col gap-4">
                         <div class="flex flex-col lg:flex-row lg:items-end lg:justify-between gap-4">
                             <div class="min-w-0 flex-1">
@@ -3544,7 +3548,7 @@
                                 <p class="text-sm mt-2 ${statusTextClass}">${statusDesc}</p>
                             </div>
                             <div class="lg:max-w-[320px]">
-                                <div class="rounded-2xl border border-white/10 bg-black/25 px-4 py-4 h-full">
+                                <div class="financial-quick-read rounded-2xl border border-white/10 bg-black/25 px-4 py-4 h-full">
                                     <p class="text-[10px] font-black uppercase tracking-widest text-slate-500 mb-2">${isPT ? 'Leitura rápida' : 'Quick read'}</p>
                                     <p class="text-sm text-slate-300">${helperStateText}</p>
                                 </div>
@@ -3698,10 +3702,12 @@
         }
     };
 
-    window.confirmCommissionPayment = (projectId, mode = 'auto') => {
+    const commissionWrites = new Set();
+    window.confirmCommissionPayment = (projectId, mode = 'auto', options = {}) => {
+        if (commissionWrites.has(projectId)) return;
         const project = state.projects.find(x => x.id === projectId);
         if (!canManageProjectEntries(project, 'fin')) { denyProjectEntryManagement(); return; }
-        const usesDraft = state.editingPayments?.projectId === projectId;
+        const usesDraft = !options.fromReport && state.editingPayments?.projectId === projectId;
         const summary = usesDraft
             ? getPaymentDraftSummary(projectId, state.editingPayments.payments)
             : getPaymentDraftSummary(projectId, project?.pagamentosEfetuados || []);
@@ -3709,7 +3715,7 @@
         const dueNow = roundMoney(Number(summary.remainingToPay || 0));
         const advanceAvailable = roundMoney(Number(summary.advanceAvailable || 0));
         const shouldAdvance = mode === 'advance' || (mode === 'auto' && dueNow <= 0.009 && advanceAvailable > 0.009);
-        const amount = shouldAdvance ? advanceAvailable : dueNow;
+        const amount = shouldAdvance ? advanceAvailable : roundMoney(Math.min(dueNow, options.fromReport ? Math.max(0, Number(options.reportPendingAmount) || 0) : dueNow));
         if (amount <= 0.009) {
             window.showModal(state.lang === 'pt' ? 'Nenhum valor disponível' : 'No amount available', state.lang === 'pt' ? 'Não existe valor disponível para registrar neste momento.' : 'There is no amount available to record at this time.', 'info');
             return;
@@ -3728,7 +3734,15 @@
             : (state.lang === 'pt'
                 ? `Registrar o pagamento de ${formatCurr(amount)} para ${sellerName}, com saída da ${companyName}, usando a data de hoje?`
                 : `Record a ${formatCurr(amount)} payment to ${sellerName}, paid by ${companyName}, using today's date?`);
-        window.showModal(title, message, 'confirm', async () => {
+        const reportMessage = options.fromReport
+            ? [getProjectDisplayName(project), `Invoice ${project.numeroInvoice || '—'} · ${state.lang === 'pt' ? 'Proposta' : state.lang === 'es' ? 'Propuesta' : 'Proposal'} ${project.numeroProposta || '—'}`,
+                `${state.lang === 'pt' ? 'Vendedor' : state.lang === 'es' ? 'Vendedor' : 'Seller'}: ${sellerName}`,
+                `${state.lang === 'pt' ? 'Empresa pagadora' : state.lang === 'es' ? 'Empresa pagadora' : 'Paying company'}: ${companyName}`,
+                `${state.lang === 'pt' ? 'Valor' : state.lang === 'es' ? 'Importe' : 'Amount'}: ${formatCurr(amount)}`,
+                `${state.lang === 'pt' ? 'Data' : state.lang === 'es' ? 'Fecha' : 'Date'}: ${formatProjectDate(new Date().toISOString().slice(0,10))}`].join('\n') : message;
+        window.showModal(options.fromReport ? (state.lang === 'pt' ? 'Registrar pagamento de comissão' : state.lang === 'es' ? 'Registrar pago de comisión' : 'Record commission payment') : title, reportMessage, 'confirm', async () => {
+            if (commissionWrites.has(projectId)) return;
+            commissionWrites.add(projectId);
             try {
                 const payment = {
                     id: crypto.randomUUID(),
@@ -3747,11 +3761,12 @@
                 const updatedPayments = [...currentPayments, payment];
                 const { normalizedPayments, syncedExpenses } = buildSyncedCommissionExpensePayload(project, updatedPayments);
                 const completionPayload = getAutomaticCompletionPayload(project, project.recebimentos || [], normalizedPayments);
-                await updateProjectSafely(doc(db, 'artifacts', appId, 'public', 'data', 'projects', projectId), {
+                const savedPatch = await updateProjectSafely(doc(db, 'artifacts', appId, 'public', 'data', 'projects', projectId), {
                     pagamentosEfetuados: normalizedPayments,
                     despesas: syncedExpenses,
                     ...(completionPayload || {})
-                });
+                }, usesDraft ? state.editingPayments.baseRecord : project);
+                state.projects = state.projects.map(item => item.id === projectId ? {...item, ...savedPatch} : item);
                 logAccess(state.user?.email,
                     shouldAdvance
                         ? `Registrou adiantamento de comissão de ${formatCurr(amount)} para ${sellerName}: ${getProjectDisplayName(project)}`
@@ -3759,7 +3774,25 @@
                     { ...getProjectLogMeta(project), paymentType: shouldAdvance ? 'commission_advance' : 'commission_payment', amount, sellerName, payingCompany: companyName }
                 );
                 if (completionPayload) logAutomaticCompletion(project);
-                window.closeEditPaymentModal();
+                if (!options.fromReport) window.closeEditPaymentModal();
+                if (options.fromReport) {
+                    window.safeRenderReport();
+                    if (state.reportProjectList) {
+                        if (state.reportProjectList.kind === 'month') {
+                            const ids = new Set(state.reportProjectList.rows.map(row => row.project.id));
+                            state.reportProjectList.rows = getReportProjectListRows().filter(row => ids.has(row.project.id));
+                            window.renderReportProjectList();
+                        } else window.openReportProjectList(state.reportProjectList.kind);
+                    }
+                    if (state.reportPendingPayments) {
+                        state.reportPendingPayments.items = getReportPendingPaymentItems();
+                        state.reportPendingPayments.selectedIds.delete(projectId);
+                        window.renderReportPendingPayments();
+                    }
+                    const note = document.getElementById(state.reportPendingPayments ? 'report-batch-payment-status' : state.reportProjectList ? 'report-payment-status' : 'report-inline-payment-status');
+                    if (note) note.textContent = state.lang === 'pt' ? `Pagamento de ${formatCurr(amount)} registrado para ${sellerName}.` : state.lang === 'es' ? `Pago de ${formatCurr(amount)} registrado para ${sellerName}.` : `${formatCurr(amount)} payment recorded for ${sellerName}.`;
+                    return;
+                }
                 setTimeout(() => window.showModal(
                     completionPayload ? (state.lang === 'pt' ? 'Obra finalizada' : 'Project finished') : (state.lang === 'pt' ? 'Pagamento registrado' : 'Payment recorded'),
                     completionPayload
@@ -3769,9 +3802,16 @@
                 ), 180);
             } catch (error) {
                 console.error('Erro ao registrar comissão:', error);
-                setTimeout(() => window.showModal(window.t('error'), (state.lang === 'pt' ? 'Não foi possível registrar o pagamento: ' : 'Unable to record payment: ') + (error?.message || error), 'error'), 180);
-            }
+                setTimeout(() => window.showModal(window.t('error'), (state.lang === 'pt' ? 'Não foi possível registrar o pagamento: ' : state.lang === 'es' ? 'No se pudo registrar el pago: ' : 'Unable to record payment: ') + (error?.message || error), 'error'), 180);
+            } finally { commissionWrites.delete(projectId); }
         });
+        if (options.fromReport) document.getElementById('custom-modal').classList.add('commission-confirmation');
+    };
+    window.payReportCommission = projectId => {
+        const row = state.reportProjectList?.rows.find(item => item.project?.id === projectId) || (!state.reportPendingPayments ? getReportProjectListRows().find(item => item.project?.id === projectId) : null);
+        const pending = state.reportPendingPayments?.items.find(item => item.projectId === projectId);
+        if (!row && !pending) return;
+        window.confirmCommissionPayment(projectId, 'due', {fromReport: true, reportPendingAmount: row?.pendingEnd ?? pending.reportPendingAmount});
     };
 
     function getReportPendingPaymentItems() {
@@ -3853,7 +3893,7 @@
         const rows = pending.items.map(item => {
             const project = item.project;
             const checked = pending.selectedIds.has(item.projectId) ? 'checked' : '';
-            return `<label class="flex items-start gap-4 rounded-2xl border border-white/10 bg-white/[.025] p-4 cursor-pointer hover:border-amber-300/40 transition-colors"><input type="checkbox" class="mt-1 h-5 w-5 accent-amber-400" ${checked} onchange="window.toggleReportPendingPayment('${item.projectId}', this.checked)"><div class="min-w-0 flex-1"><div class="flex flex-col sm:flex-row sm:items-start sm:justify-between gap-3"><div class="min-w-0"><p class="font-black text-slate-100 break-words">${escapeInlineHtml(getProjectPrimaryTitle(project))}</p><p class="mt-1 text-xs text-slate-400">${escapeInlineHtml(project.numeroInvoice || '—')} / ${escapeInlineHtml(project.numeroProposta || '—')} · ${escapeInlineHtml(getCompanyDisplayName(project.empresa))} · ${state.lang === 'pt' ? 'Cadastro' : 'Created'}: ${formatProjectCreatedAt(project)}</p></div><strong class="shrink-0 text-lg font-black text-amber-300 tabular-nums">${formatCurr(item.payableAmount)}</strong></div><p class="mt-2 text-xs text-slate-500">${state.lang === 'pt' ? 'Comissão não paga até o fim do período selecionado' : 'Commission unpaid at the selected period end'}: ${formatCurr(item.reportPendingAmount)}</p></div></label>`;
+            return `<label class="flex items-start gap-4 rounded-2xl border border-white/10 bg-white/[.025] p-4 cursor-pointer hover:border-amber-300/40 transition-colors"><input type="checkbox" class="mt-1 h-5 w-5 accent-amber-400" ${checked} onchange="window.toggleReportPendingPayment('${item.projectId}', this.checked)"><div class="min-w-0 flex-1"><div class="flex flex-col sm:flex-row sm:items-start sm:justify-between gap-3"><div class="min-w-0"><p class="font-black text-slate-100 break-words">${escapeInlineHtml(getProjectPrimaryTitle(project))}</p><p class="mt-1 text-xs text-slate-400">${escapeInlineHtml(project.numeroInvoice || '—')} / ${escapeInlineHtml(project.numeroProposta || '—')} · ${escapeInlineHtml(getCompanyDisplayName(project.empresa))} · ${state.lang === 'pt' ? 'Cadastro' : 'Created'}: ${formatProjectCreatedAt(project)}</p></div><strong class="shrink-0 text-lg font-black text-amber-300 tabular-nums">${formatCurr(item.payableAmount)}</strong></div><p class="mt-2 text-xs text-slate-500">${state.lang === 'pt' ? 'Comissão não paga até o fim do período selecionado' : 'Commission unpaid at the selected period end'}: ${formatCurr(item.reportPendingAmount)}</p></div></label><button type="button" onclick="window.payReportCommission('${item.projectId}')" class="report-commission-pay c2-primary-btn mt-2">${state.lang === 'pt' ? 'Registrar pagamento' : state.lang === 'es' ? 'Registrar pago' : 'Record payment'} · ${formatCurr(item.payableAmount)}</button>`;
         }).join('');
         container.innerHTML = `<div class="space-y-5"><div class="rounded-2xl border border-amber-300/20 bg-amber-300/[.06] p-4"><div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3"><div><p class="text-xs font-black uppercase tracking-[.18em] text-amber-200">${escapeInlineHtml(sellerName)}</p><p class="mt-1 text-sm text-slate-300">${formatProjectDate(state.reportPeriodStart)} → ${formatProjectDate(state.reportPeriodEnd)}</p></div><div class="sm:text-right"><p class="text-xs text-slate-400">${state.lang === 'pt' ? 'Selecionado para pagamento' : 'Selected for payment'}</p><strong class="text-2xl font-black text-amber-300 tabular-nums">${formatCurr(selectedTotal)}</strong></div></div></div><div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3"><label class="inline-flex items-center gap-3 text-sm font-bold text-slate-200 cursor-pointer"><input type="checkbox" class="h-5 w-5 accent-amber-400" ${allSelected ? 'checked' : ''} onchange="window.toggleAllReportPendingPayments(this.checked)">${state.lang === 'pt' ? 'Selecionar todas as obras' : 'Select all projects'}</label><span class="text-sm text-slate-400">${selectedItems.length} ${state.lang === 'pt' ? 'de' : 'of'} ${pending.items.length} ${state.lang === 'pt' ? 'obras selecionadas' : 'projects selected'}</span></div><div class="max-h-[48vh] overflow-y-auto space-y-3 pr-1">${rows}</div><div class="flex flex-col-reverse sm:flex-row sm:justify-end gap-3 pt-2 border-t border-white/10"><button type="button" onclick="window.closeReportPendingPayments()" class="px-5 py-3 rounded-xl border border-white/10 text-slate-300 font-bold hover:bg-white/5">${state.lang === 'pt' ? 'Cancelar' : 'Cancel'}</button><button type="button" onclick="window.confirmReportPendingPayments()" class="px-5 py-3 rounded-xl bg-amber-400 text-slate-950 font-black disabled:opacity-40 disabled:cursor-not-allowed" ${selectedItems.length ? '' : 'disabled'}>${state.lang === 'pt' ? 'Registrar pagamentos selecionados' : 'Record selected payments'}</button></div></div>`;
         try { lucide.createIcons(); } catch {}
@@ -4028,7 +4068,11 @@
             const completionChecklist = getReportCompletionChecklist(row);
             const invoice = String(project.numeroInvoice || '').trim() || (isPt ? 'Sem invoice' : 'No invoice');
             const completionIssues = completionChecklist.isPending ? `<div class="mt-3 rounded-xl border border-amber-300/20 bg-amber-300/[.06] px-3 py-2 text-xs text-amber-200"><strong>${isPt ? 'Pendências de encerramento' : 'Closure pending actions'}:</strong> ${completionChecklist.issues.map(issue => escapeInlineHtml(issue.label)).join(' · ')}</div>` : '';
-            return `<button type="button" onclick="window.openProjectFromReportList('${project.id}')" class="report-project-list-item w-full text-left rounded-2xl border border-white/10 bg-white/[.025] p-4 hover:border-emerald-300/40 hover:bg-emerald-300/[.04] transition-colors"><div class="flex flex-col sm:flex-row sm:items-start sm:justify-between gap-4"><div class="min-w-0"><p class="font-black text-slate-100 break-words">${escapeInlineHtml(getProjectPrimaryTitle(project))}</p><p class="report-project-list-meta mt-1 text-xs text-slate-400"><strong>${escapeInlineHtml(invoice)} / ${escapeInlineHtml(project.numeroProposta || '—')}</strong><span>${escapeInlineHtml(getCompanyDisplayName(project.empresa))}</span><span>${isPt ? 'Vendedor' : 'Seller'}: ${escapeInlineHtml(getUserDisplayName(project.vendedor, '—'))}</span><span>${isPt ? 'Cadastro' : 'Created'}: ${formatProjectCreatedAt(project)}</span></p><div class="mt-3 flex flex-wrap gap-2"><span class="v86-status ${projectState.cls}">${projectState.text}</span><span class="v86-status ${commissionState.cls}">${commissionState.text}</span></div>${completionIssues}</div><div class="report-project-list-value sm:text-right shrink-0"><p class="text-xs text-slate-500">${isPt ? 'Contrato' : 'Contract'}</p><strong class="text-lg font-black text-slate-100 tabular-nums">${formatCurr(row.totalWorkValue || project.valorTotal)}</strong>${Number(row.pendingEnd || 0) > 0.009 ? `<p class="mt-1 text-xs font-bold text-amber-300">${isPt ? 'Comissão não paga' : 'Commission unpaid'}: ${formatCurr(row.pendingEnd)}</p>` : ''}</div></div></button>`;
+            const currentDue = getPaymentDraftSummary(project.id, project.pagamentosEfetuados || [])?.remainingToPay || 0;
+            const payable = roundMoney(Math.min(Number(row.pendingEnd || 0), currentDue));
+            const action = payable > 0.009 && canManageProjectEntries(project, 'fin')
+                ? `<button type="button" onclick="window.payReportCommission('${project.id}')" class="report-commission-pay c2-primary-btn"><i data-lucide="badge-dollar-sign" class="w-4 h-4"></i>${state.lang === 'pt' ? 'Registrar pagamento' : state.lang === 'es' ? 'Registrar pago' : 'Record payment'} · ${formatCurr(payable)}</button>` : '';
+            return `<article class="report-project-row"><button type="button" onclick="window.openProjectFromReportList('${project.id}')" class="report-project-list-item w-full text-left rounded-2xl border border-white/10 bg-white/[.025] p-4 hover:border-emerald-300/40 hover:bg-emerald-300/[.04] transition-colors"><div class="flex flex-col sm:flex-row sm:items-start sm:justify-between gap-4"><div class="min-w-0"><p class="font-black text-slate-100 break-words">${escapeInlineHtml(getProjectPrimaryTitle(project))}</p><p class="report-project-list-meta mt-1 text-xs text-slate-400"><strong>${escapeInlineHtml(invoice)} / ${escapeInlineHtml(project.numeroProposta || '—')}</strong><span>${escapeInlineHtml(getCompanyDisplayName(project.empresa))}</span><span>${isPt ? 'Vendedor' : 'Seller'}: ${escapeInlineHtml(getUserDisplayName(project.vendedor, '—'))}</span><span>${isPt ? 'Cadastro' : 'Created'}: ${formatProjectCreatedAt(project)}</span></p><div class="mt-3 flex flex-wrap gap-2"><span class="v86-status ${projectState.cls}">${projectState.text}</span><span class="v86-status ${commissionState.cls}">${commissionState.text}</span></div>${completionIssues}</div><div class="report-project-list-value sm:text-right shrink-0"><p class="text-xs text-slate-500">${isPt ? 'Contrato' : 'Contract'}</p><strong class="text-lg font-black text-slate-100 tabular-nums">${formatCurr(row.totalWorkValue || project.valorTotal)}</strong>${Number(row.pendingEnd || 0) > 0.009 ? `<p class="mt-1 text-xs font-bold text-amber-300">${isPt ? 'Comissão não paga' : 'Commission unpaid'}: ${formatCurr(row.pendingEnd)}</p>` : ''}</div></div></button>${action}</article>`;
         }).join('');
         content.innerHTML = rows ? `<div class="report-project-list-scroll space-y-3 pr-1">${rows}</div>` : `<div class="v86-empty">${isPt ? 'Nenhuma obra encontrada para esta consulta.' : 'No projects found for this query.'}</div>`;
         try { lucide.createIcons(); } catch {}
@@ -4126,7 +4170,7 @@
         }).join('');
 
         summaryEl.innerHTML = `
-            <div class="rounded-[28px] border border-white/10 bg-gradient-to-br from-slate-900 via-slate-900 to-black/90 p-5 sm:p-6 shadow-[0_20px_60px_-30px_rgba(0,0,0,0.75)]">
+            <div class="financial-summary rounded-[28px] border border-white/10 bg-gradient-to-br from-slate-900 via-slate-900 to-black/90 p-5 sm:p-6 shadow-[0_20px_60px_-30px_rgba(0,0,0,0.75)]">
                 <div class="flex flex-col gap-4 xl:flex-row xl:items-start xl:justify-between mb-5">
                     <div>
                         <p class="text-[10px] font-black uppercase tracking-[0.28em] text-slate-500 mb-2">${isPT ? 'Recebimentos reais do cliente' : 'Actual client receipts'}</p>
@@ -7624,6 +7668,17 @@ function getSellerCommissionPeriodReport(projects, startStr, endStr) {
             receivableCell.className = `money font-black report-client-receivable-value ${clientOutstanding > 0.009 ? 'is-due' : ''}`;
             receivableCell.textContent = formatCurr(clientOutstanding);
             tableRow.cells[5]?.after(receivableCell);
+            const currentDue = getPaymentDraftSummary(row.project.id, row.project.pagamentosEfetuados || [])?.remainingToPay || 0;
+            const payable = roundMoney(Math.min(Number(row.pendingEnd || 0), currentDue));
+            if (payable > 0.009 && canManageProjectEntries(row.project, 'fin')) {
+                const button = document.createElement('button');
+                button.type = 'button'; button.className = 'report-table-payment c2-primary-btn no-print';
+                button.textContent = `${state.lang === 'pt' ? 'Registrar' : state.lang === 'es' ? 'Registrar' : 'Record'} ${formatCurr(payable)}`;
+                button.setAttribute('aria-label', `${state.lang === 'pt' ? 'Registrar pagamento' : state.lang === 'es' ? 'Registrar pago' : 'Record payment'} ${formatCurr(payable)} · ${getProjectPrimaryTitle(row.project)}`);
+                button.addEventListener('click', event => {event.stopPropagation(); window.payReportCommission(row.project.id);});
+                button.addEventListener('keydown', event => event.stopPropagation());
+                tableRow.cells[tableRow.cells.length - 1].append(button);
+            }
             makeReportRowNavigable(tableRow, row.project.id);
         });
         if (reportSort.key !== 'default') {
@@ -7638,11 +7693,17 @@ function getSellerCommissionPeriodReport(projects, startStr, endStr) {
             });
         }
         const summaryKpis = table.closest('.v86-page')?.querySelector('.v86-kpis');
+        if (summaryKpis) {
+            summaryKpis.classList.add('report-summary-kpis');
+            if (!document.getElementById('report-inline-payment-status')) {
+                const note = document.createElement('p'); note.id='report-inline-payment-status'; note.className='report-payment-status'; note.setAttribute('role','status'); summaryKpis.before(note);
+            }
+        }
         if (summaryKpis && !summaryKpis.querySelector('[data-report-client-receivable]')) {
             const receivableKpi = document.createElement('div');
             receivableKpi.className = 'v86-kpi report-client-receivable';
             receivableKpi.dataset.reportClientReceivable = 'true';
-            receivableKpi.innerHTML = `<span>${state.lang === 'pt' ? 'A receber no fim do período' : 'Client outstanding at period end'}</span><strong class="red">${formatCurr(totalClientOutstanding)}</strong>`;
+            receivableKpi.innerHTML = `<span>${state.lang === 'pt' ? 'A receber no fim do período' : state.lang === 'es' ? 'Por cobrar al cierre del período' : 'Client outstanding at period end'}</span><strong class="red">${formatCurr(totalClientOutstanding)}</strong>`;
             summaryKpis.appendChild(receivableKpi);
         }
         if (summaryKpis && !summaryKpis.querySelector('[data-report-monthly-chart]') && monthlyProjectData.length) {
