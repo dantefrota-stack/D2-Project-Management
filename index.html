@@ -542,6 +542,7 @@
         .c2-nav .tab-btn:hover { color:var(--c2-text); background:rgba(255,255,255,.035); }
         .c2-nav .tab-btn.tab-active { color:var(--c2-text); background:rgba(69,216,156,.07); border-color:rgba(69,216,156,.16); box-shadow:inset 0 -2px 0 var(--c2-green); }
         .c2-header-actions { display:flex; align-items:center; justify-content:flex-end; gap:10px; }
+        .c2-topbar-inner:has(#global-company-picker:not(.hidden)){display:flex;flex-wrap:wrap;gap:16px}.c2-topbar-inner:has(#global-company-picker:not(.hidden)) .c2-nav{flex:1}.c2-header-actions:has(#global-company-picker:not(.hidden)){margin-left:auto}
         @media(max-width:900px){.c2-topbar-inner:has(#global-company-picker:not(.hidden)){display:flex;flex-wrap:wrap}.c2-header-actions:has(#global-company-picker:not(.hidden)){flex:1 0 100%;flex-wrap:wrap;justify-content:space-between}}
         .c2-icon-btn { width:42px; height:42px; border-radius:14px; display:inline-flex; align-items:center; justify-content:center; color:var(--c2-muted); background:rgba(255,255,255,.025); border:1px solid var(--c2-line); transition:.2s; }
         .c2-icon-btn:hover { color:var(--c2-text); border-color:var(--c2-line-strong); background:rgba(255,255,255,.055); }
@@ -2279,7 +2280,7 @@
         const label=state.lang==='pt'?'Empresa':state.lang==='es'?'Empresa':'Company';
         document.getElementById('global-company-label').textContent=label;
         const select=document.getElementById('global-company-select');select.setAttribute('aria-label',label);
-        const all=state.lang==='pt'?'Todas as empresas · relatórios':state.lang==='es'?'Todas las empresas · informes':'All companies · reports';
+        const all=state.lang==='pt'?'Todas as empresas':state.lang==='es'?'Todas las empresas':'All companies';
         select.innerHTML=(state.userPerms.smart?'<option value="Smart Home">D2 Smart Home</option>':'')+(state.userPerms.hvac?'<option value="HVAC">D2 HVAC Solutions</option>':'')+(state.isSuperAdmin&&state.userPerms.smart&&state.userPerms.hvac?`<option value="Ambas">${all}</option>`:'');
         select.value=state.company;
     };
