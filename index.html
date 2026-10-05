@@ -1035,6 +1035,7 @@
 <style>html.portal-embedded #auth-screen{display:none!important}html.portal-embedded #portal-boot{display:flex!important}html.portal-embedded.portal-ready #portal-boot{display:none!important}html.portal-embedded #portal-back,html.portal-embedded #portal-boot-back,html.portal-embedded #portal-link-account,html.portal-embedded .c2-brand-wrap,html.portal-embedded .c2-logout,html.portal-embedded #dashboard-language-switcher,html.portal-embedded #theme-toggle{display:none!important}</style>
 <script>if(new URLSearchParams(location.search).get('embed')==='1'&&window.parent!==window)document.documentElement.classList.add('portal-embedded');</script>
     <link href="financial-modal.css?v=20261005" rel="stylesheet">
+    <link href="module-shell.css?v=20261005-2" rel="stylesheet">
 </head>
 <body class="auth-body">
 
@@ -1716,7 +1717,7 @@
     window.updateDashboardLanguageSwitcher = () => {
         const switcher = document.getElementById('dashboard-language-switcher');
         if (!switcher) return;
-        const visible = !!state.user && state.currentView === 'projects' && !state.focusedProject;
+        const visible = !!state.user && !portalEmbedded;
         switcher.classList.toggle('hidden', !visible);
         switcher.setAttribute('aria-hidden', String(!visible));
     };

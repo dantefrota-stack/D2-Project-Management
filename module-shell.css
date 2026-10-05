@@ -1,0 +1,32 @@
+/* Keep utility controls and module navigation in separate rows. */
+#main-header .c2-topbar-inner{display:flex!important;flex-wrap:wrap!important;align-items:center;gap:12px 18px;min-height:76px}
+#portal-back{order:0;flex-shrink:0}
+#main-header .c2-brand-wrap{order:1;margin-right:auto;flex-shrink:0}
+#main-header .c2-header-actions{order:2;margin-left:auto;flex-wrap:wrap;gap:8px;min-width:0}
+#main-header .mobile-nav-toggle{display:none!important;order:3;flex-shrink:0}
+#main-header #main-nav{position:static!important;transform:none!important;order:4;flex:0 0 100%!important;width:100%;display:flex!important;flex-direction:row;justify-content:flex-start;align-items:stretch;gap:6px;border-top:1px solid var(--c2-line);padding:8px 0 0;margin:0;overflow:visible;box-shadow:none!important;border-radius:0}
+#main-header #main-nav .tab-btn{width:auto;flex:0 0 auto;padding:11px 15px}
+html.portal-embedded #main-header #main-nav{order:1;flex:1 1 auto!important;width:auto;border-top:0;padding-top:0}
+/* Long client names must not compress the status or action buttons. */
+.v86-project-card-top{flex-wrap:wrap}
+.v86-project-card-top .v86-project-id{flex:1 1 200px}
+.v86-project-card-top>.flex{flex:1 0 auto;justify-content:flex-end;flex-wrap:wrap;gap:8px}
+.v86-project-card-top .v86-status,.v86-project-card-top .v86-actions{flex-shrink:0}
+@media(max-width:1120px){#main-header .c2-brand-copy{display:none}}
+@media(max-width:900px){
+ #main-header .c2-topbar-inner{padding:9px 14px;gap:8px}
+ #main-header .c2-brand-mark{width:82px;height:42px}
+ #main-header .mobile-nav-toggle{display:inline-flex!important;margin-left:auto;order:2}
+ #main-header .c2-header-actions{order:3;flex:1 0 100%;justify-content:flex-end;gap:6px}
+ #main-header #global-company-picker{margin-right:auto;flex:1 1 140px;min-width:130px!important}
+ #main-header #global-company-select{width:100%;max-width:200px}
+ #main-header .c2-header-actions>.c2-icon-btn{width:40px;height:42px;border-radius:10px}
+ html:not(.portal-embedded) #main-header #dashboard-language-switcher:not(.hidden){display:flex!important}
+ #main-header #main-nav,html.portal-embedded #main-header #main-nav{order:4;flex:0 0 100%!important;width:100%;display:none!important;border-top:1px solid var(--c2-line);padding:8px 0 0;background:var(--c2-panel)!important}
+ #main-header #main-nav.nav-open,html.portal-embedded #main-header #main-nav.nav-open{display:grid!important;grid-template-columns:repeat(2,minmax(0,1fr));gap:6px}
+ #main-header #main-nav .tab-btn{width:100%;padding:12px;border:0}
+ html.portal-embedded #main-header .c2-header-actions{flex:0 1 auto}
+ html.portal-embedded #main-header .mobile-nav-toggle{margin-left:0;margin-right:auto}
+}
+@media(max-width:600px){.v86-project-card-top .v86-actions button{width:40px;height:40px}}
+@media print{#main-header{display:none!important}}
