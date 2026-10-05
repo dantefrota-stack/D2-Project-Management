@@ -7712,9 +7712,9 @@ function getSellerCommissionPeriodReport(projects, startStr, endStr) {
             chartCard.className = 'v86-kpi report-monthly-chart-card no-print';
             chartCard.dataset.reportMonthlyChart = 'true';
             const chartHint = chartCompanies.length > 1
-                ? (state.lang === 'pt' ? 'Clique em uma barra para ver as obras da empresa. Passe o cursor para consultar o faturamento.' : 'Click a bar to view that company’s projects. Hover to view revenue.')
-                : (state.lang === 'pt' ? 'Clique em um mês para ver as obras. Passe o cursor para consultar o faturamento.' : 'Click a month to view projects. Hover to view revenue.');
-            chartCard.innerHTML = `<div class="report-monthly-chart-head"><div><strong>${state.lang === 'pt' ? 'Obras por mês' : 'Projects by month'}</strong><span>${chartHint}</span></div><div class="report-monthly-chart-total"><b>${formatCurr(totalRevenue)}</b><small>${state.lang === 'pt' ? 'Faturamento do período' : 'Period revenue'}</small></div></div><div class="report-monthly-chart-wrap"><canvas id="report-monthly-projects-chart"></canvas></div>`;
+                ? (state.lang === 'pt' ? 'Clique em uma barra para ver as obras da empresa. Passe o cursor para consultar o faturamento.' : state.lang === 'es' ? 'Haga clic en una barra para ver los proyectos de la empresa. Pase el cursor para consultar los ingresos.' : 'Click a bar to view that company’s projects. Hover to view revenue.')
+                : (state.lang === 'pt' ? 'Clique em um mês para ver as obras. Passe o cursor para consultar o faturamento.' : state.lang === 'es' ? 'Haga clic en un mes para ver los proyectos. Pase el cursor para consultar los ingresos.' : 'Click a month to view projects. Hover to view revenue.');
+            chartCard.innerHTML = `<div class="report-monthly-chart-head"><div><strong>${state.lang === 'pt' ? 'Obras por mês' : state.lang === 'es' ? 'Proyectos por mes' : 'Projects by month'}</strong><span>${chartHint}</span></div><div class="report-monthly-chart-total"><b>${formatCurr(totalRevenue)}</b><small>${state.lang === 'pt' ? 'Faturamento do período' : state.lang === 'es' ? 'Ingresos del período' : 'Period revenue'}</small></div></div><div class="report-monthly-chart-wrap"><canvas id="report-monthly-projects-chart"></canvas></div>`;
             summaryKpis.appendChild(chartCard);
             requestAnimationFrame(() => {
                 const canvas = chartCard.querySelector('#report-monthly-projects-chart');

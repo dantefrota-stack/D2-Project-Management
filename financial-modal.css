@@ -97,17 +97,19 @@
 #report-output .report-summary-kpis > .v86-kpi:not(.report-monthly-chart-card) { display: flex; flex-direction: column; justify-content: flex-start; gap: 12px; min-height: 126px; padding: 20px; }
 #report-output .report-summary-kpis > .v86-kpi:not(.report-monthly-chart-card) > span { min-height: 2.7em; font-size: 12px; line-height: 1.35; }
 #report-output .report-summary-kpis > .v86-kpi > strong { margin-top: 0; font-size: clamp(22px, 2.1vw, 30px); line-height: 1.15; }
-#report-output .report-summary-kpis > .report-monthly-chart-card { grid-column: 1 / -1; min-height: 210px; padding: 20px; }
+#report-output .report-summary-kpis > .report-monthly-chart-card { grid-column: 1 / -1; min-height: 210px !important; padding: 20px !important; }
 #report-output .report-summary-kpis .report-monthly-chart-wrap { height: 150px; }
 #report-output .report-summary-kpis .report-monthly-chart-head strong { font-size: 14px; }
 #report-output .report-summary-kpis .report-monthly-chart-total b { font-size: 20px; }
 @media (max-width: 1100px) {
   #report-output .report-summary-kpis { grid-template-columns: repeat(2, minmax(0, 1fr)); }
-  #report-output .report-summary-kpis > .report-client-receivable { grid-column: 1 / -1; flex-direction: row; align-items: center; justify-content: space-between; min-height: 88px; }
-  #report-output .report-summary-kpis > .report-client-receivable > span { min-height: 0; }
+  #report-output .report-summary-kpis > .v86-kpi.report-client-receivable { grid-column: 1 / -1; flex-direction: row; align-items: center; justify-content: space-between; min-height: 88px; text-align: left; }
+  #report-output .report-summary-kpis > .v86-kpi.report-client-receivable > span { min-height: 0; }
 }
 @media (max-width: 640px) {
   #report-output .report-summary-kpis > .v86-kpi:not(.report-monthly-chart-card) { padding: 15px; }
+  #report-output .report-summary-kpis .report-monthly-chart-head { flex-direction: column; align-items: flex-start; gap: 10px; }
+  #report-output .report-summary-kpis .report-monthly-chart-total { max-width: 100%; text-align: left; white-space: normal; overflow-wrap: anywhere; }
   :is(#edit-payment-modal, #edit-rec-modal) .financial-summary { padding: 14px; }
   :is(#edit-payment-modal, #edit-rec-modal) .modal-workspace-header { padding: 20px; }
   #edit-payment-modal .modal-workspace-header + div { padding: 16px; }
