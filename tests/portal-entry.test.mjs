@@ -24,6 +24,7 @@ test('the Portal link opens the original project app in the selected company', (
 });
 
 test('the project app falls back to an authorized company', () => {
+    assert.equal(preferredCompany('?company=smart&scope=all', 'Smart Home'), 'Ambas');
     assert.equal(allowedCompany('HVAC', { smart: true, hvac: false }), 'Smart Home');
     assert.equal(allowedCompany('Ambas', { smart: false, hvac: true }), 'HVAC');
     assert.equal(allowedCompany('Ambas', { smart: true, hvac: true }), 'Ambas');

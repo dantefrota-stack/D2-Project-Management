@@ -140,7 +140,7 @@ async function authenticatedContext(req) {
   const userRecord = await auth.getUser(decoded.uid);
   if (userRecord.disabled) throw Object.assign(new Error('User is disabled.'), {status: 403});
   const profile = profileDoc?.data() || {};
-  const access = intersectPermissions(await writeAccess(userRecord, profile, ownerRecord),decoded);
+  const access = intersectPermissions(await writeAccess(userRecord, profile, ownerRecord),decoded,ownerRecord);
   if(decoded.portal_bridge===true && !access.p_tab_proj)throw Object.assign(new Error('Projects access is not authorized for this company.'),{status:403});
   return {decoded, email, superAdmin, profileDoc, profile, access, userRecord};
 }

@@ -3,6 +3,7 @@
 const COMPANY_LABELS={smart:'Smart Home',hvac:'HVAC'};
 const error=(message,status)=>Object.assign(new Error(message),{status});
 const normalizedEmail=value=>String(value||'').trim().toLowerCase();
+const {isPrimaryOwner}=require('./identity-policy');
 
 function assertPortalLease(claims,now=Date.now()){
   const custom=claims?.firebase?.sign_in_provider==='custom';
@@ -10,7 +11,8 @@ function assertPortalLease(claims,now=Date.now()){
   if(!custom || claims.portal_bridge!==true || !Object.hasOwn(COMPANY_LABELS,claims.portal_company)
     || !Number.isSafeInteger(claims.portal_until) || claims.portal_until<=Math.floor(now/1000)
     || claims.portal_scope!=='company' || !Array.isArray(claims.portal_actions)
-    || !claims.portal_actions.includes('read') || !claims.portal_actions.includes('read_cost'))
+    || !claims.portal_actions.includes('read') || !claims.portal_actions.includes('read_cost')
+    || (claims.portal_report_all===true&&claims.portal_actions.some(action=>!['read','read_cost','export'].includes(action))))
     throw error('Portal connection expired. Reconnect from the Portal.',401);
 }
 
@@ -28,13 +30,18 @@ function portalClaims(company,grant,now=Date.now()){
     portal_actions:Array.isArray(grant.actions)?grant.actions.filter(action=>['read','create','edit','assign','read_cost','export'].includes(action)):[],
     portal_until:Math.floor(now/1000)+5*60};
 }
+function reportClaims(session,company,pmUser,now=Date.now()){
+  if(session?.superAdmin!==true||!isPrimaryOwner(pmUser)||!['smart','hvac'].every(value=>projectGrant(session,value)))throw error('Combined reports require the verified super administrator and both company grants.',403);
+  return {...portalClaims(company,projectGrant(session,company),now),portal_report_all:true,portal_actions:['read','read_cost','export']};
+}
 
-function intersectPermissions(permissions,claims){
+function intersectPermissions(permissions,claims,verifiedOwner=false){
   if(claims?.portal_bridge!==true)return permissions;
   const actions=Array.isArray(claims.portal_actions)?claims.portal_actions:[];
+  const reportAll=claims.portal_report_all===true&&verifiedOwner;
   return {...permissions,
-    p_smart:permissions.p_smart && claims.portal_company==='smart',
-    p_hvac:permissions.p_hvac && claims.portal_company==='hvac',
+    p_smart:permissions.p_smart && (reportAll||claims.portal_company==='smart'),
+    p_hvac:permissions.p_hvac && (reportAll||claims.portal_company==='hvac'),
     p_global:permissions.p_global && claims.portal_scope==='company',
     p_tab_proj:permissions.p_tab_proj && actions.includes('read'),
     p_tab_new:permissions.p_tab_new && actions.includes('create'),
@@ -52,11 +59,14 @@ function createPortalSso({auth,db,getPortalSession,getPmContext,getPmProfile,clo
     res.set('Cache-Control','private, no-store');
     try{
       if(req.method!=='POST')throw error('Method not allowed.',405);
-      const {action,portalToken,company}=req.body||{};
+      const {action,portalToken,company,scope}=req.body||{};
+      if(scope!==undefined&&scope!=='all')throw error('Invalid report scope.',400);
+      if(scope==='all'&&action!=='exchange')throw error('Report mode cannot pair accounts.',400);
       if(!['pair','exchange'].includes(action) || !Object.hasOwn(COMPANY_LABELS,company) || typeof portalToken!=='string' || portalToken.length>8000 || portalToken.length<100)throw error('Invalid handoff request.',400);
       const session=await getPortalSession(portalToken);
       const grant=projectGrant(session,company);
       if(!session?.uid || !session?.email || !grant)throw error('Projects access is not authorized for this company.',403);
+      if(scope==='all'&&(session.superAdmin!==true||!['smart','hvac'].every(value=>projectGrant(session,value))))throw error('Combined reports require both company grants.',403);
       const ref=links.doc(session.uid);
       if(action==='pair'){
         const context=await getPmContext(req);
@@ -107,7 +117,8 @@ function createPortalSso({auth,db,getPortalSession,getPmContext,getPmProfile,clo
         const access=profile.data();
         if(access.p_tab_proj===false || access[company==='smart'?'p_smart':'p_hvac']===false || (access.p_costs!==true && access.viewCosts!==true))throw error('The linked Projects profile no longer allows company-wide financial access.',403);
       }
-      const token=await auth.createCustomToken(mapping.pmUid,portalClaims(company,grant,clock()));
+      const claims=scope==='all'?reportClaims(session,company,pmUser,clock()):portalClaims(company,grant,clock());
+      const token=await auth.createCustomToken(mapping.pmUid,claims);
       return res.json({ok:true,token,expiresInSeconds:5*60});
     }catch(failure){
       if(!failure.status)console.error('Portal SSO failed:',failure.code||failure.name||'unknown',failure.message);
@@ -116,4 +127,4 @@ function createPortalSso({auth,db,getPortalSession,getPmContext,getPmProfile,clo
   };
 }
 
-module.exports={projectGrant,portalClaims,intersectPermissions,createPortalSso,assertPortalLease};
+module.exports={projectGrant,portalClaims,reportClaims,intersectPermissions,createPortalSso,assertPortalLease};
