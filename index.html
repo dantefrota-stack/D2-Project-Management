@@ -8100,8 +8100,11 @@ function getSellerCommissionPeriodReport(projects, startStr, endStr) {
         );
         const projectsRef = collection(db, 'artifacts', appId, 'public', 'data', 'projects');
         const projectSnapshots = new Map();
+        const receivedCompanies = new Set();
         const allowedCompanies = ['HVAC', 'Smart Home'].filter(company => state.isSuperAdmin || (company === 'HVAC' ? state.userPerms.hvac : state.userPerms.smart));
         const publishProjects = () => {
+            // Wait for every authorized company before presenting combined totals.
+            if (allowedCompanies.some(company => !receivedCompanies.has(company))) return;
             state.projects = Array.from(projectSnapshots.values());
             state.projects.forEach(project => { void reconcileCompletedProjectClosure(project); });
             window.renderProjectSellerFilter();
@@ -8111,6 +8114,7 @@ function getSellerCommissionPeriodReport(projects, startStr, endStr) {
             const constraints = [where('empresa', '==', company)];
             if (!state.isSuperAdmin && !state.userPerms.global) constraints.push(where('vendedor', '==', auth.currentUser.email));
             listen(query(projectsRef, ...constraints), snap => {
+                receivedCompanies.add(company);
                 Array.from(projectSnapshots.entries()).filter(([, project]) => project.empresa === company).forEach(([id]) => projectSnapshots.delete(id));
                 snap.docs.forEach(item => projectSnapshots.set(item.id, { id: item.id, ...item.data() }));
                 publishProjects();

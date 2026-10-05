@@ -25,7 +25,8 @@ test('protected owner consolidated reports read both companies, reject writes an
  await seed('owner',{superAdmin:true,p_hvac:true});
  const report={portal_report_all:true,portal_actions:['read','read_cost','export']};
  const d=db(report,'owner');
- await assertSucceeds(getDocs(collection(d,`${root}/projects`)));
+ await assertFails(getDocs(collection(d,`${root}/projects`)));
+ for(const company of ['Smart Home','HVAC'])await assertSucceeds(getDocs(query(collection(d,`${root}/projects`),where('empresa','==',company))));
  for(const id of ['smart','hvac']){
   await assertSucceeds(getDoc(projectRef(d,id)));
   await assertFails(updateDoc(projectRef(d,id),{pagamentosEfetuados:[{valor:1}]}));
@@ -33,6 +34,7 @@ test('protected owner consolidated reports read both companies, reject writes an
   await assertFails(deleteDoc(projectRef(d,id)));
  }
  await assertFails(setDoc(projectRef(d,'new'),record));
+ await assertFails(updateDoc(projectRef(db({...report,portal_actions:['read','read_cost','edit']},'owner')),{cliente:'Changed'}));
  await seed('manager',{p_hvac:true});await assertFails(getDoc(projectRef(db(report),'hvac')));
  await seed('owner',{superAdmin:true,p_hvac:false});await assertFails(getDoc(projectRef(d,'hvac')));
  await seed('owner',{superAdmin:true,p_hvac:true,active:false});await assertFails(getDoc(projectRef(d,'smart')));

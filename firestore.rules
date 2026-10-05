@@ -23,7 +23,8 @@ service cloud.firestore {
     }
 
     function portalAction(action) {
-      return !portalBridge() || action in request.auth.token.get('portal_actions', []);
+      return !portalBridge() || (action in request.auth.token.get('portal_actions', [])
+        && (!request.auth.token.get('portal_report_all', false) || action in ['read', 'read_cost', 'export']));
     }
 
     function access() {
