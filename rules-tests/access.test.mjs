@@ -21,6 +21,22 @@ test('manager can list only the authorized company and cannot delete projects',a
  const d=db();await assertSucceeds(getDocs(query(collection(d,`${root}/projects`),where('empresa','==','Smart Home'))));
  await assertFails(getDoc(projectRef(d,'hvac')));await assertFails(getDocs(collection(d,`${root}/projects`)));await assertFails(deleteDoc(projectRef(d)));
 });
+test('protected owner consolidated reports read both companies, reject writes and honor revocation',async()=>{
+ await seed('owner',{superAdmin:true,p_hvac:true});
+ const report={portal_report_all:true,portal_actions:['read','read_cost','export']};
+ const d=db(report,'owner');
+ await assertSucceeds(getDocs(collection(d,`${root}/projects`)));
+ for(const id of ['smart','hvac']){
+  await assertSucceeds(getDoc(projectRef(d,id)));
+  await assertFails(updateDoc(projectRef(d,id),{pagamentosEfetuados:[{valor:1}]}));
+  await assertFails(updateDoc(projectRef(d,id),{cliente:'Changed'}));
+  await assertFails(deleteDoc(projectRef(d,id)));
+ }
+ await assertFails(setDoc(projectRef(d,'new'),record));
+ await seed('manager',{p_hvac:true});await assertFails(getDoc(projectRef(db(report),'hvac')));
+ await seed('owner',{superAdmin:true,p_hvac:false});await assertFails(getDoc(projectRef(d,'hvac')));
+ await seed('owner',{superAdmin:true,p_hvac:true,active:false});await assertFails(getDoc(projectRef(d,'smart')));
+});
 test('missing, expired, or malformed bridge claims never become direct access',async()=>{
  for(const override of [{portal_until:1},{portal_until:'9999999999'},{portal_bridge:false},{portal_actions:[]},{portal_actions:['read']}])await assertFails(getDoc(projectRef(db(override))));
 });

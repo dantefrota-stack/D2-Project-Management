@@ -37,7 +37,8 @@ service cloud.firestore {
     }
 
     function companyAllowed(company) {
-      return (!portalBridge() || (company == 'HVAC' && request.auth.token.portal_company == 'hvac') || (company == 'Smart Home' && request.auth.token.portal_company == 'smart'))
+      return (!portalBridge() || (request.auth.token.get('portal_report_all', false) == true && access().superAdmin == true && request.auth.token.portal_actions.hasOnly(['read', 'read_cost', 'export']))
+        || (company == 'HVAC' && request.auth.token.portal_company == 'hvac') || (company == 'Smart Home' && request.auth.token.portal_company == 'smart'))
         && (isSuperAdmin()
           || (company == 'HVAC' && access().p_hvac == true)
           || (company == 'Smart Home' && access().p_smart == true));

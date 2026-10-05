@@ -1,8 +1,26 @@
 const test=require('node:test');
 const assert=require('node:assert/strict');
-const {projectGrant,portalClaims,intersectPermissions,createPortalSso,assertPortalLease}=require('./portal-sso');
+const {projectGrant,portalClaims,reportClaims,intersectPermissions,createPortalSso,assertPortalLease}=require('./portal-sso');
+const {OWNER_UID,OWNER_EMAIL}=require('./identity-policy');
 
 const session={uid:'portal-owner',email:'owner@example.com',superAdmin:true,companies:['smart'],grants:{smart:{status:'active',modules:{projects:{scope:'company',actions:['read','read_cost','create']}}}}};
+
+test('consolidated reports require the protected source owner and two live grants, with no write actions',()=>{
+  const both={...session,companies:['smart','hvac'],grants:{smart:session.grants.smart,hvac:session.grants.smart}};
+  const owner={uid:OWNER_UID,email:OWNER_EMAIL};
+  const claims=reportClaims(both,'smart',owner,1000000);
+  assert.equal(claims.portal_report_all,true);
+  assert.deepEqual(claims.portal_actions,['read','read_cost','export']);
+  assert.equal(claims.portal_until,1300);
+  assert.throws(()=>reportClaims({...both,superAdmin:false},'smart',owner));
+  assert.throws(()=>reportClaims(session,'smart',owner));
+  assert.throws(()=>reportClaims(both,'smart',{...owner,uid:'replacement'}));
+  const effective=intersectPermissions({p_smart:true,p_hvac:true,p_global:true,p_tab_proj:true,p_tab_new:true,p_tab_rep:true,p_fin:true,p_costs:true,p_contractors:true},claims,true);
+  assert.equal(effective.p_smart,true);assert.equal(effective.p_hvac,true);assert.equal(effective.p_tab_rep,true);
+  for(const key of ['p_tab_new','p_fin','p_cost_edit','p_contractors'])assert.equal(effective[key],false);
+  assert.equal(intersectPermissions(effective,claims,false).p_hvac,false);
+  assert.throws(()=>assertPortalLease({...claims,portal_actions:[...claims.portal_actions,'edit'],firebase:{sign_in_provider:'custom'}},1000000));
+});
 
 test('a company link requires a company-wide project grant',()=>{
   assert.deepEqual(projectGrant(session,'smart'),session.grants.smart.modules.projects);

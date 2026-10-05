@@ -13,7 +13,9 @@ export function allowedView(preferred, permissions, superAdmin = false) {
 }
 
 export function preferredCompany(search = '', stored = '') {
-    const value = new URLSearchParams(search).get('company');
+    const params = new URLSearchParams(search);
+    if(params.get('scope')==='all')return 'Ambas';
+    const value = params.get('company');
     if (value === 'smart') return 'Smart Home';
     if (value === 'hvac') return 'HVAC';
     return ['Smart Home', 'HVAC', 'Ambas'].includes(stored) ? stored : 'Ambas';

@@ -542,6 +542,7 @@
         .c2-nav .tab-btn:hover { color:var(--c2-text); background:rgba(255,255,255,.035); }
         .c2-nav .tab-btn.tab-active { color:var(--c2-text); background:rgba(69,216,156,.07); border-color:rgba(69,216,156,.16); box-shadow:inset 0 -2px 0 var(--c2-green); }
         .c2-header-actions { display:flex; align-items:center; justify-content:flex-end; gap:10px; }
+        @media(max-width:900px){.c2-topbar-inner:has(#global-company-picker:not(.hidden)){display:flex;flex-wrap:wrap}.c2-header-actions:has(#global-company-picker:not(.hidden)){flex:1 0 100%;flex-wrap:wrap;justify-content:space-between}}
         .c2-icon-btn { width:42px; height:42px; border-radius:14px; display:inline-flex; align-items:center; justify-content:center; color:var(--c2-muted); background:rgba(255,255,255,.025); border:1px solid var(--c2-line); transition:.2s; }
         .c2-icon-btn:hover { color:var(--c2-text); border-color:var(--c2-line-strong); background:rgba(255,255,255,.055); }
         .c2-logout:hover { color:var(--c2-red); border-color:rgba(255,110,110,.25); }
@@ -1229,6 +1230,7 @@
             </nav>
 
             <div class="c2-header-actions">
+                <label id="global-company-picker" class="hidden" style="display:none;min-width:150px;text-align:left;border:1px solid var(--c2-line);border-radius:12px;padding:5px 10px;color:var(--c2-text)"><span id="global-company-label" style="display:block;font-size:10px;font-weight:700;text-transform:uppercase">Company</span><select id="global-company-select" aria-label="Company" style="min-height:36px;max-width:225px;border:0;background:transparent;color:inherit;font-family:inherit;font-size:13px;font-weight:600" onchange="window.selectGlobalCompany(this.value)"></select></label>
                 <button type="button" id="portal-link-account" class="c2-icon-btn" title="Link this Projects account to D2 Portal" aria-label="Link this Projects account to D2 Portal" style="width:auto;padding:0 10px;font-size:12px;font-weight:700">Link Portal</button>
                 <div id="dashboard-language-switcher" class="dashboard-language-switcher hidden" aria-label="Selecionar idioma">
                     <button type="button" onclick="window.setLang('en')" class="dashboard-language-option" data-dashboard-language="en" title="English (United States)" aria-label="English (United States)"><img src="https://flagcdn.com/w80/us.png" alt="United States"></button>
@@ -1721,6 +1723,7 @@
     window.setLang = (l) => { 
         const language = ['en', 'pt', 'es'].includes(l) ? l : 'en';
         state.lang = language;
+        window.renderGlobalCompanyPicker?.();
         if (!portalEmbedded) try { localStorage.setItem(LANGUAGE_STORAGE_KEY, language); } catch (_) {}
         const url = new URL(window.location.href);
         if (url.searchParams.has('lang') && url.searchParams.get('lang') !== language) {
@@ -2185,16 +2188,17 @@
         state.company = allowedCompany(state.company, p);
         try { if (state.company) localStorage.setItem(COMPANY_KEY, state.company); } catch (_) {}
         const portalUrl = new URL(window.location.href);
-        if (portalUrl.searchParams.has('company')) {
+        if (portalUrl.searchParams.has('company') && !portalEmbedded) {
             const queryValue = companyQueryValue(state.company);
             if (queryValue) portalUrl.searchParams.set('company', queryValue);
             else portalUrl.searchParams.delete('company');
             window.history.replaceState(window.history.state, '', portalUrl);
         }
         renderCompanyPills('dynamic-unit-pills-proj');
+        window.renderGlobalCompanyPicker?.();
         window.renderProjectSellerFilter();
 
-        const nextView = allowedView(preserveView ? state.currentView : '', p, state.isSuperAdmin);
+        const nextView = allowedView(preserveView ? state.currentView : new URLSearchParams(location.search).get('view'), p, state.isSuperAdmin);
         if (nextView && (!preserveView || nextView !== state.currentView)) window.showView(nextView);
 
         if (state.projects.length > 0) {
@@ -2267,14 +2271,28 @@
     };
 
     // --- LÓGICA DE FILTROS GLOBAIS DE EMPRESA ---
+    window.renderGlobalCompanyPicker = () => {
+        const picker=document.getElementById('global-company-picker');
+        const visible=!!state.user&&!portalEmbedded&&(state.userPerms.smart||state.userPerms.hvac);
+        picker.classList.toggle('hidden',!visible);picker.style.display=visible?'block':'none';
+        if(!visible)return;
+        const label=state.lang==='pt'?'Empresa':state.lang==='es'?'Empresa':'Company';
+        document.getElementById('global-company-label').textContent=label;
+        const select=document.getElementById('global-company-select');select.setAttribute('aria-label',label);
+        const all=state.lang==='pt'?'Todas as empresas · relatórios':state.lang==='es'?'Todas las empresas · informes':'All companies · reports';
+        select.innerHTML=(state.userPerms.smart?'<option value="Smart Home">D2 Smart Home</option>':'')+(state.userPerms.hvac?'<option value="HVAC">D2 HVAC Solutions</option>':'')+(state.isSuperAdmin&&state.userPerms.smart&&state.userPerms.hvac?`<option value="Ambas">${all}</option>`:'');
+        select.value=state.company;
+    };
+    window.selectGlobalCompany = unit => { window.selectUnit(unit);if(unit==='Ambas')window.showView('reports'); };
     window.selectUnit = (unit) => {
         if (allowedCompany(unit, state.userPerms) !== unit) return;
+        if(unit!==state.company){state.focusedProject=null;state.activeModule=null;}
         state.company = unit;
+        window.renderGlobalCompanyPicker?.();
         try { localStorage.setItem(COMPANY_KEY, unit); } catch (_) {}
         const url = new URL(window.location.href);
         const queryValue = companyQueryValue(unit);
-        if (queryValue) url.searchParams.set('company', queryValue);
-        else url.searchParams.delete('company');
+        if (!portalEmbedded) { if (queryValue) url.searchParams.set('company', queryValue); else url.searchParams.delete('company'); }
         window.history.replaceState(window.history.state, '', url);
         
         document.querySelectorAll('.unit-pill-btn').forEach(b => {
@@ -2642,6 +2660,7 @@
 
     const portalCompany = new URLSearchParams(window.location.search).get('company');
     const portalCompanyAllowed = portalCompany === 'smart' || portalCompany === 'hvac';
+    const portalReportAll = new URLSearchParams(location.search).get('scope') === 'all';
     const portalEmbedded = document.documentElement.classList.contains('portal-embedded') && portalCompanyAllowed;
     // Owner-only Projects pilot. Server and Firestore rules enforce the scope.
     const portalBridgeAvailable = true;
@@ -2719,7 +2738,7 @@
     async function portalSso(action) {
         const portalToken = await requestPortalToken();
         const pmToken = action === 'pair' ? await auth.currentUser?.getIdToken() : null;
-        const response = await fetch('/api/portal-sso', { method: 'POST', headers: { 'Content-Type': 'application/json', ...(pmToken ? { Authorization: `Bearer ${pmToken}` } : {}) }, body: JSON.stringify({ action, portalToken, company: portalCompany }), cache: 'no-store' });
+        const response = await fetch('/api/portal-sso', { method: 'POST', headers: { 'Content-Type': 'application/json', ...(pmToken ? { Authorization: `Bearer ${pmToken}` } : {}) }, body: JSON.stringify({ action, portalToken, company: portalCompany, ...(portalReportAll?{scope:"all"}:{}) }), cache: 'no-store' });
         const result = await response.json().catch(() => ({}));
         if (!response.ok) throw new Error(result.error || 'Portal connection failed.');
         if (action === 'pair') return result;
@@ -5100,6 +5119,7 @@
         const tv = document.getElementById('view-' + v); const tt = document.getElementById('tab-' + v);
         if (tv) tv.classList.remove('hidden'); if (tt) tt.classList.add('tab-active');
         state.currentView = v;
+        window.renderGlobalCompanyPicker?.();
         window.closeMobileNav();
 
         if (v === 'logs') window.renderLogs();
