@@ -1035,6 +1035,7 @@
 <style>html.portal-embedded #auth-screen{display:none!important}html.portal-embedded #portal-boot{display:flex!important}html.portal-embedded.portal-ready #portal-boot{display:none!important}html.portal-embedded #portal-back,html.portal-embedded #portal-boot-back,html.portal-embedded #portal-link-account,html.portal-embedded .c2-brand-wrap,html.portal-embedded .c2-logout,html.portal-embedded #dashboard-language-switcher,html.portal-embedded #theme-toggle{display:none!important}</style>
 <script>if(new URLSearchParams(location.search).get('embed')==='1'&&window.parent!==window)document.documentElement.classList.add('portal-embedded');</script>
     <link href="financial-modal.css?v=20261005" rel="stylesheet">
+    <link href="module-shell.css?v=20261005-2" rel="stylesheet">
 </head>
 <body class="auth-body">
 
@@ -1614,6 +1615,11 @@
         section_project_dates:'Fechas del proyecto', optional:'Opcional',
         page_team_eyebrow:'Administración', page_team_title:'Equipo', page_team_subtitle:'Gestiona usuarios, visibilidad y permisos.',
         page_logs_eyebrow:'Auditoría', page_logs_title:'Registro de auditoría', page_logs_subtitle:'Consulta las acciones y los cambios registrados.',
+        logs_empty:'No hay registros de auditoría', logs_filter_user:'Filtrar por usuario', logs_all_users:'Todos los usuarios',
+        logs_clear_filter:'Borrar filtro', logs_results:'registros mostrados', clear_history:'Borrar historial',
+        logs_search_placeholder:'Buscar acción, usuario, proyecto o referencia', action_history:'Historial de acciones',
+        action_operation:'Acción / Operación', logs_project:'Proyecto / Referencia', date:'Fecha',
+        invoice_label:'Factura', proposal_label:'Propuesta',
         login_title:'D2 Project Management', lbl_email:'Correo electrónico', lbl_pass:'Contraseña', btn_login:'Acceder',
         f_prop:'N.º de propuesta', f_inv:'N.º de factura', f_unit:'Empresa responsable', f_client:'Cliente',
         f_project_name:'Nombre del proyecto', f_address:'Dirección de la obra', f_seller:'Vendedor',
@@ -1716,7 +1722,7 @@
     window.updateDashboardLanguageSwitcher = () => {
         const switcher = document.getElementById('dashboard-language-switcher');
         if (!switcher) return;
-        const visible = !!state.user && state.currentView === 'projects' && !state.focusedProject;
+        const visible = !!state.user && !portalEmbedded;
         switcher.classList.toggle('hidden', !visible);
         switcher.setAttribute('aria-hidden', String(!visible));
     };
@@ -1735,6 +1741,9 @@
         document.querySelector('.mobile-nav-toggle')?.setAttribute('aria-label', loc('Abrir menu','Open menu','Abrir menú'));
         const portalBackText = language === 'pt' ? 'Voltar ao Portal' : language === 'es' ? 'Volver al Portal' : 'Back to Portal';
         document.getElementById('portal-back-label').textContent = portalBackText;
+        document.getElementById('dashboard-language-switcher')?.setAttribute('aria-label', loc('Selecionar idioma','Select language','Seleccionar idioma'));
+        document.getElementById('theme-toggle')?.setAttribute('aria-label', loc('Alternar tema','Toggle theme','Cambiar tema'));
+        document.querySelector('.c2-logout')?.setAttribute('aria-label', loc('Sair','Sign out','Cerrar sesión'));
         document.getElementById('auth-portal-back').textContent = `← ${portalBackText}`;
         document.getElementById('portal-boot-back').textContent = `← ${portalBackText}`;
         if (state.portalBridge) {
@@ -1954,7 +1963,7 @@
         });
 
         const userOptions = Array.from(userMap.entries())
-            .sort((a, b) => a[1].name.localeCompare(b[1].name, state.lang === 'pt' ? 'pt-BR' : 'en-US'));
+            .sort((a, b) => a[1].name.localeCompare(b[1].name, state.lang === 'pt' ? 'pt-BR' : state.lang === 'es' ? 'es-ES' : 'en-US'));
         const select = document.getElementById('logs-user-filter');
         if (select) {
             const optionsHtml = [
@@ -1994,7 +2003,7 @@
 
         tbody.innerHTML = logs.map(log => {
             const logDate = log._renderDate || getLogDate(log);
-            const renderedDate = Number.isNaN(logDate.getTime()) ? '-' : logDate.toLocaleString(state.lang === 'pt' ? 'pt-BR' : 'en-US');
+            const renderedDate = Number.isNaN(logDate.getTime()) ? '-' : logDate.toLocaleString(state.lang === 'pt' ? 'pt-BR' : state.lang === 'es' ? 'es-ES' : 'en-US');
             const info = getLogProjectInfo(log);
             const projectMetaLine = [info.invoice ? `${window.t('invoice_label')}: ${info.invoice}` : '', info.proposal ? `${window.t('proposal_label')}: ${info.proposal}` : ''].filter(Boolean).join(' • ');
             const logUserEmail = String(log?.user || '').trim();
@@ -2003,7 +2012,7 @@
             <tr>
                 <td class="whitespace-nowrap"><div class="font-bold text-slate-200">${renderedDate}</div></td>
                 <td>
-                    <button type="button" onclick="window.setLogsUserFilter('${escapeInlineHtml(logUserEmail.toLowerCase())}')" class="text-left max-w-full" title="${escapeInlineHtml(state.lang === 'pt' ? 'Filtrar por este usuário' : 'Filter by this user')}">
+                    <button type="button" onclick="window.setLogsUserFilter('${escapeInlineHtml(logUserEmail.toLowerCase())}')" class="text-left max-w-full" title="${escapeInlineHtml(loc('Filtrar por este usuário','Filter by this user','Filtrar por este usuario'))}">
                         <span class="block font-extrabold text-emerald-300 truncate">${escapeInlineHtml(logUserName)}</span>
                         ${logUserEmail ? `<span class="block text-[9px] text-slate-500 mt-1 truncate">${escapeInlineHtml(logUserEmail)}</span>` : ''}
                     </button>
