@@ -1,6 +1,6 @@
 import {test} from 'node:test';
 import assert from 'node:assert/strict';
-import {isInventoryExpense,preserveInventoryExpenses,formatInventoryUnitCost} from '../inventory-expenses.mjs';
+import {isInventoryExpense,preserveInventoryExpenses,formatInventoryUnitCost,inventoryCostReviewUrl} from '../inventory-expenses.mjs';
 import {assertUnchangedProjectFields} from '../project-concurrency.mjs';
 
 test('fractional per-foot prices retain six decimal places in all portal languages',()=>{
@@ -20,4 +20,10 @@ test('a server stock cost arriving during a manual edit does not block it; anoth
   const manual={id:'manual',valor:15},charge={id:'stock-a',autoType:'inventory_consumption',valor:7.5};
   assert.doesNotThrow(()=>assertUnchangedProjectFields({despesas:[manual,charge]},{despesas:[manual]},{despesas:[{...manual,valor:16}]}));
   assert.throws(()=>assertUnchangedProjectFields({despesas:[{...manual,valor:20},charge]},{despesas:[manual]},{despesas:[{...manual,valor:16}]}));
+});
+
+test('cost review links only allow pending consumption in supported companies and safe movement IDs',()=>{
+  const row={autoType:'inventory_consumption',inventoryCompany:'hvac',inventoryMovementId:'a'.repeat(32),inventoryCostPending:true};
+  assert.equal(new URL(inventoryCostReviewUrl(row)).searchParams.get('expenseMovement'),row.inventoryMovementId);
+  for(const patch of [{autoType:'inventory_reversal'},{inventoryCostPending:false},{inventoryCompany:'other'},{inventoryMovementId:'bad&company=smart'}])assert.equal(inventoryCostReviewUrl({...row,...patch}),'');
 });

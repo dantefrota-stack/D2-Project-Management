@@ -1417,7 +1417,7 @@
 </div>
 
 <script type="module">
-    import { isInventoryExpense, preserveInventoryExpenses, formatInventoryUnitCost } from './inventory-expenses.mjs';
+    import { isInventoryExpense, preserveInventoryExpenses, formatInventoryUnitCost, inventoryCostReviewUrl } from './inventory-expenses.mjs';
     import { preferredCompany, allowedCompany, allowedView, companyQueryValue, COMPANY_KEY } from './portal-entry.mjs';
     import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
     import { getAuth, signInWithEmailAndPassword, signInWithCustomToken, onIdTokenChanged, signOut } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
@@ -6846,17 +6846,19 @@ function getSellerCommissionPeriodReport(projects, startStr, endStr) {
     }
     function v86CostRows(p,f){
         const exps=(p.despesas||[]); const total=Math.max(0,Number(f.totalDespesas||0));
-        return Object.entries(f.gastosPorCategoria||{}).filter(([,v])=>Number(v)>0).map(([cat,val])=>{const count=exps.filter(e=>e.categoria===cat).length;const pct=total?Number(val)/total*100:0;return `<tr><td class="wrap">${escapeInlineHtml(cat)}</td><td class="money">${formatCurr(val)}</td><td class="money">${pct.toFixed(1)}%</td><td class="money">${count}</td></tr>`}).join('')||`<tr><td colspan="4" class="v86-empty">${state.lang==='pt'?'Nenhuma despesa registrada ainda.':'No expenses recorded yet.'}</td></tr>`;
+        return Object.entries(f.gastosPorCategoria||{}).filter(([cat,v])=>Number(v)>0||exps.some(e=>e.categoria===cat)).map(([cat,val])=>{const count=exps.filter(e=>e.categoria===cat).length;const pct=total?Number(val)/total*100:0;return `<tr><td class="wrap">${escapeInlineHtml(cat)}</td><td class="money">${formatCurr(val)}</td><td class="money">${pct.toFixed(1)}%</td><td class="money">${count}</td></tr>`}).join('')||`<tr><td colspan="4" class="v86-empty">${state.lang==='pt'?'Nenhuma despesa registrada ainda.':'No expenses recorded yet.'}</td></tr>`;
     }
     function v86ExpenseHistory(p){
         const canManageCosts = canManageProjectEntries(p, 'costs');
         return (p.despesas||[]).slice().sort((a,b)=>String(b.data||'').localeCompare(String(a.data||''))).map(exp => {
             const isManualExpense = !exp.autoType;
+            const costReviewUrl = canManageCosts ? inventoryCostReviewUrl(exp) : '';
             const actions = canManageCosts && isManualExpense
                 ? `<button class="v86-table-action" title="${state.lang==='pt'?'Editar despesa':'Edit expense'}" onclick="window.editExpense('${p.id}','${exp.id}')"><i data-lucide="pencil" class="w-4 h-4 text-cyan-300"></i></button><button class="v86-table-action" title="${state.lang==='pt'?'Excluir despesa':'Delete expense'}" onclick="window.deleteExpense('${p.id}','${exp.id}','${escapeInlineHtml(String(exp.descricao||'').replace(/'/g,"\\'"))}',${Number(exp.valor)||0})"><i data-lucide="trash-2" class="w-4 h-4 text-red-400"></i></button>`
-                : '';
+                : costReviewUrl ? `<a class="v86-table-action" href="${costReviewUrl}" target="_blank" rel="noopener noreferrer" title="${state.lang==='pt'?'Conferir custo':state.lang==='es'?'Revisar costo':'Review cost'}"><i data-lucide="pencil" class="w-4 h-4 text-cyan-300"></i>${state.lang==='pt'?'Conferir custo':state.lang==='es'?'Revisar costo':'Review cost'}</a>` : '';
             const inventoryLabel=state.lang==='pt'?'Estoque':state.lang==='es'?'Inventario':'Inventory';
-            const provenance=isInventoryExpense(exp)?`<small class="block text-slate-400">${inventoryLabel} · ${escapeInlineHtml(exp.inventoryMovementId||'')} · ${escapeInlineHtml(String(exp.inventoryQuantity))} ${escapeInlineHtml(exp.inventoryUnit||'')} × ${formatInventoryUnitCost(exp.inventoryUnitCost,state.lang)}</small>`:`<small class="block text-slate-400">${state.lang==='pt'?'Referência do lançamento':state.lang==='es'?'Referencia del gasto':'Expense reference'}: ${escapeInlineHtml(String(exp.id||''))}</small>`;
+            const pendingLabel=exp.inventoryCostPending===true ? `<small class="block text-amber-500">${state.lang==='pt'?'Custo a conferir · valor provisório':state.lang==='es'?'Costo pendiente de revisión · importe provisional':'Cost awaiting review · provisional amount'}</small>` : '';
+            const provenance=isInventoryExpense(exp)?`<small class="block text-slate-400">${inventoryLabel} · ${escapeInlineHtml(exp.inventoryMovementId||'')} · ${escapeInlineHtml(String(exp.inventoryQuantity))} ${escapeInlineHtml(exp.inventoryUnit||'')} × ${formatInventoryUnitCost(exp.inventoryUnitCost,state.lang)}</small>${pendingLabel}`:`<small class="block text-slate-400">${state.lang==='pt'?'Referência do lançamento':state.lang==='es'?'Referencia del gasto':'Expense reference'}: ${escapeInlineHtml(String(exp.id||''))}</small>`;
             return `<tr><td>${exp.data?new Date(exp.data+'T12:00:00').toLocaleDateString(state.lang==='pt'?'pt-BR':'en-US'):'—'}</td><td class="wrap font-bold text-slate-100">${escapeInlineHtml(exp.descricao||'—')}${provenance}</td><td><span class="v86-status info">${escapeInlineHtml(exp.categoria||'—')}</span></td><td class="money text-amber-300">${formatCurr(exp.valor)}</td><td class="money no-print">${actions}</td></tr>`;
         }).join('')||`<tr><td colspan="5" class="v86-empty">${window.t('no_expenses')}</td></tr>`;
     }
