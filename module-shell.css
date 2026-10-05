@@ -12,6 +12,7 @@ html.portal-embedded #main-header #main-nav{order:1;flex:1 1 auto!important;widt
 .v86-project-card-top .v86-project-id{flex:1 1 200px}
 .v86-project-card-top>.flex{flex:1 0 auto;justify-content:flex-end;flex-wrap:wrap;gap:8px}
 .v86-project-card-top .v86-status,.v86-project-card-top .v86-actions{flex-shrink:0}
+#logs-filter-summary strong{color:var(--c2-text)!important}
 @media(max-width:1120px){#main-header .c2-brand-copy{display:none}}
 @media(max-width:900px){
  #main-header .c2-topbar-inner{padding:9px 14px;gap:8px}
