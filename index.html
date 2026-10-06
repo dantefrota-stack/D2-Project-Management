@@ -4227,8 +4227,8 @@
                 }
             }))
         };
-        state.editingRecs.initialSignature = financialDraftSignature('receipts', state.editingRecs.recs);
         if (options.newReceipt) state.editingRecs.recs.push({ data: new Date().toISOString().slice(0, 10), valor: 0, metodo: '', _isNew: true });
+        state.editingRecs.initialSignature = financialDraftSignature('receipts', state.editingRecs.recs);
         logAccess(state.user?.email, `Abriu recebimentos do cliente: ${getProjectDisplayName(p)}`, getProjectLogMeta(p));
         window.renderRecEditList();
         document.getElementById('edit-rec-modal').classList.add('active');

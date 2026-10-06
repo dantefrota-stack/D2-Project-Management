@@ -63,6 +63,14 @@ test('client action opens one new receipt and never posts an advance or resets t
   assert.equal(f.writes.length, 0);
   assert.equal(f.state.editingPayments, null);
 });
+test('switching away from an untouched new receipt does not require an unnecessary confirmation', () => {
+  const f = fixture(); f.window.openFinancialAction('qa', 'receipts');
+  f.window.openFinancialAction('qa', 'payments');
+  assert.equal(f.state.editingRecs, null);
+  assert.equal(f.state.editingPayments.payments.length, 1);
+  assert.equal(f.window.modal, undefined);
+  assert.equal(f.writes.length, 0);
+});
 test('a $5000 client receipt saves once, preserves history and unrelated expenses and releases the correct commission', async () => {
   const f = fixture(); enterPayment(f);
   await Promise.all([f.window.saveEditedRecs(), f.window.saveEditedRecs()]);
