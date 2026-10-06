@@ -14,6 +14,7 @@
 .team-editor-layout { display:grid; grid-template-columns:minmax(0,1.35fr) minmax(300px,1fr); gap:24px; align-items:start; }
 .team-editor-layout #team-form { margin:0; min-width:0; grid-column:1; grid-row:1; }
 .team-editor-layout .team-member-activity { grid-column:2; grid-row:1; }
+.team-editor-layout #team-member-activity[hidden] + #team-form { grid-column:1 / -1; grid-row:1; }
 .team-member-activity { padding:16px; border:1px solid var(--c2-line); border-radius:18px; background:var(--c2-panel-2); min-width:0; }
 .team-member-activity h3 { margin:0; font-size:1rem; font-weight:800; color:var(--c2-text); }
 .team-activity-hint,.team-activity-status { color:var(--c2-muted); font-size:.75rem; line-height:1.5; margin:8px 0 12px; }
