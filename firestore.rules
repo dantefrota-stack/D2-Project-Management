@@ -34,20 +34,35 @@ service cloud.firestore {
     function isSuperAdmin() {
       // Callers check hasAccess once. Repeating it in every nested company/field
       // check can exhaust Firestore's expression limit on valid updates.
-      return !portalBridge() && access().superAdmin == true;
+      return access().superAdmin == true && (!portalBridge() || (
+        request.auth.token.get('portal_owner', false) == true
+        && request.auth.token.get('portal_report_all', false) != true
+        && request.auth.uid == 'IYz2jpQojuRsClIHpSaSIFziAQG3'
+        && request.auth.token.email == 'dante.frota@allcablingtech.com'
+        && request.auth.token.get('portal_scope', '') == 'company'
+        && request.auth.token.get('portal_actions', []).hasAll(['read', 'read_cost', 'create', 'edit', 'assign', 'export'])
+      ));
     }
 
     function companyAllowed(company) {
-      return (!portalBridge() || (request.auth.token.get('portal_report_all', false) == true && access().superAdmin == true && request.auth.token.portal_actions.hasOnly(['read', 'read_cost', 'export']))
+      return companyAllowedWithAdmin(company, isSuperAdmin());
+    }
+
+    function companyAllowedWithAdmin(company, administrator) {
+      return (!portalBridge() || administrator || (request.auth.token.get('portal_report_all', false) == true && access().superAdmin == true && request.auth.token.portal_actions.hasOnly(['read', 'read_cost', 'export']))
         || (company == 'HVAC' && request.auth.token.portal_company == 'hvac') || (company == 'Smart Home' && request.auth.token.portal_company == 'smart'))
-        && (isSuperAdmin()
+        && (administrator
           || (company == 'HVAC' && access().p_hvac == true)
           || (company == 'Smart Home' && access().p_smart == true));
     }
 
     function projectReadable(data) {
-      return (!portalBridge() || portalAction('read_cost')) && companyAllowed(data.empresa)
-        && (isSuperAdmin() || (access().p_global == true && (!portalBridge() || request.auth.token.portal_scope == 'company')) || data.vendedor == request.auth.token.email);
+      return projectReadableWithAdmin(data, isSuperAdmin());
+    }
+
+    function projectReadableWithAdmin(data, administrator) {
+      return (!portalBridge() || portalAction('read_cost')) && companyAllowedWithAdmin(data.empresa, administrator)
+        && (administrator || (access().p_global == true && (!portalBridge() || request.auth.token.portal_scope == 'company')) || data.vendedor == request.auth.token.email);
     }
 
     function contractorCompanyAllowed(data) {
@@ -80,12 +95,12 @@ service cloud.firestore {
           + resource.data.get('inventoryExpenses', []).size() == request.resource.data.get('despesas', []).size();
     }
 
-    function projectUpdateAllowed() {
+    function projectUpdateAllowed(administrator) {
       let changed = request.resource.data.diff(resource.data).affectedKeys();
       let financial = ['recebimentos', 'pagamentosEfetuados'];
       let lifecycle = ['status', 'dataConclusao', 'archived', 'commercialStatus', 'archivedReason', 'updatedAt'];
       let metadata = ['numeroProposta', 'numeroInvoice', 'cliente', 'nomeProjeto', 'endereco', 'vendedor', 'valorTotal', 'orcamento', 'metodo', 'percComissao', 'dataInicio', 'dataEntrega'];
-      return isSuperAdmin() || (
+      return administrator || (
         request.resource.data.empresa == resource.data.empresa
         && changed.hasOnly(metadata.concat(lifecycle).concat(financial).concat(['despesas']))
         && (!changed.hasAny(metadata) || access().p_tab_new == true)
@@ -94,6 +109,17 @@ service cloud.firestore {
         && (!changed.hasAny(['despesas']) || access().p_costs == true || (access().p_fin == true && changed.hasAny(['pagamentosEfetuados'])))
         && (!changed.hasAny(lifecycle) || access().p_fin == true || access().p_tab_new == true || (access().p_costs == true && changed.hasOnly(['despesas', 'updatedAt'])))
       );
+    }
+
+    function projectWriteAllowed() {
+      // Evaluate the protected identity once to stay below the Firestore
+      // expression limit while checking both old and new company scopes.
+      let administrator = isSuperAdmin();
+      return projectReadableWithAdmin(resource.data, administrator)
+        && projectReadableWithAdmin(request.resource.data, administrator)
+        && portalAction('edit') && validAmounts(request.resource.data)
+        && validLists(request.resource.data) && inventoryExpensesProtected()
+        && projectUpdateAllowed(administrator);
     }
 
     match /artifacts/d2-Project-Management/public/data/access_control/{uid} {
@@ -114,27 +140,26 @@ service cloud.firestore {
         && request.resource.data.get('despesas', []).size() == 0
         && request.resource.data.get('inventoryExpenses', []).size() == 0
         && (request.resource.data.vendedor == request.auth.token.email || portalAction('assign'));
-      allow update: if hasAccess() && projectReadable(resource.data) && projectReadable(request.resource.data)
-        && portalAction('edit') && validAmounts(request.resource.data) && validLists(request.resource.data) && inventoryExpensesProtected() && projectUpdateAllowed();
+      allow update: if hasAccess() && projectWriteAllowed();
       allow delete: if hasAccess() && isSuperAdmin();
     }
 
     match /artifacts/d2-Project-Management/public/data/contractors/{contractorId} {
-      allow read: if hasAccess() && !portalBridge() && access().p_contractors == true && contractorCompanyAllowed(resource.data);
-      allow create: if hasAccess() && !portalBridge() && access().p_contractors == true && contractorCompanyAllowed(request.resource.data);
-      allow update: if hasAccess() && !portalBridge() && access().p_contractors == true && contractorCompanyAllowed(resource.data) && contractorCompanyAllowed(request.resource.data);
+      allow read: if hasAccess() && (!portalBridge() || isSuperAdmin()) && access().p_contractors == true && contractorCompanyAllowed(resource.data);
+      allow create: if hasAccess() && (!portalBridge() || isSuperAdmin()) && access().p_contractors == true && contractorCompanyAllowed(request.resource.data);
+      allow update: if hasAccess() && (!portalBridge() || isSuperAdmin()) && access().p_contractors == true && contractorCompanyAllowed(resource.data) && contractorCompanyAllowed(request.resource.data);
       allow delete: if hasAccess() && isSuperAdmin();
     }
 
     match /artifacts/d2-Project-Management/public/data/contractor_payments/{paymentId} {
-      allow read: if hasAccess() && !portalBridge() && access().p_contractors == true && companyAllowed(resource.data.company);
-      allow create: if hasAccess() && !portalBridge() && access().p_contractors == true && companyAllowed(request.resource.data.company);
-      allow update: if hasAccess() && !portalBridge() && access().p_contractors == true && companyAllowed(resource.data.company) && companyAllowed(request.resource.data.company);
-      allow delete: if hasAccess() && !portalBridge() && access().p_contractors == true && companyAllowed(resource.data.company);
+      allow read: if hasAccess() && (!portalBridge() || isSuperAdmin()) && access().p_contractors == true && companyAllowed(resource.data.company);
+      allow create: if hasAccess() && (!portalBridge() || isSuperAdmin()) && access().p_contractors == true && companyAllowed(request.resource.data.company);
+      allow update: if hasAccess() && (!portalBridge() || isSuperAdmin()) && access().p_contractors == true && companyAllowed(resource.data.company) && companyAllowed(request.resource.data.company);
+      allow delete: if hasAccess() && (!portalBridge() || isSuperAdmin()) && access().p_contractors == true && companyAllowed(resource.data.company);
     }
 
     match /artifacts/d2-Project-Management/public/data/contractor_document_requests/{requestId} {
-      allow read: if hasAccess() && !portalBridge() && access().p_contractors == true && companyAllowed(resource.data.company);
+      allow read: if hasAccess() && (!portalBridge() || isSuperAdmin()) && access().p_contractors == true && companyAllowed(resource.data.company);
       allow write: if false;
     }
 

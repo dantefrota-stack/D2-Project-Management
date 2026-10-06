@@ -5,6 +5,8 @@ import {doc,setDoc,getDoc,updateDoc,deleteDoc,collection,query,where,getDocs} fr
 
 if(process.env.FIRESTORE_EMULATOR_HOST!=='127.0.0.1:8280')throw Error('Requires isolated Projects emulator on port 8280');
 const root='artifacts/d2-Project-Management/public/data',project='demo-d2-project-audit';
+const ownerUid='IYz2jpQojuRsClIHpSaSIFziAQG3';
+const ownerClaims={email:'dante.frota@allcablingtech.com',portal_owner:true,portal_actions:['read','read_cost','create','edit','assign','export']};
 let env;
 const perms={active:true,superAdmin:false,p_smart:true,p_hvac:false,p_global:true,p_tab_proj:true,p_tab_new:true,p_tab_rep:true,p_fin:true,p_costs:true,p_contractors:false};
 const record={empresa:'Smart Home',vendedor:'manager@example.test',cliente:'Audit',valorTotal:100,orcamento:20,percComissao:10,recebimentos:[],pagamentosEfetuados:[],despesas:[]};
@@ -75,11 +77,44 @@ test('direct authorized access still works and an owner bridge has no owner bypa
  const direct=db({firebase:{sign_in_provider:'password'},portal_bridge:false},'owner');await assertSucceeds(getDoc(projectRef(direct,'hvac')));
 });
 
+test('authorized protected-owner bridge manages both companies and reads contractors and audit without client ACL writes',async()=>{
+ await seed(ownerUid,{superAdmin:true,p_hvac:true,p_contractors:true});const d=db(ownerClaims,ownerUid);
+ for(const id of ['smart','hvac']){
+  await assertSucceeds(getDoc(projectRef(d,id)));
+  await assertSucceeds(updateDoc(projectRef(d,id),{cliente:'Owner edit'}));
+ }
+ for(const company of ['Smart Home','HVAC']){
+  await assertSucceeds(getDocs(query(collection(d,`${root}/projects`),where('empresa','==',company))));
+  const ref=doc(d,`${root}/contractors/${company}`);
+  await assertSucceeds(setDoc(ref,{company,companies:[company],businessName:'Test contractor'}));
+  await assertSucceeds(getDoc(ref));await assertSucceeds(updateDoc(ref,{businessName:'Edited'}));await assertSucceeds(deleteDoc(ref));
+  const payment=doc(d,`${root}/contractor_payments/${company}`);
+  await assertSucceeds(setDoc(payment,{company,valor:1}));await assertSucceeds(getDoc(payment));await assertSucceeds(deleteDoc(payment));
+ }
+ await assertSucceeds(getDocs(collection(d,`${root}/audit_logs`)));
+ await assertFails(setDoc(doc(d,`${root}/audit_logs/forged`),{action:'Forged'}));
+ await assertFails(updateDoc(doc(d,`${root}/access_control/${ownerUid}`),{superAdmin:true}));
+ await assertSucceeds(setDoc(projectRef(d,'new-owner'),record));await assertSucceeds(deleteDoc(projectRef(d,'new-owner')));
+});
+
+test('owner flag cannot promote another UID, a revoked ACL, a partial grant or a consolidated report',async()=>{
+ await seed(ownerUid,{superAdmin:true,p_hvac:true,p_contractors:true});
+ await seed('replacement',{superAdmin:true,p_hvac:true,p_contractors:true});
+ for(const [uid,patch] of [['replacement',ownerClaims],[ownerUid,{...ownerClaims,email:'other@example.test'}],
+  [ownerUid,{...ownerClaims,portal_until:1}],[ownerUid,{...ownerClaims,portal_actions:['read','read_cost','edit']}],
+  [ownerUid,{...ownerClaims,portal_report_all:true,portal_actions:['read','read_cost','export']}]]){
+  const d=db(patch,uid);await assertFails(deleteDoc(projectRef(d)));await assertFails(getDocs(collection(d,`${root}/audit_logs`)));await assertFails(getDocs(collection(d,`${root}/contractors`)));
+ }
+ await seed(ownerUid,{superAdmin:false,p_hvac:true,p_contractors:true});await assertFails(getDoc(projectRef(db(ownerClaims,ownerUid),'hvac')));
+ await seed(ownerUid,{superAdmin:true,p_hvac:true,active:false});await assertFails(getDoc(projectRef(db(ownerClaims,ownerUid))));
+});
+
 test('automatic inventory expenses cannot be removed, edited or unlocked even by an owner',async()=>{
  const automatic={id:'stock-a',autoType:'inventory_consumption',valor:7.5};
  await env.withSecurityRulesDisabled(c=>updateDoc(projectRef(c.firestore()),{despesas:[automatic],inventoryExpenses:[automatic]}));
  await seed('owner',{superAdmin:true,p_hvac:true});
- for(const d of [db(),db({firebase:{sign_in_provider:'password'},portal_bridge:false},'owner')]){
+ await seed(ownerUid,{superAdmin:true,p_hvac:true,p_contractors:true});
+ for(const d of [db(),db({firebase:{sign_in_provider:'password'},portal_bridge:false},'owner'),db(ownerClaims,ownerUid)]){
   await assertFails(updateDoc(projectRef(d),{despesas:[]}));
   await assertFails(updateDoc(projectRef(d),{despesas:[{...automatic,valor:999}]}));
   await assertFails(updateDoc(projectRef(d),{despesas:[automatic,automatic]}));
