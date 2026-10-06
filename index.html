@@ -7,6 +7,7 @@
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
     <link href="report-print.css" rel="stylesheet">
+    <link href="team-profile.css" rel="stylesheet">
     <link href="project-progress.css?v=20260930-header-shortcuts" rel="stylesheet">
     <script src="https://unpkg.com/lucide@latest"></script>
     <!-- Chart.js para Gráficos Interativos -->
@@ -1363,27 +1364,13 @@
                     <h1 data-i18n="page_team_title">Equipe</h1>
                     <p class="c2-page-subtitle" data-i18n="page_team_subtitle">Gerencie usuários, visibilidade e permissões do sistema.</p>
                 </div>
-                <button type="button" onclick="window.openNewTeamMember()" class="c2-primary-btn"><i data-lucide="user-plus" class="w-4 h-4"></i><span>Adicionar usuário</span></button>
+                <button type="button" onclick="window.openNewTeamMember()" class="c2-primary-btn"><i data-lucide="user-plus" class="w-4 h-4"></i><span data-i18n="team_add_user">Adicionar usuário</span></button>
             </div>
             <section class="c2-panel p-0 overflow-hidden text-left">
-                <div class="c2-list-head"><div><p class="c2-eyebrow" data-i18n="registered_users">Usuários cadastrados</p><h2 data-i18n="active_team">Equipe ativa</h2><p class="mt-2 text-sm text-slate-500">Clique em um membro para visualizar e editar seus acessos.</p></div><div class="c2-list-head-icon"><i data-lucide="users" class="w-5 h-5"></i></div></div>
+                <div class="c2-list-head"><div><p class="c2-eyebrow" data-i18n="registered_users">Usuários cadastrados</p><h2 data-i18n="active_team">Equipe ativa</h2><p class="mt-2 text-sm text-slate-500" data-i18n="team_list_hint">Clique em um membro para consultar a atividade e editar seus acessos.</p></div><div class="c2-list-head-icon"><i data-lucide="users" class="w-5 h-5"></i></div></div>
                 <div id="users-list" class="c2-users-list"></div>
             </section>
-            <div id="team-editor-modal" class="modal-overlay modal-overlay-scroll workspace-modal-overlay">
-                <div class="modal-content modal-panel-scroll modal-workspace animate-fade-in text-left">
-                    <div class="modal-workspace-header-inset flex items-start justify-between gap-4"><div><p class="c2-eyebrow" data-i18n="section_user_registration">Cadastro / edição</p><h2 id="team-editor-title" class="mt-1 text-2xl font-black text-slate-100" data-i18n="section_user">Usuário</h2><p class="mt-2 text-sm text-slate-500">Defina a visibilidade, as abas e as permissões financeiras deste acesso.</p></div><button type="button" onclick="window.closeTeamEditor()" class="c2-icon-btn" aria-label="Fechar" data-i18n-aria="close"><i data-lucide="x" class="w-5 h-5"></i></button></div>
-                    <div id="team-form-feedback" role="status" aria-live="polite" class="hidden mt-5 rounded-xl border border-emerald-400/30 bg-emerald-500/10 p-4 text-sm font-bold text-emerald-200"></div>
-                    <form id="team-form" class="space-y-6 mt-6">
-                        <input type="hidden" id="t-id">
-                        <div class="c2-form-field"><label data-i18n="team_name">Nome completo</label><input type="text" id="t-name" required class="modern-input" data-i18n-placeholder="full_name_placeholder" placeholder="Digite o nome completo"></div>
-                        <div class="grid grid-cols-1 sm:grid-cols-2 gap-4"><div class="c2-form-field"><label data-i18n="team_email">E-mail</label><input type="email" id="t-email" required class="modern-input" placeholder="usuario@email.com"></div><div class="c2-form-field relative"><label data-i18n="team_pass">Senha temporária</label><input type="password" id="t-pass" minlength="8" required class="modern-input !pr-12" autocomplete="new-password"><button type="button" onclick="window.togglePassword('t-pass', 'eye-team-btn')" class="password-toggle" id="eye-team-btn" style="top:58%"><i data-lucide="eye" class="w-4 h-4"></i></button><small class="mt-2 block text-slate-500">Ao editar, deixe vazio para preservar a senha atual do Firebase.</small></div></div>
-                        <div class="c2-permission-group"><p class="c2-eyebrow" data-i18n="team_scope">Visibilidade e Escopo</p><div class="grid grid-cols-1 gap-2 mt-3"><label class="perm-box"><input type="checkbox" id="p_smart" class="perm-checkbox"><span><strong>D2 Smart Home</strong><small data-i18n="team_smart_visibility">Visualizar projetos e dados Smart Home</small></span></label><label class="perm-box"><input type="checkbox" id="p_hvac" class="perm-checkbox"><span><strong>D2 HVAC</strong><small data-i18n="team_hvac_visibility">Visualizar projetos e dados HVAC</small></span></label><label class="perm-box"><input type="checkbox" id="p_global" class="perm-checkbox"><span><strong data-i18n="team_global_visibility">Ver outros vendedores</strong><small data-i18n="team_global_visibility_hint">Acesso a projetos de outros responsáveis</small></span></label></div></div>
-                        <div class="c2-permission-group"><p class="c2-eyebrow" data-i18n="team_tabs">Acesso às Abas</p><div class="grid grid-cols-1 sm:grid-cols-2 gap-2 mt-3"><label class="perm-box"><input type="checkbox" id="p_tab_proj" class="perm-checkbox" checked><span><strong data-i18n="team_tab_projects">Projetos</strong></span></label><label class="perm-box"><input type="checkbox" id="p_tab_new" class="perm-checkbox"><span><strong data-i18n="team_tab_new">Nova obra</strong></span></label><label class="perm-box"><input type="checkbox" id="p_tab_rep" class="perm-checkbox"><span><strong data-i18n="team_tab_reports">Relatórios</strong></span></label><label class="perm-box"><input type="checkbox" id="p_contractors" class="perm-checkbox"><span><strong>Contractors</strong><small>Gerenciar fornecedores, documentos e pagamentos</small></span></label></div></div>
-                        <div class="c2-permission-group"><p class="c2-eyebrow" data-i18n="team_perms">Permissões Financeiras</p><div class="grid grid-cols-1 gap-2 mt-3"><label class="perm-box"><input type="checkbox" id="p_fin" class="perm-checkbox"><span><strong data-i18n="team_finance_entry">Inserir recebimentos / pagamentos</strong><small data-i18n="team_finance_entry_hint">Registrar movimentações financeiras</small></span></label><label class="perm-box"><input type="checkbox" id="p_costs" class="perm-checkbox"><span><strong data-i18n="team_cost_access">Acesso a custos e margem</strong><small data-i18n="team_cost_access_hint">Visualizar despesas, orçamento e margem</small></span></label></div></div>
-                        <div class="flex justify-end gap-3 pt-4 border-t border-white/10"><button type="button" onclick="window.closeTeamEditor()" class="c2-secondary-btn" data-i18n="cancel">Cancelar</button><button type="submit" id="btn-save-team" class="c2-primary-btn" data-i18n="btn_team"><i data-lucide="save" class="w-4 h-4"></i>Salvar usuário</button></div>
-                    </form>
-                </div>
-            </div>
+
         </div>
 
         <div id="view-logs" class="hidden c2-view animate-fade-in">
@@ -1413,6 +1400,36 @@
             <div id="report-output"></div>
         </div>
     </main>
+            <div id="team-editor-modal" class="modal-overlay workspace-modal-overlay" role="dialog" aria-modal="true" aria-labelledby="team-editor-title">
+                <div class="modal-content team-editor-panel text-left">
+                    <header class="team-editor-header">
+                        <button id="team-back-button" type="button" onclick="window.closeTeamEditor()" class="c2-secondary-btn"><i data-lucide="arrow-left" class="w-4 h-4"></i><span data-i18n="team_back">Voltar à equipe</span></button>
+                        <div class="team-editor-heading"><p class="c2-eyebrow" data-i18n="section_user_registration">Cadastro / edição</p><h2 id="team-editor-title" data-i18n="section_user">Usuário</h2><p data-i18n="team_editor_hint">Confira a atividade recente e ajuste os acessos deste membro.</p></div>
+                        <button type="button" onclick="window.closeTeamEditor()" class="c2-icon-btn" aria-label="Fechar" data-i18n-aria="close"><i data-lucide="x" class="w-5 h-5"></i></button>
+                    </header>
+                    <div class="team-editor-body">
+                    <div class="team-editor-layout">
+                    <aside id="team-member-activity" class="team-member-activity" aria-labelledby="team-activity-title" hidden>
+                        <h3 id="team-activity-title" data-i18n="team_recent_activity">Últimos 5 logs</h3>
+                        <p class="team-activity-hint" data-i18n="team_activity_hint">Ações na empresa selecionada e registros sem empresa definida.</p>
+                        <div id="team-activity-content" aria-live="polite"></div>
+                        <button type="button" onclick="window.openTeamMemberLogs()" class="c2-secondary-btn team-activity-all" data-i18n="team_all_logs">Ver todos os logs deste membro</button>
+                    </aside>
+                    <form id="team-form" class="space-y-6 mt-6">
+                        <input type="hidden" id="t-id">
+                        <div class="c2-form-field"><label data-i18n="team_name">Nome completo</label><input type="text" id="t-name" required class="modern-input" data-i18n-placeholder="full_name_placeholder" placeholder="Digite o nome completo"></div>
+                        <div class="grid grid-cols-1 sm:grid-cols-2 gap-4"><div class="c2-form-field"><label data-i18n="team_email">E-mail</label><input type="email" id="t-email" required class="modern-input" placeholder="usuario@email.com"></div><div class="c2-form-field relative"><label data-i18n="team_pass">Senha temporária</label><div class="relative"><input type="password" id="t-pass" minlength="8" required class="modern-input !pr-12" autocomplete="new-password"><button type="button" onclick="window.togglePassword('t-pass', 'eye-team-btn')" class="password-toggle" id="eye-team-btn" style="top:50%"><i data-lucide="eye" class="w-4 h-4"></i></button></div><small class="mt-2 block text-slate-500" data-i18n="team_password_hint">Ao editar, deixe vazio para preservar a senha atual do Firebase.</small></div></div>
+                        <div class="c2-permission-group"><p class="c2-eyebrow" data-i18n="team_scope">Visibilidade e Escopo</p><div class="grid grid-cols-1 gap-2 mt-3"><label class="perm-box"><input type="checkbox" id="p_smart" class="perm-checkbox"><span><strong>D2 Smart Home</strong><small data-i18n="team_smart_visibility">Visualizar projetos e dados Smart Home</small></span></label><label class="perm-box"><input type="checkbox" id="p_hvac" class="perm-checkbox"><span><strong>D2 HVAC</strong><small data-i18n="team_hvac_visibility">Visualizar projetos e dados HVAC</small></span></label><label class="perm-box"><input type="checkbox" id="p_global" class="perm-checkbox"><span><strong data-i18n="team_global_visibility">Ver outros vendedores</strong><small data-i18n="team_global_visibility_hint">Acesso a projetos de outros responsáveis</small></span></label></div></div>
+                        <div class="c2-permission-group"><p class="c2-eyebrow" data-i18n="team_tabs">Acesso às Abas</p><div class="grid grid-cols-1 sm:grid-cols-2 gap-2 mt-3"><label class="perm-box"><input type="checkbox" id="p_tab_proj" class="perm-checkbox" checked><span><strong data-i18n="team_tab_projects">Projetos</strong></span></label><label class="perm-box"><input type="checkbox" id="p_tab_new" class="perm-checkbox"><span><strong data-i18n="team_tab_new">Nova obra</strong></span></label><label class="perm-box"><input type="checkbox" id="p_tab_rep" class="perm-checkbox"><span><strong data-i18n="team_tab_reports">Relatórios</strong></span></label><label class="perm-box"><input type="checkbox" id="p_contractors" class="perm-checkbox"><span><strong>Contractors</strong><small data-i18n="team_contractors_hint">Gerenciar fornecedores, documentos e pagamentos</small></span></label></div></div>
+                        <div class="c2-permission-group"><p class="c2-eyebrow" data-i18n="team_perms">Permissões Financeiras</p><div class="grid grid-cols-1 gap-2 mt-3"><label class="perm-box"><input type="checkbox" id="p_fin" class="perm-checkbox"><span><strong data-i18n="team_finance_entry">Inserir recebimentos / pagamentos</strong><small data-i18n="team_finance_entry_hint">Registrar movimentações financeiras</small></span></label><label class="perm-box"><input type="checkbox" id="p_costs" class="perm-checkbox"><span><strong data-i18n="team_cost_access">Acesso a custos e margem</strong><small data-i18n="team_cost_access_hint">Visualizar despesas, orçamento e margem</small></span></label></div></div>
+
+                    </form>
+                    </div>
+                    <div id="team-form-feedback" role="status" aria-live="polite" class="hidden mt-5 rounded-xl border border-emerald-400/30 bg-emerald-500/10 p-4 text-sm font-bold text-emerald-200"></div>
+                    </div>
+                    <footer class="team-editor-footer"><button type="button" onclick="window.closeTeamEditor()" class="c2-secondary-btn" data-i18n="cancel">Cancelar</button><button type="submit" form="team-form" id="btn-save-team" class="c2-primary-btn" data-i18n="btn_team">Salvar usuário</button></footer>
+                </div>
+            </div>
     <div id="contractor-editor-modal" class="modal-overlay modal-overlay-scroll workspace-modal-overlay">
         <div class="modal-content modal-panel-scroll modal-workspace animate-fade-in text-left">
             <div class="modal-workspace-header-inset flex items-start justify-between gap-4 mb-6"><div><p class="c2-eyebrow">Base de fornecedores</p><h2 id="contractor-editor-title" class="text-2xl font-black text-emerald-300">Novo contractor</h2></div><button type="button" onclick="window.closeContractorEditor()" class="c2-icon-btn"><i data-lucide="x" class="w-5 h-5"></i></button></div>
@@ -1432,6 +1449,7 @@
     import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
     import { getAuth, signInWithEmailAndPassword, signInWithCustomToken, onIdTokenChanged, signOut } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
     import { createSessionLifecycle } from './session-lifecycle.mjs';
+    import {recentMemberActivity,activityDate} from './team-activity.mjs';
     import { createProjectProgressUI } from './project-progress.mjs';
     import { assertUnchangedProjectFields } from './project-concurrency.mjs';
     import { getFirestore, collection, doc, updateDoc, addDoc, deleteDoc, onSnapshot, serverTimestamp, arrayUnion, getDocs, writeBatch, runTransaction, query, where } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
@@ -1469,7 +1487,7 @@
         user: null, 
         isSuperAdmin: false, portalBridge: false,
         userPerms: { tab_proj: true, tab_new: false, tab_rep: false, fin: false, costs: false, contractors: false, smart: true, hvac: false, global: false },
-        projects: [], contractors: [], contractorPayments: [], contractorDocumentRequests: [], team: [], logs: [], logsUserFilter: '', logsSearchQuery: '', company: initialCompany, lang: savedLanguage, theme: 'dark',
+        projects: [], contractors: [], contractorPayments: [], contractorDocumentRequests: [], team: [], logs: [], logsLoaded: false, logsUserFilter: '', logsSearchQuery: '', company: initialCompany, lang: savedLanguage, theme: 'dark',
         editingPayments: null, editingRecs: null, reportPendingPayments: null, reportProjectList: null, reportProjectListReturn: null, returnToReport: false, returnToReportAfterEdit: false, focusedProject: null, activeModule: null, archiveFilter: 'active',
         reportActiveKpi: 'receita', projectSellerFilter: 'all', projectSearchQuery: '', contractorSearchQuery: '', contractorCompanyFilter: 'Ambas', contractorArchiveFilter: 'active', reportPeriodStart: '', reportPeriodEnd: '', reportSellerFilter: 'all', reportArchiveFilter: 'all', reportTableSort: { key: 'default', direction: 'asc' }, reportRangePreset: 'year', mobileNavOpen: false, currentView: 'projects'
     };
@@ -1690,6 +1708,12 @@
         "no_receipts": "Sin cobros registrados"
 });
     window.t = (key) => translations[state.lang]?.[key] || translations.en[key] || key;
+    Object.assign(translations.pt, {team_back:'Voltar à equipe',team_editor_hint:'Confira a atividade recente e ajuste os acessos deste membro.',team_recent_activity:'Últimos 5 logs',team_activity_hint:'Ações na empresa selecionada e registros sem empresa definida.',team_all_logs:'Ver todos os logs deste membro'});
+    Object.assign(translations.en, {team_back:'Back to team',team_editor_hint:'Review recent activity and manage this member’s access.',team_recent_activity:'Last 5 activity logs',team_activity_hint:'Actions in the selected company and records without a company.',team_all_logs:'View all logs for this member'});
+    Object.assign(translations.es, {team_back:'Volver al equipo',team_editor_hint:'Revisa la actividad reciente y los accesos de este miembro.',team_recent_activity:'Últimos 5 registros',team_activity_hint:'Acciones en la empresa seleccionada y registros sin empresa.',team_all_logs:'Ver todos los registros de este miembro'});
+    Object.assign(translations.pt, {team_add_user:'Adicionar usuário',team_list_hint:'Clique em um membro para consultar a atividade e editar seus acessos.',team_password_hint:'Ao editar, deixe vazio para preservar a senha atual do Firebase.',team_contractors_hint:'Gerenciar fornecedores, documentos e pagamentos'});
+    Object.assign(translations.en, {team_add_user:'Add user',team_list_hint:'Select a member to review activity and manage access.',team_password_hint:'When editing, leave blank to keep the current Firebase password.',team_contractors_hint:'Manage vendors, documents and payments'});
+    Object.assign(translations.es, {team_add_user:'Añadir usuario',team_list_hint:'Selecciona un miembro para revisar su actividad y gestionar accesos.',team_password_hint:'Al editar, deja vacío para mantener la contraseña actual de Firebase.',team_contractors_hint:'Gestionar proveedores, documentos y pagos',section_user_registration:'Registro / edición',section_user:'Usuario',btn_team:'Guardar y autorizar acceso',team_scope:'Visibilidad y alcance',team_tabs:'Acceso a las áreas del sistema',team_perms:'Permisos de escritura',team_smart_visibility:'Ver proyectos y datos de Smart Home',team_hvac_visibility:'Ver proyectos y datos de HVAC',team_global_visibility:'Ver otros vendedores',team_global_visibility_hint:'Acceder a proyectos de otros responsables',team_tab_projects:'Proyectos',team_tab_new:'Nueva obra',team_tab_reports:'Informes',team_finance_entry:'Registrar cobros / pagos',team_finance_entry_hint:'Registrar movimientos financieros',team_cost_access:'Acceso a costes y margen',team_cost_access_hint:'Ver gastos, presupuesto y margen',registered_users:'Usuarios registrados',active_team:'Equipo activo'});
     const loc = (pt, en, es) => state.lang === 'pt' ? pt : state.lang === 'es' ? es : en;
 
     const tStatus = (s) => {
@@ -1773,6 +1797,8 @@
         window.updateDashboardLanguageSwitcher();
         if (typeof window.renderProjectSellerFilter === 'function') window.renderProjectSellerFilter();
         if (typeof window.renderLogs === 'function') window.renderLogs();
+        if (typeof renderTeamAdmin === 'function') renderTeamAdmin();
+        window.renderTeamActivity?.();
         if(state.projects.length > 0) {
             if (typeof window.renderProjects === 'function') window.renderProjects();
             if (typeof window.safeRenderReport === 'function') window.safeRenderReport();
@@ -2302,6 +2328,7 @@
         if (allowedCompany(unit, state.userPerms) !== unit) return;
         if(unit!==state.company){state.focusedProject=null;state.activeModule=null;}
         state.company = unit;
+        window.closeTeamEditor?.();
         window.renderGlobalCompanyPicker?.();
         try { localStorage.setItem(COMPANY_KEY, unit); } catch (_) {}
         const url = new URL(window.location.href);
@@ -2682,7 +2709,8 @@
     let preserveSessionDrafts=false;
     const sessionLifecycle = createSessionLifecycle({
         clearData: () => {
-            state.projects = []; state.team = []; state.logs = [];
+            state.projects = []; state.team = []; state.logs = []; state.logsLoaded = false;
+            window.closeTeamEditor?.();
             state.contractors = []; state.contractorPayments = []; state.contractorDocumentRequests = [];
             if (!preserveSessionDrafts) {
                 state.focusedProject = null; state.editingPayments = null; state.editingRecs = null; state.editingProjectBase = null;
@@ -4788,12 +4816,14 @@
             return;
         }
 
+        window.resetTeamForm();
+        state.teamActivityMember = {id, name, email};
         document.getElementById('t-id').value = id; 
         document.getElementById('t-name').value = name || ''; 
         document.getElementById('t-email').value = email; 
         document.getElementById('t-pass').value = '';
         document.getElementById('t-pass').required = false;
-        document.getElementById('t-pass').placeholder = state.lang === 'pt' ? 'Deixe vazio para manter a senha atual' : 'Leave blank to keep current password';
+        document.getElementById('t-pass').placeholder = loc('Deixe vazio para manter a senha atual','Leave blank to keep current password','Deja vacío para mantener la contraseña actual');
         
         document.getElementById('p_smart').checked = permObj.smart;
         document.getElementById('p_hvac').checked = permObj.hvac;
@@ -4804,19 +4834,79 @@
         document.getElementById('p_fin').checked = permObj.fin;
         document.getElementById('p_costs').checked = permObj.costs;
         document.getElementById('p_contractors').checked = permObj.contractors === true;
-        const title = document.getElementById('team-editor-title'); if (title) { title.textContent = state.lang === 'pt' ? `Editando ${name || email}` : `Editing ${name || email}`; title.removeAttribute('data-i18n'); }
+        const title = document.getElementById('team-editor-title'); if (title) { title.textContent = loc(`Ficha de ${name || email}`, `${name || email} · Team profile`, `Ficha de ${name || email}`); title.removeAttribute('data-i18n'); }
         const feedback = document.getElementById('team-form-feedback'); if (feedback) { feedback.classList.add('hidden'); feedback.textContent = ''; }
-        document.getElementById('team-editor-modal')?.classList.add('active'); try { lucide.createIcons(); } catch {}
+        window.renderTeamActivity();
+        openTeamEditor();
     };
     window.resetTeamForm = () => {
+        state.teamActivityMember = null;
+        const activity = document.getElementById('team-member-activity'); if(activity) activity.hidden = true;
+        const content = document.getElementById('team-activity-content'); if(content) content.textContent = '';
         const form = document.getElementById('team-form'); form?.reset(); document.getElementById('t-id').value = '';
-        const password = document.getElementById('t-pass'); password.required = true; password.placeholder = state.lang === 'pt' ? 'Mínimo de 8 caracteres' : 'At least 8 characters';
+        const password = document.getElementById('t-pass'); password.required = true; password.placeholder = loc('Mínimo de 8 caracteres','At least 8 characters','Mínimo de 8 caracteres');
         document.getElementById('p_smart').checked = true; document.getElementById('p_hvac').checked = true; document.getElementById('p_tab_proj').checked = true;
-        const title = document.getElementById('team-editor-title'); if (title) { title.textContent = state.lang === 'pt' ? 'Usuário' : 'User'; title.setAttribute('data-i18n', 'section_user'); }
+        const title = document.getElementById('team-editor-title'); if (title) { title.textContent = loc('Usuário','User','Usuario'); title.setAttribute('data-i18n', 'section_user'); }
         const feedback = document.getElementById('team-form-feedback'); if (feedback) { feedback.classList.add('hidden'); feedback.textContent = ''; }
     };
-    window.openNewTeamMember = () => { if (!state.isSuperAdmin) { window.showModal(window.t('modal_access_denied'), window.t('modal_access_denied_msg'), 'error'); return; } window.resetTeamForm(); const title = document.getElementById('team-editor-title'); if (title) { title.textContent = state.lang === 'pt' ? 'Adicionar usuário' : 'Add user'; title.removeAttribute('data-i18n'); } document.getElementById('team-editor-modal')?.classList.add('active'); try { lucide.createIcons(); } catch {} };
-    window.closeTeamEditor = () => { document.getElementById('team-editor-modal')?.classList.remove('active'); window.resetTeamForm(); };
+    window.openNewTeamMember = () => { if (!state.isSuperAdmin) { window.showModal(window.t('modal_access_denied'), window.t('modal_access_denied_msg'), 'error'); return; } window.resetTeamForm(); const title = document.getElementById('team-editor-title'); if (title) { title.textContent = loc('Adicionar usuário','Add user','Añadir usuario'); title.removeAttribute('data-i18n'); } openTeamEditor(); };
+    let teamEditorBodyOverflow = null;
+    function openTeamEditor() {
+        const modal = document.getElementById('team-editor-modal');
+        if (teamEditorBodyOverflow === null) teamEditorBodyOverflow = document.body.style.overflow;
+        document.body.style.overflow = 'hidden';
+        modal.classList.add('active');
+        modal.querySelector('.team-editor-body').scrollTop = 0;
+        document.getElementById('team-back-button').focus({preventScroll:true});
+        try { lucide.createIcons(); } catch {}
+    }
+    window.closeTeamEditor = () => {
+        const modal = document.getElementById('team-editor-modal');
+        const wasOpen = modal?.classList.contains('active');
+        const memberId = state.teamActivityMember?.id;
+        modal?.classList.remove('active');
+        if (teamEditorBodyOverflow !== null) {document.body.style.overflow=teamEditorBodyOverflow;teamEditorBodyOverflow=null;}
+        window.resetTeamForm();
+        if(wasOpen) Array.from(document.querySelectorAll('[data-team-member-id]')).find(row=>row.dataset.teamMemberId===memberId)?.focus({preventScroll:true});
+    };
+    document.getElementById('team-editor-modal').addEventListener('keydown',event=>{
+        if(event.defaultPrevented || document.querySelector('.modal-overlay.active:not(#team-editor-modal)')) return;
+        if(event.key==='Escape'){event.preventDefault();window.closeTeamEditor();return;}
+        if(event.key!=='Tab') return;
+        const controls=Array.from(event.currentTarget.querySelectorAll('button,input,select,textarea,[tabindex="0"]')).filter(control=>!control.disabled&&control.getClientRects().length);
+        const first=controls[0],last=controls.at(-1);
+        if(event.shiftKey&&document.activeElement===first){event.preventDefault();last?.focus();}
+        else if(!event.shiftKey&&document.activeElement===last){event.preventDefault();first?.focus();}
+    });
+    window.renderTeamActivity = () => {
+        const section=document.getElementById('team-member-activity'),content=document.getElementById('team-activity-content');
+        const member=state.teamActivityMember;
+        if(!section||!content) return;
+        section.hidden=!state.isSuperAdmin||!member;
+        if(section.hidden){content.textContent='';return;}
+        const name=member.name||member.email;
+        document.getElementById('team-editor-title').textContent=loc(`Ficha de ${name}`, `${name} · Team profile`, `Ficha de ${name}`);
+        content.setAttribute('aria-busy',String(!state.logsLoaded));
+        section.querySelector('button').disabled=!state.logsLoaded;
+        if(!state.logsLoaded){content.innerHTML='<p class="team-activity-status" role="status">'+escapeInlineHtml(loc('Carregando, aguarde…','Loading, please wait…','Cargando, espera…'))+'</p>';return;}
+        const memberLogs=getMergedLogs().filter(log=>String(log.user||'').trim().toLowerCase()===String(member.email).trim().toLowerCase()).map(log=>({...log,projectId:getLogProjectInfo(log).projectId}));
+        const logs=recentMemberActivity(memberLogs,member,state.company,state.projects);
+        if(!logs.length){content.innerHTML='<p class="team-activity-status">'+escapeInlineHtml(loc('Nenhuma ação encontrada para este membro nesta seleção.','No activity found for this member in this selection.','No se encontró actividad de este miembro en esta selección.'))+'</p>';return;}
+        const locale=state.lang==='pt'?'pt-BR':state.lang==='es'?'es-ES':'en-US';
+        content.innerHTML='<ol class="team-activity-list">'+logs.map(log=>{
+            const info=getLogProjectInfo(log),date=activityDate(log);
+            const dateLabel=date.getTime()?date.toLocaleString(locale,{dateStyle:'short',timeStyle:'short'}):loc('Data não registrada','Date not recorded','Fecha no registrada');
+            const references=[info.projectName&&!info.cleanAction.includes(info.projectName)?info.projectName:'',info.invoice?'Invoice '+info.invoice:'',info.proposal?loc('Proposta ','Proposal ','Propuesta ')+info.proposal:''].filter(Boolean);
+            return '<li><div class="team-activity-meta"><time'+(date.getTime()?' datetime="'+date.toISOString()+'"':'')+'>'+escapeInlineHtml(dateLabel)+'</time>'+(references.length?'<span class="team-activity-reference">'+escapeInlineHtml(references.join(' · '))+'</span>':'')+'</div><strong>'+escapeInlineHtml(info.cleanAction)+'</strong></li>';
+        }).join('')+'</ol>';
+    };
+    window.openTeamMemberLogs = () => {
+        if(!state.isSuperAdmin||!state.teamActivityMember) return;
+        const email=state.teamActivityMember.email;
+        window.closeTeamEditor();
+        state.logsUserFilter=String(email||'').trim().toLowerCase();state.logsSearchQuery='';
+        window.showView('logs');
+    };
 
     window.deleteTeam = (id) => {
         if (!state.isSuperAdmin) {
@@ -5216,6 +5306,7 @@
     };
 
     window.showView = (v) => {
+        window.closeTeamEditor?.();
         ['projects', 'new', 'reports', 'contractors', 'users', 'logs'].forEach(id => {
             const el = document.getElementById('view-' + id); const tab = document.getElementById('tab-' + id);
             if (el) el.classList.add('hidden'); if (tab) tab.classList.remove('tab-active');
@@ -8209,6 +8300,7 @@ function getSellerCommissionPeriodReport(projects, startStr, endStr) {
             // Wait for every authorized company before presenting combined totals.
             if (allowedCompanies.some(company => !receivedCompanies.has(company))) return;
             state.projects = Array.from(projectSnapshots.values());
+            window.renderTeamActivity?.();
             state.projects.forEach(project => { void reconcileCompletedProjectClosure(project); });
             window.renderProjectSellerFilter();
             window.renderProjects(); window.safeRenderReport();
@@ -8238,7 +8330,9 @@ function getSellerCommissionPeriodReport(projects, startStr, endStr) {
         if (state.isSuperAdmin) {
             listen(auditLogsRef(), snap => {
                 state.logs = snap.docs.map(d => ({ id: d.id, ...d.data() }));
+                state.logsLoaded = true;
                 window.renderLogs();
+                window.renderTeamActivity();
             });
         } else {
             state.logs = [];
@@ -8287,7 +8381,7 @@ function getSellerCommissionPeriodReport(projects, startStr, endStr) {
                     const scopeText = [p.smart ? 'Smart Home' : '', p.hvac ? 'HVAC' : '', p.global ? 'Global' : ''].filter(Boolean).join(' • ') || '—';
                     const permissionText = [p.fin ? 'Finanças' : '', p.costs ? 'Custos' : '', p.tab_rep ? 'Relatórios' : ''].filter(Boolean).join(' • ') || 'Projetos';
                     const updatedNow = state.recentlyUpdatedTeamId === u.id;
-                    return `<div class="c2-user-row cursor-pointer transition-colors ${updatedNow ? 'ring-2 ring-emerald-400/60 bg-emerald-500/5' : ''}" data-team-member-id="${escapeInlineHtml(u.id)}" role="button" tabindex="0" aria-label="${state.lang === 'pt' ? 'Editar' : 'Edit'} ${sellerName}" onclick="window.editTeamMember('${u.id}', decodeURIComponent('${encodedName}'), decodeURIComponent('${encodedEmail}'), JSON.parse(decodeURIComponent('${tagObj}')))" onkeydown="if((event.key==='Enter'||event.key===' ')&&event.target===this){event.preventDefault();this.click()}"><div class="c2-user-identity"><div class="c2-user-initials">${escapeInlineHtml(initials)}</div><div class="min-w-0"><div class="c2-user-name">${sellerName}</div><div class="c2-user-email">${sellerEmail}</div>${updatedNow ? `<span class="c2-tag green mt-2">${state.lang === 'pt' ? 'Atualizado agora' : 'Updated now'}</span>` : ''}</div></div><div><span class="c2-tag ${roleStr==='Admin'?'green':''}">${roleStr}</span><div class="c2-user-perms mt-2">${escapeInlineHtml(scopeText)}</div></div><div class="c2-user-perms"><strong class="text-slate-300">Acessos</strong><br>${escapeInlineHtml(permissionText)}</div><div class="c2-row-actions"><button onclick="event.stopPropagation();window.editTeamMember('${u.id}', decodeURIComponent('${encodedName}'), decodeURIComponent('${encodedEmail}'), JSON.parse(decodeURIComponent('${tagObj}')))" title="Editar"><i data-lucide="edit-3" class="w-4 h-4"></i></button><button onclick="event.stopPropagation();window.deleteTeam('${u.id}')" title="Excluir" class="${u.email.toLowerCase() === SUPER_ADMIN.toLowerCase() ? 'hidden' : ''}"><i data-lucide="trash-2" class="w-4 h-4 text-red-400"></i></button></div></div>`;
+                    return `<div class="c2-user-row cursor-pointer transition-colors ${updatedNow ? 'ring-2 ring-emerald-400/60 bg-emerald-500/5' : ''}" data-team-member-id="${escapeInlineHtml(u.id)}" role="button" tabindex="0" aria-label="${loc('Editar','Edit','Editar')} ${sellerName}" onclick="window.editTeamMember('${u.id}', decodeURIComponent('${encodedName}'), decodeURIComponent('${encodedEmail}'), JSON.parse(decodeURIComponent('${tagObj}')))" onkeydown="if((event.key==='Enter'||event.key===' ')&&event.target===this){event.preventDefault();this.click()}"><div class="c2-user-identity"><div class="c2-user-initials">${escapeInlineHtml(initials)}</div><div class="min-w-0"><div class="c2-user-name">${sellerName}</div><div class="c2-user-email">${sellerEmail}</div>${updatedNow ? `<span class="c2-tag green mt-2">${state.lang === 'pt' ? 'Atualizado agora' : 'Updated now'}</span>` : ''}</div></div><div><span class="c2-tag ${roleStr==='Admin'?'green':''}">${roleStr}</span><div class="c2-user-perms mt-2">${escapeInlineHtml(scopeText)}</div></div><div class="c2-user-perms"><strong class="text-slate-300">Acessos</strong><br>${escapeInlineHtml(permissionText)}</div><div class="c2-row-actions"><button onclick="event.stopPropagation();window.editTeamMember('${u.id}', decodeURIComponent('${encodedName}'), decodeURIComponent('${encodedEmail}'), JSON.parse(decodeURIComponent('${tagObj}')))" title="Editar"><i data-lucide="edit-3" class="w-4 h-4"></i></button><button onclick="event.stopPropagation();window.deleteTeam('${u.id}')" title="Excluir" class="${u.email.toLowerCase() === SUPER_ADMIN.toLowerCase() ? 'hidden' : ''}"><i data-lucide="trash-2" class="w-4 h-4 text-red-400"></i></button></div></div>`;
                 }).join('');
                 try { lucide.createIcons(); } catch {}
             }
@@ -8395,8 +8489,8 @@ function getSellerCommissionPeriodReport(projects, startStr, endStr) {
                 document.getElementById('p_smart').checked = true; document.getElementById('p_hvac').checked = true; document.getElementById('p_tab_proj').checked = true;
                 const successMessage = state.lang === 'pt' ? `${name} foi ${id ? 'atualizado' : 'cadastrado'} com sucesso. As permissões já estão ativas.` : `${name} was successfully ${id ? 'updated' : 'created'}. The permissions are now active.`;
                 if (feedback) { feedback.textContent = successMessage; feedback.classList.remove('hidden'); }
-                const title = document.getElementById('team-editor-title'); if (title) { title.textContent = state.lang === 'pt' ? 'Usuário' : 'User'; title.setAttribute('data-i18n', 'section_user'); }
-                document.getElementById('team-editor-modal')?.classList.remove('active');
+                const title = document.getElementById('team-editor-title'); if (title) { title.textContent = loc('Usuário','User','Usuario'); title.setAttribute('data-i18n', 'section_user'); }
+                window.closeTeamEditor();
                 window.showModal(state.lang === 'pt' ? 'Acesso atualizado' : 'Access updated', successMessage, 'info');
                 setTimeout(() => { if (state.recentlyUpdatedTeamId === (savedUser?.id || id)) { state.recentlyUpdatedTeamId = ''; if (state.currentView === 'users') renderTeamAdmin(); } }, 6000);
             } catch (err) { window.showModal('Erro', 'Erro ao salvar usuário: ' + err.message, 'error'); }
