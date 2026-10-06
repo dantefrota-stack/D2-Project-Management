@@ -4,6 +4,7 @@ const COMPANY_LABELS={smart:'Smart Home',hvac:'HVAC'};
 const error=(message,status)=>Object.assign(new Error(message),{status});
 const normalizedEmail=value=>String(value||'').trim().toLowerCase();
 const {isPrimaryOwner}=require('./identity-policy');
+const OWNER_ACTIONS=['read','read_cost','create','edit','assign','export'];
 
 function assertPortalLease(claims,now=Date.now()){
   const custom=claims?.firebase?.sign_in_provider==='custom';
@@ -35,8 +36,29 @@ function reportClaims(session,company,pmUser,now=Date.now()){
   return {...portalClaims(company,projectGrant(session,company),now),portal_report_all:true,portal_actions:['read','read_cost','export']};
 }
 
+function ownerClaims(session,company,pmUser,now=Date.now()){
+  const claims=portalClaims(company,projectGrant(session,company),now);
+  // Preserve the existing owner's powers only when both systems independently
+  // authorize the same protected identity and both live company grants are full.
+  if(session?.superAdmin===true && isPrimaryOwner(pmUser)
+    && normalizedEmail(session.email)===normalizedEmail(pmUser.email)
+    && ['smart','hvac'].every(value=>{
+      const grant=projectGrant(session,value);
+      return grant && OWNER_ACTIONS.every(action=>grant.actions.includes(action));
+    }))claims.portal_owner=true;
+  return claims;
+}
+
+function isOwnerPortalSession(claims,verifiedOwner){
+  return verifiedOwner===true && claims?.portal_bridge===true && claims.portal_owner===true
+    && claims.portal_report_all!==true && claims.portal_scope==='company'
+    && Object.hasOwn(COMPANY_LABELS,claims.portal_company)
+    && Array.isArray(claims.portal_actions) && OWNER_ACTIONS.every(action=>claims.portal_actions.includes(action));
+}
+
 function intersectPermissions(permissions,claims,verifiedOwner=false){
   if(claims?.portal_bridge!==true)return permissions;
+  if(isOwnerPortalSession(claims,verifiedOwner))return {...permissions,p_cost_edit:permissions.p_costs===true};
   const actions=Array.isArray(claims.portal_actions)?claims.portal_actions:[];
   const reportAll=claims.portal_report_all===true&&verifiedOwner;
   return {...permissions,
@@ -117,7 +139,7 @@ function createPortalSso({auth,db,getPortalSession,getPmContext,getPmProfile,clo
         const access=profile.data();
         if(access.p_tab_proj===false || access[company==='smart'?'p_smart':'p_hvac']===false || (access.p_costs!==true && access.viewCosts!==true))throw error('The linked Projects profile no longer allows company-wide financial access.',403);
       }
-      const claims=scope==='all'?reportClaims(session,company,pmUser,clock()):portalClaims(company,grant,clock());
+      const claims=scope==='all'?reportClaims(session,company,pmUser,clock()):ownerClaims(session,company,pmUser,clock());
       const token=await auth.createCustomToken(mapping.pmUid,claims);
       return res.json({ok:true,token,expiresInSeconds:5*60});
     }catch(failure){
@@ -127,4 +149,4 @@ function createPortalSso({auth,db,getPortalSession,getPmContext,getPmProfile,clo
   };
 }
 
-module.exports={projectGrant,portalClaims,reportClaims,intersectPermissions,createPortalSso,assertPortalLease};
+module.exports={projectGrant,portalClaims,ownerClaims,isOwnerPortalSession,reportClaims,intersectPermissions,createPortalSso,assertPortalLease};

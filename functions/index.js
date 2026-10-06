@@ -6,7 +6,7 @@ const {getStorage} = require('firebase-admin/storage');
 const {getAuth} = require('firebase-admin/auth');
 const Busboy = require('busboy');
 const crypto = require('crypto');
-const {createPortalSso,intersectPermissions,assertPortalLease}=require('./portal-sso');
+const {createPortalSso,intersectPermissions,assertPortalLease,isOwnerPortalSession}=require('./portal-sso');
 const {isPrimaryOwner}=require('./identity-policy');
 const {createProgressReportsHandler}=require('./progress-reports');
 
@@ -134,11 +134,12 @@ async function authenticatedContext(req) {
   assertPortalLease(decoded);
   const email = String(decoded.email || '').toLowerCase();
   const ownerRecord=isPrimaryOwner(decoded);
-  const superAdmin=ownerRecord && decoded.portal_bridge!==true;
+  const superAdmin=ownerRecord && (decoded.portal_bridge!==true || isOwnerPortalSession(decoded,ownerRecord));
   const profileDoc = await profileByEmail(email);
   if (!ownerRecord && !profileDoc) throw Object.assign(new Error('User is not authorized for this system.'), {status: 403});
   const userRecord = await auth.getUser(decoded.uid);
   if (userRecord.disabled) throw Object.assign(new Error('User is disabled.'), {status: 403});
+  if (ownerRecord && !isPrimaryOwner(userRecord)) throw Object.assign(new Error('The protected owner identity changed.'), {status: 403});
   const profile = profileDoc?.data() || {};
   const access = intersectPermissions(await writeAccess(userRecord, profile, ownerRecord),decoded,ownerRecord);
   if(decoded.portal_bridge===true && !access.p_tab_proj)throw Object.assign(new Error('Projects access is not authorized for this company.'),{status:403});
@@ -339,7 +340,7 @@ exports.adminApi = onRequest({region: 'us-east1', cors: CORS_ORIGINS, invoker: '
     if (req.method !== 'POST') return res.status(405).json({error: 'Method not allowed.'});
     const context = await authenticatedContext(req); const action = cleanText(req.body?.action, 80);
     if (action === 'session') {
-      if (context.superAdmin) { await sanitizeAndSynchronizeAllUsers(); await normalizeLegacyContractors(); }
+      if (context.superAdmin && context.decoded.portal_bridge!==true) { await sanitizeAndSynchronizeAllUsers(); await normalizeLegacyContractors(); }
       const bridge=context.decoded.portal_bridge===true;
       const actions=context.decoded.portal_actions||[];
       const permissions={...normalizePermissions(context.access,false),
