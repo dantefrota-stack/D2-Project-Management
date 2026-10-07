@@ -1036,7 +1036,7 @@
 <style>html.portal-embedded #auth-screen{display:none!important}html.portal-embedded #portal-boot{display:flex!important}html.portal-embedded.portal-ready #portal-boot{display:none!important}html.portal-embedded #portal-back,html.portal-embedded #portal-boot-back,html.portal-embedded #portal-link-account,html.portal-embedded .c2-brand-wrap,html.portal-embedded .c2-logout,html.portal-embedded #dashboard-language-switcher,html.portal-embedded #theme-toggle{display:none!important}</style>
 <script>if(new URLSearchParams(location.search).get('embed')==='1'&&window.parent!==window)document.documentElement.classList.add('portal-embedded');</script>
     <link href="financial-modal.css?v=20261006-2" rel="stylesheet">
-    <link href="module-shell.css?v=20261005-2" rel="stylesheet">
+    <link href="module-shell.css?v=20261007-company-logos" rel="stylesheet">
 </head>
 <body class="auth-body">
 
@@ -1237,7 +1237,7 @@
             </nav>
 
             <div class="c2-header-actions">
-                <label id="global-company-picker" class="hidden" style="display:none;min-width:150px;text-align:left;border:1px solid var(--c2-line);border-radius:12px;padding:5px 10px;color:var(--c2-text)"><span id="global-company-label" style="display:block;font-size:10px;font-weight:700;text-transform:uppercase">Company</span><select id="global-company-select" aria-label="Company" style="min-height:36px;max-width:225px;border:0;background:transparent;color:inherit;font-family:inherit;font-size:13px;font-weight:600" onchange="window.selectGlobalCompany(this.value)"></select></label>
+                <div id="global-company-picker" class="hidden" style="display:none"><span id="global-company-logos" aria-hidden="true"></span><svg class="company-picker-chevron" aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m6 9 6 6 6-6"/></svg><select id="global-company-select" aria-label="Company" onchange="window.selectGlobalCompany(this.value)"></select></div>
                 <button type="button" id="portal-link-account" class="c2-icon-btn" title="Link this Projects account to D2 Portal" aria-label="Link this Projects account to D2 Portal" style="width:auto;padding:0 10px;font-size:12px;font-weight:700">Link Portal</button>
                 <div id="dashboard-language-switcher" class="dashboard-language-switcher hidden" aria-label="Selecionar idioma">
                     <button type="button" onclick="window.setLang('en')" class="dashboard-language-option" data-dashboard-language="en" title="English (United States)" aria-label="English (United States)"><img src="https://flagcdn.com/w80/us.png" alt="United States"></button>
@@ -2314,14 +2314,15 @@
     window.renderGlobalCompanyPicker = () => {
         const picker=document.getElementById('global-company-picker');
         const visible=!!state.user&&!portalEmbedded&&(state.userPerms.smart||state.userPerms.hvac);
-        picker.classList.toggle('hidden',!visible);picker.style.display=visible?'block':'none';
+        picker.classList.toggle('hidden',!visible);picker.style.display=visible?'flex':'none';
         if(!visible)return;
         const label=state.lang==='pt'?'Empresa':state.lang==='es'?'Empresa':'Company';
-        document.getElementById('global-company-label').textContent=label;
         const select=document.getElementById('global-company-select');select.setAttribute('aria-label',label);
         const all=state.lang==='pt'?'Todas as empresas':state.lang==='es'?'Todas las empresas':'All companies';
         select.innerHTML=(state.userPerms.smart?'<option value="Smart Home">D2 Smart Home</option>':'')+(state.userPerms.hvac?'<option value="HVAC">D2 HVAC Solutions</option>':'')+(state.isSuperAdmin&&state.userPerms.smart&&state.userPerms.hvac?`<option value="Ambas">${all}</option>`:'');
         select.value=state.company;
+        const logoCompanies=state.company==='Ambas'?['Smart Home','HVAC']:[state.company];
+        document.getElementById('global-company-logos').innerHTML=logoCompanies.map(company=>`<img src="${company==='HVAC'?'logo-D2-HVAC-Solutions-preto.png':'logo-D2-SmartHome-preto.png'}" alt="">`).join('');
     };
     window.selectGlobalCompany = unit => { window.selectUnit(unit);if(unit==='Ambas')window.showView('reports'); };
     window.selectUnit = (unit) => {
