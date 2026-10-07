@@ -6,6 +6,15 @@
 #main-header .mobile-nav-toggle{display:none!important;order:3;flex-shrink:0}
 #main-header #main-nav{position:static!important;transform:none!important;order:4;flex:0 0 100%!important;width:100%;display:flex!important;flex-direction:row;justify-content:flex-start;align-items:stretch;gap:6px;border-top:1px solid var(--c2-line);padding:8px 0 0;margin:0;overflow:visible;box-shadow:none!important;border-radius:0}
 #main-header #main-nav .tab-btn{width:auto;flex:0 0 auto;padding:11px 15px}
+#global-company-picker{position:relative;display:flex;align-items:center;justify-content:center;gap:14px;flex:0 1 auto;min-width:0;min-height:54px;box-sizing:border-box;padding:8px 14px;border:1px solid var(--c2-line);border-radius:12px;background:#fff;color:#214b60;transition:border-color .15s,box-shadow .15s}
+#global-company-logos{display:flex;align-items:center;gap:16px;pointer-events:none}
+#global-company-logos img{display:block;width:108px;height:36px;object-fit:contain}
+#global-company-picker .company-picker-chevron{width:18px;height:18px;flex-shrink:0;pointer-events:none}
+#global-company-select{position:absolute;inset:0;width:100%;height:100%;margin:0;padding:0;border:0;border-radius:inherit;appearance:none;background:transparent;color:transparent;font-family:inherit;font-size:14px;font-weight:650;cursor:pointer}
+#global-company-select option{color:#214b60;background:#fff}
+#global-company-select:focus{outline:none}
+#global-company-picker:hover{border-color:#789bae;box-shadow:0 2px 8px #214b6010}
+#global-company-picker:has(select:focus-visible){outline:3px solid #5c91ad;outline-offset:3px}
 html.portal-embedded #main-header #main-nav{order:1;flex:1 1 auto!important;width:auto;border-top:0;padding-top:0}
 /* Long client names must not compress the status or action buttons. */
 .v86-project-card-top{flex-wrap:wrap}
@@ -19,8 +28,8 @@ html.portal-embedded #main-header #main-nav{order:1;flex:1 1 auto!important;widt
  #main-header .c2-brand-mark{width:82px;height:42px}
  #main-header .mobile-nav-toggle{display:inline-flex!important;margin-left:auto;order:2}
  #main-header .c2-header-actions{order:3;flex:1 0 100%;justify-content:flex-end;gap:6px}
- #main-header #global-company-picker{margin-right:auto;flex:1 1 140px;min-width:130px!important}
- #main-header #global-company-select{width:100%;max-width:200px}
+ #main-header #global-company-picker{margin-right:auto;flex:0 1 auto}
+ #global-company-logos img{width:100px}
  #main-header .c2-header-actions>.c2-icon-btn{width:40px;height:42px;border-radius:10px}
  html:not(.portal-embedded) #main-header #dashboard-language-switcher:not(.hidden){display:flex!important}
  #main-header #main-nav,html.portal-embedded #main-header #main-nav{order:4;flex:0 0 100%!important;width:100%;display:none!important;border-top:1px solid var(--c2-line);padding:8px 0 0;background:var(--c2-panel)!important}
