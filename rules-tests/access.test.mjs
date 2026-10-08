@@ -89,7 +89,7 @@ test('authorized protected-owner bridge manages both companies and reads contrac
   await assertSucceeds(setDoc(ref,{company,companies:[company],businessName:'Test contractor'}));
   await assertSucceeds(getDoc(ref));await assertSucceeds(updateDoc(ref,{businessName:'Edited'}));await assertSucceeds(deleteDoc(ref));
   const payment=doc(d,`${root}/contractor_payments/${company}`);
-  await assertSucceeds(setDoc(payment,{company,valor:1}));await assertSucceeds(getDoc(payment));await assertSucceeds(deleteDoc(payment));
+  await assertSucceeds(setDoc(payment,{company,amount:1}));await assertSucceeds(getDoc(payment));await assertSucceeds(deleteDoc(payment));
  }
  await assertSucceeds(getDocs(collection(d,`${root}/audit_logs`)));
  await assertFails(setDoc(doc(d,`${root}/audit_logs/forged`),{action:'Forged'}));
@@ -123,4 +123,25 @@ test('automatic inventory expenses cannot be removed, edited or unlocked even by
  }
  await assertFails(setDoc(projectRef(db(),'bad-inventory'),{...record,inventoryExpenses:[automatic]}));
  await assertFails(setDoc(doc(db(),`${root}/projects/smart/inventory_expense_events/forged`),{amountCents:1}));
+});
+
+test('contractor create and update enforce the same text, list and payment limits',async()=>{
+ await seed(ownerUid,{superAdmin:true,p_hvac:true,p_contractors:true});
+ const d=db(ownerClaims,ownerUid),vendor=doc(d,`${root}/contractors/schema`),payment=doc(d,`${root}/contractor_payments/schema`);
+ const valid={businessName:'Local contractor',company:'Smart Home',companies:['Smart Home'],documents:[]};
+ await assertSucceeds(setDoc(vendor,valid));
+ for(const patch of [{businessName:1},{email:'x'.repeat(181)},{companies:['unknown']},{documents:'invalid'}]){
+  await assertFails(setDoc(doc(d,`${root}/contractors/bad`),{...valid,...patch}));
+  await assertFails(updateDoc(vendor,patch));
+ }
+ await assertSucceeds(setDoc(payment,{company:'Smart Home',amount:500,date:'2026-10-07',note:'Local test'}));
+ for(const patch of [{amount:-1},{amount:'500'},{amount:1000000000001},{note:'x'.repeat(2001)},{company:'unknown'}]){
+  await assertFails(setDoc(doc(d,`${root}/contractor_payments/bad`),{company:'Smart Home',amount:500,...patch}));
+  await assertFails(updateDoc(payment,patch));
+ }
+ await assertSucceeds(updateDoc(payment,{amount:750}));
+ await seed('manager',{p_contractors:true});
+ const direct=db({firebase:{sign_in_provider:'password'},portal_bridge:false});
+ await assertFails(setDoc(doc(direct,`${root}/contractor_payments/other-company`),{company:'HVAC',amount:1}));
+ await assertSucceeds(updateDoc(payment,{note:'Corrected local test'}));
 });

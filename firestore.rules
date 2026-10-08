@@ -79,6 +79,29 @@ service cloud.firestore {
         && data.get('percComissao', 0) is number && data.get('percComissao', 0) >= 0 && data.get('percComissao', 0) <= 100;
     }
 
+    function boundedText(data, key, limit) {
+      return data.get(key, '') is string && data.get(key, '').size() <= limit;
+    }
+
+    function validContractor(data) {
+      return data.businessName is string && data.businessName.size() > 0 && data.businessName.size() <= 160
+        && data.get('companies', []) is list && data.get('companies', []).size() <= 2
+        && data.get('companies', []).hasOnly(['HVAC', 'Smart Home'])
+        && boundedText(data, 'contactName', 120) && boundedText(data, 'email', 180)
+        && boundedText(data, 'phone', 60) && boundedText(data, 'ein', 40)
+        && boundedText(data, 'address', 240) && boundedText(data, 'services', 500)
+        && data.get('documents', []) is list && data.get('documents', []).size() <= 2000;
+    }
+
+    function validContractorPayment(data) {
+      return data.company in ['HVAC', 'Smart Home']
+        && data.amount is number && data.amount > 0 && data.amount <= 1000000000000
+        && boundedText(data, 'contractorId', 128) && boundedText(data, 'contractorName', 160)
+        && boundedText(data, 'projectId', 128) && boundedText(data, 'projectName', 500)
+        && boundedText(data, 'date', 10) && boundedText(data, 'method', 100)
+        && boundedText(data, 'note', 2000);
+    }
+
     function validLists(data) {
       return data.get('recebimentos', []) is list && data.get('recebimentos', []).size() <= 2000
         && data.get('pagamentosEfetuados', []) is list && data.get('pagamentosEfetuados', []).size() <= 2000
@@ -146,15 +169,15 @@ service cloud.firestore {
 
     match /artifacts/d2-Project-Management/public/data/contractors/{contractorId} {
       allow read: if hasAccess() && (!portalBridge() || isSuperAdmin()) && access().p_contractors == true && contractorCompanyAllowed(resource.data);
-      allow create: if hasAccess() && (!portalBridge() || isSuperAdmin()) && access().p_contractors == true && contractorCompanyAllowed(request.resource.data);
-      allow update: if hasAccess() && (!portalBridge() || isSuperAdmin()) && access().p_contractors == true && contractorCompanyAllowed(resource.data) && contractorCompanyAllowed(request.resource.data);
+      allow create: if hasAccess() && (!portalBridge() || isSuperAdmin()) && access().p_contractors == true && contractorCompanyAllowed(request.resource.data) && validContractor(request.resource.data);
+      allow update: if hasAccess() && (!portalBridge() || isSuperAdmin()) && access().p_contractors == true && contractorCompanyAllowed(resource.data) && contractorCompanyAllowed(request.resource.data) && validContractor(request.resource.data);
       allow delete: if hasAccess() && isSuperAdmin();
     }
 
     match /artifacts/d2-Project-Management/public/data/contractor_payments/{paymentId} {
       allow read: if hasAccess() && (!portalBridge() || isSuperAdmin()) && access().p_contractors == true && companyAllowed(resource.data.company);
-      allow create: if hasAccess() && (!portalBridge() || isSuperAdmin()) && access().p_contractors == true && companyAllowed(request.resource.data.company);
-      allow update: if hasAccess() && (!portalBridge() || isSuperAdmin()) && access().p_contractors == true && companyAllowed(resource.data.company) && companyAllowed(request.resource.data.company);
+      allow create: if hasAccess() && (!portalBridge() || isSuperAdmin()) && access().p_contractors == true && companyAllowed(request.resource.data.company) && validContractorPayment(request.resource.data);
+      allow update: if hasAccess() && (!portalBridge() || isSuperAdmin()) && access().p_contractors == true && companyAllowed(resource.data.company) && companyAllowed(request.resource.data.company) && validContractorPayment(request.resource.data);
       allow delete: if hasAccess() && (!portalBridge() || isSuperAdmin()) && access().p_contractors == true && companyAllowed(resource.data.company);
     }
 

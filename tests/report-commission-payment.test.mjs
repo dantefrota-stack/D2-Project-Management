@@ -5,6 +5,7 @@ import {randomUUID} from 'node:crypto';
 import vm from 'node:vm';
 import {assertUnchangedProjectFields} from '../project-concurrency.mjs';
 import {preserveInventoryExpenses} from '../inventory-expenses.mjs';
+import {projectLocale} from '../project-locale.mjs';
 
 const source=readFileSync(new URL('../index.html',import.meta.url),'utf8');
 const slice=(start,end)=>source.slice(source.indexOf(start),source.indexOf(end,source.indexOf(start)));
@@ -14,6 +15,7 @@ function fixture({pending=200,released=1000,paid=800,language='en',allowed=true}
   const state={lang:language,user:{email:'admin@example.test'},userPerms:{fin:true},projects:[project],reportProjectList:{kind:'outstanding',rows:[{project,pendingEnd:pending}]}};
   const window={showModal:(title,message,type,confirm)=>{window.modal={title,message,type,confirm};},safeRenderReport:()=>{},openReportProjectList:()=>{},closeEditPaymentModal:()=>{throw Error('Must stay in report');}};
   const ctx=vm.createContext({window,state,console,db:{},appId:'qa',crypto:{randomUUID},Set,
+    loc:(pt,en,es)=>projectLocale(state.lang,pt,en,es),
     document:{getElementById:id=>{if(!elements.has(id))elements.set(id,{textContent:'',classList:{add:c=>classes.add(c)}});return elements.get(id);}},
     canManageProjectEntries:()=>allowed,denyProjectEntryManagement:()=>{window.denied=true;},
     roundMoney:n=>Math.round(Number(n)*100)/100,formatCurr:n=>`$${Number(n).toFixed(2)}`,formatProjectDate:d=>d,
